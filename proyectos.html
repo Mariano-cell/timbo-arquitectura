@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Timbó — Selected bioclimatic architecture projects.">
+  <title>Timbó — Projects</title>
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="page--dark">
+
+  <!-- ====== NAVEGACIÓN ====== -->
+  <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
+    <ul class="nav__links">
+      <li><a href="index.html" class="nav__link">Home</a></li>
+      <li><a href="proyectos.html" class="nav__link nav__link--active">Projects</a></li>
+      <li><a href="sustentabilidad.html" class="nav__link">Sustainability</a></li>
+      <li><a href="sobre-nosotros.html" class="nav__link">About Us</a></li>
+      <li><a href="contacto.html" class="nav__link">Contact</a></li>
+    </ul>
+  </nav>
+
+
+  <!-- ====== CONTENIDO PRINCIPAL ====== -->
+  <main class="page-content">
+
+    <section class="projects-section" id="projects-section">
+      <div class="container container--wide">
+        <h1 class="projects__title" data-i18n="projects.title">Selected Projects</h1>
+
+        <div class="projects__body">
+
+          <!-- COLUMNA A: preview del proyecto en hover -->
+          <div class="projects__preview" id="projects-preview">
+            <div class="projects__preview-image-wrapper">
+              <img class="projects__preview-img" id="projects-preview-img" src="" alt="">
+            </div>
+            <div class="projects__preview-meta" id="projects-preview-meta">
+              <!-- nombre y location se insertan por JS en hover -->
+            </div>
+          </div>
+
+          <!-- COLUMNA B: lista de proyectos -->
+          <ul class="projects__list" id="projects-list">
+            <!-- Renderizado por main.js -->
+          </ul>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ====== FOOTER ====== -->
+  <footer id="main-footer" class="main-footer"></footer>
+
+  <!-- JS -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+
+</body>
+</html>

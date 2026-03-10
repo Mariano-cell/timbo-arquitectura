@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Timbó — Cabaña Suindá">
+  <title>Timbó — Cabaña Suindá</title>
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="page--dark">
+  <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
+    <ul class="nav__links">
+      <li><a href="index.html" class="nav__link">Home</a></li>
+      <li><a href="proyectos.html" class="nav__link nav__link--active">Projects</a></li>
+      <li><a href="sustentabilidad.html" class="nav__link">Sustainability</a></li>
+      <li><a href="sobre-nosotros.html" class="nav__link">About Us</a></li>
+      <li><a href="contacto.html" class="nav__link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main class="page-content">
+    <section class="project-detail" data-project-slug="cabana-suinda">
+      <div class="project-detail__hero">
+        <img id="project-cover" src="assets/images/projects/project-covers/cover_005.jpg" alt="Cabaña Suindá">
+      </div>
+
+      <div class="container">
+        <a href="proyectos.html" id="project-back-link" class="project-detail__back">Volver a proyectos</a>
+
+        <header class="project-detail__header">
+          <p class="project-detail__location" id="project-location">Corrientes</p>
+          <h1 class="project-detail__title" id="project-title">Cabaña Suindá</h1>
+        </header>
+
+        <p class="project-detail__summary" id="project-summary">
+          Un refugio en el litoral argentino integrado al paisaje de esteros, diseñado con criterios bioclimáticos para el clima subtropical húmedo.
+        </p>
+
+        <div class="project-detail__meta">
+          <article class="project-detail__meta-item">
+            <span class="project-detail__meta-label" id="project-meta-location-label">Ubicación</span>
+            <p class="project-detail__meta-value" id="project-meta-location">Corrientes, Argentina</p>
+          </article>
+          <article class="project-detail__meta-item">
+            <span class="project-detail__meta-label" id="project-meta-type-label">Tipología</span>
+            <p class="project-detail__meta-value" id="project-type">Cabaña / Refugio</p>
+          </article>
+          <article class="project-detail__meta-item">
+            <span class="project-detail__meta-label" id="project-meta-status-label">Estado</span>
+            <p class="project-detail__meta-value" id="project-status">En desarrollo</p>
+          </article>
+        </div>
+
+        <div class="project-detail__body">
+          <div class="project-detail__copy">
+            <p id="project-description-1">
+              El proyecto se inserta en un entorno de humedales y vegetación nativa, elevando la construcción para minimizar el impacto sobre el terreno natural y favorecer la ventilación cruzada en un clima de alta humedad.
+            </p>
+            <p id="project-description-2">
+              La arquitectura prioriza materiales regionales y sistemas constructivos adaptados a las condiciones del litoral, buscando confort térmico pasivo y una relación continua entre los espacios habitables y el paisaje circundante.
+            </p>
+          </div>
+
+          <div class="project-map" data-map-sequence>
+            <div class="project-map__canvas" id="project-map-canvas"></div>
+            <button class="project-map__replay" data-map-replay type="button">
+              Reproducir de nuevo ↻
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer id="main-footer" class="main-footer"></footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

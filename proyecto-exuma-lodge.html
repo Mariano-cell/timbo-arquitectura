@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Timbó — Exuma Lodge">
+  <title>Timbó — Exuma Lodge</title>
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="page--dark">
+  <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
+    <ul class="nav__links">
+      <li><a href="index.html" class="nav__link">Home</a></li>
+      <li><a href="proyectos.html" class="nav__link nav__link--active">Projects</a></li>
+      <li><a href="sustentabilidad.html" class="nav__link">Sustainability</a></li>
+      <li><a href="sobre-nosotros.html" class="nav__link">About Us</a></li>
+      <li><a href="contacto.html" class="nav__link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main class="page-content">
+    <section class="project-detail" data-project-slug="exuma-lodge">
+      <div class="project-detail__hero">
+        <img id="project-cover" src="assets/images/projects/project-covers/cover_001.jpg" alt="Exuma Lodge">
+      </div>
+
+      <div class="container">
+        <a href="proyectos.html" id="project-back-link" class="project-detail__back">Volver a proyectos</a>
+
+        <header class="project-detail__header">
+          <p class="project-detail__location" id="project-location">Bahamas</p>
+          <h1 class="project-detail__title" id="project-title">Exuma Lodge</h1>
+        </header>
+
+        <p class="project-detail__summary" id="project-summary">
+          Un refugio costero diseñado para maximizar ventilación cruzada, sombra profunda y relación directa con el paisaje marino.
+        </p>
+
+        <div class="project-detail__meta">
+          <article class="project-detail__meta-item">
+            <span class="project-detail__meta-label" id="project-meta-location-label">Ubicación</span>
+            <p class="project-detail__meta-value" id="project-meta-location">Bahamas</p>
+          </article>
+          <article class="project-detail__meta-item">
+            <span class="project-detail__meta-label" id="project-meta-type-label">Tipología</span>
+            <p class="project-detail__meta-value" id="project-type">Hospitality Lodge</p>
+          </article>
+          <article class="project-detail__meta-item">
+            <span class="project-detail__meta-label" id="project-meta-status-label">Estado</span>
+            <p class="project-detail__meta-value" id="project-status">En desarrollo</p>
+          </article>
+        </div>
+
+        <div class="project-detail__body">
+          <div class="project-detail__copy">
+            <p id="project-description-1">
+              La propuesta se implanta con una lógica de bajo impacto sobre el terreno, elevando los espacios habitables y priorizando materiales durables frente al ambiente salino.
+            </p>
+            <p id="project-description-2">
+              La arquitectura organiza las áreas comunes y privadas alrededor de patios de aire y recorridos exteriores cubiertos, sosteniendo confort térmico con mínima dependencia mecánica.
+            </p>
+          </div>
+
+          <div class="project-map" data-map-sequence>
+            <div class="project-map__canvas" id="project-map-canvas"></div>
+            <button class="project-map__replay" data-map-replay type="button">
+              Reproducir de nuevo ↻
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer id="main-footer" class="main-footer"></footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

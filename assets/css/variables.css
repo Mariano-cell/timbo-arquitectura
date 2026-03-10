@@ -1,0 +1,215 @@
+/* ============================================================
+   TIMBÓ — variables.css
+   Reset, custom properties, tipografía
+   ============================================================ */
+
+/* ----- CSS Reset (modern) ----- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.6;
+  font-family: var(--font-primary);
+  font-weight: var(--fw-regular);
+  color: var(--color-black);
+  background-color: var(--color-bg-light);
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.1;
+  font-weight: var(--fw-bold);
+}
+
+
+/* ----- @font-face ----- */
+
+/*
+  Pesos disponibles: Regular (400), Medium (500), Semibold (600), Bold (700), Black (900).
+  No tenemos Light; usamos Regular como peso más liviano.
+  Archivos en .ttf (para mejor compatibilidad, convertir a .woff2 en producción).
+*/
+
+@font-face {
+  font-family: 'Autaut Grotesk';
+  src: url('../fonts/autaut-grotesk/AutautGrotesk-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Autaut Grotesk';
+  src: url('../fonts/autaut-grotesk/AutautGrotesk-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Autaut Grotesk';
+  src: url('../fonts/autaut-grotesk/AutautGrotesk-Semibold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Autaut Grotesk';
+  src: url('../fonts/autaut-grotesk/AutautGrotesk-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Autaut Grotesk';
+  src: url('../fonts/autaut-grotesk/AutautGrotesk-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/* ----- Custom Properties ----- */
+
+:root {
+
+  /* --- Paleta: Escala de grises --- */
+  --color-white: #FFFFFF;
+  --color-gray-100: #F5F5F5;
+  /* fondo claro principal */
+  --color-gray-200: #D9D9D9;
+  --color-gray-300: #A0A0A0;
+  --color-gray-400: #707070;
+  --color-gray-500: #4A4A4A;
+  /* gris carbón */
+  --color-black: #1A1A1A;
+  /* casi negro */
+
+  /* --- Paleta: Acentos de color --- */
+  --color-sky: #A8CBE0;
+  /* celeste claro */
+  --color-olive: #8BA63A;
+  /* verde oliva / musgo */
+  --color-forest: #3D6B5E;
+  /* verde bosque oscuro */
+
+  /* --- Semánticos --- */
+  --color-bg-light: var(--color-gray-100);
+  --color-bg-dark: var(--color-gray-500);
+  --color-text-primary: var(--color-black);
+  --color-text-light: var(--color-white);
+  --color-text-muted: var(--color-gray-400);
+
+  /* --- Tipografía --- */
+  --font-primary: 'Autaut Grotesk', 'Helvetica Neue', Arial, sans-serif;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-black: 900;
+
+  /* --- Escala tipográfica (desktop-first) --- */
+  --text-xs: 0.75rem;
+  /* 12px */
+  --text-sm: 0.875rem;
+  /* 14px */
+  --text-base: 1rem;
+  /* 16px */
+  --text-lg: 1.125rem;
+  /* 18px */
+  --text-xl: 1.25rem;
+  /* 20px */
+  --text-2xl: 1.5rem;
+  /* 24px */
+  --text-3xl: 2rem;
+  /* 32px */
+  --text-4xl: 2.5rem;
+  /* 40px */
+  --text-5xl: 3.5rem;
+  /* 56px */
+  --text-6xl: 4.5rem;
+  /* 72px */
+  --text-hero: 6rem;
+  /* 96px — títulos enormes del hero */
+
+  /* --- Espaciado --- */
+  --space-xs: 0.25rem;
+  /* 4px */
+  --space-sm: 0.5rem;
+  /* 8px */
+  --space-md: 1rem;
+  /* 16px */
+  --space-lg: 1.5rem;
+  /* 24px */
+  --space-xl: 2rem;
+  /* 32px */
+  --space-2xl: 3rem;
+  /* 48px */
+  --space-3xl: 4rem;
+  /* 64px */
+  --space-4xl: 6rem;
+  /* 96px */
+  --space-5xl: 8rem;
+  /* 128px */
+
+  /* --- Layout --- */
+  --max-width: 1200px;
+  --nav-height: 60px;
+  --border-radius: 12px;
+  /* rounded corners de las imágenes de proyecto */
+
+  /* --- Transiciones --- */
+  --transition-fast: 150ms ease;
+  --transition-base: 300ms ease;
+  --transition-slow: 500ms ease;
+
+  --color-crema: #f0ebe3;
+  --color-azul: #1d4363;
+}
