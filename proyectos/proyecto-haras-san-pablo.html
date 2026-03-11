@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Timbó — Haras San Pablo">
+  <title>Timbó — Haras San Pablo</title>
+  <link rel="stylesheet" href="../assets/css/variables.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="page--dark">
+  <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
+    <ul class="nav__links">
+      <li><a href="../index.html" class="nav__link">Home</a></li>
+      <li><a href="../proyectos.html" class="nav__link nav__link--active">Projects</a></li>
+      <li><a href="../sustentabilidad.html" class="nav__link">Sustainability</a></li>
+      <li><a href="../sobre-nosotros.html" class="nav__link">About Us</a></li>
+      <li><a href="../contacto.html" class="nav__link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main class="page-content">
+    <section class="project-detail" data-project-slug="haras-san-pablo">
+      <div class="project-detail__hero">
+        <img id="project-cover" src="../assets/images/projects/project-covers/cover_002.jpg" alt="Haras San Pablo">
+      </div>
+
+      <div class="container">
+        <a href="../proyectos.html" id="project-back-link" class="project-detail__back">Volver a proyectos</a>
+
+        <header class="project-detail__header">
+          <p class="project-detail__location" id="project-location">Argentina</p>
+          <h1 class="project-detail__title" id="project-title">Haras San Pablo</h1>
+        </header>
+
+        <p class="project-detail__summary" id="project-summary">
+          Infraestructura residencial y productiva integrada al paisaje rural, con estrategias bioclimáticas para estaciones marcadas.
+        </p>
+
+        <div class="project-detail__meta">
+          <article class="project-detail__meta-item">
+            <span class="project-detail__meta-label" id="project-meta-location-label">Ubicación</span>
+            <p class="project-detail__meta-value" id="project-meta-location">Argentina</p>
+          </article>
+          <article class="project-detail__meta-item">
+            <span class="project-detail__meta-label" id="project-meta-type-label">Tipología</span>
+            <p class="project-detail__meta-value" id="project-type">Residencial + Productivo</p>
+          </article>
+          <article class="project-detail__meta-item">
+            <span class="project-detail__meta-label" id="project-meta-status-label">Estado</span>
+            <p class="project-detail__meta-value" id="project-status">Construido</p>
+          </article>
+        </div>
+
+        <div class="project-detail__copy">
+          <p id="project-description-1">
+            El masterplan articula vivienda, servicios y espacios de trabajo ecuestre mediante piezas de escala controlada y transiciones semicubiertas.
+          </p>
+          <p id="project-description-2">
+            Se priorizaron materiales locales y sistemas constructivos de mantenimiento eficiente, junto con manejo hídrico de superficie y áreas de sombra vegetada.
+          </p>
+        </div>
+
+        <section class="project-map-story"
+          data-map-story
+          data-map-placeholder="true"
+          data-stage2-delay="700"
+          data-stage3-delay="2400"
+          data-stage2-scale="1.9"
+          data-stage2-x="-80"
+          data-stage2-y="-38"
+          data-stage3-scale="3.2"
+          data-stage3-x="-168"
+          data-stage3-y="-118"
+          data-marker-x="58"
+          data-marker-y="56"
+          data-map-base-src="../assets/images/maps/haras-san-pablo/base-map.svg"
+          data-map-region-src="../assets/images/maps/haras-san-pablo/region-overlay.svg"
+          aria-label="Cartographic location sequence">
+          <header class="project-map-story__header">
+            <p class="project-map-story__eyebrow" id="project-map-eyebrow">Secuencia cartográfica</p>
+            <h2 class="project-map-story__title" id="project-map-title">Del continente al sitio</h2>
+            <p class="project-map-story__caption" id="project-map-caption">
+              Secuencia editorial de aproximación territorial: vista continental, foco regional y ubicación final del proyecto.
+            </p>
+          </header>
+
+          <div class="project-map-story__viewport" aria-hidden="true">
+            <div class="project-map-story__scene">
+              <!-- Reemplazar por asset cartográfico real (continente/país reconocible) -->
+              <img
+                class="project-map-story__layer project-map-story__layer--base"
+                data-map-layer="base"
+                src="../assets/images/maps/haras-san-pablo/base-map.svg"
+                alt="Mapa base del territorio del proyecto">
+
+              <!-- Reemplazar por overlay real de la región/provincia destacada -->
+              <img
+                class="project-map-story__layer project-map-story__layer--region"
+                data-map-layer="region"
+                src="../assets/images/maps/haras-san-pablo/region-overlay.svg"
+                alt="">
+
+              <!-- Coordenadas del marcador controladas por --marker-x / --marker-y -->
+              <span class="project-map-story__marker"></span>
+            </div>
+            <p class="project-map-story__asset-note" data-map-asset-note>
+              Placeholder activo. Reemplazá `base-map.svg` y `region-overlay.svg` por cartografía real.
+            </p>
+          </div>
+
+          <button type="button" class="project-map-story__replay" id="project-map-replay" data-map-story-replay>
+            Reproducir secuencia
+          </button>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer id="main-footer" class="main-footer"></footer>
+
+  <script src="../assets/js/data.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

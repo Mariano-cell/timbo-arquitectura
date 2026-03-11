@@ -436,12 +436,14 @@ const Timbo = {
           <a class="projects__item-link" href="${project.page}?lang=${lang}">
             <div class="projects__item-info">
               <span class="projects__item-name">${project.name}</span>
-              <span class="projects__item-location">${project.location}</span>
+              <div class="projects__item-bottom">
+                <span class="projects__item-location">${project.location}</span>
+                <span class="projects__item-cta">
+                  ${data.viewProject}
+                  <span class="projects__item-cta-arrow"></span>
+                </span>
+              </div>
             </div>
-            <span class="projects__item-cta">
-              ${data.viewProject}
-              <span class="projects__item-cta-arrow"></span>
-            </span>
           </a>
         </li>
       `).join('');
@@ -467,7 +469,7 @@ const Timbo = {
         }
 
         previewMeta.innerHTML = `
-          <div class="projects__preview-meta-name">${project.name}</div>
+          <div class="projects__preview-meta-category">${project.category || ''}</div>
           <div class="projects__preview-meta-location">${project.location}</div>
         `;
       }, true);
@@ -886,7 +888,7 @@ const Timbo = {
      ============================================================ */
   heroSwitcher: {
     MEDIA: [
-      { type: 'video', src: 'assets/images/hero/hero-video_001.mp4', poster: 'assets/images/hero/hero_004.jpg', label: 'Video' },
+      { type: 'video', src: 'assets/images/hero/hero-video_001-web.mp4', poster: 'assets/images/hero/hero_004.jpg', label: 'Video' },
       { type: 'image', src: 'assets/images/hero/hero_001.jpeg', label: 'Hero 1' },
       { type: 'image', src: 'assets/images/hero/hero_002.jpeg', label: 'Hero 2' },
       { type: 'image', src: 'assets/images/hero/hero_003.jpg', label: 'Hero 3' },
@@ -961,7 +963,7 @@ const Timbo = {
       // Update hero background content
       if (item.type === 'video') {
         heroBg.innerHTML = `
-          <video autoplay muted loop playsinline poster="${item.poster}">
+          <video autoplay muted loop playsinline preload="metadata" poster="${item.poster}">
             <source src="${item.src}" type="video/mp4">
           </video>
           <img src="${item.poster}" alt="Vista aérea de costa y naturaleza" loading="eager">
