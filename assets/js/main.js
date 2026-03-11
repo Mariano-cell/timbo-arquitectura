@@ -901,7 +901,7 @@ const Timbo = {
       { type: 'image', src: 'assets/images/hero/alternate-hero-photos/DJI_20240528172828_0147_D-Mejorado-NR.jpg', label: 'Drone 2' },
     ],
 
-    activeIndex: 4,
+    activeIndex: 0,
 
     init() {
       const switcher = document.getElementById('hero-switcher');
@@ -920,7 +920,7 @@ const Timbo = {
 
       this.MEDIA.forEach((item, i) => {
         const btn = document.createElement('button');
-        btn.className = 'hero-switcher__option' + (i === 4 ? ' hero-switcher__option--active' : '');
+        btn.className = 'hero-switcher__option' + (i === this.activeIndex ? ' hero-switcher__option--active' : '');
         btn.setAttribute('aria-label', item.label);
         btn.dataset.index = i;
 
