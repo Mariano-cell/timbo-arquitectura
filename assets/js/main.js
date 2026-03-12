@@ -881,109 +881,6 @@ const Timbo = {
     },
   },
 
-
-  /* ============================================================
-     HERO SWITCHER
-     Panel para cambiar la portada del hero (herramienta de test)
-     ============================================================ */
-  heroSwitcher: {
-    MEDIA: [
-      { type: 'video', src: 'assets/images/hero/hero-video_001-web.mp4', poster: 'assets/images/hero/hero_004.jpg', label: 'Video' },
-      { type: 'image', src: 'assets/images/hero/hero_001.jpeg', label: 'Hero 1' },
-      { type: 'image', src: 'assets/images/hero/hero_002.jpeg', label: 'Hero 2' },
-      { type: 'image', src: 'assets/images/hero/hero_003.jpg', label: 'Hero 3' },
-      { type: 'image', src: 'assets/images/hero/hero_004.jpg', label: 'Hero 4' },
-      { type: 'image', src: 'assets/images/hero/alternate-hero-photos/DSC03407.jpg', label: 'Alt 1' },
-      { type: 'image', src: 'assets/images/hero/alternate-hero-photos/DSC03425.jpg', label: 'Alt 2' },
-      { type: 'image', src: 'assets/images/hero/alternate-hero-photos/DSC03800.jpg', label: 'Alt 3' },
-      { type: 'image', src: 'assets/images/hero/alternate-hero-photos/DSC03843.jpg', label: 'Alt 4' },
-      { type: 'image', src: 'assets/images/hero/alternate-hero-photos/DJI_20240528173308_0154_D-Mejorado-NR.jpg', label: 'Drone 1' },
-      { type: 'image', src: 'assets/images/hero/alternate-hero-photos/DJI_20240528172828_0147_D-Mejorado-NR.jpg', label: 'Drone 2' },
-    ],
-
-    activeIndex: 0,
-
-    init() {
-      const switcher = document.getElementById('hero-switcher');
-      if (!switcher) return;
-
-      const toggle = switcher.querySelector('.hero-switcher__toggle');
-      const panel = switcher.querySelector('.hero-switcher__panel');
-
-      // Build panel content
-      panel.innerHTML = `
-        <p class="hero-switcher__label">Portada</p>
-        <div class="hero-switcher__grid"></div>
-      `;
-
-      const grid = panel.querySelector('.hero-switcher__grid');
-
-      this.MEDIA.forEach((item, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'hero-switcher__option' + (i === this.activeIndex ? ' hero-switcher__option--active' : '');
-        btn.setAttribute('aria-label', item.label);
-        btn.dataset.index = i;
-
-        const thumbSrc = item.type === 'video' ? item.poster : item.src;
-        btn.innerHTML = `<img src="${thumbSrc}" alt="${item.label}" loading="lazy">`;
-
-        if (item.type === 'video') {
-          btn.innerHTML += `
-            <span class="hero-switcher__play-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
-            </span>
-          `;
-        }
-
-        btn.addEventListener('click', () => this.select(i));
-        grid.appendChild(btn);
-      });
-
-      // Toggle open/close
-      toggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        switcher.classList.toggle('hero-switcher--open');
-      });
-
-      // Close on click outside
-      document.addEventListener('click', (e) => {
-        if (!switcher.contains(e.target)) {
-          switcher.classList.remove('hero-switcher--open');
-        }
-      });
-    },
-
-    select(index) {
-      if (index === this.activeIndex) return;
-
-      const item = this.MEDIA[index];
-      const heroBg = document.querySelector('.hero__bg');
-      if (!heroBg || !item) return;
-
-      // Update hero background content
-      if (item.type === 'video') {
-        heroBg.innerHTML = `
-          <video autoplay muted loop playsinline preload="metadata" poster="${item.poster}">
-            <source src="${item.src}" type="video/mp4">
-          </video>
-          <img src="${item.poster}" alt="Vista aérea de costa y naturaleza" loading="eager">
-        `;
-      } else {
-        heroBg.innerHTML = `
-          <img src="${item.src}" alt="${item.label}" loading="eager">
-        `;
-      }
-
-      // Update active state in grid
-      this.activeIndex = index;
-      const options = document.querySelectorAll('.hero-switcher__option');
-      options.forEach((opt, i) => {
-        opt.classList.toggle('hero-switcher__option--active', i === index);
-      });
-    },
-  },
-
-
   /* ============================================================
      VALUES BREAKDOWN — Carousel interactivo + paneles de detalle
      ============================================================ */
@@ -1628,7 +1525,6 @@ const Timbo = {
     this.imageExpand.init();
     this.overlayTextReveal.init();
     this.philosophyStatementReveal.init();
-    this.heroSwitcher.init();
     this.valuesBreakdown.init();
     this.projectMap.init();
 
