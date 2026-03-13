@@ -779,13 +779,84 @@ const Timbo = {
      HERO INTRO (animación al cargar)
      ============================================================ */
   heroIntro: {
+    FALLBACK_MS: 4000,
+    CONTENT_DELAY_MS: 700,
+
     init() {
       const heroContent = document.querySelector('#hero .hero__content');
+      const heroBg = document.querySelector('#hero .hero__bg');
+      const video = heroBg?.querySelector('video');
       if (!heroContent) return;
 
-      setTimeout(() => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (video) {
+          video.classList.add('is-armed', 'is-loaded');
+          video.play().catch(() => {});
+        }
+        if (heroBg) heroBg.classList.add('hero__bg--video-loaded');
         heroContent.classList.add('is-visible');
-      }, 100);
+        return;
+      }
+
+      // If there is no video, reveal content with a small delay.
+      if (!video) {
+        setTimeout(() => heroContent.classList.add('is-visible'), 200);
+        return;
+      }
+
+      // Start hidden and wait for controlled playback start.
+      heroContent.classList.remove('is-visible');
+      video.classList.remove('is-armed', 'is-loaded');
+      if (heroBg) heroBg.classList.remove('hero__bg--video-loaded');
+
+      let revealed = false;
+      const revealContent = () => {
+        if (revealed) return;
+        revealed = true;
+        heroContent.classList.add('is-visible');
+      };
+
+      const fallbackTimer = setTimeout(() => {
+        revealContent();
+      }, this.FALLBACK_MS);
+
+      let started = false;
+      const onVideoStarted = () => {
+        if (started) return;
+        started = true;
+        clearTimeout(fallbackTimer);
+
+        // Video starts while still transparent, then fades in.
+        video.classList.add('is-armed');
+
+        const onFirstFrame = () => {
+          video.classList.add('is-loaded');
+          if (heroBg) heroBg.classList.add('hero__bg--video-loaded');
+        };
+
+        if (typeof video.requestVideoFrameCallback === 'function') {
+          video.requestVideoFrameCallback(() => {
+            onFirstFrame();
+          });
+        } else {
+          video.addEventListener('playing', onFirstFrame, { once: true });
+        }
+
+        video.play().catch(() => {
+          revealContent();
+        });
+
+        setTimeout(() => {
+          revealContent();
+        }, this.CONTENT_DELAY_MS);
+      };
+
+      if (video.readyState >= 2) {
+        onVideoStarted();
+      } else {
+        video.addEventListener('canplay', onVideoStarted, { once: true });
+        video.load();
+      }
     },
   },
 
