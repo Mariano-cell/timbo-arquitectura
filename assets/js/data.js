@@ -120,7 +120,7 @@ const SITE_DATA = {
         'exuma-lodge': {
           name:         'Exuma Lodge',
           location:     'Bahamas',
-          cover:        'assets/images/projects/project-covers/cover_001.jpg',
+
           summary:      'Un refugio costero diseñado para maximizar ventilación cruzada, sombra profunda y relación directa con el paisaje marino.',
           type:         'Hospitality Lodge',
           status:       'En desarrollo',
@@ -130,7 +130,7 @@ const SITE_DATA = {
         'haras-san-pablo': {
           name:         'Haras San Pablo',
           location:     'Argentina',
-          cover:        'assets/images/projects/project-covers/cover_002.jpg',
+
           summary:      'Infraestructura residencial y productiva integrada al paisaje rural, con estrategias bioclimáticas para estaciones marcadas.',
           type:         'Residencial + Productivo',
           status:       'Construido',
@@ -140,7 +140,7 @@ const SITE_DATA = {
         'tobar-lodge': {
           name:         'Tobar Lodge',
           location:     'Argentina',
-          cover:        'assets/images/projects/project-covers/cover_003.jpg',
+
           summary:      'Arquitectura de baja huella para estancias temporarias, enfocada en confort pasivo y una fuerte continuidad interior-exterior.',
           type:         'Hospitality / Retiro',
           status:       'Anteproyecto',
@@ -150,7 +150,7 @@ const SITE_DATA = {
         'cherokee-ave': {
           name:         'Cherokee Ave',
           location:     'Estados Unidos',
-          cover:        'assets/images/projects/project-covers/cover_004.jpg',
+
           summary:      'Intervención urbana compacta con foco en eficiencia térmica, iluminación natural y resiliencia climática en trama consolidada.',
           type:         'Vivienda Urbana',
           status:       'En obra',
@@ -160,7 +160,7 @@ const SITE_DATA = {
         'cabana-suinda': {
           name:         'Cabaña Suindá',
           location:     'Corrientes, Argentina',
-          cover:        'assets/images/projects/project-covers/cover_005.jpg',
+
           summary:      'Un refugio en el litoral argentino integrado al paisaje de esteros, diseñado con criterios bioclimáticos para el clima subtropical húmedo.',
           type:         'Cabaña / Refugio',
           status:       'En desarrollo',
@@ -178,7 +178,7 @@ const SITE_DATA = {
         'exuma-lodge': {
           name:         'Exuma Lodge',
           location:     'Bahamas',
-          cover:        'assets/images/projects/project-covers/cover_001.jpg',
+
           summary:      'A coastal retreat designed to maximize cross ventilation, deep shade, and a direct relationship with the marine landscape.',
           type:         'Hospitality Lodge',
           status:       'In development',
@@ -188,7 +188,7 @@ const SITE_DATA = {
         'haras-san-pablo': {
           name:         'Haras San Pablo',
           location:     'Argentina',
-          cover:        'assets/images/projects/project-covers/cover_002.jpg',
+
           summary:      'Residential and productive infrastructure integrated into a rural landscape, with bioclimatic strategies for marked seasons.',
           type:         'Residential + Productive',
           status:       'Built',
@@ -198,7 +198,7 @@ const SITE_DATA = {
         'tobar-lodge': {
           name:         'Tobar Lodge',
           location:     'Argentina',
-          cover:        'assets/images/projects/project-covers/cover_003.jpg',
+
           summary:      'Low-footprint architecture for temporary stays, focused on passive comfort and strong indoor-outdoor continuity.',
           type:         'Hospitality / Retreat',
           status:       'Concept design',
@@ -208,7 +208,7 @@ const SITE_DATA = {
         'cherokee-ave': {
           name:         'Cherokee Ave',
           location:     'United States',
-          cover:        'assets/images/projects/project-covers/cover_004.jpg',
+
           summary:      'A compact urban intervention focused on thermal efficiency, daylight access, and climate resilience in a consolidated fabric.',
           type:         'Urban Housing',
           status:       'Under construction',
@@ -218,7 +218,7 @@ const SITE_DATA = {
         'cabana-suinda': {
           name:         'Cabaña Suindá',
           location:     'Corrientes, Argentina',
-          cover:        'assets/images/projects/project-covers/cover_005.jpg',
+
           summary:      'A retreat in the Argentine littoral integrated into the wetland landscape, designed with bioclimatic criteria for the humid subtropical climate.',
           type:         'Cabin / Retreat',
           status:       'In development',

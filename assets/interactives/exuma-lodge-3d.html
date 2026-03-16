@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exuma Lodge — Plano 3D</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f0ebe3;
+    font-family: 'Space Mono', monospace;
+    overflow: hidden;
+    width: 100vw; height: 100vh;
+  }
+
+  #canvas-container { width: 100vw; height: 100vh; }
+
+  #ui {
+    position: fixed;
+    top: 20px; left: 20px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #title {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #d4c9a8;
+    opacity: 0.7;
+  }
+
+  #legend {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 6px;
+  }
+
+  .leg-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    color: #888;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .leg-item:hover { color: #d4c9a8; }
+
+  .leg-swatch {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  #hint {
+    position: fixed;
+    bottom: 20px; left: 20px;
+    font-size: 9px;
+    color: #555;
+    letter-spacing: 0.08em;
+    line-height: 1.9;
+  }
+
+  #room-label {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #d4c9a8;
+    opacity: 0;
+    transition: opacity 0.25s;
+    text-align: right;
+  }
+
+  #sun-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  #sun-toggle span {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #888;
+    transition: color 0.2s;
+  }
+  #sun-toggle:hover span { color: #d4c9a8; }
+
+  .toggle-track {
+    width: 32px; height: 16px;
+    border-radius: 8px;
+    background: #2a2520;
+    border: 1px solid #555;
+    position: relative;
+    transition: background 0.3s, border-color 0.3s;
+    flex-shrink: 0;
+  }
+  .toggle-track.on {
+    background: #c8a84a;
+    border-color: #e0c060;
+  }
+  .toggle-thumb {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #888;
+    position: absolute;
+    top: 2px; left: 2px;
+    transition: left 0.25s, background 0.3s;
+  }
+  .toggle-track.on .toggle-thumb {
+    left: 18px;
+    background: #fff8e0;
+  }
+
+  #time-display {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: #c8a84a;
+    margin-top: 4px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    min-height: 14px;
+  }
+  #time-display.visible { opacity: 1; }
+
+  .spd-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    background: transparent;
+    color: #666;
+    border: 1px solid #333;
+    padding: 3px 7px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .spd-btn:hover { color: #d4c9a8; border-color: #666; }
+  .spd-btn.active { color: #c8a84a; border-color: #c8a84a; background: rgba(200,168,74,0.08); }
+  #wind-toggle:hover span { color: #9ee8ff; }
+  #wind-track.on { background: #2a6a7a; border-color: #9ee8ff; }
+  #wind-track.on .toggle-thumb { left: 18px; background: #9ee8ff; }
+  #wire-track.on { background: #3a2a6a; border-color: #b09ef5; }
+  #wire-track.on .toggle-thumb { left: 18px; background: #b09ef5; }
+  #grid-track.on { background: #1a3a2a; border-color: #6af5b0; }
+  #grid-track.on .toggle-thumb { left: 18px; background: #6af5b0; }
+  #rot-track.on  { background: #3a2a1a; border-color: #f5c86a; }
+  #rot-track.on  .toggle-thumb { left: 18px; background: #f5c86a; }
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+
+<div id="ui">
+  <div id="title">Plano 3D — Exuma Lodge</div>
+  <div id="legend"></div>
+  <div id="sun-toggle">
+    <div class="toggle-track" id="track">
+      <div class="toggle-thumb"></div>
+    </div>
+    <span>Ciclo solar</span>
+  </div>
+  <div id="speed-btns" style="display:flex;gap:5px;margin-top:6px;opacity:0;transition:opacity 0.3s;pointer-events:none;">
+    <button class="spd-btn active" data-spd="1x">1x</button>
+    <button class="spd-btn" data-spd="2x">2x</button>
+    <button class="spd-btn" data-spd="5x">5x</button>
+    <button class="spd-btn" data-spd="10x">10x</button>
+  </div>
+  <div id="time-display">06:00</div>
+
+  <div id="wind-toggle" style="display:flex;align-items:center;gap:10px;margin-top:10px;cursor:pointer;user-select:none;">
+    <div class="toggle-track" id="wind-track"><div class="toggle-thumb"></div></div>
+    <span style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#888;transition:color 0.2s;">Viento</span>
+  </div>
+
+  <div id="wire-toggle" style="display:flex;align-items:center;gap:10px;margin-top:8px;cursor:pointer;user-select:none;">
+    <div class="toggle-track" id="wire-track"><div class="toggle-thumb"></div></div>
+    <span style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#888;transition:color 0.2s;">Wireframe</span>
+  </div>
+
+  <div id="grid-toggle" style="display:flex;align-items:center;gap:10px;margin-top:8px;cursor:pointer;user-select:none;">
+    <div class="toggle-track" id="grid-track"><div class="toggle-thumb"></div></div>
+    <span style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#888;transition:color 0.2s;">Malla</span>
+  </div>
+
+  <div id="rot-toggle" style="display:flex;align-items:center;gap:10px;margin-top:8px;cursor:pointer;user-select:none;">
+    <div class="toggle-track" id="rot-track"><div class="toggle-thumb"></div></div>
+    <span style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#888;transition:color 0.2s;">Auto-rotar</span>
+  </div>
+</div>
+
+<div id="hint">
+  Click + arrastrar &rarr; rotar<br>
+  Scroll &rarr; zoom<br>
+  Click derecho + arrastrar &rarr; mover<br>
+  Click habitaci&oacute;n &rarr; enfocar
+</div>
+
+<div id="room-label"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ── Escena ────────────────────────────────────────────────────
+const container = document.getElementById('canvas-container');
+const W = window.innerWidth, H = window.innerHeight;
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(W, H);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputEncoding = THREE.sRGBEncoding;
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf0ebe3);
+scene.fog = new THREE.Fog(0xf0ebe3, 40, 90);
+
+const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 200);
+camera.position.set(18, 22, 22);
+camera.lookAt(7, 0, 5.5);
+
+// ── Luces ─────────────────────────────────────────────────────
+const ambient = new THREE.AmbientLight(0xfff5e0, 0.5);
+scene.add(ambient);
+
+const sun = new THREE.DirectionalLight(0xfff0cc, 1.4);
+sun.position.set(20, 30, 10);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.near = 0.5;
+sun.shadow.camera.far = 100;
+sun.shadow.camera.left = -25;
+sun.shadow.camera.right = 25;
+sun.shadow.camera.top = 25;
+sun.shadow.camera.bottom = -25;
+scene.add(sun);
+
+const fill = new THREE.PointLight(0x8ab4d8, 0.4, 60);
+fill.position.set(-5, 8, 15);
+scene.add(fill);
+
+// ── Materiales ────────────────────────────────────────────────
+const WALL_H = 2.8;
+const WALL_T = 0.22;
+const FLOOR_H = 0.08;
+
+const matWall    = new THREE.MeshLambertMaterial({ color: 0xe8dfc8 });
+const matFloorG  = new THREE.MeshLambertMaterial({ color: 0xb8a88a });
+const matRoof    = new THREE.MeshLambertMaterial({ color: 0x7a5c42, transparent: true, opacity: 0.18, side: THREE.DoubleSide });
+const matGrid    = new THREE.MeshLambertMaterial({ color: 0x1a1814 });
+
+const roomColors = {
+  living:   0xd4b896,
+  cocina:   0xb8d4a0,
+  bano:     0x9ec4d4,
+  hab1:     0xd4a0a8,
+  hab2:     0xc4b4d8,
+  pasillo:  0xd4cdb8,
+  jardin:   0x7aaa6a,
+};
+
+const roomMats = {};
+Object.entries(roomColors).forEach(([k, c]) => {
+  roomMats[k] = new THREE.MeshLambertMaterial({ color: c });
+});
+
+// ── Helper: caja ──────────────────────────────────────────────
+function box(w, h, d, mat, x, y, z, castShadow = true) {
+  const geo = new THREE.BoxGeometry(w, h, d);
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(x + w/2, y + h/2, z + d/2);
+  mesh.castShadow = castShadow;
+  mesh.receiveShadow = true;
+  scene.add(mesh);
+  return mesh;
+}
+
+// ── Suelo general ─────────────────────────────────────────────
+box(14, FLOOR_H, 11, new THREE.MeshLambertMaterial({color:0x2a2520}), 0, -FLOOR_H, 0, false);
+
+// ── Pisos de habitaciones ─────────────────────────────────────
+const floors = [
+  { id:'living',  x:5,   z:0,   w:9,   d:4.5 },
+  { id:'cocina',  x:0,   z:0,   w:5,   d:4.5 },
+  { id:'pasillo', x:0,   z:4.5, w:4,   d:6.5 },
+  { id:'bano',    x:4,   z:4.5, w:3.5, d:3   },
+  { id:'hab1',    x:7.5, z:4.5, w:6.5, d:6.5 },
+  { id:'hab2',    x:4,   z:7.5, w:3.5, d:3.5 },
+];
+
+const floorMeshes = [];
+floors.forEach(f => {
+  const m = box(f.w, FLOOR_H, f.d, roomMats[f.id], f.x, 0, f.z, false);
+  m.userData = { roomId: f.id, label: labelOf(f.id) };
+  floorMeshes.push(m);
+});
+
+box(14, FLOOR_H, 4, roomMats.jardin, 0, 0, 11, false);
+
+function labelOf(id) {
+  return { living:'Living / Comedor', cocina:'Cocina', bano:'Baño',
+           hab1:'Dormitorio 1', hab2:'Dormitorio 2', pasillo:'Pasillo', jardin:'Jardín' }[id] || id;
+}
+
+// ── Paredes ───────────────────────────────────────────────────
+const T = WALL_T;
+
+function wall(x, z, w, d) { box(w, WALL_H, d, matWall, x, 0, z); }
+
+wall(0,         0,          14,  T);
+wall(0,         11-T,       14,  T);
+wall(0,         0,          T,   11);
+wall(14-T,      0,          T,   11);
+
+wall(5-T/2,     0,          T,   4.5);
+wall(0,         4.5-T/2,    14,  T);
+wall(4-T/2,     4.5,        T,   6.5);
+wall(4,         7.5-T/2,    3.5, T);
+wall(7.5-T/2,   4.5,        T,   6.5);
+
+// ── Puertas ───────────────────────────────────────────────────
+const matDoor  = new THREE.MeshLambertMaterial({ color: 0x6b4c2a });
+const matFrame = new THREE.MeshLambertMaterial({ color: 0xc8b89a });
+const DOOR_W = 0.85, DOOR_H = 2.1, DOOR_D = 0.08;
+
+function door(x, y, z, rotY) {
+  const grp = new THREE.Group();
+  const frameGeo = new THREE.BoxGeometry(DOOR_W + 0.1, DOOR_H + 0.1, 0.05);
+  const frame = new THREE.Mesh(frameGeo, matFrame);
+  grp.add(frame);
+  const leafGeo = new THREE.BoxGeometry(DOOR_W, DOOR_H, DOOR_D);
+  const leaf = new THREE.Mesh(leafGeo, matDoor);
+  leaf.position.set(DOOR_W * 0.3, 0, DOOR_W * 0.3);
+  leaf.rotation.y = -Math.PI / 5;
+  grp.add(leaf);
+  grp.position.set(x, y + DOOR_H / 2, z);
+  grp.rotation.y = rotY;
+  scene.add(grp);
+}
+
+door(T/2, 0, 2.8, Math.PI / 2);
+door(T/2, 0, 5.8, Math.PI / 2);
+door(4.2, 0, 4.5 + T/2, 0);
+door(4.2, 0, 8.2, 0);
+door(7.5 + T/2, 0, 6.0, Math.PI / 2);
+
+// ── Ventanas ──────────────────────────────────────────────────
+const matWin     = new THREE.MeshLambertMaterial({ color: 0x8dd4f0, transparent: true, opacity: 0.45, side: THREE.DoubleSide });
+const matWinFrame= new THREE.MeshLambertMaterial({ color: 0xd8cbb0 });
+const WIN_H = 1.1, WIN_SILL = 0.9;
+
+function window3d(x, y, z, w, rotY) {
+  const grp = new THREE.Group();
+  const glassGeo = new THREE.BoxGeometry(w, WIN_H, 0.04);
+  const glass = new THREE.Mesh(glassGeo, matWin);
+  grp.add(glass);
+  const fGeo = new THREE.BoxGeometry(w + 0.08, WIN_H + 0.08, 0.06);
+  const fr   = new THREE.Mesh(fGeo, matWinFrame);
+  fr.position.z = -0.02;
+  grp.add(fr);
+  grp.position.set(x, y + WIN_SILL + WIN_H / 2, z);
+  grp.rotation.y = rotY;
+  scene.add(grp);
+}
+
+window3d(7.5,  0, 0,     1.4, 0);
+window3d(10.5, 0, 0,     1.4, 0);
+window3d(2.0,  0, 0,     1.6, 0);
+window3d(14, 0, 6.0,    1.2, Math.PI/2);
+window3d(14, 0, 9.0,    1.2, Math.PI/2);
+window3d(5.5,  0, 11,   1.0, 0);
+window3d(0, 0, 7.5,     1.0, Math.PI/2);
+
+// ── Techo ─────────────────────────────────────────────────────
+{
+  const geo = new THREE.BoxGeometry(14, 0.12, 11);
+  const mesh = new THREE.Mesh(geo, matRoof);
+  mesh.position.set(7, WALL_H + 0.06, 5.5);
+  scene.add(mesh);
+}
+
+// ── Grilla ────────────────────────────────────────────────────
+let gridMesh;
+{
+  gridMesh = new THREE.GridHelper(40, 40, 0x2a2520, 0x1e1c18);
+  gridMesh.position.set(7, -0.01, 5.5);
+  scene.add(gridMesh);
+}
+
+// ── Flechas de viento ─────────────────────────────────────────
+const arrowColor  = new THREE.Color(0x7adeef);
+const arrowGroups = [];
+
+function makeFlowArrow(path, speed = 0.004) {
+  const arrow = new THREE.ArrowHelper(
+    new THREE.Vector3(0, 0, 1),
+    path[0].clone(),
+    0.7,
+    arrowColor,
+    0.28,
+    0.16
+  );
+  arrow.visible = false;
+  scene.add(arrow);
+  arrowGroups.push({ arrow, path, t: Math.random(), speed });
+}
+
+function pathPoint(path, t) {
+  const total = path.length - 1;
+  const scaled = t * total;
+  const idx = Math.min(Math.floor(scaled), total - 1);
+  const f = scaled - idx;
+  const pos = path[idx].clone().lerp(path[idx + 1], f);
+  const dir = path[idx + 1].clone().sub(path[idx]).normalize();
+  return { pos, dir };
+}
+
+const Y = 1.2;
+
+const pathLiving1 = [
+  new THREE.Vector3(7.5,  Y, 0.3),
+  new THREE.Vector3(7.5,  Y, 2.0),
+  new THREE.Vector3(7.5,  Y, 4.0),
+];
+const pathLiving2 = [
+  new THREE.Vector3(10.5, Y, 0.3),
+  new THREE.Vector3(10.5, Y, 2.2),
+  new THREE.Vector3(11.0, Y, 4.0),
+];
+const pathLiving3 = [
+  new THREE.Vector3(9.0,  Y, 0.3),
+  new THREE.Vector3(10.5, Y, 1.5),
+  new THREE.Vector3(13.5, Y, 2.5),
+];
+const pathCocina1 = [
+  new THREE.Vector3(2.0,  Y, 0.3),
+  new THREE.Vector3(2.0,  Y, 2.2),
+  new THREE.Vector3(2.0,  Y, 4.2),
+];
+const pathCocina2 = [
+  new THREE.Vector3(3.5,  Y, 0.3),
+  new THREE.Vector3(1.5,  Y, 2.5),
+  new THREE.Vector3(0.5,  Y, 4.2),
+];
+const pathPasillo1 = [
+  new THREE.Vector3(0.5,  Y, 5.5),
+  new THREE.Vector3(2.0,  Y, 6.5),
+  new THREE.Vector3(3.5,  Y, 8.0),
+];
+const pathPasillo2 = [
+  new THREE.Vector3(2.0,  Y, 5.0),
+  new THREE.Vector3(3.5,  Y, 6.0),
+  new THREE.Vector3(4.2,  Y, 7.0),
+];
+const pathHab1_1 = [
+  new THREE.Vector3(7.8,  Y, 5.0),
+  new THREE.Vector3(10.0, Y, 6.5),
+  new THREE.Vector3(13.5, Y, 6.5),
+];
+const pathHab1_2 = [
+  new THREE.Vector3(8.5,  Y, 8.0),
+  new THREE.Vector3(11.0, Y, 8.5),
+  new THREE.Vector3(13.5, Y, 9.0),
+];
+const pathHab2 = [
+  new THREE.Vector3(4.5,  Y, 7.8),
+  new THREE.Vector3(5.5,  Y, 9.0),
+  new THREE.Vector3(5.5,  Y, 10.8),
+];
+const pathBano = [
+  new THREE.Vector3(4.5,  Y, 4.8),
+  new THREE.Vector3(5.5,  Y, 5.5),
+  new THREE.Vector3(6.5,  Y, 7.0),
+];
+
+const paths = [
+  pathLiving1, pathLiving1, pathLiving1,
+  pathLiving2, pathLiving2,
+  pathLiving3,
+  pathCocina1, pathCocina1,
+  pathCocina2,
+  pathPasillo1, pathPasillo1,
+  pathPasillo2,
+  pathHab1_1, pathHab1_1, pathHab1_1,
+  pathHab1_2, pathHab1_2,
+  pathHab2, pathHab2,
+  pathBano,
+];
+
+paths.forEach((p) => makeFlowArrow(p, 0.003 + Math.random() * 0.003));
+
+let windActive = false;
+
+function updateWind() {
+  arrowGroups.forEach(({ arrow, path, speed }, i) => {
+    arrowGroups[i].t = (arrowGroups[i].t + speed) % 1;
+    const { pos, dir } = pathPoint(path, arrowGroups[i].t);
+    arrow.position.copy(pos);
+    arrow.setDirection(dir);
+    const fade = Math.sin(arrowGroups[i].t * Math.PI);
+    arrow.line.material.opacity  = fade * 0.85;
+    arrow.cone.material.opacity  = fade * 0.85;
+    arrow.line.material.transparent = true;
+    arrow.cone.material.transparent = true;
+  });
+}
+
+// ── Leyenda ───────────────────────────────────────────────────
+const legendData = [
+  { id:'living',  hex:'#d4b896', label:'Living / Comedor' },
+  { id:'cocina',  hex:'#b8d4a0', label:'Cocina' },
+  { id:'bano',    hex:'#9ec4d4', label:'Baño' },
+  { id:'hab1',    hex:'#d4a0a8', label:'Dormitorio 1' },
+  { id:'hab2',    hex:'#c4b4d8', label:'Dormitorio 2' },
+  { id:'pasillo', hex:'#d4cdb8', label:'Pasillo' },
+  { id:'jardin',  hex:'#7aaa6a', label:'Jardín' },
+];
+
+const legendEl = document.getElementById('legend');
+legendData.forEach(item => {
+  const div = document.createElement('div');
+  div.className = 'leg-item';
+  div.innerHTML = '<div class="leg-swatch" style="background:' + item.hex + '"></div><span>' + item.label + '</span>';
+  div.addEventListener('click', () => focusRoom(item.id));
+  legendEl.appendChild(div);
+});
+
+// ── Órbita manual ─────────────────────────────────────────────
+let isDragging = false, isRight = false;
+let prevX = 0, prevY = 0;
+let theta = Math.PI / 4, phi = Math.PI / 3.5, radius = 30;
+let targetX = 7, targetZ = 5.5;
+let camTargetTheta = theta, camTargetPhi = phi, camTargetRadius = radius;
+let camTargetX = targetX, camTargetZ = targetZ;
+
+renderer.domElement.addEventListener('mousedown', e => {
+  isDragging = true;
+  isRight = e.button === 2;
+  prevX = e.clientX; prevY = e.clientY;
+});
+window.addEventListener('mouseup', () => isDragging = false);
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  const dx = e.clientX - prevX, dy = e.clientY - prevY;
+  prevX = e.clientX; prevY = e.clientY;
+  if (isRight) {
+    camTargetX -= dx * 0.04;
+    camTargetZ -= dy * 0.04;
+  } else {
+    camTargetTheta -= dx * 0.008;
+    camTargetPhi = Math.max(0.15, Math.min(Math.PI/2.1, camTargetPhi - dy * 0.006));
+  }
+});
+renderer.domElement.addEventListener('wheel', e => {
+  camTargetRadius = Math.max(6, Math.min(55, camTargetRadius + e.deltaY * 0.04));
+});
+renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+
+// ── Raycasting ────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const roomLabelEl = document.getElementById('room-label');
+
+renderer.domElement.addEventListener('click', e => {
+  if (Math.abs(e.clientX - prevX) > 4 || Math.abs(e.clientY - prevY) > 4) return;
+  mouse.x =  (e.clientX / W) * 2 - 1;
+  mouse.y = -(e.clientY / H) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(floorMeshes);
+  if (hits.length) {
+    const id = hits[0].object.userData.roomId;
+    roomLabelEl.textContent = hits[0].object.userData.label;
+    roomLabelEl.style.opacity = '1';
+    setTimeout(() => roomLabelEl.style.opacity = '0', 2200);
+    focusRoom(id);
+  }
+});
+
+function focusRoom(id) {
+  const f = floors.find(r => r.id === id);
+  if (!f) return;
+  camTargetX = f.x + f.w / 2;
+  camTargetZ = f.z + f.d / 2;
+  camTargetRadius = 14;
+  camTargetPhi = 0.9;
+}
+
+// ── Sol visible ───────────────────────────────────────────────
+const sunGeo  = new THREE.SphereGeometry(0.6, 16, 16);
+const sunMat  = new THREE.MeshBasicMaterial({ color: 0xffe87a });
+const sunMesh = new THREE.Mesh(sunGeo, sunMat);
+scene.add(sunMesh);
+
+const glowMat = new THREE.SpriteMaterial({ color: 0xffcc44, transparent: true, opacity: 0.18 });
+const glow    = new THREE.Sprite(glowMat);
+glow.scale.set(4, 4, 1);
+scene.add(glow);
+
+// ── Ciclo solar ───────────────────────────────────────────────
+let sunActive = false;
+let sunTime   = 0.18;
+const SUN_SPEEDS = { '1x': 0.00018, '2x': 0.00036, '5x': 0.0009, '10x': 0.0018 };
+let SUN_SPEED = SUN_SPEEDS['1x'];
+
+const track       = document.getElementById('track');
+const timeDisplay = document.getElementById('time-display');
+
+document.getElementById('sun-toggle').addEventListener('click', () => {
+  sunActive = !sunActive;
+  track.classList.toggle('on', sunActive);
+  timeDisplay.classList.toggle('visible', sunActive);
+  const speedBtns = document.getElementById('speed-btns');
+  speedBtns.style.opacity = sunActive ? '1' : '0';
+  speedBtns.style.pointerEvents = sunActive ? 'auto' : 'none';
+});
+
+document.getElementById('speed-btns').addEventListener('click', e => {
+  const btn = e.target.closest('.spd-btn');
+  if (!btn) return;
+  document.querySelectorAll('.spd-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  SUN_SPEED = SUN_SPEEDS[btn.dataset.spd];
+});
+
+function skyAt(t) {
+  const stops = [
+    { t:0.00, sky:[0x0a,0x0a,0x12], sun:[0x11,0x11,0x33], amb:0.10, int:0.00 },
+    { t:0.17, sky:[0x0a,0x0a,0x12], sun:[0x11,0x11,0x33], amb:0.10, int:0.00 },
+    { t:0.22, sky:[0x1a,0x08,0x20], sun:[0xff,0x60,0x20], amb:0.25, int:0.40 },
+    { t:0.28, sky:[0xff,0x99,0x44], sun:[0xff,0xcc,0x66], amb:0.50, int:0.90 },
+    { t:0.42, sky:[0x55,0x99,0xdd], sun:[0xff,0xf5,0xcc], amb:0.65, int:1.40 },
+    { t:0.50, sky:[0x33,0x88,0xff], sun:[0xff,0xff,0xee], amb:0.70, int:1.60 },
+    { t:0.62, sky:[0x55,0x99,0xdd], sun:[0xff,0xf0,0xcc], amb:0.60, int:1.30 },
+    { t:0.75, sky:[0xff,0x77,0x22], sun:[0xff,0x99,0x44], amb:0.45, int:0.80 },
+    { t:0.80, sky:[0x22,0x05,0x18], sun:[0x44,0x11,0x44], amb:0.18, int:0.10 },
+    { t:0.85, sky:[0x0a,0x0a,0x12], sun:[0x11,0x11,0x33], amb:0.10, int:0.00 },
+    { t:1.00, sky:[0x0a,0x0a,0x12], sun:[0x11,0x11,0x33], amb:0.10, int:0.00 },
+  ];
+
+  let a = stops[0], b = stops[stops.length-1];
+  for (let i = 0; i < stops.length-1; i++) {
+    if (t >= stops[i].t && t <= stops[i+1].t) { a = stops[i]; b = stops[i+1]; break; }
+  }
+  const f = a.t === b.t ? 0 : (t - a.t) / (b.t - a.t);
+  const lerp = (x,y) => x + (y-x)*f;
+  const lerpC = (x,y,i) => Math.round(lerp(x[i],y[i]));
+
+  return {
+    sky: new THREE.Color(
+      lerpC(a.sky,b.sky,0)/255,
+      lerpC(a.sky,b.sky,1)/255,
+      lerpC(a.sky,b.sky,2)/255
+    ),
+    sunColor: new THREE.Color(
+      lerpC(a.sun,b.sun,0)/255,
+      lerpC(a.sun,b.sun,1)/255,
+      lerpC(a.sun,b.sun,2)/255
+    ),
+    amb:  lerp(a.amb, b.amb),
+    int:  lerp(a.int, b.int),
+  };
+}
+
+function updateSun(t) {
+  const angle  = (t - 0.5) * Math.PI;
+  const elev   = Math.sin(t * Math.PI) * 28;
+  const sx     = -22 * Math.cos(angle);
+  const sz     = -8;
+  sun.position.set(sx, Math.max(elev, -8), sz);
+  sunMesh.position.copy(sun.position);
+  glow.position.copy(sun.position);
+
+  const data = skyAt(t);
+  scene.background = new THREE.Color(0xf0ebe3);
+  scene.fog.color  = new THREE.Color(0xf0ebe3);
+  ambient.intensity = 0.45;
+  sun.intensity     = 1.5;
+  sun.color.set(0xfff5cc);
+
+  const isAbove = elev > 0;
+  sunMesh.visible = isAbove;
+  glow.visible    = isAbove;
+  if (isAbove) {
+    sunMat.color = data.sunColor;
+    glowMat.color = data.sunColor;
+    const s = 0.4 + (1 - Math.abs(t - 0.5) * 2) * 0.5;
+    sunMesh.scale.setScalar(s);
+    glow.scale.set(s * 5, s * 5, 1);
+  }
+
+  const h = Math.floor(t * 24);
+  const m = Math.floor((t * 24 - h) * 60);
+  timeDisplay.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+}
+
+sunMesh.visible = false;
+glow.visible    = false;
+updateSun(0.5);
+
+document.getElementById('wind-toggle').addEventListener('click', () => {
+  windActive = !windActive;
+  arrowGroups.forEach(({ arrow }) => { arrow.visible = windActive; });
+  document.getElementById('wind-track').classList.toggle('on', windActive);
+});
+
+// ── Wireframe ─────────────────────────────────────────────────
+let wireActive = true;
+const WIRE_COLOR = 0x5f7a68;
+const edgeObjects = [];
+
+const houseMeshes = [];
+scene.traverse(obj => {
+  if (obj.isMesh && obj !== sunMesh) houseMeshes.push(obj);
+});
+
+houseMeshes.forEach(mesh => {
+  const edges = new THREE.EdgesGeometry(mesh.geometry, 10);
+  const mat   = new THREE.LineBasicMaterial({
+    color: WIRE_COLOR,
+    linewidth: 2,
+    transparent: true,
+    opacity: 0.9,
+    depthTest: true,
+  });
+  const lines = new THREE.LineSegments(edges, mat);
+  lines.position.copy(mesh.position);
+  lines.rotation.copy(mesh.rotation);
+  lines.scale.copy(mesh.scale);
+  lines.visible = wireActive;
+  mesh.visible = !wireActive;
+  scene.add(lines);
+  edgeObjects.push({ lines, mesh });
+});
+
+document.getElementById('wire-track').classList.toggle('on', wireActive);
+
+document.getElementById('wire-toggle').addEventListener('click', () => {
+  wireActive = !wireActive;
+  edgeObjects.forEach(({ lines, mesh }) => {
+    lines.visible = wireActive;
+    mesh.visible = !wireActive;
+  });
+  sunMesh.visible = sunActive ? (Math.sin(sunTime * Math.PI) * 28 > 0) : false;
+  document.getElementById('wire-track').classList.toggle('on', wireActive);
+});
+
+// ── Malla ─────────────────────────────────────────────────────
+let gridVisible = false;
+document.getElementById('grid-track').classList.toggle('on', gridVisible);
+gridMesh.visible = gridVisible;
+
+document.getElementById('grid-toggle').addEventListener('click', () => {
+  gridVisible = !gridVisible;
+  gridMesh.visible = gridVisible;
+  document.getElementById('grid-track').classList.toggle('on', gridVisible);
+});
+
+// ── Auto-rotación ─────────────────────────────────────────────
+let autoRotate = true;
+const AUTO_ROT_SPEED = 0.004;
+document.getElementById('rot-track').classList.toggle('on', autoRotate);
+
+document.getElementById('rot-toggle').addEventListener('click', () => {
+  autoRotate = !autoRotate;
+  document.getElementById('rot-track').classList.toggle('on', autoRotate);
+});
+
+// ── Loop ──────────────────────────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+
+  if (sunActive) {
+    sunTime = (sunTime + SUN_SPEED) % 1;
+    updateSun(sunTime);
+  }
+
+  if (windActive) updateWind();
+
+  if (autoRotate && !isDragging) camTargetTheta += AUTO_ROT_SPEED;
+
+  theta  += (camTargetTheta  - theta)  * 0.08;
+  phi    += (camTargetPhi    - phi)    * 0.08;
+  radius += (camTargetRadius - radius) * 0.08;
+  targetX += (camTargetX - targetX)   * 0.08;
+  targetZ += (camTargetZ - targetZ)   * 0.08;
+
+  camera.position.x = targetX + radius * Math.sin(phi) * Math.sin(theta);
+  camera.position.y =           radius * Math.cos(phi);
+  camera.position.z = targetZ + radius * Math.sin(phi) * Math.cos(theta);
+  camera.lookAt(targetX, 0, targetZ);
+
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  const w = window.innerWidth, h = window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+});
+</script>
+</body>
+</html>

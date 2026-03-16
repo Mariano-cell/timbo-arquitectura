@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="../assets/css/variables.css">
   <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
-<body class="page--dark">
-  <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
+<body class="page--crema">
+  <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
     <ul class="nav__links">
       <li><a href="../index.html" class="nav__link">Home</a></li>
       <li><a href="../proyectos.html" class="nav__link nav__link--active">Projects</a></li>
@@ -21,62 +21,257 @@
 
   <main class="page-content">
     <section class="project-detail" data-project-slug="exuma-lodge">
+
+      <!-- 1. Hero -->
       <div class="project-detail__hero">
-        <img id="project-cover" src="../assets/images/projects/project-covers/cover_001.jpg" alt="Exuma Lodge">
+        <img id="project-cover" src="../assets/images/projects/bahamas/gallery_05.jpg" alt="Exuma Lodge">
       </div>
 
       <div class="container">
-        <a href="../proyectos.html" id="project-back-link" class="project-detail__back">Volver a proyectos</a>
+
+        <!-- 2. Header del proyecto -->
+        <a href="../proyectos.html" id="project-back-link" class="project-detail__back anim-fade-in" data-anim-delay="400">Volver a proyectos</a>
 
         <header class="project-detail__header">
-          <p class="project-detail__location" id="project-location">Bahamas</p>
-          <h1 class="project-detail__title" id="project-title">Exuma Lodge</h1>
+          <p class="project-detail__location anim-fade-up" data-anim-delay="500" id="project-location">Bahamas — 23°58'02"N, 77°31'30"W</p>
+          <h1 class="project-detail__title anim-fade-up" data-anim-delay="650" id="project-title">Exuma Lodge</h1>
         </header>
 
-        <p class="project-detail__summary" id="project-summary">
-          Un refugio costero diseñado para maximizar ventilación cruzada, sombra profunda y relación directa con el paisaje marino.
-        </p>
-
         <div class="project-detail__meta">
-          <article class="project-detail__meta-item">
+          <article class="project-detail__meta-item anim-fade-up" data-anim-delay="800">
             <span class="project-detail__meta-label" id="project-meta-location-label">Ubicación</span>
             <p class="project-detail__meta-value" id="project-meta-location">Bahamas</p>
           </article>
-          <article class="project-detail__meta-item">
+          <article class="project-detail__meta-item anim-fade-up" data-anim-delay="900">
             <span class="project-detail__meta-label" id="project-meta-type-label">Tipología</span>
             <p class="project-detail__meta-value" id="project-type">Hospitality Lodge</p>
           </article>
-          <article class="project-detail__meta-item">
+          <article class="project-detail__meta-item anim-fade-up" data-anim-delay="1000">
             <span class="project-detail__meta-label" id="project-meta-status-label">Estado</span>
             <p class="project-detail__meta-value" id="project-status">En desarrollo</p>
           </article>
         </div>
 
-        <div class="project-detail__body">
-          <div class="project-detail__copy">
-            <p id="project-description-1">
+        <!-- 3. Descripción narrativa + Mapa -->
+        <div class="project-narrative">
+          <div class="project-narrative__copy anim-fade-up" data-anim-delay="1100">
+            <p class="project-narrative__text" id="project-description-1">
               La propuesta se implanta con una lógica de bajo impacto sobre el terreno, elevando los espacios habitables y priorizando materiales durables frente al ambiente salino.
             </p>
-            <p id="project-description-2">
+            <p class="project-narrative__text" id="project-description-2">
               La arquitectura organiza las áreas comunes y privadas alrededor de patios de aire y recorridos exteriores cubiertos, sosteniendo confort térmico con mínima dependencia mecánica.
             </p>
           </div>
-
-          <div class="project-map" data-map-sequence>
-            <div class="project-map__canvas" id="project-map-canvas"></div>
-            <button class="project-map__replay" data-map-replay type="button">
-              Reproducir de nuevo ↻
-            </button>
+          <div class="project-narrative__map anim-fade-in" data-anim-delay="1300">
+            <div class="project-map" data-map-sequence>
+              <div class="project-map__canvas" id="project-map-canvas"></div>
+            </div>
           </div>
         </div>
 
       </div>
+
+      <!-- Interlude: panorámica del manglar -->
+      <div class="project-interlude">
+        <img class="project-interlude__img" src="../assets/images/projects/bahamas/gallery_05.jpg" alt="Exuma Lodge — panorámica del manglar">
+      </div>
+
+      <!-- Clima — parte 1: intro + stats + temperatura/humedad -->
+      <div class="container">
+        <section class="project-climate">
+          <header class="project-climate__header">
+            <p class="project-climate__label">Análisis climático</p>
+            <h2 class="project-climate__title">Clima · Bahamas</h2>
+          </header>
+
+          <p class="project-climate__intro">
+            Las Bahamas se ubican en la zona de clima tropical de sabana, con temperaturas estables durante todo el año y una marcada estacionalidad en las lluvias. Estas condiciones —calor sostenido, alta humedad y vientos constantes del este— definen las decisiones estructurales del proyecto: orientación, materialidad y estrategia de ventilación responden directamente al comportamiento climático del sitio.
+          </p>
+
+          <div class="project-climate__stats">
+            <article class="project-climate__stat">
+              <p class="project-climate__stat-value">Aw</p>
+              <p class="project-climate__stat-label">Clasificación Köppen</p>
+              <p class="project-climate__stat-detail">Tropical Savanna</p>
+            </article>
+            <article class="project-climate__stat">
+              <p class="project-climate__stat-value">21–30 °C</p>
+              <p class="project-climate__stat-label">Temperatura anual</p>
+              <p class="project-climate__stat-detail">Rango mín. invierno — máx. verano</p>
+            </article>
+            <article class="project-climate__stat">
+              <p class="project-climate__stat-value">70–79%</p>
+              <p class="project-climate__stat-label">Humedad relativa</p>
+              <p class="project-climate__stat-detail">Seca — Húmeda</p>
+            </article>
+            <article class="project-climate__stat">
+              <p class="project-climate__stat-value">5.29 m/s</p>
+              <p class="project-climate__stat-label">Viento promedio</p>
+              <p class="project-climate__stat-detail">N/NO invierno · E/SE verano</p>
+            </article>
+          </div>
+
+          <!-- Gráfico: Temperatura + Humedad -->
+          <div class="climate-chart" id="climate-chart-temp-humidity" aria-label="Temperatura y humedad mensual — Bahamas">
+            <div class="climate-chart__header">
+              <div class="climate-chart__legend">
+                <span class="climate-chart__legend-item climate-chart__legend-item--temp">
+                  <span class="climate-chart__legend-dot"></span>
+                  Temperatura media (°C)
+                </span>
+                <span class="climate-chart__legend-item climate-chart__legend-item--humidity">
+                  <span class="climate-chart__legend-dot"></span>
+                  Humedad relativa (%)
+                </span>
+              </div>
+            </div>
+            <div class="climate-chart__canvas-wrapper">
+              <svg class="climate-chart__svg" id="temp-humidity-svg" aria-hidden="true"></svg>
+            </div>
+            <div class="climate-chart__tooltip" id="climate-tooltip" role="tooltip" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <!-- 7. Plano 3D interactivo -->
+        <section class="project-3d">
+          <header class="project-3d__header">
+            <p class="project-3d__label">Exploración espacial</p>
+            <h2 class="project-3d__title">Plano 3D interactivo</h2>
+            <p class="project-3d__desc">Modelo tridimensional de la vivienda con simulación de ciclo solar, ventilación cruzada y distribución de ambientes. Interactuá con el modelo para explorar cada espacio.</p>
+          </header>
+          <div class="project-3d__frame">
+            <iframe src="../assets/interactives/exuma-lodge-3d.html" title="Plano 3D — Exuma Lodge" loading="lazy" allowfullscreen></iframe>
+          </div>
+        </section>
+      </div>
+
+      <!-- Interlude: vistas aéreas -->
+      <div class="project-interlude project-interlude--pair">
+        <img class="project-interlude__img" src="../assets/images/projects/bahamas/gallery_04.jpg" alt="Exuma Lodge — vista cenital">
+        <img class="project-interlude__img" src="../assets/images/projects/bahamas/gallery_02.jpg" alt="Exuma Lodge — aproximación aérea">
+      </div>
+
+      <!-- Clima — parte 2: radiación solar + rosa de vientos -->
+      <div class="container">
+        <section class="project-climate project-climate--continued">
+          <!-- Gráfico 2: Radiación Solar -->
+          <div class="climate-chart" id="climate-chart-solar" aria-label="Radiación solar mensual — Bahamas">
+            <div class="climate-chart__header">
+              <h3 class="climate-chart__title">Solar Radiation</h3>
+              <p class="climate-chart__desc">Monthly solar energy intensity (Wh/m²). The gold portion represents diffuse radiation; the orange, direct.</p>
+            </div>
+            <div class="climate-chart__legend">
+              <span class="climate-chart__legend-item">
+                <span class="climate-chart__legend-swatch" style="background:#C05A1F;"></span>
+                Direct radiation
+              </span>
+              <span class="climate-chart__legend-item">
+                <span class="climate-chart__legend-swatch" style="background:#E8A84A;"></span>
+                Diffuse radiation
+              </span>
+            </div>
+            <div class="climate-chart__canvas-wrapper">
+              <svg id="solar-radiation-svg" class="climate-chart__svg" aria-label="Monthly solar radiation chart"></svg>
+              <div class="climate-chart__tooltip" id="solar-tooltip"></div>
+            </div>
+          </div>
+
+          <!-- Gráfico 3: Rosa de Vientos -->
+          <div class="climate-chart climate-chart--polar">
+            <div class="climate-chart__header">
+              <h3 class="climate-chart__title">Wind Rose</h3>
+              <p class="climate-chart__desc">Wind frequency and intensity by direction. Longer petals indicate higher frequency; color indicates average speed (blue = slow, red = fast).</p>
+            </div>
+            <div class="climate-chart__toggle">
+              <button class="climate-chart__toggle-btn is-active" id="windRoseBtnWet">Wet season</button>
+              <button class="climate-chart__toggle-btn" id="windRoseBtnDry">Dry season</button>
+            </div>
+            <div class="climate-chart__canvas-wrapper climate-chart__canvas-wrapper--square">
+              <svg id="wind-rose-svg" class="climate-chart__svg climate-chart__svg--square" aria-label="Wind rose — Bahamas"></svg>
+            </div>
+            <div class="climate-chart__legend">
+              <span class="climate-chart__legend-item"><span class="climate-chart__legend-swatch" style="background:#9ECAE1;"></span>1–3.25 m/s</span>
+              <span class="climate-chart__legend-item"><span class="climate-chart__legend-swatch" style="background:#FDB863;"></span>3.25–5.5 m/s</span>
+              <span class="climate-chart__legend-item"><span class="climate-chart__legend-swatch" style="background:#E6550D;"></span>5.5–7.75 m/s</span>
+              <span class="climate-chart__legend-item"><span class="climate-chart__legend-swatch" style="background:#A63603;"></span>> 7.75 m/s</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Interlude: isla desde el norte -->
+      <div class="project-interlude">
+        <img class="project-interlude__img" src="../assets/images/projects/bahamas/gallery_01.jpg" alt="Exuma Lodge — isla desde el norte">
+      </div>
+
+      <!-- Clima — parte 3: precipitación + estrategias -->
+      <div class="container">
+        <section class="project-climate project-climate--continued">
+          <!-- Gráfico 4: Precipitación Mensual -->
+          <div class="climate-chart" id="climate-chart-rainfall" aria-label="Precipitación mensual — Bahamas">
+            <div class="climate-chart__header">
+              <h3 class="climate-chart__title">Monthly Rainfall</h3>
+              <p class="climate-chart__desc">Average monthly precipitation (mm). The shaded band marks the wet season (RA+, Apr–Sep); remaining months correspond to the dry season (RA−).</p>
+            </div>
+            <div class="climate-chart__canvas-wrapper">
+              <svg id="rainfall-svg" class="climate-chart__svg" aria-label="Monthly rainfall chart — Bahamas"></svg>
+              <div class="climate-chart__tooltip" id="rainfall-tooltip"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Estrategias de diseño -->
+        <section class="project-strategies">
+          <header class="project-strategies__header">
+            <p class="project-strategies__label">Respuesta al clima</p>
+            <h2 class="project-strategies__title">Estrategias de diseño</h2>
+          </header>
+
+          <div class="project-strategies__grid">
+            <article class="project-strategies__item">
+              <h3 class="project-strategies__item-title">Ventilación cruzada</h3>
+              <p class="project-strategies__item-text">La orientación de los volúmenes capitaliza los vientos del E/SE para favorecer ventilación natural permanente.</p>
+            </article>
+            <article class="project-strategies__item">
+              <h3 class="project-strategies__item-title">Protección solar</h3>
+              <p class="project-strategies__item-text">Voladizos y galerías profundas bloquean la radiación de alta intensidad del verano, permitiendo entrada de luz difusa.</p>
+            </article>
+            <article class="project-strategies__item">
+              <h3 class="project-strategies__item-title">Gestión hídrica</h3>
+              <p class="project-strategies__item-text">La alta pluviometría de la temporada húmeda (hasta 109 cm) se integra al diseño como recurso, con captación en cubierta y drenaje controlado.</p>
+            </article>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Interlude: costa y contexto territorial -->
+      <div class="project-interlude project-interlude--pair">
+        <img class="project-interlude__img" src="../assets/images/projects/bahamas/gallery_06.jpg" alt="Exuma Lodge — costa y vegetación">
+        <img class="project-interlude__img" src="../assets/images/projects/bahamas/gallery_03.jpg" alt="Exuma Lodge — contexto territorial">
+      </div>
+
+      <!-- 8. Planos / Renders -->
+      <div class="container">
+        <section class="project-plans">
+          <div class="project-plans__grid">
+            <div class="project-plans__item">
+              <img class="project-plans__img" src="../assets/images/projects/bahamas/plan_01.jpg" alt="Exuma Lodge — planta">
+            </div>
+            <div class="project-plans__item">
+              <img class="project-plans__img" src="../assets/images/projects/bahamas/plan_02.jpg" alt="Exuma Lodge — elevación">
+            </div>
+          </div>
+        </section>
+      </div>
     </section>
   </main>
 
+  <!-- 9. Footer -->
   <footer id="main-footer" class="main-footer"></footer>
 
   <script src="../assets/js/data.js"></script>
   <script src="../assets/js/main.js"></script>
+  <script src="../assets/js/charts.js"></script>
 </body>
 </html>

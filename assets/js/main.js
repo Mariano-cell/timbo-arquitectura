@@ -378,6 +378,32 @@ const Timbo = {
 
 
   /* ============================================================
+     INTRO LINK OVAL (óvalo hand-drawn en hover de "See more")
+     ============================================================ */
+  introLinkOval: {
+    init() {
+      const link = document.querySelector('.intro__link');
+      if (!link) return;
+
+      const depth = window.location.pathname.includes('/proyectos/') ? '../' : '';
+      const img = document.createElement('img');
+      img.classList.add('intro-link__oval');
+      img.src = `${depth}assets/images/svg/ovalo_001.svg`;
+      img.alt = '';
+      img.setAttribute('aria-hidden', 'true');
+      link.appendChild(img);
+
+      link.addEventListener('mouseenter', () => {
+        link.classList.add('intro__link--oval-draw');
+      });
+
+      link.addEventListener('mouseleave', () => {
+        link.classList.remove('intro__link--oval-draw');
+      });
+    },
+  },
+
+  /* ============================================================
      NAV INTRO (animación al cargar)
      ============================================================ */
   navIntro: {
@@ -396,6 +422,193 @@ const Timbo = {
   },
 
   /* ============================================================
+     PAGE TRANSITION (Home -> Projects)
+     Salida suave desde Home y entrada elegante en Proyectos.
+     ============================================================ */
+  pageTransition: {
+    STORAGE_KEY: 'timbo-page-transition',
+    EXIT_CLASS: 'is-leaving-to-projects',
+    ENTER_CLASS: 'is-entering-projects',
+    ENTER_ACTIVE_CLASS: 'is-entering-projects-active',
+    HOME_ENTER_CLASS: 'is-entering-home',
+    HOME_ENTER_ACTIVE_CLASS: 'is-entering-home-active',
+    EXIT_DURATION_MS: 440,
+    isTransitioning: false,
+
+    getPageName(pathname = window.location.pathname) {
+      const raw = pathname.split('/').pop() || 'index.html';
+      return raw.toLowerCase();
+    },
+
+    shouldAnimate() {
+      return !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    },
+
+    isSimpleNavigationClick(event, link) {
+      if (event.defaultPrevented) return false;
+      if (event.button !== 0) return false;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
+      if (!link || !link.href) return false;
+      if (link.target && link.target !== '_self') return false;
+      if (link.hasAttribute('download')) return false;
+      return true;
+    },
+
+    getInternalUrl(link) {
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#')) return null;
+
+      let url;
+      try {
+        url = new URL(href, window.location.href);
+      } catch (_err) {
+        return null;
+      }
+      if (url.origin !== window.location.origin) return null;
+      return url;
+    },
+
+    saveIntent() {
+      try {
+        const payload = {
+          from: 'index.html',
+          to: 'proyectos.html',
+          at: Date.now(),
+        };
+        sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(payload));
+      } catch (_err) {
+        // Ignore sessionStorage failures and continue navigation
+      }
+    },
+
+    consumeIntent() {
+      let raw = null;
+      try {
+        raw = sessionStorage.getItem(this.STORAGE_KEY);
+        sessionStorage.removeItem(this.STORAGE_KEY);
+      } catch (_err) {
+        return null;
+      }
+      if (!raw) return null;
+
+      let payload = null;
+      try {
+        payload = JSON.parse(raw);
+      } catch (_err) {
+        return null;
+      }
+      if (!payload || payload.to !== 'proyectos.html' || payload.from !== 'index.html') return null;
+      if (typeof payload.at !== 'number') return null;
+      if (Date.now() - payload.at > 6000) return null;
+      return payload;
+    },
+
+    startExit(targetUrl) {
+      if (this.isTransitioning) return;
+      this.isTransitioning = true;
+
+      this.saveIntent();
+      document.documentElement.classList.add(this.EXIT_CLASS);
+
+      window.setTimeout(() => {
+        window.location.assign(targetUrl.href);
+      }, this.EXIT_DURATION_MS);
+    },
+
+    isProjectPage() {
+      return window.location.pathname.includes('/proyectos/proyecto-');
+    },
+
+    startGenericExit(targetUrl) {
+      if (this.isTransitioning) return;
+      this.isTransitioning = true;
+
+      document.documentElement.classList.add('is-leaving');
+
+      window.setTimeout(() => {
+        window.location.assign(targetUrl.href);
+      }, this.EXIT_DURATION_MS);
+    },
+
+    bindExitLinks() {
+      const links = document.querySelectorAll('a[href]');
+      if (links.length === 0) return;
+
+      links.forEach((link) => {
+        link.addEventListener('click', (event) => {
+          if (!this.shouldAnimate()) return;
+          if (!this.isSimpleNavigationClick(event, link)) return;
+
+          const targetUrl = this.getInternalUrl(link);
+          if (!targetUrl) return;
+
+          const currentPage = this.getPageName(window.location.pathname);
+          const targetPage = this.getPageName(targetUrl.pathname);
+          if (targetPage === currentPage) return;
+
+          // Home → Projects (existing specific transition)
+          if (currentPage === 'index.html' && targetPage === 'proyectos.html') {
+            event.preventDefault();
+            this.startExit(targetUrl);
+            return;
+          }
+
+          // Project detail pages → any other page
+          if (this.isProjectPage()) {
+            event.preventDefault();
+            this.startGenericExit(targetUrl);
+            return;
+          }
+        });
+      });
+    },
+
+    runEntry() {
+      const intent = this.consumeIntent();
+      if (!intent) return;
+      if (!this.shouldAnimate()) return;
+      if (this.getPageName(window.location.pathname) !== 'proyectos.html') return;
+
+      const root = document.documentElement;
+      root.classList.add(this.ENTER_CLASS);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          root.classList.add(this.ENTER_ACTIVE_CLASS);
+        });
+      });
+
+      window.setTimeout(() => {
+        root.classList.remove(this.ENTER_CLASS, this.ENTER_ACTIVE_CLASS);
+      }, 1100);
+    },
+
+    runHomeEntry() {
+      if (!this.shouldAnimate()) return;
+      if (this.getPageName(window.location.pathname) !== 'index.html') return;
+
+      const root = document.documentElement;
+      root.classList.add(this.HOME_ENTER_CLASS);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          root.classList.add(this.HOME_ENTER_ACTIVE_CLASS);
+        });
+      });
+
+      window.setTimeout(() => {
+        root.classList.remove(this.HOME_ENTER_CLASS, this.HOME_ENTER_ACTIVE_CLASS);
+      }, 1300);
+    },
+
+    init() {
+      this.runEntry();
+      this.runHomeEntry();
+      this.bindExitLinks();
+    },
+  },
+
+  /* ============================================================
      FOOTER
      ============================================================ */
   footer: {
@@ -405,9 +618,10 @@ const Timbo = {
       if (!footer) return;
 
       const isDarkPage = document.body.classList.contains('page--dark');
+      const depth = window.location.pathname.includes('/proyectos/') ? '../' : '';
       const logoSrc = isDarkPage
-        ? 'assets/images/logo/timbo-blanco.svg'
-        : 'assets/images/logo/Timbó_02-27.svg';
+        ? `${depth}assets/images/logo/timbo-blanco.svg`
+        : `${depth}assets/images/logo/timbo-negro.svg`;
 
       footer.innerHTML = `
         <div class="footer__inner">
@@ -423,6 +637,92 @@ const Timbo = {
      Renderiza la lista de proyectos desde SITE_DATA.projects
      ============================================================ */
   projectsList: {
+    eventsController: null,
+    previewSwapTimer: null,
+    PREVIEW_SWAP_DELAY_MS: 110,
+
+    clearPreviewSwapTimer() {
+      if (!this.previewSwapTimer) return;
+      clearTimeout(this.previewSwapTimer);
+      this.previewSwapTimer = null;
+    },
+
+    hidePreviewImage(previewImg) {
+      if (!previewImg) return;
+      this.clearPreviewSwapTimer();
+      previewImg.classList.remove('is-swapping', 'is-visible');
+    },
+
+    setPreviewImage(previewImg, imageSrc, altText = '') {
+      if (!previewImg || !imageSrc) {
+        this.hidePreviewImage(previewImg);
+        return;
+      }
+
+      const nextSrc = String(imageSrc);
+      const currentSrc = previewImg.dataset.currentSrc || '';
+      const isVisible = previewImg.classList.contains('is-visible');
+
+      const commitSwap = () => {
+        previewImg.src = nextSrc;
+        previewImg.alt = altText;
+        previewImg.dataset.currentSrc = nextSrc;
+        previewImg.classList.add('is-visible');
+        requestAnimationFrame(() => {
+          previewImg.classList.remove('is-swapping');
+        });
+      };
+
+      if (!isVisible || !currentSrc) {
+        this.clearPreviewSwapTimer();
+        previewImg.classList.remove('is-swapping');
+        commitSwap();
+        return;
+      }
+
+      if (currentSrc === nextSrc) {
+        this.clearPreviewSwapTimer();
+        previewImg.alt = altText || previewImg.alt;
+        previewImg.classList.remove('is-swapping');
+        previewImg.classList.add('is-visible');
+        return;
+      }
+
+      this.clearPreviewSwapTimer();
+      previewImg.classList.add('is-swapping');
+      this.previewSwapTimer = window.setTimeout(() => {
+        commitSwap();
+        this.previewSwapTimer = null;
+      }, this.PREVIEW_SWAP_DELAY_MS);
+    },
+
+    shouldSkipIntroAnimation() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+
+      try {
+        const rawIntent = sessionStorage.getItem('timbo-page-transition');
+        if (!rawIntent) return false;
+        const intent = JSON.parse(rawIntent);
+        return intent?.from === 'index.html' && intent?.to === 'proyectos.html';
+      } catch (_err) {
+        return false;
+      }
+    },
+
+    animateListEntry(list) {
+      if (!list) return;
+
+      list.classList.remove('projects__list--intro', 'projects__list--intro-ready');
+      if (this.shouldSkipIntroAnimation()) return;
+
+      list.classList.add('projects__list--intro');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          list.classList.add('projects__list--intro-ready');
+        });
+      });
+    },
+
     render() {
       const list = document.getElementById('projects-list');
       if (!list) return; // No estamos en la página de proyectos
@@ -432,7 +732,7 @@ const Timbo = {
       if (!data || !data.items || data.items.length === 0) return;
 
       list.innerHTML = data.items.map((project, i) => `
-        <li class="projects__item" data-project-index="${i}">
+        <li class="projects__item" data-project-index="${i}" style="--project-item-index:${i};">
           <a class="projects__item-link" href="${project.page}?lang=${lang}">
             <div class="projects__item-info">
               <span class="projects__item-name">${project.name}</span>
@@ -448,10 +748,16 @@ const Timbo = {
         </li>
       `).join('');
 
+      this.animateListEntry(list);
+
       // Preview hover interactivo
       const previewImg = document.getElementById('projects-preview-img');
       const previewMeta = document.getElementById('projects-preview-meta');
       if (!previewImg || !previewMeta) return;
+
+      if (this.eventsController) this.eventsController.abort();
+      const controller = new AbortController();
+      this.eventsController = controller;
 
       list.addEventListener('mouseenter', (e) => {
         const item = e.target.closest('.projects__item');
@@ -461,23 +767,21 @@ const Timbo = {
         if (!project) return;
 
         if (project.image) {
-          previewImg.src = project.image;
-          previewImg.alt = project.name;
-          previewImg.classList.add('is-visible');
+          this.setPreviewImage(previewImg, project.image, project.name);
         } else {
-          previewImg.classList.remove('is-visible');
+          this.hidePreviewImage(previewImg);
         }
 
         previewMeta.innerHTML = `
           <div class="projects__preview-meta-category">${project.category || ''}</div>
           <div class="projects__preview-meta-location">${project.location}</div>
         `;
-      }, true);
+      }, { capture: true, signal: controller.signal });
 
       list.addEventListener('mouseleave', () => {
-        previewImg.classList.remove('is-visible');
+        this.hidePreviewImage(previewImg);
         previewMeta.innerHTML = '';
-      });
+      }, { signal: controller.signal });
 
       // Scroll contenido: absorbe el scroll mientras la lista pueda scrollear,
       // lo deja pasar a la página cuando llega al límite.
@@ -493,7 +797,7 @@ const Timbo = {
           list.scrollTop += e.deltaY;
         }
         // Si llegó al límite, no hacemos nada → el evento sube a la página
-      }, { passive: false });
+      }, { passive: false, signal: controller.signal });
     },
   },
 
@@ -535,18 +839,27 @@ const Timbo = {
       setText('project-meta-status-label', pageData.statusLabel);
       setText('project-back-link', pageData.backToProjects);
 
-      const coverImg = document.getElementById('project-cover');
-      if (coverImg && project.cover) {
-        coverImg.src = project.cover;
-        coverImg.alt = `${project.name} — ${project.location}`;
-      }
+      const depth = window.location.pathname.includes('/proyectos/') ? '../' : '';
+
+
 
       const backLink = document.getElementById('project-back-link');
       if (backLink) {
-        backLink.href = `proyectos.html?lang=${lang}`;
+        backLink.href = `${depth}proyectos.html?lang=${lang}`;
       }
 
       document.title = `Timbó — ${project.name}`;
+
+      // Hero cover entry animation
+      const coverImg = document.getElementById('project-cover');
+      if (coverImg) {
+        const reveal = () => coverImg.classList.add('is-loaded');
+        if (coverImg.complete) {
+          requestAnimationFrame(reveal);
+        } else {
+          coverImg.addEventListener('load', reveal, { once: true });
+        }
+      }
     },
   },
 
@@ -560,6 +873,7 @@ const Timbo = {
     heroSectionEl: null,
     featuredImageEl: null,
     valuesBreakdownEl: null,
+    sustHeroEl: null,
 
     render() {
       const existingLogo = document.querySelector('.floating-logo');
@@ -568,15 +882,16 @@ const Timbo = {
         return existingLogo;
       }
 
+      const depth = window.location.pathname.includes('/proyectos/') ? '../' : '';
       const logo = document.createElement('a');
-      logo.href = 'index.html';
+      logo.href = `${depth}index.html`;
       logo.className = 'floating-logo';
       logo.setAttribute('aria-label', 'Ir al inicio');
       logo.innerHTML = `
         <span class="floating-logo__stack" aria-hidden="true">
-          <img src="assets/images/logo/timbo-negro.svg" alt="Timbó" class="floating-logo__img floating-logo__img--black">
-          <img src="assets/images/logo/timbo-gris.svg" alt="Timbó" class="floating-logo__img floating-logo__img--gray">
-          <img src="assets/images/logo/timbo-blanco.svg" alt="Timbó" class="floating-logo__img floating-logo__img--white">
+          <img src="${depth}assets/images/logo/timbo-negro.svg" alt="Timbó" class="floating-logo__img floating-logo__img--black">
+          <img src="${depth}assets/images/logo/timbo-gris.svg" alt="Timbó" class="floating-logo__img floating-logo__img--gray">
+          <img src="${depth}assets/images/logo/timbo-blanco.svg" alt="Timbó" class="floating-logo__img floating-logo__img--white">
         </span>
       `;
 
@@ -673,18 +988,111 @@ const Timbo = {
       this.logoEl.classList.add('floating-logo--on-values');
     },
 
+    parseInsetClipPathPercentages(clipPathValue) {
+      if (typeof clipPathValue !== 'string' || clipPathValue.trim() === '') return null;
+
+      const insetMatch = clipPathValue.match(/inset\((.+)\)/i);
+      if (!insetMatch) return null;
+
+      const insetBody = insetMatch[1].split(/\s+round\s+/i)[0].trim();
+      if (!insetBody) return null;
+
+      const tokens = insetBody.split(/\s+/).filter(Boolean);
+      if (tokens.length === 0 || tokens.length > 4) return null;
+
+      const values = tokens.map((token) => {
+        const percentMatch = token.match(/^([+-]?\d*\.?\d+)%$/);
+        if (!percentMatch) return null;
+
+        const parsed = Number(percentMatch[1]);
+        if (!Number.isFinite(parsed)) return null;
+        return Math.min(Math.max(parsed, 0), 100);
+      });
+
+      if (values.some((value) => value == null)) return null;
+
+      if (values.length === 1) {
+        return { top: values[0], right: values[0], bottom: values[0], left: values[0] };
+      }
+
+      if (values.length === 2) {
+        return { top: values[0], right: values[1], bottom: values[0], left: values[1] };
+      }
+
+      if (values.length === 3) {
+        return { top: values[0], right: values[1], bottom: values[2], left: values[1] };
+      }
+
+      return { top: values[0], right: values[1], bottom: values[2], left: values[3] };
+    },
+
+    updateSustHeroBlend() {
+      if (!this.logoEl) return;
+      if (!this.sustHeroEl) {
+        this.logoEl.classList.remove('floating-logo--on-sust-hero');
+        this.logoEl.style.setProperty('--sust-overlap-top', '100%');
+        this.logoEl.style.setProperty('--sust-overlap-right', '0px');
+        this.logoEl.style.setProperty('--sust-overlap-bottom', '0px');
+        this.logoEl.style.setProperty('--sust-overlap-left', '0px');
+        return;
+      }
+
+      const logoRect = this.logoEl.getBoundingClientRect();
+      const heroRect = this.sustHeroEl.getBoundingClientRect();
+      const inlineClipPath = this.sustHeroEl.style.clipPath || '';
+      const computedClipPath = window.getComputedStyle(this.sustHeroEl).clipPath || '';
+      const insetValues =
+        this.parseInsetClipPathPercentages(inlineClipPath)
+        || this.parseInsetClipPathPercentages(computedClipPath)
+        || { top: 25, right: 25, bottom: 25, left: 25 };
+
+      const visibleTop = heroRect.top + (heroRect.height * insetValues.top) / 100;
+      const visibleBottom = heroRect.bottom - (heroRect.height * insetValues.bottom) / 100;
+      const visibleLeft = heroRect.left + (heroRect.width * insetValues.left) / 100;
+      const visibleRight = heroRect.right - (heroRect.width * insetValues.right) / 100;
+
+      const overlapTop = Math.max(logoRect.top, visibleTop);
+      const overlapBottom = Math.min(logoRect.bottom, visibleBottom);
+      const overlapLeft = Math.max(logoRect.left, visibleLeft);
+      const overlapRight = Math.min(logoRect.right, visibleRight);
+      const hasOverlap = overlapBottom > overlapTop && overlapRight > overlapLeft;
+
+      if (!hasOverlap) {
+        this.logoEl.classList.remove('floating-logo--on-sust-hero');
+        this.logoEl.style.setProperty('--sust-overlap-top', `${logoRect.height}px`);
+        this.logoEl.style.setProperty('--sust-overlap-right', '0px');
+        this.logoEl.style.setProperty('--sust-overlap-bottom', '0px');
+        this.logoEl.style.setProperty('--sust-overlap-left', '0px');
+        return;
+      }
+
+      const topInset = Math.max(0, overlapTop - logoRect.top);
+      const bottomInset = Math.max(0, logoRect.bottom - overlapBottom);
+      const leftInset = Math.max(0, overlapLeft - logoRect.left);
+      const rightInset = Math.max(0, logoRect.right - overlapRight);
+      const seamCompensationPx = 0.8;
+
+      this.logoEl.style.setProperty('--sust-overlap-top', `${Math.max(0, topInset - seamCompensationPx)}px`);
+      this.logoEl.style.setProperty('--sust-overlap-right', `${Math.max(0, rightInset - seamCompensationPx)}px`);
+      this.logoEl.style.setProperty('--sust-overlap-bottom', `${Math.max(0, bottomInset - seamCompensationPx)}px`);
+      this.logoEl.style.setProperty('--sust-overlap-left', `${Math.max(0, leftInset - seamCompensationPx)}px`);
+      this.logoEl.classList.add('floating-logo--on-sust-hero');
+    },
+
     init() {
       const logo = this.render();
       if (!logo) return;
       this.heroSectionEl = document.getElementById('hero');
       this.featuredImageEl = document.querySelector('.featured-project__image');
       this.valuesBreakdownEl = document.getElementById('values-breakdown');
+      this.sustHeroEl = document.getElementById('sustHeroImage');
 
       logo.classList.add('floating-logo--visible');
       const updateLogoState = () => {
         this.updateHeroLayer();
         this.updateFeaturedImageBlend();
         this.updateValuesBreakdownBlend();
+        this.updateSustHeroBlend();
       };
 
       updateLogoState();
@@ -779,84 +1187,54 @@ const Timbo = {
      HERO INTRO (animación al cargar)
      ============================================================ */
   heroIntro: {
-    FALLBACK_MS: 4000,
-    CONTENT_DELAY_MS: 700,
-
     init() {
       const heroContent = document.querySelector('#hero .hero__content');
       const heroBg = document.querySelector('#hero .hero__bg');
       const video = heroBg?.querySelector('video');
       if (!heroContent) return;
 
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        if (video) {
-          video.classList.add('is-armed', 'is-loaded');
-          video.play().catch(() => {});
-        }
-        if (heroBg) heroBg.classList.add('hero__bg--video-loaded');
-        heroContent.classList.add('is-visible');
-        return;
-      }
-
-      // If there is no video, reveal content with a small delay.
       if (!video) {
-        setTimeout(() => heroContent.classList.add('is-visible'), 200);
+        heroContent.classList.add('is-visible');
         return;
       }
 
-      // Start hidden and wait for controlled playback start.
-      heroContent.classList.remove('is-visible');
-      video.classList.remove('is-armed', 'is-loaded');
-      if (heroBg) heroBg.classList.remove('hero__bg--video-loaded');
+      // Sin animación de entrada del video: mostrar y reproducir directo.
+      video.classList.add('is-armed', 'is-loaded');
+      if (heroBg) heroBg.classList.add('hero__bg--video-loaded');
+      video.play().catch(() => {});
+      heroContent.classList.add('is-visible');
+    },
+  },
 
-      let revealed = false;
-      const revealContent = () => {
-        if (revealed) return;
-        revealed = true;
-        heroContent.classList.add('is-visible');
+  /* ============================================================
+     HERO VIDEO SCROLL FADE
+     Empieza a bajar opacidad del video luego de cierto scroll.
+     ============================================================ */
+  heroVideoScrollFade: {
+    START_SCROLL_PX: 200,
+    FADE_DISTANCE_PX: 520,
+    MIN_OPACITY: 0,
+
+    init() {
+      const video = document.querySelector('#hero .hero__bg video');
+      if (!video) return;
+
+      const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+      const update = () => {
+        const fadeProgressRaw = clamp(
+          (window.scrollY - this.START_SCROLL_PX) / this.FADE_DISTANCE_PX,
+          0,
+          1,
+        );
+        const fadeProgress = Math.pow(fadeProgressRaw, 1.2);
+        const opacity = 1 - (1 - this.MIN_OPACITY) * fadeProgress;
+        video.style.setProperty('--hero-video-scroll-opacity', opacity.toFixed(3));
       };
 
-      const fallbackTimer = setTimeout(() => {
-        revealContent();
-      }, this.FALLBACK_MS);
-
-      let started = false;
-      const onVideoStarted = () => {
-        if (started) return;
-        started = true;
-        clearTimeout(fallbackTimer);
-
-        // Video starts while still transparent, then fades in.
-        video.classList.add('is-armed');
-
-        const onFirstFrame = () => {
-          video.classList.add('is-loaded');
-          if (heroBg) heroBg.classList.add('hero__bg--video-loaded');
-        };
-
-        if (typeof video.requestVideoFrameCallback === 'function') {
-          video.requestVideoFrameCallback(() => {
-            onFirstFrame();
-          });
-        } else {
-          video.addEventListener('playing', onFirstFrame, { once: true });
-        }
-
-        video.play().catch(() => {
-          revealContent();
-        });
-
-        setTimeout(() => {
-          revealContent();
-        }, this.CONTENT_DELAY_MS);
-      };
-
-      if (video.readyState >= 2) {
-        onVideoStarted();
-      } else {
-        video.addEventListener('canplay', onVideoStarted, { once: true });
-        video.load();
-      }
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
     },
   },
 
@@ -944,6 +1322,37 @@ const Timbo = {
         const end = vh * 0.64;
         const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
         statement.style.setProperty('--philosophy-statement-progress', progress);
+      };
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    },
+  },
+
+  /* ============================================================
+     PHILOSOPHY BACKGROUND REVEAL (scroll-linked)
+     Fondo de .philosophy: 0 -> 1 cuando la sección alcanza 60% visible.
+     ============================================================ */
+  philosophyBackgroundReveal: {
+    init() {
+      const section = document.querySelector('.philosophy');
+      if (!section) return;
+
+      const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        section.style.setProperty('--philosophy-bg-progress', 1);
+        return;
+      }
+
+      const update = () => {
+        const rect = section.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const targetVisiblePx = rect.height * 0.6;
+        const visibleFromEntry = vh - rect.top;
+        const progress = clamp(visibleFromEntry / targetVisiblePx, 0, 1);
+        section.style.setProperty('--philosophy-bg-progress', progress.toFixed(3));
       };
 
       window.addEventListener('scroll', update, { passive: true });
@@ -1314,7 +1723,6 @@ const Timbo = {
     config: null,
     map: null,
     container: null,
-    replayBtn: null,
     marker: null,
     sequencePlayed: false,
 
@@ -1327,8 +1735,6 @@ const Timbo = {
       const slug = section ? section.dataset.projectSlug : null;
       this.config = slug ? this.MAP_CONFIGS[slug] : null;
       if (!this.config) return;
-
-      this.replayBtn = this.container.querySelector('[data-map-replay]');
 
       // Lazy-load MapLibre when container is ~2 viewports away
       const loadObserver = new IntersectionObserver((entries) => {
@@ -1377,7 +1783,6 @@ const Timbo = {
           this.showIslandHighlight();
           this.showMarker();
           this.enableInteraction();
-          this.showReplayButton();
           return;
         }
 
@@ -1424,7 +1829,6 @@ const Timbo = {
             if (polygonAfter == null) this.showIslandHighlight();
             this.showMarker();
             this.enableInteraction();
-            this.showReplayButton();
           });
           return;
         }
@@ -1541,38 +1945,39 @@ const Timbo = {
       this.map.doubleClickZoom.disable();
       this.map.keyboard.disable();
     },
+  },
 
-    showReplayButton() {
-      if (!this.replayBtn) return;
-      this.replayBtn.classList.add('is-visible');
-      this.replayBtn.addEventListener('click', () => this.replay(), { once: false });
-    },
+  sustScrollHero: {
+    init() {
+      const imageEl = document.getElementById('sustHeroImage');
+      if (!imageEl) return;
 
-    hideReplayButton() {
-      if (!this.replayBtn) return;
-      this.replayBtn.classList.remove('is-visible');
-    },
+      const SCROLL_HEIGHT = 1500;
 
-    replay() {
-      if (this.marker) {
-        this.marker.remove();
-        this.marker = null;
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
       }
-      this.removeIslandHighlight();
-      this.disableInteraction();
-      this.hideReplayButton();
 
-      const stage1 = this.config.stages[0];
-      this.map.flyTo({
-        center: stage1.center,
-        zoom: stage1.zoom,
-        speed: 1.2,
-        essential: true,
-      });
+      function clamp(v, min, max) {
+        return Math.min(Math.max(v, min), max);
+      }
 
-      this.map.once('moveend', () => {
-        this.runSequence();
-      });
+      function onScroll() {
+        const progress = clamp(window.scrollY / SCROLL_HEIGHT, 0, 1);
+
+        // clip-path: de inset(25% 25% 25% 25% round var(--border-radius))
+        // a inset(0% 0% 0% 0% round var(--border-radius))
+        const inset = lerp(25, 0, progress);
+        imageEl.style.clipPath =
+          `inset(${inset}% ${inset}% ${inset}% ${inset}% round var(--border-radius))`;
+
+        // background-size: 170% → 100%
+        const size = lerp(170, 100, progress);
+        imageEl.style.backgroundSize = size + '%';
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); // estado inicial
     },
   },
 
@@ -1585,6 +1990,7 @@ const Timbo = {
     this.footer.render();
     this.floatingLogo.init();
     this.navLinkUnderline.init();
+    this.introLinkOval.init();
 
     // 2. Nav: fondo al scrollear + cambio de color por sección
     this.navScroll.init();
@@ -1593,15 +1999,23 @@ const Timbo = {
     this.featuredProjectCta.init();
     this.scrollReveal.init();
     this.heroIntro.init();
+    this.heroVideoScrollFade.init();
     this.imageExpand.init();
     this.overlayTextReveal.init();
     this.philosophyStatementReveal.init();
+    this.philosophyBackgroundReveal.init();
     this.valuesBreakdown.init();
     this.projectMap.init();
 
     // 3. Detectar idioma y aplicar
     const lang = this.i18n.detect();
     this.i18n.set(lang);
+
+    // 4. Transición entre Home y Projects
+    this.pageTransition.init();
+
+    // 5. Scroll hero en Sustentabilidad
+    this.sustScrollHero.init();
   },
 
 };

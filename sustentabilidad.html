@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Timbó — Sustentabilidad</title>
+  <meta name="description" content="Timbó — Sustainability is not a label. It is the foundation of how we design.">
+  <title>Timbó — Sustainability</title>
   <link rel="stylesheet" href="assets/css/variables.css">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-<body>
-  <nav class="main-nav main-nav--light" aria-label="Main navigation">
+<body class="page--crema">
+  <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
     <ul class="nav__links">
       <li><a href="index.html" class="nav__link">Home</a></li>
       <li><a href="proyectos.html" class="nav__link">Projects</a></li>
@@ -17,15 +18,184 @@
       <li><a href="contacto.html" class="nav__link">Contact</a></li>
     </ul>
   </nav>
+
+  <!-- SCROLL HERO -->
+  <div class="sust-scroll-hero">
+    <div class="sust-scroll-hero__sticky">
+      <div class="sust-scroll-hero__image" id="sustHeroImage"></div>
+    </div>
+  </div>
+
   <main class="page-content">
-    <section class="section--padded">
+
+    <!-- 1. Opening — typographic hero -->
+    <section class="sust-hero">
       <div class="container">
-        <h1 data-i18n="sustainability.title">Sustentabilidad</h1>
-        <p style="color: var(--color-gray-400); margin-top: var(--space-xl);">Sección en construcción.</p>
+        <p class="sust-hero__label">Sustainability</p>
+        <h1 class="sust-hero__title">Sustainability is not a label.</h1>
+        <p class="sust-hero__subtitle">For us, it means designing architecture that consumes less energy, lasts longer, and deepens the relationship between people and nature.</p>
       </div>
     </section>
+
+    <!-- 2. Foundation -->
+    <section class="sust-section">
+      <div class="container">
+        <div class="sust-section__layout">
+          <div class="sust-section__aside">
+            <p class="sust-section__number">01</p>
+          </div>
+          <div class="sust-section__body">
+            <h2 class="sust-section__heading">It is the foundation of how we design.</h2>
+            <p class="sust-section__text">Through the scientific method, we reduce buildings' dependence on fossil-fuel energy. Through orientation, form, and materiality, we maximize comfort and indoor environmental quality.</p>
+          </div>
+          <figure class="sust-section__media sust-section__media--portrait">
+            <img src="assets/images/sustentabilidad/animales-001.jpg" alt="Wildlife in natural habitat" loading="lazy" decoding="async">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Process -->
+    <section class="sust-section">
+      <div class="container">
+        <div class="sust-section__layout">
+          <div class="sust-section__aside">
+            <p class="sust-section__number">02</p>
+          </div>
+          <figure class="sust-section__media sust-section__media--square">
+            <img src="assets/images/sustentabilidad/animales-002.jpg" alt="Wildlife close-up in local ecosystem" loading="lazy" decoding="async">
+          </figure>
+          <div class="sust-section__body">
+            <h2 class="sust-section__heading">Our process begins with research.</h2>
+            <p class="sust-section__text">We analyze local climate data — solar radiation, wind patterns, humidity, and seasonal variations — and measure real conditions on site. We model performance through dynamic simulations, where every decision is tested, calibrated, and validated.</p>
+            <p class="sust-section__emphasis">It is not assumed — it is verified.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Approach -->
+    <section class="sust-section">
+      <div class="container">
+        <div class="sust-section__layout">
+          <div class="sust-section__aside">
+            <p class="sust-section__number">03</p>
+          </div>
+          <div class="sust-section__body">
+            <h2 class="sust-section__heading">We work with the sun, the wind, and the land.</h2>
+            <p class="sust-section__text">We quantify both embodied and operational carbon, evaluating materials and energy demand throughout the building's life cycle. We maximize natural daylight and ventilation while controlling heat gains, achieving stable conditions across seasons.</p>
+            <p class="sust-section__text">This approach allows us to avoid generic "green" solutions and develop climate-specific strategies for each project: simple, effective, and durable.</p>
+          </div>
+          <figure class="sust-section__media sust-section__media--landscape">
+            <img src="assets/images/sustentabilidad/animales-003.jpg" alt="Fauna integrated with landscape" loading="lazy" decoding="async">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Principles strip -->
+    <section class="sust-principles">
+      <div class="container">
+        <div class="sust-principles__grid">
+          <article class="sust-principles__item">
+            <p class="sust-principles__value">Climate-specific</p>
+            <p class="sust-principles__detail">No generic solutions. Every strategy responds to the site's measured conditions.</p>
+          </article>
+          <article class="sust-principles__item">
+            <p class="sust-principles__value">Verified performance</p>
+            <p class="sust-principles__detail">Dynamic simulation and on-site measurement replace assumptions.</p>
+          </article>
+          <article class="sust-principles__item">
+            <p class="sust-principles__value">Full life cycle</p>
+            <p class="sust-principles__detail">Embodied and operational carbon evaluated from material to demolition.</p>
+          </article>
+        </div>
+        <div class="sust-principles__gallery">
+          <figure class="sust-principles__image sust-principles__image--wide">
+            <img src="assets/images/sustentabilidad/animales-004.jpg" alt="Wildlife and water balance" loading="lazy" decoding="async">
+          </figure>
+          <figure class="sust-principles__image sust-principles__image--tall">
+            <img src="assets/images/sustentabilidad/animales-005.jpg" alt="Species adapted to local climate" loading="lazy" decoding="async">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Strategies -->
+    <section class="sust-strategies">
+      <div class="container">
+        <header class="sust-strategies__header">
+          <p class="sust-strategies__label">Design strategies</p>
+          <h2 class="sust-strategies__title">Strategies</h2>
+        </header>
+
+        <figure class="sust-strategies__image">
+          <img src="assets/images/sustentabilidad/animales-006.jpg" alt="Biodiversity as design reference" loading="lazy" decoding="async">
+        </figure>
+
+        <div class="sust-strategies__grid">
+          <article class="sust-strategies__item">
+            <p class="sust-strategies__item-number">01</p>
+            <h3 class="sust-strategies__item-title">Correct Orientation</h3>
+            <p class="sust-strategies__item-text">Alignment of the building relative to the sun and prevailing winds.</p>
+          </article>
+          <article class="sust-strategies__item">
+            <p class="sust-strategies__item-number">02</p>
+            <h3 class="sust-strategies__item-title">Envelope Thermal Transmittance</h3>
+            <p class="sust-strategies__item-text">Rate of heat loss through the building envelope; lower transmittance means better insulation and efficiency.</p>
+          </article>
+          <article class="sust-strategies__item">
+            <p class="sust-strategies__item-number">03</p>
+            <h3 class="sust-strategies__item-title">Thermal Mass</h3>
+            <p class="sust-strategies__item-text">Materials that store heat during the day and release it slowly, stabilizing indoor temperature.</p>
+          </article>
+          <article class="sust-strategies__item">
+            <p class="sust-strategies__item-number">04</p>
+            <h3 class="sust-strategies__item-title">Glazing Fraction</h3>
+            <p class="sust-strategies__item-text">Proportion of glazed surface that balances natural light, thermal losses, and solar gains.</p>
+          </article>
+          <article class="sust-strategies__item">
+            <p class="sust-strategies__item-number">05</p>
+            <h3 class="sust-strategies__item-title">Albedo</h3>
+            <p class="sust-strategies__item-text">A surface's ability to reflect solar radiation; high albedo reduces heat buildup.</p>
+          </article>
+          <article class="sust-strategies__item">
+            <p class="sust-strategies__item-number">06</p>
+            <h3 class="sust-strategies__item-title">Solar Shading</h3>
+            <p class="sust-strategies__item-text">Elements that block direct radiation and reduce thermal gains while maintaining natural light.</p>
+          </article>
+          <article class="sust-strategies__item">
+            <p class="sust-strategies__item-number">07</p>
+            <h3 class="sust-strategies__item-title">Natural & Night Ventilation</h3>
+            <p class="sust-strategies__item-text">Cross ventilation and night cooling that remove accumulated heat without mechanical systems.</p>
+          </article>
+          <article class="sust-strategies__item">
+            <p class="sust-strategies__item-number">08</p>
+            <h3 class="sust-strategies__item-title">Green Roofs</h3>
+            <p class="sust-strategies__item-text">Vegetated roofs that cool through evaporation, retain rainwater, and improve insulation and biodiversity.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Closing statement -->
+    <section class="sust-closing">
+      <div class="container">
+        <figure class="sust-closing__image">
+          <img src="assets/images/sustentabilidad/animales-007.jpg" alt="Native fauna and living ecosystems" loading="lazy" decoding="async">
+        </figure>
+        <blockquote class="sust-closing__quote">
+          <p>A Timbó project is not sealed: it breathes.</p>
+          <p>It engages its surroundings and evolves with those who inhabit it.</p>
+        </blockquote>
+        <p class="sust-closing__coda">Our architecture adapts to life and its changes.</p>
+      </div>
+    </section>
+
   </main>
+
   <footer id="main-footer" class="main-footer"></footer>
+
   <script src="assets/js/data.js"></script>
   <script src="assets/js/main.js"></script>
 </body>
