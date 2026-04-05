@@ -3,29 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Timbó — Sobre nosotros. Somos Gerónimo Vigil y Mía Morrone, arquitectos argentinos.">
   <title>Timbó — Sobre Nosotros</title>
   <link rel="stylesheet" href="assets/css/variables.css">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
-  <nav class="main-nav main-nav--light" aria-label="Main navigation">
+  <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
     <ul class="nav__links">
-      <li><a href="index.html" class="nav__link">Home</a></li>
-      <li><a href="proyectos.html" class="nav__link">Projects</a></li>
-      <li><a href="sustentabilidad.html" class="nav__link">Sustainability</a></li>
-      <li><a href="sobre-nosotros.html" class="nav__link nav__link--active">About Us</a></li>
-      <li><a href="contacto.html" class="nav__link">Contact</a></li>
+      <li><a href="index.html" class="nav__link">Inicio</a></li>
+      <li><a href="proyectos.html" class="nav__link">Proyectos</a></li>
+      <li><a href="sustentabilidad.html" class="nav__link">Sustentabilidad</a></li>
+      <li><a href="sobre-nosotros.html" class="nav__link nav__link--active">Sobre nosotros</a></li>
+      <li><a href="contacto.html" class="nav__link">Contacto</a></li>
     </ul>
   </nav>
+
   <main class="page-content">
-    <section class="section--padded">
-      <div class="container">
-        <h1 data-i18n="about.title">Sobre Nosotros</h1>
-        <p style="color: var(--color-gray-400); margin-top: var(--space-xl);">Sección en construcción.</p>
+
+    <!-- 1. Hero -->
+    <section class="about-hero" data-nav-theme="dark">
+      <div class="container about-hero__container">
+        <h1 class="about-hero__title">Sobre nosotros</h1>
+        <div class="about-hero__copy">
+          <p class="about-hero__text">Somos Gerónimo Vigil y Mía Morrone, arquitectos argentinos y apasionados por la naturaleza.</p>
+          <p class="about-hero__text">Timbó nació de una convicción compartida: que la arquitectura debe profundizar nuestra conexión con la naturaleza y enriquecer la forma en que la habitamos, respondiendo de manera inteligente al clima y al lugar.</p>
+        </div>
       </div>
     </section>
+
+    <section class="about-approach" data-nav-theme="dark">
+      <div class="about-approach__copy">
+        <div class="about-approach__text-block">
+          <p class="about-approach__text anim-fade-up" data-anim-delay="0">Nuestros diseños responden al clima y anticipan los desafíos de un entorno cambiante, combinando territorio, arquitectura y ciencia. Nuestro principal objetivo es el bienestar de las personas: crear espacios que promuevan disfrute y confort.<br><br>Jardines, campos, montañas o ciudades: cada paisaje es una oportunidad para diseñar en diálogo con la naturaleza. Abordamos cada desafío, sin importar la escala, el clima o el contexto, con responsabilidad y creatividad.</p>
+        </div>
+
+        <img class="about-approach__mark anim-fade-in" data-anim-delay="280" src="assets/images/logo/timbo-blanco.svg" alt="Timbó">
+      </div>
+
+      <div class="about-approach__media anim-fade-in" data-anim-delay="120">
+        <img src="assets/images/about-us/pareja-distancia.jpg" alt="Gerónimo Vigil y Mía Morrone en el paisaje" loading="lazy" decoding="async">
+      </div>
+    </section>
+
+    <section class="about-founders" data-nav-theme="dark">
+      <div class="container about-founders__container">
+        <figure class="about-founders__portrait anim-fade-in" data-anim-delay="0">
+          <img src="assets/images/about-us/retrato.jpg" alt="Retrato de Gerónimo Vigil y Mía Morrone" loading="lazy" decoding="async">
+        </figure>
+
+        <div class="about-founders__copy">
+          <p class="about-founders__text anim-fade-up" data-anim-delay="120">Gerónimo, graduado en la Universidad de Belgrano, lidera el área de diseño del estudio. Su experiencia proyectando en paisajes silvestres y prístinos dio forma a un enfoque sensible y profundamente contextual. Cada proyecto nace del entorno, equilibrando materialidad, proporción y simplicidad contemporánea, con una identidad clara y coherente.</p>
+          <p class="about-founders__text anim-fade-up" data-anim-delay="240">Mía completó sus estudios de grado y posgrado en la Universidad Torcuato Di Tella y obtuvo un Master of Science in Sustainable Environmental Design en la Architectural Association de Londres. Lidera el área de desempeño ambiental e investigación, aplicando estrategias rigurosas, medibles y basadas en evidencia para asegurar que cada diseño alcance los más altos estándares ambientales.</p>
+        </div>
+      </div>
+    </section>
+
   </main>
+
   <footer id="main-footer" class="main-footer"></footer>
+
   <script src="assets/js/data.js"></script>
   <script src="assets/js/main.js"></script>
 </body>

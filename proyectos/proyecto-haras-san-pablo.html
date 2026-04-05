@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body class="page--crema">
-  <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
+  <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
     <ul class="nav__links">
       <li><a href="../index.html" class="nav__link">Home</a></li>
       <li><a href="../proyectos.html" class="nav__link nav__link--active">Projects</a></li>
@@ -20,7 +20,33 @@
   </nav>
 
   <main class="page-content">
-    
+    <section class="project-hero" id="hero" data-nav-theme="dark">
+      <div class="project-hero__media" aria-hidden="true">
+        <img id="project-cover" src="../assets/images/projects/haras-san-pablo/portada-haras.jpg" alt="Casa de Campo Haras San Pablo" loading="eager" decoding="async">
+      </div>
+
+      <div class="container project-hero__content">
+        <h1 class="project-hero__title anim-fade-up" data-anim-delay="120">Casa de Campo<br>Haras San Pablo</h1>
+      </div>
+    </section>
+
+    <section class="project-frame project-frame--split" data-project-slug="haras-san-pablo" data-nav-theme="light">
+      <div class="container project-frame__container">
+        <figure class="project-frame__media">
+          <img src="../assets/images/projects/project-covers/cover_002.jpg" alt="Casa de Campo Haras San Pablo" loading="lazy" decoding="async">
+        </figure>
+
+        <div class="project-frame__copy">
+          <p class="project-frame__text">
+            El desarrollo de esta vivienda surge de la dualidad compleja del paisaje andino-patagónico. Conviven dos realidades: la ladera de montaña, expuesta y ventosa, junto a la densidad de los bosques húmedos de coihue, lenga y ñire.
+          </p>
+
+          <p class="project-frame__text">
+            La arquitectura evita intervenir en la flora nativa, de gran valor ecológico. Para preservar el bosque, la implantación se resuelve en un área abierta sin vegetación. Este sitio, expuesto a un clima dinámico y hostil demanda un diseño adaptado al viento, las bajas temperaturas, las lluvias y nevadas.
+          </p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer id="main-footer" class="main-footer"></footer>

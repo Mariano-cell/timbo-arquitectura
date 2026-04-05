@@ -63,7 +63,6 @@ const Timbo = {
       // Re-renderizar componentes dinámicos que dependen del idioma
       Timbo.projectsList.render();
       Timbo.projectPage.render();
-      Timbo.introPhraseUnderline.init();
     },
 
     /**
@@ -81,6 +80,8 @@ const Timbo = {
         if (value !== undefined) {
           if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             el.placeholder = value;
+          } else if (el.getAttribute('data-i18n-html') === 'true') {
+            el.innerHTML = value;
           } else {
             el.textContent = value;
           }
@@ -145,38 +146,41 @@ const Timbo = {
 
   /* ============================================================
      NAV THEME — Intersection Observer
-     Home: dark solo mientras el hero ocupa la franja superior.
-     Fuera del hero: light fijo (negro).
+     Usa la sección activa bajo el nav mediante `data-nav-theme`.
      ============================================================ */
   navTheme: {
 
     init() {
       const nav = document.querySelector('.main-nav');
-      const hero = document.getElementById('hero');
-      if (!nav || !hero) return;
+      const themedSections = Array.from(document.querySelectorAll('[data-nav-theme]'));
+      if (!nav || themedSections.length === 0) return;
 
-      const applyTheme = (isDark) => {
+      const applyTheme = (theme) => {
         nav.classList.remove('main-nav--dark', 'main-nav--light');
-        nav.classList.add(isDark ? 'main-nav--dark' : 'main-nav--light');
+        nav.classList.add(theme === 'dark' ? 'main-nav--dark' : 'main-nav--light');
       };
 
-      const updateThemeFromHero = () => {
-        const heroRect = hero.getBoundingClientRect();
-        const heroIsBehindNav = heroRect.top <= 0 && heroRect.bottom > 0;
-        applyTheme(heroIsBehindNav);
+      const updateThemeFromSections = () => {
+        const navLine = nav.getBoundingClientRect().bottom + 1;
+        const activeSection = themedSections.find((section) => {
+          const rect = section.getBoundingClientRect();
+          return rect.top <= navLine && rect.bottom > navLine;
+        });
+
+        applyTheme(activeSection?.dataset.navTheme || 'light');
       };
 
-      updateThemeFromHero();
+      updateThemeFromSections();
 
       const observer = new IntersectionObserver(() => {
-        updateThemeFromHero();
+        updateThemeFromSections();
       }, {
         threshold: [0, 0.01, 1],
       });
 
-      observer.observe(hero);
-      window.addEventListener('scroll', updateThemeFromHero, { passive: true });
-      window.addEventListener('resize', updateThemeFromHero);
+      themedSections.forEach((section) => observer.observe(section));
+      window.addEventListener('scroll', updateThemeFromSections, { passive: true });
+      window.addEventListener('resize', updateThemeFromSections);
     },
   },
 
@@ -240,142 +244,6 @@ const Timbo = {
       }
     },
   },
-
-  /* ============================================================
-     INTRO PHRASE UNDERLINE (subrayado manuscrito en frase clave)
-     ============================================================ */
-  introPhraseUnderline: {
-    UNDERLINE_PATH: 'M2 8 C20 8, 35 4, 60 6 C85 8, 100 3, 130 5 C160 7, 175 4, 200 6 C225 8, 245 3, 270 5 C295 7, 305 5, 318 6',
-    PHRASE_BY_LANG: {
-      es: 'asegurando una baja demanda energética y una alta calidad ambiental',
-      en: 'ensuring low energy demand and high environmental quality',
-    },
-
-    buildUnderlineSvg() {
-      const svgNS = 'http://www.w3.org/2000/svg';
-      const svg = document.createElementNS(svgNS, 'svg');
-      svg.classList.add('hand-underline-text__svg');
-      svg.setAttribute('viewBox', '0 0 320 12');
-      svg.setAttribute('preserveAspectRatio', 'none');
-      svg.setAttribute('aria-hidden', 'true');
-
-      const path = document.createElementNS(svgNS, 'path');
-      path.setAttribute('d', this.UNDERLINE_PATH);
-      svg.appendChild(path);
-      return svg;
-    },
-
-    wrapPhrase() {
-      const textEl = document.querySelector('.intro__text span[data-i18n="home.introText"]');
-      if (!textEl) return null;
-
-      const fullText = textEl.textContent;
-      if (!fullText) return null;
-
-      const phrase = this.PHRASE_BY_LANG[Timbo.state.lang];
-      if (!phrase) return null;
-
-      const index = fullText.toLowerCase().indexOf(phrase.toLowerCase());
-      if (index < 0) return null;
-
-      const before = fullText.slice(0, index);
-      const match = fullText.slice(index, index + phrase.length);
-      const after = fullText.slice(index + phrase.length);
-
-      const phraseEl = document.createElement('span');
-      phraseEl.className = 'hand-underline-text';
-
-      const labelEl = document.createElement('span');
-      labelEl.className = 'hand-underline-text__label';
-      labelEl.textContent = match;
-
-      phraseEl.append(labelEl, this.buildUnderlineSvg());
-
-      textEl.textContent = '';
-      textEl.append(document.createTextNode(before), phraseEl, document.createTextNode(after));
-
-      return phraseEl;
-    },
-
-    getTransitionTotalMs(el) {
-      const style = window.getComputedStyle(el);
-      const durations = style.transitionDuration.split(',').map((value) => this.parseTime(value));
-      const delays = style.transitionDelay.split(',').map((value) => this.parseTime(value));
-      const length = Math.max(durations.length, delays.length);
-
-      let total = 0;
-      for (let i = 0; i < length; i += 1) {
-        const duration = durations[i] ?? durations[durations.length - 1] ?? 0;
-        const delay = delays[i] ?? delays[delays.length - 1] ?? 0;
-        total = Math.max(total, duration + delay);
-      }
-
-      return total;
-    },
-
-    parseTime(value) {
-      const trimmed = value.trim();
-      if (trimmed.endsWith('ms')) return Number.parseFloat(trimmed);
-      if (trimmed.endsWith('s')) return Number.parseFloat(trimmed) * 1000;
-      return 0;
-    },
-
-    clearPending(paragraph) {
-      if (paragraph._introUnderlineObserver) {
-        paragraph._introUnderlineObserver.disconnect();
-        paragraph._introUnderlineObserver = null;
-      }
-      if (paragraph._introUnderlineTimer) {
-        clearTimeout(paragraph._introUnderlineTimer);
-        paragraph._introUnderlineTimer = null;
-      }
-    },
-
-    scheduleDraw(paragraph, phraseEl) {
-      if (!paragraph || !phraseEl) return;
-
-      this.clearPending(paragraph);
-      phraseEl.classList.remove('hand-underline-text--draw');
-
-      const runDraw = () => {
-        const waitMs = this.getTransitionTotalMs(paragraph) + 50;
-        paragraph._introUnderlineTimer = setTimeout(() => {
-          phraseEl.classList.add('hand-underline-text--draw');
-        }, waitMs);
-      };
-
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        phraseEl.classList.add('hand-underline-text--draw');
-        return;
-      }
-
-      if (paragraph.classList.contains('is-visible')) {
-        runDraw();
-        return;
-      }
-
-      const observer = new MutationObserver(() => {
-        if (!paragraph.classList.contains('is-visible')) return;
-        observer.disconnect();
-        paragraph._introUnderlineObserver = null;
-        runDraw();
-      });
-
-      paragraph._introUnderlineObserver = observer;
-      observer.observe(paragraph, { attributes: true, attributeFilter: ['class'] });
-    },
-
-    init() {
-      const paragraph = document.querySelector('.intro__text.anim-fade-up');
-      if (!paragraph) return;
-
-      const phraseEl = this.wrapPhrase();
-      if (!phraseEl) return;
-
-      this.scheduleDraw(paragraph, phraseEl);
-    },
-  },
-
 
   /* ============================================================
      INTRO LINK OVAL (óvalo hand-drawn en hover de "See more")
@@ -873,6 +741,8 @@ const Timbo = {
     heroSectionEl: null,
     featuredImageEl: null,
     valuesBreakdownEl: null,
+    philosophyEl: null,
+    sustBlendEls: [],
     sustHeroEl: null,
 
     render() {
@@ -988,6 +858,80 @@ const Timbo = {
       this.logoEl.classList.add('floating-logo--on-values');
     },
 
+    updatePhilosophyBlend() {
+      if (!this.logoEl) return;
+      if (!this.philosophyEl) {
+        this.logoEl.classList.remove('floating-logo--on-philosophy');
+        this.logoEl.style.setProperty('--philosophy-overlap-top', '100%');
+        this.logoEl.style.setProperty('--philosophy-overlap-bottom', '0px');
+        return;
+      }
+
+      const logoRect = this.logoEl.getBoundingClientRect();
+      const philosophyRect = this.philosophyEl.getBoundingClientRect();
+      const overlapTop = Math.max(logoRect.top, philosophyRect.top);
+      const overlapBottom = Math.min(logoRect.bottom, philosophyRect.bottom);
+      const hasOverlap = overlapBottom > overlapTop;
+
+      if (!hasOverlap) {
+        this.logoEl.classList.remove('floating-logo--on-philosophy');
+        this.logoEl.style.setProperty('--philosophy-overlap-top', `${logoRect.height}px`);
+        this.logoEl.style.setProperty('--philosophy-overlap-bottom', '0px');
+        return;
+      }
+
+      const topInset = Math.max(0, overlapTop - logoRect.top);
+      const bottomInset = Math.max(0, logoRect.bottom - overlapBottom);
+
+      this.logoEl.style.setProperty('--philosophy-overlap-top', `${topInset}px`);
+      this.logoEl.style.setProperty('--philosophy-overlap-bottom', `${bottomInset}px`);
+      this.logoEl.classList.add('floating-logo--on-philosophy');
+    },
+
+    updateSustOverviewBlend() {
+      if (!this.logoEl) return;
+      if (!Array.isArray(this.sustBlendEls) || this.sustBlendEls.length === 0) {
+        this.logoEl.classList.remove('floating-logo--on-sust-overview');
+        this.logoEl.style.setProperty('--sust-overview-overlap-top', '100%');
+        this.logoEl.style.setProperty('--sust-overview-overlap-bottom', '0px');
+        return;
+      }
+
+      const logoRect = this.logoEl.getBoundingClientRect();
+      const activeSection = this.sustBlendEls.find((sectionEl) => {
+        const sectionRect = sectionEl.getBoundingClientRect();
+        const overlapTop = Math.max(logoRect.top, sectionRect.top);
+        const overlapBottom = Math.min(logoRect.bottom, sectionRect.bottom);
+        return overlapBottom > overlapTop;
+      });
+
+      if (!activeSection) {
+        this.logoEl.classList.remove('floating-logo--on-sust-overview');
+        this.logoEl.style.setProperty('--sust-overview-overlap-top', `${logoRect.height}px`);
+        this.logoEl.style.setProperty('--sust-overview-overlap-bottom', '0px');
+        return;
+      }
+
+      const sectionRect = activeSection.getBoundingClientRect();
+      const overlapTop = Math.max(logoRect.top, sectionRect.top);
+      const overlapBottom = Math.min(logoRect.bottom, sectionRect.bottom);
+      const hasOverlap = overlapBottom > overlapTop;
+
+      if (!hasOverlap) {
+        this.logoEl.classList.remove('floating-logo--on-sust-overview');
+        this.logoEl.style.setProperty('--sust-overview-overlap-top', `${logoRect.height}px`);
+        this.logoEl.style.setProperty('--sust-overview-overlap-bottom', '0px');
+        return;
+      }
+
+      const topInset = Math.max(0, overlapTop - logoRect.top);
+      const bottomInset = Math.max(0, logoRect.bottom - overlapBottom);
+
+      this.logoEl.style.setProperty('--sust-overview-overlap-top', `${topInset}px`);
+      this.logoEl.style.setProperty('--sust-overview-overlap-bottom', `${bottomInset}px`);
+      this.logoEl.classList.add('floating-logo--on-sust-overview');
+    },
+
     parseInsetClipPathPercentages(clipPathValue) {
       if (typeof clipPathValue !== 'string' || clipPathValue.trim() === '') return null;
 
@@ -1044,7 +988,7 @@ const Timbo = {
       const insetValues =
         this.parseInsetClipPathPercentages(inlineClipPath)
         || this.parseInsetClipPathPercentages(computedClipPath)
-        || { top: 25, right: 25, bottom: 25, left: 25 };
+        || { top: 0, right: 0, bottom: 0, left: 0 };
 
       const visibleTop = heroRect.top + (heroRect.height * insetValues.top) / 100;
       const visibleBottom = heroRect.bottom - (heroRect.height * insetValues.bottom) / 100;
@@ -1082,9 +1026,11 @@ const Timbo = {
     init() {
       const logo = this.render();
       if (!logo) return;
-      this.heroSectionEl = document.getElementById('hero');
+      this.heroSectionEl = document.getElementById('hero') || document.querySelector('.sust-hero');
       this.featuredImageEl = document.querySelector('.featured-project__image');
       this.valuesBreakdownEl = document.getElementById('values-breakdown');
+      this.philosophyEl = document.getElementById('philosophy');
+      this.sustBlendEls = Array.from(document.querySelectorAll('.sust-overview, .sust-process, .sust-climate, .sust-breathe, .sust-metrics'));
       this.sustHeroEl = document.getElementById('sustHeroImage');
 
       logo.classList.add('floating-logo--visible');
@@ -1092,62 +1038,14 @@ const Timbo = {
         this.updateHeroLayer();
         this.updateFeaturedImageBlend();
         this.updateValuesBreakdownBlend();
+        this.updatePhilosophyBlend();
+        this.updateSustOverviewBlend();
         this.updateSustHeroBlend();
       };
 
       updateLogoState();
       window.addEventListener('scroll', updateLogoState, { passive: true });
       window.addEventListener('resize', updateLogoState);
-    },
-  },
-
-  /* ============================================================
-     CTA FIJO (View Projects)
-     Visible solo mientras featured-project está en viewport.
-     ============================================================ */
-  featuredProjectCta: {
-    ctaEl: null,
-    sectionEl: null,
-    imageEl: null,
-
-    updateState() {
-      if (!this.ctaEl || !this.sectionEl || !this.imageEl) return;
-
-      const cta = this.ctaEl;
-      const sectionRect = this.sectionEl.getBoundingClientRect();
-      const imageRect = this.imageEl.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-
-      const sectionInViewport = sectionRect.top < viewportHeight && sectionRect.bottom > 0;
-      cta.classList.toggle('btn--overlay--visible', sectionInViewport);
-
-      if (!sectionInViewport) {
-        cta.classList.add('btn--overlay--fixed');
-        cta.classList.remove('btn--overlay--anchored');
-        return;
-      }
-
-      // Cambia a modo anclado cuando el borde inferior de la imagen
-      // alcanza (o pasa) el borde inferior del viewport.
-      const reachedImageBottom = imageRect.bottom <= viewportHeight + 0.5;
-
-      cta.classList.toggle('btn--overlay--anchored', reachedImageBottom);
-      cta.classList.toggle('btn--overlay--fixed', !reachedImageBottom);
-    },
-
-    init() {
-      const cta = document.querySelector('.btn--overlay');
-      const section = document.getElementById('featured-project');
-      const image = document.querySelector('.featured-project__image');
-      if (!cta || !section || !image) return;
-
-      this.ctaEl = cta;
-      this.sectionEl = section;
-      this.imageEl = image;
-
-      this.updateState();
-      window.addEventListener('scroll', () => this.updateState(), { passive: true });
-      window.addEventListener('resize', () => this.updateState());
     },
   },
 
@@ -1183,6 +1081,30 @@ const Timbo = {
     },
   },
 
+  sustMetricsReveal: {
+    init() {
+      const section = document.querySelector('.sust-metrics');
+      if (!section) return;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        section.classList.add('is-visible');
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          section.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        });
+      }, {
+        threshold: 0.35,
+      });
+
+      observer.observe(section);
+    },
+  },
+
   /* ============================================================
      HERO INTRO (animación al cargar)
      ============================================================ */
@@ -1203,6 +1125,30 @@ const Timbo = {
       if (heroBg) heroBg.classList.add('hero__bg--video-loaded');
       video.play().catch(() => {});
       heroContent.classList.add('is-visible');
+    },
+  },
+
+  sustHeroIntro: {
+    init() {
+      const heroSection = document.querySelector('.sust-hero');
+      const heroContent = heroSection?.querySelector('.sust-hero__content');
+      const heroImage = heroSection?.querySelector('.sust-hero__media img');
+      if (!heroSection || !heroContent) return;
+
+      const reveal = () => {
+        window.requestAnimationFrame(() => {
+          heroSection.classList.add('is-visible');
+          heroContent.classList.add('is-visible');
+        });
+      };
+
+      if (!heroImage || heroImage.complete) {
+        reveal();
+        return;
+      }
+
+      heroImage.addEventListener('load', reveal, { once: true });
+      heroImage.addEventListener('error', reveal, { once: true });
     },
   },
 
@@ -1983,6 +1929,103 @@ const Timbo = {
 
 
   /* ============================================================
+     HERO BACKGROUND TOGGLE
+     ============================================================ */
+  heroBgToggle: {
+
+    BACKGROUNDS: [
+      { type: 'video', src: null },
+      { type: 'photo', src: 'assets/images/hero/alternate-hero-photos/foto-montañas-fondo.jpg' },
+      { type: 'photo', src: 'assets/images/hero/alternate-hero-photos/DJI_0475 (1).jpg' },
+      { type: 'photo', src: 'assets/images/hero/alternate-hero-photos/DJI_20240305170434_0265_D.jpg' },
+      { type: 'photo', src: 'assets/images/hero/alternate-hero-photos/DSC01983.jpg' },
+      { type: 'photo', src: 'assets/images/hero/alternate-hero-photos/DSC01984.jpg' },
+      { type: 'photo', src: 'assets/images/hero/alternate-hero-photos/DSC02312.jpg' },
+    ],
+
+    currentIndex: 0,
+
+    init() {
+      const btn      = document.getElementById('heroBgToggle');
+      const photoEl  = document.getElementById('heroBgPhoto');
+      const heroEl   = document.getElementById('hero');
+      const videoEl  = heroEl ? heroEl.querySelector('video') : null;
+
+      if (!btn || !photoEl || !heroEl || !videoEl) return;
+
+      btn.addEventListener('click', () => {
+        this.currentIndex = (this.currentIndex + 1) % this.BACKGROUNDS.length;
+        const bg = this.BACKGROUNDS[this.currentIndex];
+
+        if (bg.type === 'video') {
+          photoEl.style.backgroundImage = '';
+          photoEl.classList.remove('is-active');
+          videoEl.style.opacity = '';
+        } else {
+          photoEl.style.backgroundImage = `url('${bg.src}')`;
+          photoEl.classList.add('is-active');
+          videoEl.style.opacity = '0';
+        }
+      });
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            btn.classList.remove('is-hidden');
+          } else {
+            btn.classList.add('is-hidden');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      observer.observe(heroEl);
+    },
+  },
+
+
+  /* ============================================================
+     PLANO 3D CONTROLS
+     ============================================================ */
+  plano3dControls: {
+    init() {
+      const frame = document.getElementById('plano3dFrame');
+      if (!frame) return;
+
+      const toggles = document.querySelectorAll('.sust-process__toggle');
+      const speedBtns = document.getElementById('plano3dSpeedBtns');
+
+      toggles.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const action = btn.dataset.action;
+          btn.classList.toggle('is-active');
+          frame.contentWindow.postMessage({ action }, '*');
+
+          if (action === 'toggleSun') {
+            speedBtns.classList.toggle('is-visible', btn.classList.contains('is-active'));
+          }
+        });
+      });
+
+      speedBtns.addEventListener('click', (e) => {
+        const btn = e.target.closest('.sust-process__speed-btn');
+        if (!btn) return;
+        speedBtns.querySelectorAll('.sust-process__speed-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        frame.contentWindow.postMessage({ action: 'setSpeed', value: btn.dataset.spd }, '*');
+      });
+
+      window.addEventListener('message', (e) => {
+        if (e.data && e.data.action === 'sunDeactivated') {
+          const sunToggle = document.querySelector('.sust-process__toggle[data-action="toggleSun"]');
+          if (sunToggle) sunToggle.classList.remove('is-active');
+          speedBtns.classList.remove('is-visible');
+        }
+      });
+    },
+  },
+
+
+  /* ============================================================
      INICIALIZACIÓN
      ============================================================ */
   init() {
@@ -1996,16 +2039,17 @@ const Timbo = {
     this.navScroll.init();
     this.navTheme.init();
     this.navIntro.init();
-    this.featuredProjectCta.init();
     this.scrollReveal.init();
+    this.sustMetricsReveal.init();
     this.heroIntro.init();
+    this.sustHeroIntro.init();
     this.heroVideoScrollFade.init();
+    this.heroBgToggle.init();
+    this.plano3dControls.init();
     this.imageExpand.init();
     this.overlayTextReveal.init();
-    this.philosophyStatementReveal.init();
-    this.philosophyBackgroundReveal.init();
-    this.valuesBreakdown.init();
     this.projectMap.init();
+    this.introDetailSlider.init();
 
     // 3. Detectar idioma y aplicar
     const lang = this.i18n.detect();
@@ -2014,8 +2058,25 @@ const Timbo = {
     // 4. Transición entre Home y Projects
     this.pageTransition.init();
 
-    // 5. Scroll hero en Sustentabilidad
-    this.sustScrollHero.init();
+  },
+
+  /* ---- Slider de fotos intro__detail ---- */
+  introDetailSlider: {
+    init() {
+      const dots = document.querySelectorAll('.intro__detail-dot[data-slide]');
+      const imgs = document.querySelectorAll('.intro__detail-img');
+      if (!dots.length || !imgs.length) return;
+
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          const idx = Number(dot.dataset.slide);
+          dots.forEach(d => d.classList.remove('is-active'));
+          imgs.forEach(i => i.classList.remove('is-active'));
+          dot.classList.add('is-active');
+          if (imgs[idx]) imgs[idx].classList.add('is-active');
+        });
+      });
+    },
   },
 
 };

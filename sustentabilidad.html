@@ -1,194 +1,370 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Timbó — Sustainability is not a label. It is the foundation of how we design.">
-  <title>Timbó — Sustainability</title>
+  <meta name="description" content="Timbó — Sustentabilidad. Es la base de cómo proyectamos.">
+  <title>Timbó — Sustentabilidad</title>
   <link rel="stylesheet" href="assets/css/variables.css">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body class="page--crema">
-  <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
+  <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
     <ul class="nav__links">
-      <li><a href="index.html" class="nav__link">Home</a></li>
-      <li><a href="proyectos.html" class="nav__link">Projects</a></li>
-      <li><a href="sustentabilidad.html" class="nav__link nav__link--active">Sustainability</a></li>
-      <li><a href="sobre-nosotros.html" class="nav__link">About Us</a></li>
-      <li><a href="contacto.html" class="nav__link">Contact</a></li>
+      <li><a href="index.html" class="nav__link">Inicio</a></li>
+      <li><a href="proyectos.html" class="nav__link">Proyectos</a></li>
+      <li><a href="sustentabilidad.html" class="nav__link nav__link--active">Sustentabilidad</a></li>
+      <li><a href="sobre-nosotros.html" class="nav__link">Sobre nosotros</a></li>
+      <li><a href="contacto.html" class="nav__link">Contacto</a></li>
     </ul>
   </nav>
 
-  <!-- SCROLL HERO -->
-  <div class="sust-scroll-hero">
-    <div class="sust-scroll-hero__sticky">
-      <div class="sust-scroll-hero__image" id="sustHeroImage"></div>
-    </div>
-  </div>
-
   <main class="page-content">
 
-    <!-- 1. Opening — typographic hero -->
-    <section class="sust-hero">
-      <div class="container">
-        <p class="sust-hero__label">Sustainability</p>
-        <h1 class="sust-hero__title">Sustainability is not a label.</h1>
-        <p class="sust-hero__subtitle">For us, it means designing architecture that consumes less energy, lasts longer, and deepens the relationship between people and nature.</p>
+    <!-- 1. Hero -->
+    <section class="sust-hero" data-nav-theme="dark">
+      <div class="sust-hero__media" id="sustHeroImage" aria-hidden="true">
+        <img src="assets/images/sustainability/sust-hero__background-img.jpg" alt="" loading="eager" decoding="async">
+      </div>
+      <div class="container sust-hero__content">
+        <h1 class="sust-hero__title">Sustentabilidad</h1>
+        <img src="assets/images/logo/logo-nuevo-blanco-15.svg" alt="Timbó" class="sust-hero__logo">
+      </div>
+    </section>
+    <section class="sust-overview" id="sust-overview" data-nav-theme="light">
+      <div class="container sust-overview__container">
+        <div class="sust-overview__copy">
+          <h2 class="sust-overview__title anim-fade-up" data-anim-delay="0">Sustentabilidad<br>no es un rótulo ni<br>una etiqueta.</h2>
+          <p class="sust-overview__text anim-fade-up" data-anim-delay="140">Para nosotros, significa diseñar arquitectura<br>que consuma menos energía, dure más años<br>y profundice la relación entre las personas y<br>la naturaleza.<br><br>Es la base de cómo proyectamos.</p>
+        </div>
+
+        <svg class="sust-overview__diagram-svg anim-fade-in" data-anim-delay="220" viewBox="0 0 600 600" aria-label="Estrategias bioclimáticas">
+          <defs>
+            <radialGradient id="glowGrad" cx="50%" cy="50%" r="35%">
+              <stop offset="0%" stop-color="rgba(80,82,30,0.45)" />
+              <stop offset="50%" stop-color="rgba(80,82,30,0.15)" />
+              <stop offset="100%" stop-color="rgba(80,82,30,0)" />
+            </radialGradient>
+          </defs>
+
+          <!-- Glow central -->
+          <circle cx="300" cy="300" r="200" fill="url(#glowGrad)" />
+
+          <!-- Anillo -->
+          <circle cx="300" cy="300" r="210" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1" />
+
+          <!-- Label central -->
+          <text x="300" y="310" text-anchor="middle" font-size="38" font-weight="400" letter-spacing="-0.02em" fill="rgba(255,255,255,0.96)" font-family="'Autaut Grotesk', sans-serif">ESTRATEGIAS</text>
+
+          <!-- 1. ALBEDO — top (0°) -->
+          <g class="sust-strategy" style="transform-origin: 300px 90px">
+            <circle cx="300" cy="90" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+            <text x="300" y="68" text-anchor="middle" font-size="13" font-weight="400" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">ALBEDO</text>
+          </g>
+
+          <!-- 2. ORIENTACIÓN CORRECTA — top-right (45°) -->
+          <g class="sust-strategy" style="transform-origin: 449px 151px">
+            <circle cx="449" cy="151" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+            <text x="470" y="142" text-anchor="start" font-size="13" font-weight="400" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+              <tspan x="470" dy="0">ORIENTACIÓN</tspan>
+              <tspan x="470" dy="16">CORRECTA</tspan>
+            </text>
+          </g>
+
+          <!-- 3. TRANSMITANCIA TÉRMICA — right (90°) -->
+          <g class="sust-strategy" style="transform-origin: 510px 300px">
+            <circle cx="510" cy="300" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+            <text x="530" y="290" text-anchor="start" font-size="13" font-weight="400" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+              <tspan x="530" dy="0">TRANSMITANCIA</tspan>
+              <tspan x="530" dy="16">TÉRMICA DE LA</tspan>
+              <tspan x="530" dy="16">ENVOLVENTE</tspan>
+            </text>
+          </g>
+
+          <!-- 4. MASA TÉRMICA — bottom-right (135°) -->
+          <g class="sust-strategy" style="transform-origin: 449px 449px">
+            <circle cx="449" cy="449" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+            <text x="470" y="445" text-anchor="start" font-size="13" font-weight="400" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+              <tspan x="470" dy="0">MASA</tspan>
+              <tspan x="470" dy="16">TÉRMICA</tspan>
+            </text>
+          </g>
+
+          <!-- 5. PROPORCIÓN VIDRIADA — bottom (180°) -->
+          <g class="sust-strategy" style="transform-origin: 300px 510px">
+            <circle cx="300" cy="510" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+            <text x="300" y="540" text-anchor="middle" font-size="13" font-weight="400" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+              <tspan x="300" dy="0">PROPORCIÓN</tspan>
+              <tspan x="300" dy="16">VIDRIADA</tspan>
+            </text>
+          </g>
+
+          <!-- 6. PROTECCIÓN SOLAR — bottom-left (225°) -->
+          <g class="sust-strategy" style="transform-origin: 151px 449px">
+            <circle cx="151" cy="449" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+            <text x="131" y="445" text-anchor="end" font-size="13" font-weight="400" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+              <tspan x="131" dy="0">PROTECCIÓN</tspan>
+              <tspan x="131" dy="16">SOLAR</tspan>
+            </text>
+          </g>
+
+          <!-- 7. VENTILACIÓN NATURAL Y NOCTURNA — left (270°) -->
+          <g class="sust-strategy" style="transform-origin: 90px 300px">
+            <circle cx="90" cy="300" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+            <text x="70" y="284" text-anchor="end" font-size="13" font-weight="400" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+              <tspan x="70" dy="0">VENTILACIÓN</tspan>
+              <tspan x="70" dy="16">NATURAL</tspan>
+              <tspan x="70" dy="16">Y NOCTURNA</tspan>
+            </text>
+          </g>
+
+          <!-- 8. CUBIERTAS VERDES — top-left (315°) -->
+          <g class="sust-strategy" style="transform-origin: 151px 151px">
+            <circle cx="151" cy="151" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+            <text x="131" y="142" text-anchor="end" font-size="13" font-weight="400" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+              <tspan x="131" dy="0">CUBIERTAS</tspan>
+              <tspan x="131" dy="16">VERDES</tspan>
+            </text>
+          </g>
+        </svg>
       </div>
     </section>
 
-    <!-- 2. Foundation -->
-    <section class="sust-section">
-      <div class="container">
-        <div class="sust-section__layout">
-          <div class="sust-section__aside">
-            <p class="sust-section__number">01</p>
+    <!-- 3. Proceso / Investigación -->
+    <section class="sust-process" id="sust-process" data-nav-theme="light">
+      <div class="container sust-process__container">
+        <div class="sust-process__interactive-wrap anim-fade-up" data-anim-delay="0">
+          <div class="sust-process__interactive">
+            <iframe id="plano3dFrame" src="assets/interactives/plano-3d.html" title="Plano 3D interactivo — Vivienda" loading="lazy" allowfullscreen></iframe>
           </div>
-          <div class="sust-section__body">
-            <h2 class="sust-section__heading">It is the foundation of how we design.</h2>
-            <p class="sust-section__text">Through the scientific method, we reduce buildings' dependence on fossil-fuel energy. Through orientation, form, and materiality, we maximize comfort and indoor environmental quality.</p>
+          <div class="sust-process__controls">
+            <button class="sust-process__toggle is-active" data-action="toggleWind">
+              <span class="sust-process__toggle-track"><span class="sust-process__toggle-thumb"></span></span>
+              <span class="sust-process__toggle-label">Viento</span>
+            </button>
+            <button class="sust-process__toggle is-active" data-action="toggleWire">
+              <span class="sust-process__toggle-track"><span class="sust-process__toggle-thumb"></span></span>
+              <span class="sust-process__toggle-label">Wireframe</span>
+            </button>
+            <button class="sust-process__toggle is-active" data-action="toggleRotate">
+              <span class="sust-process__toggle-track"><span class="sust-process__toggle-thumb"></span></span>
+              <span class="sust-process__toggle-label">Auto-rotar</span>
+            </button>
+            <button class="sust-process__toggle" data-action="toggleSun">
+              <span class="sust-process__toggle-track"><span class="sust-process__toggle-thumb"></span></span>
+              <span class="sust-process__toggle-label">Ciclo solar</span>
+            </button>
+            <div class="sust-process__speed-btns" id="plano3dSpeedBtns">
+              <button class="sust-process__speed-btn is-active" data-spd="1x">1x</button>
+              <button class="sust-process__speed-btn" data-spd="2x">2x</button>
+              <button class="sust-process__speed-btn" data-spd="5x">5x</button>
+              <button class="sust-process__speed-btn" data-spd="10x">10x</button>
+            </div>
           </div>
-          <figure class="sust-section__media sust-section__media--portrait">
-            <img src="assets/images/sustentabilidad/animales-001.jpg" alt="Wildlife in natural habitat" loading="lazy" decoding="async">
-          </figure>
+        </div>
+        <div class="sust-process__copy anim-fade-up" data-anim-delay="180">
+          <h2 class="sust-process__title">Nuestro proceso<br>comienza con la<br>investigación.</h2>
+          <p class="sust-process__text">A través del método científico, reducimos la dependencia de los edificios en energía proveniente de combustibles fósiles. Mediante la orientación, la forma y la materialidad, maximizamos el confort y la calidad ambiental interior.</p>
         </div>
       </div>
     </section>
 
-    <!-- 3. Process -->
-    <section class="sust-section">
-      <div class="container">
-        <div class="sust-section__layout">
-          <div class="sust-section__aside">
-            <p class="sust-section__number">02</p>
-          </div>
-          <figure class="sust-section__media sust-section__media--square">
-            <img src="assets/images/sustentabilidad/animales-002.jpg" alt="Wildlife close-up in local ecosystem" loading="lazy" decoding="async">
-          </figure>
-          <div class="sust-section__body">
-            <h2 class="sust-section__heading">Our process begins with research.</h2>
-            <p class="sust-section__text">We analyze local climate data — solar radiation, wind patterns, humidity, and seasonal variations — and measure real conditions on site. We model performance through dynamic simulations, where every decision is tested, calibrated, and validated.</p>
-            <p class="sust-section__emphasis">It is not assumed — it is verified.</p>
+    <section class="sust-climate" id="sust-climate" data-nav-theme="light">
+      <div class="container sust-climate__container">
+        <div class="sust-climate__copy anim-fade-up" data-anim-delay="0">
+          <h2 class="sust-climate__title">Trabajamos<br>con el sol,<br>el viento y<br>el territorio.</h2>
+
+          <div class="sust-climate__body">
+            <p class="sust-climate__text">Analizamos datos climáticos locales (radiación solar, patrones de viento, humedad y variaciones estacionales) y medimos condiciones reales en el sitio. Modelamos el desempeño mediante simulaciones dinámicas, donde cada decisión se prueba, se calibra y se valida.<br><br>No se supone: se comprueba.</p>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- 4. Approach -->
-    <section class="sust-section">
-      <div class="container">
-        <div class="sust-section__layout">
-          <div class="sust-section__aside">
-            <p class="sust-section__number">03</p>
-          </div>
-          <div class="sust-section__body">
-            <h2 class="sust-section__heading">We work with the sun, the wind, and the land.</h2>
-            <p class="sust-section__text">We quantify both embodied and operational carbon, evaluating materials and energy demand throughout the building's life cycle. We maximize natural daylight and ventilation while controlling heat gains, achieving stable conditions across seasons.</p>
-            <p class="sust-section__text">This approach allows us to avoid generic "green" solutions and develop climate-specific strategies for each project: simple, effective, and durable.</p>
-          </div>
-          <figure class="sust-section__media sust-section__media--landscape">
-            <img src="assets/images/sustentabilidad/animales-003.jpg" alt="Fauna integrated with landscape" loading="lazy" decoding="async">
-          </figure>
-        </div>
-      </div>
-    </section>
+        <div class="sust-climate__signals" aria-label="Variables climáticas analizadas">
+          <article class="sust-climate__signal anim-fade-up" data-anim-delay="140">
+            <img class="sust-climate__signal-icon" src="assets/images/sustainability/zona-climatica.svg" alt="" aria-hidden="true" loading="lazy">
+            <p class="sust-climate__signal-label">Zona<br>climática</p>
+          </article>
 
-    <!-- 5. Principles strip -->
-    <section class="sust-principles">
-      <div class="container">
-        <div class="sust-principles__grid">
-          <article class="sust-principles__item">
-            <p class="sust-principles__value">Climate-specific</p>
-            <p class="sust-principles__detail">No generic solutions. Every strategy responds to the site's measured conditions.</p>
+          <article class="sust-climate__signal anim-fade-up" data-anim-delay="240">
+            <img class="sust-climate__signal-icon" src="assets/images/sustainability/trayectoria-solar.svg" alt="" aria-hidden="true" loading="lazy">
+            <p class="sust-climate__signal-label">Trayectoria<br>solar</p>
           </article>
-          <article class="sust-principles__item">
-            <p class="sust-principles__value">Verified performance</p>
-            <p class="sust-principles__detail">Dynamic simulation and on-site measurement replace assumptions.</p>
-          </article>
-          <article class="sust-principles__item">
-            <p class="sust-principles__value">Full life cycle</p>
-            <p class="sust-principles__detail">Embodied and operational carbon evaluated from material to demolition.</p>
-          </article>
-        </div>
-        <div class="sust-principles__gallery">
-          <figure class="sust-principles__image sust-principles__image--wide">
-            <img src="assets/images/sustentabilidad/animales-004.jpg" alt="Wildlife and water balance" loading="lazy" decoding="async">
-          </figure>
-          <figure class="sust-principles__image sust-principles__image--tall">
-            <img src="assets/images/sustentabilidad/animales-005.jpg" alt="Species adapted to local climate" loading="lazy" decoding="async">
-          </figure>
-        </div>
-      </div>
-    </section>
 
-    <!-- 6. Strategies -->
-    <section class="sust-strategies">
-      <div class="container">
-        <header class="sust-strategies__header">
-          <p class="sust-strategies__label">Design strategies</p>
-          <h2 class="sust-strategies__title">Strategies</h2>
-        </header>
-
-        <figure class="sust-strategies__image">
-          <img src="assets/images/sustentabilidad/animales-006.jpg" alt="Biodiversity as design reference" loading="lazy" decoding="async">
-        </figure>
-
-        <div class="sust-strategies__grid">
-          <article class="sust-strategies__item">
-            <p class="sust-strategies__item-number">01</p>
-            <h3 class="sust-strategies__item-title">Correct Orientation</h3>
-            <p class="sust-strategies__item-text">Alignment of the building relative to the sun and prevailing winds.</p>
-          </article>
-          <article class="sust-strategies__item">
-            <p class="sust-strategies__item-number">02</p>
-            <h3 class="sust-strategies__item-title">Envelope Thermal Transmittance</h3>
-            <p class="sust-strategies__item-text">Rate of heat loss through the building envelope; lower transmittance means better insulation and efficiency.</p>
-          </article>
-          <article class="sust-strategies__item">
-            <p class="sust-strategies__item-number">03</p>
-            <h3 class="sust-strategies__item-title">Thermal Mass</h3>
-            <p class="sust-strategies__item-text">Materials that store heat during the day and release it slowly, stabilizing indoor temperature.</p>
-          </article>
-          <article class="sust-strategies__item">
-            <p class="sust-strategies__item-number">04</p>
-            <h3 class="sust-strategies__item-title">Glazing Fraction</h3>
-            <p class="sust-strategies__item-text">Proportion of glazed surface that balances natural light, thermal losses, and solar gains.</p>
-          </article>
-          <article class="sust-strategies__item">
-            <p class="sust-strategies__item-number">05</p>
-            <h3 class="sust-strategies__item-title">Albedo</h3>
-            <p class="sust-strategies__item-text">A surface's ability to reflect solar radiation; high albedo reduces heat buildup.</p>
-          </article>
-          <article class="sust-strategies__item">
-            <p class="sust-strategies__item-number">06</p>
-            <h3 class="sust-strategies__item-title">Solar Shading</h3>
-            <p class="sust-strategies__item-text">Elements that block direct radiation and reduce thermal gains while maintaining natural light.</p>
-          </article>
-          <article class="sust-strategies__item">
-            <p class="sust-strategies__item-number">07</p>
-            <h3 class="sust-strategies__item-title">Natural & Night Ventilation</h3>
-            <p class="sust-strategies__item-text">Cross ventilation and night cooling that remove accumulated heat without mechanical systems.</p>
-          </article>
-          <article class="sust-strategies__item">
-            <p class="sust-strategies__item-number">08</p>
-            <h3 class="sust-strategies__item-title">Green Roofs</h3>
-            <p class="sust-strategies__item-text">Vegetated roofs that cool through evaporation, retain rainwater, and improve insulation and biodiversity.</p>
+          <article class="sust-climate__signal anim-fade-up" data-anim-delay="340">
+            <img class="sust-climate__signal-icon" src="assets/images/sustainability/patrones-de-viento.svg" alt="" aria-hidden="true" loading="lazy">
+            <p class="sust-climate__signal-label">Patrones<br>de viento</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- 7. Closing statement -->
-    <section class="sust-closing">
+    <section class="sust-breathe" id="sust-breathe" data-nav-theme="dark">
+      <div class="sust-breathe__media anim-fade-in" data-anim-delay="0" aria-hidden="true">
+        <img src="assets/images/sustainability/tucuman-lodge.jpg" alt="" loading="lazy" decoding="async">
+      </div>
+
+      <div class="container sust-breathe__content">
+        <h2 class="sust-breathe__title anim-fade-up" data-anim-delay="0">Un proyecto timbó<br>no es hermético:<br>respira.</h2>
+
+        <p class="sust-breathe__text anim-fade-up" data-anim-delay="180">Se vincula con su entorno y evoluciona con quienes lo habitan.<br><br>Nuestra arquitectura se adapta a la vida y a sus cambios.</p>
+      </div>
+    </section>
+
+    <section class="sust-metrics" id="sust-metrics" data-nav-theme="light">
+      <div class="container sust-metrics__container">
+        <div class="sust-metrics__charts" aria-label="Indicadores de desempeño">
+          <article class="sust-metrics__item sust-metrics__item--high anim-fade-up" data-anim-delay="0" style="--metric-fill: 80%;">
+            <p class="sust-metrics__value">80%</p>
+            <div class="sust-metrics__bar" aria-hidden="true">
+              <div class="sust-metrics__bar-fill"></div>
+            </div>
+            <div class="sust-metrics__caption">
+              <p class="sust-metrics__label">Lorem ipsum</p>
+              <p class="sust-metrics__note">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </div>
+          </article>
+
+          <article class="sust-metrics__item sust-metrics__item--mid anim-fade-up" data-anim-delay="140" style="--metric-fill: 50%;">
+            <p class="sust-metrics__value">50%</p>
+            <div class="sust-metrics__bar" aria-hidden="true">
+              <div class="sust-metrics__bar-fill"></div>
+            </div>
+            <div class="sust-metrics__caption">
+              <p class="sust-metrics__label">Lorem ipsum</p>
+              <p class="sust-metrics__note">Lorem ipsum dolor sit amet, consectetur adipiscing elit sed.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="sust-metrics__copy anim-fade-up" data-anim-delay="240">
+          <p class="sust-metrics__text">Cuantificamos el carbono incorporado y el operacional, evaluando materiales y demanda energética a lo largo del ciclo de vida del edificio. Maximizamos la luz natural y la ventilación mientras controlamos las ganancias térmicas, logrando condiciones estables a lo largo de las estaciones.</p>
+          <p class="sust-metrics__text">Este enfoque nos permite evitar soluciones "verdes" genéricas y desarrollar estrategias climáticas específicas para cada proyecto: simples, efectivas y duraderas.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Estrategias full-width -->
+    <section class="sust-strategies" id="sust-strategies" data-nav-theme="dark">
       <div class="container">
-        <figure class="sust-closing__image">
-          <img src="assets/images/sustentabilidad/animales-007.jpg" alt="Native fauna and living ecosystems" loading="lazy" decoding="async">
-        </figure>
-        <blockquote class="sust-closing__quote">
-          <p>A Timbó project is not sealed: it breathes.</p>
-          <p>It engages its surroundings and evolves with those who inhabit it.</p>
-        </blockquote>
-        <p class="sust-closing__coda">Our architecture adapts to life and its changes.</p>
+        <svg class="sust-strategies__diagram-svg anim-fade-in" data-anim-delay="0" viewBox="0 0 800 800" aria-label="Estrategias bioclimáticas detalladas">
+          <defs>
+            <radialGradient id="glowGrad2" cx="50%" cy="50%" r="35%">
+              <stop offset="0%" stop-color="rgba(80,82,30,0.45)" />
+              <stop offset="50%" stop-color="rgba(80,82,30,0.15)" />
+              <stop offset="100%" stop-color="rgba(80,82,30,0)" />
+            </radialGradient>
+          </defs>
+
+          <!-- Glow central -->
+          <circle cx="400" cy="400" r="260" fill="url(#glowGrad2)" />
+
+          <!-- Anillo -->
+          <circle cx="400" cy="400" r="220" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1" />
+
+          <!-- Label central -->
+          <text x="400" y="412" text-anchor="middle" font-size="42" font-weight="400" letter-spacing="-0.02em" fill="rgba(255,255,255,0.96)" font-family="'Autaut Grotesk', sans-serif">ESTRATEGIAS</text>
+
+          <!-- 1. VENTILACIÓN NATURAL Y NOCTURNA — top-left (315°) -->
+          <circle cx="244" cy="244" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+          <text x="120" y="212" text-anchor="middle" font-size="14" font-weight="600" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="120" dy="0">VENTILACIÓN</tspan>
+            <tspan x="120" dy="18">NATURAL Y NOCTURNA</tspan>
+          </text>
+          <text x="120" y="252" text-anchor="middle" font-size="11" font-weight="300" fill="rgba(255,255,255,0.72)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="120" dy="0">Ventilación cruzada y</tspan>
+            <tspan x="120" dy="15">enfriamiento nocturno que</tspan>
+            <tspan x="120" dy="15">eliminan calor acumulado sin</tspan>
+            <tspan x="120" dy="15">sistemas mecánicos.</tspan>
+          </text>
+
+          <!-- 2. ORIENTACIÓN CORRECTA — top-right (45°) -->
+          <circle cx="556" cy="244" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+          <text x="680" y="220" text-anchor="middle" font-size="14" font-weight="600" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="680" dy="0">ORIENTACIÓN</tspan>
+            <tspan x="680" dy="18">CORRECTA</tspan>
+          </text>
+          <text x="680" y="262" text-anchor="middle" font-size="11" font-weight="300" fill="rgba(255,255,255,0.72)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="680" dy="0">Alineación del edificio</tspan>
+            <tspan x="680" dy="15">respecto al sol y vientos</tspan>
+          </text>
+
+          <!-- 3. TRANSMITANCIA TÉRMICA — right (90°) -->
+          <circle cx="620" cy="400" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+          <text x="730" y="382" text-anchor="middle" font-size="14" font-weight="600" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="730" dy="0">TRANSMITANCIA</tspan>
+            <tspan x="730" dy="18">TÉRMICA DE LA</tspan>
+            <tspan x="730" dy="18">ENVOLVENTE</tspan>
+          </text>
+          <text x="730" y="440" text-anchor="middle" font-size="11" font-weight="300" fill="rgba(255,255,255,0.72)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="730" dy="0">Nivel de pérdida de calor a</tspan>
+            <tspan x="730" dy="15">través de la envolvente;</tspan>
+            <tspan x="730" dy="15">menor transmitancia es igual a</tspan>
+            <tspan x="730" dy="15">mejor aislamiento y eficiencia</tspan>
+          </text>
+
+          <!-- 4. MASA TÉRMICA — bottom-right (135°) -->
+          <circle cx="556" cy="556" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+          <text x="680" y="540" text-anchor="middle" font-size="14" font-weight="600" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="680" dy="0">MASA</tspan>
+            <tspan x="680" dy="18">TÉRMICA</tspan>
+          </text>
+          <text x="680" y="580" text-anchor="middle" font-size="11" font-weight="300" fill="rgba(255,255,255,0.72)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="680" dy="0">Materiales que almacenan</tspan>
+            <tspan x="680" dy="15">calor durante el día y lo</tspan>
+            <tspan x="680" dy="15">liberan lentamente,</tspan>
+            <tspan x="680" dy="15">estabilizando la</tspan>
+            <tspan x="680" dy="15">temperatura interior</tspan>
+          </text>
+
+          <!-- 5. PROPORCIÓN VIDRIADA — bottom (180°) -->
+          <circle cx="400" cy="620" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+          <text x="400" y="648" text-anchor="middle" font-size="14" font-weight="600" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="400" dy="0">PROPORCIÓN</tspan>
+            <tspan x="400" dy="18">VIDRIADA</tspan>
+          </text>
+          <text x="400" y="690" text-anchor="middle" font-size="11" font-weight="300" fill="rgba(255,255,255,0.72)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="400" dy="0">Proporción de superficie</tspan>
+            <tspan x="400" dy="15">vidriada que equilibra luz</tspan>
+            <tspan x="400" dy="15">natural, pérdidas térmicas</tspan>
+            <tspan x="400" dy="15">y ganancias solares</tspan>
+          </text>
+
+          <!-- 6. ALBEDO — bottom-left (225°) -->
+          <circle cx="244" cy="556" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+          <text x="120" y="548" text-anchor="middle" font-size="14" font-weight="600" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">ALBEDO</text>
+          <text x="120" y="568" text-anchor="middle" font-size="11" font-weight="300" fill="rgba(255,255,255,0.72)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="120" dy="0">Capacidad de una</tspan>
+            <tspan x="120" dy="15">superficie vidriada de reflejar</tspan>
+            <tspan x="120" dy="15">radiación solar; alto albedo</tspan>
+            <tspan x="120" dy="15">reduce calentamiento</tspan>
+          </text>
+
+          <!-- 7. PROTECCIÓN SOLAR — left (270°) -->
+          <circle cx="180" cy="400" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+          <text x="56" y="382" text-anchor="middle" font-size="14" font-weight="600" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="56" dy="0">PROTECCIÓN</tspan>
+            <tspan x="56" dy="18">SOLAR</tspan>
+          </text>
+          <text x="56" y="418" text-anchor="middle" font-size="11" font-weight="300" fill="rgba(255,255,255,0.72)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="56" dy="0">Elementos que bloquean</tspan>
+            <tspan x="56" dy="15">radiación directa y reducen</tspan>
+            <tspan x="56" dy="15">ganancias térmicas</tspan>
+            <tspan x="56" dy="15">manteniendo luz natural</tspan>
+          </text>
+
+          <!-- 8. CUBIERTAS VERDES — top (0°) -->
+          <circle cx="400" cy="180" r="8" fill="#b8b37a" stroke="rgba(255,255,255,0.92)" stroke-width="2" />
+          <text x="400" y="160" text-anchor="middle" font-size="14" font-weight="600" fill="rgba(255,255,255,0.98)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="400" dy="0">CUBIERTAS</tspan>
+            <tspan x="400" dy="-18">VERDES</tspan>
+          </text>
+          <text x="400" y="118" text-anchor="middle" font-size="11" font-weight="300" fill="rgba(255,255,255,0.72)" font-family="'Autaut Grotesk', sans-serif">
+            <tspan x="400" dy="0">Vegetación en cubierta que</tspan>
+            <tspan x="400" dy="-15">reduce isla de calor, mejora</tspan>
+            <tspan x="400" dy="-15">aislamiento térmico y gestiona</tspan>
+            <tspan x="400" dy="-15">aguas pluviales</tspan>
+          </text>
+        </svg>
       </div>
     </section>
 
