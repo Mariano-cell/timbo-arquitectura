@@ -2050,6 +2050,7 @@ const Timbo = {
     this.overlayTextReveal.init();
     this.projectMap.init();
     this.introDetailSlider.init();
+    this.projectOverviewSlider.init();
 
     // 3. Detectar idioma y aplicar
     const lang = this.i18n.detect();
@@ -2070,6 +2071,24 @@ const Timbo = {
       dots.forEach(dot => {
         dot.addEventListener('click', () => {
           const idx = Number(dot.dataset.slide);
+          dots.forEach(d => d.classList.remove('is-active'));
+          imgs.forEach(i => i.classList.remove('is-active'));
+          dot.classList.add('is-active');
+          if (imgs[idx]) imgs[idx].classList.add('is-active');
+        });
+      });
+    },
+  },
+
+  projectOverviewSlider: {
+    init() {
+      const dots = document.querySelectorAll('.project-overview__dot[data-project-overview-slide]');
+      const imgs = document.querySelectorAll('.project-overview__img');
+      if (!dots.length || !imgs.length) return;
+
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          const idx = Number(dot.dataset.projectOverviewSlide);
           dots.forEach(d => d.classList.remove('is-active'));
           imgs.forEach(i => i.classList.remove('is-active'));
           dot.classList.add('is-active');
