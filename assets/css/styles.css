@@ -4210,3 +4210,196 @@ html.is-entering-projects.is-entering-projects-active .projects__item {
     width: clamp(7rem, 30vw, 10rem);
   }
 }
+
+
+/* =========================
+   CONTACTO
+   ========================= */
+
+/* --- Hero --- */
+.contact-hero {
+  min-height: 50vh;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: var(--space-4xl);
+  background-color: var(--color-gray-500);
+  color: var(--color-text-light);
+}
+
+.contact-hero__container {
+  max-width: var(--max-width);
+}
+
+.contact-hero__title {
+  font-size: var(--text-5xl);
+  font-weight: var(--fw-regular);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: var(--space-lg);
+}
+
+.contact-hero__subtitle {
+  font-size: var(--text-lg);
+  font-weight: var(--fw-regular);
+  color: var(--color-gray-300);
+  max-width: 480px;
+}
+
+/* --- Body (formulario + info) --- */
+.contact-body {
+  padding-top: var(--space-5xl);
+  padding-bottom: var(--space-5xl);
+  background-color: var(--color-bg-light);
+}
+
+.contact-body__container {
+  max-width: var(--max-width);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5xl);
+  align-items: start;
+}
+
+/* --- Formulario --- */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.contact-form__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.contact-form__label {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-gray-400);
+}
+
+.contact-form__input {
+  width: 100%;
+  padding: var(--space-md);
+  font-size: var(--text-base);
+  font-family: var(--font-primary);
+  color: var(--color-black);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-gray-300);
+  border-radius: 0;
+  outline: none;
+  transition: border-color var(--transition-base);
+}
+
+.contact-form__input:focus {
+  border-bottom-color: var(--color-black);
+}
+
+.contact-form__input::placeholder {
+  color: var(--color-gray-300);
+}
+
+.contact-form__textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.contact-form__submit {
+  align-self: flex-start;
+  padding: var(--space-md) var(--space-2xl);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-light);
+  background-color: var(--color-black);
+  border: 1px solid var(--color-black);
+  cursor: pointer;
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+.contact-form__submit:hover {
+  background-color: transparent;
+  color: var(--color-black);
+}
+
+.contact-form__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.contact-form__feedback {
+  font-size: var(--text-sm);
+  min-height: 1.4em;
+}
+
+.contact-form__feedback--success {
+  color: var(--color-forest);
+}
+
+.contact-form__feedback--error {
+  color: #b44;
+}
+
+/* --- Info lateral --- */
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xl);
+  padding-top: var(--space-sm);
+}
+
+.contact-info__block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.contact-info__heading {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-gray-400);
+}
+
+.contact-info__link {
+  font-size: var(--text-base);
+  color: var(--color-black);
+  transition: color var(--transition-base);
+}
+
+.contact-info__link:hover {
+  color: var(--color-forest);
+}
+
+.contact-info__text {
+  font-size: var(--text-base);
+  color: var(--color-black);
+}
+
+/* --- Responsive contacto --- */
+@media (max-width: 768px) {
+  .contact-hero {
+    min-height: 40vh;
+    padding-bottom: var(--space-3xl);
+  }
+
+  .contact-hero__title {
+    font-size: var(--text-4xl);
+  }
+
+  .contact-body__container {
+    grid-template-columns: 1fr;
+    gap: var(--space-4xl);
+  }
+
+  .contact-body {
+    padding-top: var(--space-4xl);
+    padding-bottom: var(--space-4xl);
+  }
+}

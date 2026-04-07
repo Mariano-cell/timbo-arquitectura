@@ -2026,6 +2026,72 @@ const Timbo = {
 
 
   /* ============================================================
+     CONTACT FORM — Envío vía Netlify Function
+     ============================================================ */
+  contactForm: {
+    init() {
+      const form = document.getElementById('contactForm');
+      if (!form) return;
+
+      const feedback = document.getElementById('formFeedback');
+      const submitBtn = form.querySelector('.contact-form__submit');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Limpiar feedback previo
+        feedback.textContent = '';
+        feedback.className = 'contact-form__feedback';
+
+        // Recoger datos
+        const data = {
+          name: form.name.value.trim(),
+          email: form.email.value.trim(),
+          subject: form.subject.value.trim(),
+          message: form.message.value.trim(),
+        };
+
+        // Validación simple en cliente
+        if (!data.name || !data.email || !data.message) {
+          feedback.textContent = 'Por favor completá nombre, email y mensaje.';
+          feedback.classList.add('contact-form__feedback--error');
+          return;
+        }
+
+        // Deshabilitar botón
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando…';
+
+        try {
+          const res = await fetch('/.netlify/functions/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+
+          const result = await res.json();
+
+          if (res.ok) {
+            feedback.textContent = 'Mensaje enviado. Gracias por escribirnos.';
+            feedback.classList.add('contact-form__feedback--success');
+            form.reset();
+          } else {
+            feedback.textContent = result.error || 'Hubo un problema al enviar el mensaje.';
+            feedback.classList.add('contact-form__feedback--error');
+          }
+        } catch {
+          feedback.textContent = 'Error de conexión. Intentá de nuevo más tarde.';
+          feedback.classList.add('contact-form__feedback--error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Enviar mensaje';
+        }
+      });
+    },
+  },
+
+
+  /* ============================================================
      INICIALIZACIÓN
      ============================================================ */
   init() {
@@ -2051,6 +2117,7 @@ const Timbo = {
     this.projectMap.init();
     this.introDetailSlider.init();
     this.projectOverviewSlider.init();
+    this.contactForm.init();
 
     // 3. Detectar idioma y aplicar
     const lang = this.i18n.detect();
