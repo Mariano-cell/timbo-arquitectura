@@ -1416,6 +1416,7 @@ const Timbo = {
     init() {
       const section = document.querySelector('.sust-strategies');
       const detail = section?.querySelector('.sust-strategies__detail');
+      const detailStack = detail?.querySelector('.sust-strategies__detail-stack');
       const closeButton = detail?.querySelector('.sust-strategies__detail-close');
       const detailIcon = detail?.querySelector('.sust-strategies__detail-icon');
       const detailTitle = detail?.querySelector('.sust-strategies__detail-title');
@@ -1424,8 +1425,9 @@ const Timbo = {
         ? Array.from(section.querySelectorAll('.sust-strategies__orbit-label-item[data-strategy]'))
         : [];
       const orbitApi = Timbo.sustStrategiesOrbit.api;
+      const reduceMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
 
-      if (!section || !detail || !closeButton || !detailIcon || !detailTitle || !detailText || !labelItems.length) return;
+      if (!section || !detail || !detailStack || !closeButton || !detailIcon || !detailTitle || !detailText || !labelItems.length) return;
 
       const strategies = {
         ventilacion: {
@@ -1471,15 +1473,13 @@ const Timbo = {
       };
 
       let activeKey = '';
+      let swapToken = 0;
 
-      const setActive = (key = '') => {
-        const strategy = key ? strategies[key] : null;
-        activeKey = strategy ? key : '';
+      const cancelDetailAnimations = () => {
+        detailStack.getAnimations().forEach((animation) => animation.cancel());
+      };
 
-        section.classList.toggle('is-detail-open', Boolean(strategy));
-        detail.setAttribute('aria-hidden', strategy ? 'false' : 'true');
-        orbitApi?.setDetailOpen(Boolean(strategy));
-
+      const setDetailContent = (strategy) => {
         if (strategy) {
           detailIcon.src = strategy.icon;
           detailIcon.alt = `Icono de ${strategy.title}`;
@@ -1492,12 +1492,96 @@ const Timbo = {
 
         detailTitle.textContent = strategy ? strategy.title : '';
         detailText.textContent = strategy ? strategy.description : '';
+      };
+
+      const animateDetailSwap = async (strategy, token) => {
+        const exitAnimation = detailStack.animate([
+          {
+            opacity: 1,
+            transform: 'translate3d(0, 0, 0) scale(1)',
+            filter: 'blur(0px)',
+          },
+          {
+            opacity: 0,
+            transform: 'translate3d(0, 3px, 0) scale(0.998)',
+            filter: 'blur(4px)',
+          },
+        ], {
+          duration: 150,
+          easing: 'cubic-bezier(0.4, 0, 1, 1)',
+          fill: 'forwards',
+        });
+
+        try {
+          await exitAnimation.finished;
+        } catch (_) {
+          return;
+        }
+
+        if (token !== swapToken) return;
+
+        setDetailContent(strategy);
+        cancelDetailAnimations();
+
+        const enterAnimation = detailStack.animate([
+          {
+            opacity: 0,
+            transform: 'translate3d(0, 2px, 0) scale(0.999)',
+            filter: 'blur(5px)',
+          },
+          {
+            opacity: 1,
+            transform: 'translate3d(0, 0, 0) scale(1)',
+            filter: 'blur(0px)',
+          },
+        ], {
+          duration: 260,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          fill: 'both',
+        });
+
+        enterAnimation.finished
+          .catch(() => {})
+          .finally(() => {
+            if (token !== swapToken) return;
+            cancelDetailAnimations();
+          });
+      };
+
+      const setActive = (key = '') => {
+        swapToken += 1;
+        const token = swapToken;
+        const previousKey = activeKey;
+        const strategy = key ? strategies[key] : null;
+        activeKey = strategy ? key : '';
+        const wasDetailOpen = section.classList.contains('is-detail-open');
+
+        section.classList.toggle('is-detail-open', Boolean(strategy));
+        detail.setAttribute('aria-hidden', strategy ? 'false' : 'true');
+        orbitApi?.setDetailOpen(Boolean(strategy));
 
         labelItems.forEach((item) => {
           const isActive = item.dataset.strategy === activeKey;
           item.classList.toggle('is-active', isActive);
           item.setAttribute('aria-expanded', isActive ? 'true' : 'false');
         });
+
+        cancelDetailAnimations();
+
+        const shouldAnimateSwap = Boolean(
+          strategy
+          && wasDetailOpen
+          && previousKey
+          && previousKey !== activeKey
+          && !reduceMotionQuery?.matches
+        );
+
+        if (shouldAnimateSwap) {
+          animateDetailSwap(strategy, token);
+          return;
+        }
+
+        setDetailContent(strategy);
       };
 
       const openStrategy = (key) => {
@@ -2827,6 +2911,141 @@ const Timbo = {
 
 
   /* ============================================================
+     KEYBOARD NAV
+     Navegación por teclado con flechas arriba/abajo entre "stops"
+     (anclas) definidos por página. Cada stop es un selector CSS;
+     al presionar ↓ saltamos al siguiente stop, con ↑ al anterior.
+     - Se ignora si el foco está sobre un input / textarea / select
+       o elemento contentEditable.
+     - Restamos NAV_OFFSET al top para que no quede tapado por el nav.
+     - Respeta prefers-reduced-motion (sin smooth).
+     ============================================================ */
+  keyboardNav: {
+    NAV_OFFSET: 60, // altura del nav fixed
+    EPSILON: 4,     // tolerancia px al comparar posición actual vs stops
+
+    // Stops por página. Cada entrada matchea si TODOS los selectores
+    // del "match" existen en el DOM; usamos los primeros que coincidan.
+    PAGES: [
+      {
+        name: 'home',
+        match: ['.hero', '.intro', '.nature-dialogue', '.philosophy'],
+        stops: [
+          '#hero',
+          '.intro__body',
+          '.intro__detail',
+          '#nature-dialogue',
+          '#philosophy',
+        ],
+      },
+      {
+        name: 'sustentabilidad',
+        match: ['.sust-hero'],
+        stops: [
+          '.sust-hero',
+          '#sust-overview',
+          '#sust-process',
+          '#sust-climate',
+          '#sust-breathe',
+          '#sust-metrics',
+          '#sust-strategies',
+        ],
+      },
+      {
+        name: 'proyectos',
+        match: ['.projects-section'],
+        stops: [
+          '#projects-section',
+        ],
+      },
+      {
+        name: 'sobre-nosotros',
+        match: ['.about-hero'],
+        stops: [
+          '.about-hero',
+          '.about-founders',
+          '.about-approach',
+          '.about-final',
+        ],
+      },
+      {
+        name: 'contacto',
+        match: ['.contact-image'],
+        stops: [
+          '.contact-image',
+        ],
+      },
+    ],
+
+    stopEls: [],
+    reducedMotion: false,
+
+    init() {
+      // Detectar página activa y armar lista de elementos de stops.
+      const page = this.PAGES.find((p) =>
+        p.match.every((sel) => document.querySelector(sel))
+      );
+      if (!page) return;
+
+      this.stopEls = page.stops
+        .map((sel) => document.querySelector(sel))
+        .filter(Boolean);
+
+      // Si hay menos de 2 stops, no tiene sentido navegar.
+      if (this.stopEls.length < 2) return;
+
+      this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      window.addEventListener('keydown', (e) => this.onKeydown(e));
+    },
+
+    isTypingTarget(el) {
+      if (!el) return false;
+      const tag = el.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+      if (el.isContentEditable) return true;
+      return false;
+    },
+
+    onKeydown(e) {
+      // Solo ↓ / ↑
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      // Ignorar si el foco está en un campo de texto.
+      if (this.isTypingTarget(document.activeElement)) return;
+      // Ignorar si hay teclas modificadoras (para no pisar shortcuts del SO).
+      if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+
+      e.preventDefault();
+
+      const direction = e.key === 'ArrowDown' ? 1 : -1;
+      const currentY = window.scrollY;
+
+      // Calcular top relativo a la página para cada stop, ordenado.
+      const targets = this.stopEls
+        .map((el) => Math.max(0, el.getBoundingClientRect().top + window.scrollY - this.NAV_OFFSET))
+        .sort((a, b) => a - b);
+
+      let next;
+      if (direction === 1) {
+        next = targets.find((y) => y > currentY + this.EPSILON);
+      } else {
+        // El último menor al actual
+        for (let i = targets.length - 1; i >= 0; i--) {
+          if (targets[i] < currentY - this.EPSILON) { next = targets[i]; break; }
+        }
+      }
+
+      if (next === undefined) return;
+
+      window.scrollTo({
+        top: next,
+        behavior: this.reducedMotion ? 'auto' : 'smooth',
+      });
+    },
+  },
+
+
+  /* ============================================================
      INICIALIZACIÓN
      ============================================================ */
   init() {
@@ -2861,6 +3080,7 @@ const Timbo = {
     this.introDetailSlider.init();
     this.projectOverviewSlider.init();
     this.contactForm.init();
+    this.keyboardNav.init();
 
     // 3. Detectar idioma y aplicar
     const lang = this.i18n.detect();

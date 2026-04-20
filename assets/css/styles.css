@@ -3484,6 +3484,8 @@ html.is-entering-projects.is-entering-projects-active .projects__item {
   align-items: flex-start;
   gap: clamp(1.1rem, 1.8vw, 1.55rem);
   padding-top: 0.35rem;
+  will-change: opacity, transform, filter;
+  transform-origin: left center;
 }
 
 .sust-strategies__detail-icon-frame {
