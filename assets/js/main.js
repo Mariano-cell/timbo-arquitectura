@@ -1584,204 +1584,47 @@ const Timbo = {
     },
   },
 
-  /* ---- Hero logo parallax: el logo baja con el scroll a 1/2 de rate ---- */
-  heroLogoParallax: {
-    RATE: 0.5,            // rate del parallax vertical (1/2)
-    BOTTOM_OFFSET: 130,        // distancia al borde inferior del hero donde arranca la fase 1 del logo (sin uso activo, sólo referencia)
-    BOTTOM_OFFSET_FINAL: 120,  // distancia final al borde inferior del hero (destino Y del logo)
-    MIN_OPACITY_Y: 0.5,        // opacidad mínima al final del recorrido (ahora se aplica durante la fase 2)
-    MAX_SCALE_Y: 1.08,         // escala máxima al alcanzar el "pre-destino" Y (1 = tamaño original)
-    SCALE_EARLY_STOP: 20,      // px antes del destino Y en los que la escala ya llegó a su máximo
-    X_TRIGGER_BEFORE_HIDDEN: 30, // px antes del scroll point en que el texto queda oculto
-    MASK_DISTANCE: 450,   // px de scroll que dura el corte bajo la franja invisible (derecha → izquierda)
-    MASK_RATE: 1 / 3,     // ratio horizontal: 10px por cada 30px de scroll
-    MASK_FADE: 10,        // px de zona de fade al arrancar la fase 2 (borde inicial de la franja invisible)
-    MASK_FADE_MAX: 200,   // px de zona de fade al final del recorrido (la franja se agranda con el scroll)
-    MASK_FADE_RAMP: 60,   // px de scroll durante los que el fade crece de 0 a MASK_FADE (suaviza activación)
-    logoEl: null,
-    heroEl: null,
-    maxOffset: 0,
-    ticking: false,
-
-    init() {
-      this.heroEl = document.getElementById('hero');
-      if (!this.heroEl) return;
-      this.logoEl = this.heroEl.querySelector('.hero__logo');
-      if (!this.logoEl) return;
-
-      this.measure();
-      this.update();
-      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
-      window.addEventListener('resize', () => {
-        this.measure();
-        this.update();
-      }, { passive: true });
-    },
-
-    measure() {
-      // Calcular los max offsets usando la posición NATURAL del logo.
-      // Sacamos el transform temporalmente para medir la posición natural.
-      const previousTransform = this.logoEl.style.transform;
-      this.logoEl.style.transform = '';
-      const heroRect = this.heroEl.getBoundingClientRect();
-      const logoRect = this.logoEl.getBoundingClientRect();
-      const heroBottom = heroRect.top + window.scrollY + heroRect.height;
-      const logoBottom = logoRect.top + window.scrollY + logoRect.height;
-      // maxOffset: hasta dónde baja en fase 1 (BOTTOM_OFFSET del borde inferior)
-      this.maxOffset = Math.max(0, heroBottom - this.BOTTOM_OFFSET - logoBottom);
-      // maxOffsetFinal: destino final del logo (BOTTOM_OFFSET_FINAL del borde inferior)
-      this.maxOffsetFinal = Math.max(this.maxOffset, heroBottom - this.BOTTOM_OFFSET_FINAL - logoBottom);
-      // Restauramos el transform previo.
-      this.logoEl.style.transform = previousTransform;
-    },
-
-    onScroll() {
-      if (this.ticking) return;
-      this.ticking = true;
-      requestAnimationFrame(() => {
-        this.update();
-        this.ticking = false;
-      });
-    },
-
-    update() {
-      const scrolled = Math.max(0, window.scrollY);
-
-      // --- Fase 1: el logo baja continuamente hasta maxOffsetFinal (posición de destino) ---
-      const desiredOffset = scrolled * this.RATE;
-      const phase1Y = Math.min(desiredOffset, this.maxOffsetFinal);
-
-      // --- Fase 2: el logo sigue bajando y se mete bajo una franja invisible horizontal ---
-      // La franja queda fija en la posición de destino (maxOffsetFinal). Al seguir bajando,
-      // la parte inferior del logo cruza la franja y se oculta con fade suave.
-      // Scroll necesario para llegar al destino.
-      const scrollToFinal = this.maxOffsetFinal > 0 ? this.maxOffsetFinal / this.RATE : Infinity;
-      const phaseYScroll = Math.max(0, scrolled - scrollToFinal);
-      let extraY = 0;
-      let applyMask = false;
-      let overshootY = 0;
-      if (phaseYScroll > 0) {
-        const phaseYScrollClamped = Math.min(this.MASK_DISTANCE, phaseYScroll);
-        // El logo sigue bajando a ratio MASK_RATE
-        extraY = phaseYScrollClamped * this.MASK_RATE;
-        overshootY = extraY;
-        applyMask = true;
-      }
-
-      const totalY = phase1Y + extraY;
-      this.logoEl.style.transform = `translate(0px, ${totalY}px) scale(1)`;
-
-      // Opacidad: arranca recién cuando el logo empieza a meterse bajo la franja invisible
-      // (fase 2). Antes de eso, el logo mantiene opacidad 1 (o la que fija el CSS si no hay scroll).
-      if (phaseYScroll > 0) {
-        // Progreso de la opacidad: 0 → 1 a lo largo de MASK_DISTANCE, igual que la máscara.
-        const opacityProgress = Math.min(1, phaseYScroll / this.MASK_DISTANCE);
-        const opacity = 1 - (1 - this.MIN_OPACITY_Y) * opacityProgress;
-        this.logoEl.style.transition = 'none';
-        this.logoEl.style.opacity = String(opacity);
-      } else if (scrolled > 0) {
-        // En fase 1 (antes del corte): opacidad plena, sin transition para evitar lag.
-        this.logoEl.style.transition = 'none';
-        this.logoEl.style.opacity = '1';
-      } else {
-        // Sin scroll: dejamos que el CSS maneje la entrada (fade-in 2200ms a opacity 1).
-        this.logoEl.style.transition = '';
-        this.logoEl.style.opacity = '';
-      }
-
-      // Máscara: aparece durante la fase 2. La franja invisible queda fija a la altura
-      // del destino (maxOffsetFinal). Al bajar el logo, su parte INFERIOR cruza la franja
-      // y queda oculta, con un fade suave de MASK_FADE px.
-      if (applyMask) {
-        const logoHeight = this.logoEl.offsetHeight || 1;
-        // Ramp inicial: al activarse, el fade vale 0 → crece a MASK_FADE durante MASK_FADE_RAMP
-        // px de scroll, para que no haya un salto visible.
-        const fadeRamp = Math.min(1, phaseYScroll / this.MASK_FADE_RAMP);
-        // Crecimiento continuo a lo largo de MASK_DISTANCE: el fade se agranda de MASK_FADE
-        // a MASK_FADE_MAX a medida que el logo se mete más bajo la franja invisible.
-        const growthProgress = Math.min(1, phaseYScroll / this.MASK_DISTANCE);
-        const baseFade = this.MASK_FADE + (this.MASK_FADE_MAX - this.MASK_FADE) * growthProgress;
-        const currentFade = baseFade * fadeRamp;
-        // visibleBottom: posición (desde el top) hasta donde el logo es visible.
-        // Cuando overshootY = 0 → visibleBottom = height (todo visible).
-        // Cuando overshootY = height → visibleBottom = 0 (todo oculto).
-        const visibleBottom = Math.max(0, logoHeight - overshootY);
-        const fadeStart = Math.max(0, visibleBottom - currentFade);
-        // Gradiente: opaco desde 0 hasta fadeStart, fade hasta visibleBottom, transparente hasta 100%.
-        const maskValue = `linear-gradient(to bottom, #000 0px, #000 ${fadeStart}px, rgba(0,0,0,0) ${visibleBottom}px, rgba(0,0,0,0) 100%)`;
-        this.logoEl.style.webkitMaskImage = maskValue;
-        this.logoEl.style.maskImage = maskValue;
-      } else {
-        // Sin máscara: logo sólido.
-        this.logoEl.style.webkitMaskImage = '';
-        this.logoEl.style.maskImage = '';
-      }
-    },
-  },
-
-  heroTaglineParallax: {
-    RATE: 0.42,          // ratio de desplazamiento del texto respecto al scroll
-    MAX_OFFSET: 100,     // desplazamiento total máximo (px) antes del "corte"
-    MIN_SCALE: 0.85,     // escala mínima al final del recorrido (1 = tamaño original)
-    MIN_OPACITY: 0.4,    // opacidad mínima antes de empezar el corte
-    MASK_DISTANCE: 150,  // px de scroll que dura el corte bajo la franja invisible
-    MASK_RATE: 1.0,      // ratio de desplazamiento durante el corte (1:1 con el scroll)
-    MASK_FADE: 24,       // px de zona de fade (borde suave de la franja invisible)
-    ENTRY_DURATION: 1800,   // ms que dura la animación de entrada
-    ENTRY_TRANSLATE: 20,    // px de translateY inicial (sube de +ENTRY_TRANSLATE a 0)
-    ENTRY_BLUR: 8,          // px de blur inicial (baja a 0 durante BLUR_DURATION)
-    BLUR_DURATION: 600,     // ms que dura el fade del blur (más breve que ENTRY_DURATION)
+  /* ============================================================
+     HERO PARALLAX
+     Tagline y logo bajan con el scroll a distintos ratios.
+     Ambos se frenan cuando el logo alcanza MAX_LOGO_Y (px).
+     Además, el tagline se escala de 1 a TAGLINE_MIN_SCALE durante los
+     primeros TAGLINE_SCALE_DISTANCE px de scroll.
+     ============================================================ */
+  heroParallax: {
+    TAGLINE_RATE: 0.4,
+    LOGO_RATE: 0.5,
+    MAX_LOGO_Y: 300,
+    TAGLINE_SCALE_DISTANCE: 150,   // px de scroll durante los que escala
+    TAGLINE_MIN_SCALE: 0.9,        // escala final del tagline
+    TAGLINE_OPACITY_DISTANCE: 50,    // fase 1: px de scroll durante los que baja la opacidad (1 → TAGLINE_MIN_OPACITY)
+    TAGLINE_MIN_OPACITY: 0.9,        // opacidad al final de la fase 1
+    TAGLINE_OPACITY_DISTANCE_2: 100, // fase 2: px adicionales durante los que sigue bajando
+    TAGLINE_MIN_OPACITY_2: 0.6,      // opacidad al final de la fase 2 (luego queda fija)
+    TAGLINE_MASK_SCROLL: 60,         // scrollY en el que el tagline "toca" la franja invisible
+    TAGLINE_MASK_FADE: 12,           // px de fade suave en el borde de la franja
+    TAGLINE_RATE_POST_MASK: 0.5,     // rate de descenso del tagline una vez que toca la máscara
+    LOGO_SCALE_START: 0,             // scrollY al que arranca el crecimiento del logo
+    LOGO_SCALE_DISTANCE: 250,        // px de scroll durante los que crece
+    LOGO_MAX_SCALE: 1.12,            // escala final del logo (12% más grande)
+    LOGO_MASK_FADE: 4,               // px de fade suave en el borde de la franja del logo
+    LOGO_RESUME_SCROLL: 750,         // scrollY al que el logo retoma el descenso (fase 2)
+    LOGO_RESUME_RATE: 1.0,           // rate de descenso durante la fase 2 (post-pausa)
+    LOGO_OPACITY_START: 700,         // fase 1: scrollY al que empieza el fade de opacidad del logo
+    LOGO_OPACITY_MID: 780,           // fase 1: scrollY al que el logo alcanza LOGO_MID_OPACITY
+    LOGO_OPACITY_END: 930,           // fase 2: scrollY al que termina el fade (opacidad 0)
+    LOGO_MID_OPACITY: 0.6,           // opacidad intermedia (al final de la fase 1)
+    LOGO_MIN_OPACITY: 0,             // opacidad final del logo
     taglineEl: null,
+    logoEl: null,
     ticking: false,
-    entryProgress: 0,       // 0 al arrancar, 1 cuando termina la entrada
-    blurProgress: 0,        // 0 al arrancar, 1 cuando termina el fade de blur
-    entryStartTime: null,
-    entryDone: false,
 
     init() {
       this.taglineEl = document.querySelector('.hero__tagline');
-      if (!this.taglineEl) return;
-      // Arranca invisible y fuera de lugar para que la entrada no "salte".
-      this.taglineEl.style.transformOrigin = 'center center';
+      this.logoEl = document.querySelector('.hero__logo');
+      if (!this.taglineEl && !this.logoEl) return;
       this.update();
       window.addEventListener('scroll', () => this.onScroll(), { passive: true });
-      // Arrancar la animación de entrada en el próximo frame.
-      requestAnimationFrame((t) => this.tickEntry(t));
-    },
-
-    /**
-     * Devuelve el scroll point (px) en el que el texto queda completamente oculto
-     * bajo su franja invisible. Útil para coordinar otros módulos (ej: heroLogoParallax).
-     */
-    getFullyHiddenScroll() {
-      if (!this.taglineEl) return 0;
-      const taglineHeight = this.taglineEl.offsetHeight || 1;
-      const scrollToMax = this.MAX_OFFSET / this.RATE;
-      // Durante la fase 2, el overshoot crece a MASK_RATE px por px de scroll.
-      // El texto queda oculto cuando overshoot >= taglineHeight.
-      const phase2ScrollNeeded = taglineHeight / this.MASK_RATE;
-      return scrollToMax + phase2ScrollNeeded;
-    },
-
-    // Ease-out cubic aproxima cubic-bezier(0.22, 0.61, 0.36, 1)
-    ease(t) {
-      return 1 - Math.pow(1 - t, 3);
-    },
-
-    tickEntry(timestamp) {
-      if (this.entryStartTime === null) this.entryStartTime = timestamp;
-      const elapsed = timestamp - this.entryStartTime;
-      const raw = Math.min(1, elapsed / this.ENTRY_DURATION);
-      this.entryProgress = this.ease(raw);
-      // Progreso independiente para el blur (duración más breve)
-      const rawBlur = Math.min(1, elapsed / this.BLUR_DURATION);
-      this.blurProgress = this.ease(rawBlur);
-      this.update();
-      if (raw < 1) {
-        requestAnimationFrame((t) => this.tickEntry(t));
-      } else {
-        this.entryDone = true;
-      }
     },
 
     onScroll() {
@@ -1795,66 +1638,107 @@ const Timbo = {
 
     update() {
       const scrolled = Math.max(0, window.scrollY);
-
-      // --- Fase 1: parallax normal (0 → MAX_OFFSET) ---
-      // Scroll necesario para completar la fase 1
-      const scrollToMax = this.MAX_OFFSET / this.RATE;
-      const phase1Scroll = Math.min(scrolled, scrollToMax);
-      const phase1Offset = phase1Scroll * this.RATE;
-      // progreso de fase 1: 0 → 1
-      const progress1 = phase1Offset / this.MAX_OFFSET;
-      // opacidad baja de 1 a MIN_OPACITY
-      const parallaxOpacity = 1 - (1 - this.MIN_OPACITY) * progress1;
-      // escala baja de 1 a MIN_SCALE
-      const parallaxScale = 1 - (1 - this.MIN_SCALE) * progress1;
-
-      // --- Fase 2: corte bajo la franja invisible ---
-      // Scroll adicional después de terminar la fase 1
-      const phase2Scroll = Math.max(0, scrolled - scrollToMax);
-      // Cuánto avanza el texto durante la fase 2 (más rápido, para "escurrirse")
-      const phase2Offset = phase2Scroll * this.MASK_RATE;
-      // progreso de fase 2: 0 → 1 a lo largo de MASK_DISTANCE
-      const progress2 = Math.min(1, phase2Scroll / this.MASK_DISTANCE);
-
-      // El texto se desplaza total: el parallax normal + el adicional de la fase 2
-      const totalTranslate = phase1Offset + phase2Offset;
-
-      // La franja invisible está fija en MAX_OFFSET (la posición de destino del parallax).
-      // Solo cuando el texto empieza a cruzar la franja (overshoot > 0) aplicamos la máscara
-      // con fade. Mientras está en fase 1 (overshoot = 0), no hay máscara ni clip.
-      const overshoot = Math.max(0, totalTranslate - this.MAX_OFFSET);
-      const taglineHeight = this.taglineEl.offsetHeight || 1;
-
-      // offset de entrada
-      const entryTranslate = (1 - this.entryProgress) * this.ENTRY_TRANSLATE;
-
-      // opacidad final: multiplica por la entrada
-      const opacity = parallaxOpacity * this.entryProgress;
-
-      // blur de entrada: arranca en ENTRY_BLUR, baja a 0 a medida que blurProgress → 1.
-      // Usa BLUR_DURATION (más breve que ENTRY_DURATION).
-      const blurProgress = this.blurProgress != null ? this.blurProgress : 0;
-      const entryBlur = this.ENTRY_BLUR * (1 - blurProgress);
-
-      this.taglineEl.style.transform = `translateY(${totalTranslate + entryTranslate}px) scale(${parallaxScale})`;
-      this.taglineEl.style.opacity = String(opacity);
-      this.taglineEl.style.filter = entryBlur > 0.1 ? `blur(${entryBlur}px)` : '';
-
-      if (overshoot > 0) {
-        // Visible: desde 0 hasta visibleBottom. Entre fadeStart y visibleBottom
-        // hacemos un fade suave para que el corte no sea tajante.
-        const visibleBottom = Math.max(0, taglineHeight - overshoot);
-        const fadeStart = Math.max(0, visibleBottom - this.MASK_FADE);
-        const maskValue = `linear-gradient(to bottom, #000 0px, #000 ${fadeStart}px, rgba(0,0,0,0) ${visibleBottom}px, rgba(0,0,0,0) 100%)`;
-        this.taglineEl.style.webkitMaskImage = maskValue;
-        this.taglineEl.style.maskImage = maskValue;
+      // Scroll al que el logo alcanza su tope de fase 1. En ese momento el tagline
+      // también queda congelado.
+      const scrollCap = this.MAX_LOGO_Y / this.LOGO_RATE;
+      const scrolledEffective = Math.min(scrolled, scrollCap);
+      // Tagline: baja a TAGLINE_RATE hasta que toca la máscara (scrollY = TAGLINE_MASK_SCROLL);
+      // a partir de ahí baja a TAGLINE_RATE_POST_MASK.
+      const taglineYAtMask = this.TAGLINE_MASK_SCROLL * this.TAGLINE_RATE;
+      let taglineY;
+      if (scrolledEffective <= this.TAGLINE_MASK_SCROLL) {
+        taglineY = scrolledEffective * this.TAGLINE_RATE;
       } else {
-        // Sin overshoot: sin máscara, texto totalmente sólido.
-        this.taglineEl.style.webkitMaskImage = '';
-        this.taglineEl.style.maskImage = '';
+        taglineY = taglineYAtMask + (scrolledEffective - this.TAGLINE_MASK_SCROLL) * this.TAGLINE_RATE_POST_MASK;
       }
-      // Limpiamos el clip-path viejo por si quedó aplicado de antes
-      this.taglineEl.style.clipPath = '';
+      // Fase 1 del logo: descenso normal hasta MAX_LOGO_Y.
+      let logoY = scrolledEffective * this.LOGO_RATE;
+      // Fase 2 (post-pausa): una vez que scrollY supera LOGO_RESUME_SCROLL,
+      // el logo retoma el descenso a LOGO_RESUME_RATE sumando a MAX_LOGO_Y.
+      if (scrolled > this.LOGO_RESUME_SCROLL) {
+        logoY = this.MAX_LOGO_Y + (scrolled - this.LOGO_RESUME_SCROLL) * this.LOGO_RESUME_RATE;
+      }
+
+      // Escala del tagline: 1 → TAGLINE_MIN_SCALE a lo largo de TAGLINE_SCALE_DISTANCE px
+      const scaleProgress = Math.min(1, scrolled / this.TAGLINE_SCALE_DISTANCE);
+      const taglineScale = 1 - (1 - this.TAGLINE_MIN_SCALE) * scaleProgress;
+
+      // Opacidad del tagline en dos fases:
+      //   Fase 1: de 0 a TAGLINE_OPACITY_DISTANCE px → opacidad 1 → TAGLINE_MIN_OPACITY
+      //   Fase 2: de TAGLINE_OPACITY_DISTANCE a +TAGLINE_OPACITY_DISTANCE_2 px → TAGLINE_MIN_OPACITY → TAGLINE_MIN_OPACITY_2
+      //   Después: se queda fija en TAGLINE_MIN_OPACITY_2.
+      let taglineOpacity;
+      if (scrolled <= this.TAGLINE_OPACITY_DISTANCE) {
+        const p1 = scrolled / this.TAGLINE_OPACITY_DISTANCE;
+        taglineOpacity = 1 - (1 - this.TAGLINE_MIN_OPACITY) * p1;
+      } else {
+        const p2 = Math.min(1, (scrolled - this.TAGLINE_OPACITY_DISTANCE) / this.TAGLINE_OPACITY_DISTANCE_2);
+        taglineOpacity = this.TAGLINE_MIN_OPACITY - (this.TAGLINE_MIN_OPACITY - this.TAGLINE_MIN_OPACITY_2) * p2;
+      }
+
+      if (this.taglineEl) {
+        this.taglineEl.style.transform = `translateY(${taglineY}px) scale(${taglineScale})`;
+        this.taglineEl.style.opacity = String(taglineOpacity);
+
+        // Máscara: fija a la altura que el tagline tiene a scrollY = TAGLINE_MASK_SCROLL.
+        const overshoot = Math.max(0, taglineY - taglineYAtMask);
+        if (overshoot > 0) {
+          const taglineHeight = this.taglineEl.offsetHeight || 1;
+          const visibleBottom = Math.max(0, taglineHeight - overshoot);
+          const fadeStart = Math.max(0, visibleBottom - this.TAGLINE_MASK_FADE);
+          const maskValue = `linear-gradient(to bottom, #000 0px, #000 ${fadeStart}px, rgba(0,0,0,0) ${visibleBottom}px, rgba(0,0,0,0) 100%)`;
+          this.taglineEl.style.webkitMaskImage = maskValue;
+          this.taglineEl.style.maskImage = maskValue;
+        } else {
+          this.taglineEl.style.webkitMaskImage = '';
+          this.taglineEl.style.maskImage = '';
+        }
+      }
+
+      if (this.logoEl) {
+        // Escala del logo: 1 → LOGO_MAX_SCALE a lo largo de LOGO_SCALE_DISTANCE px, empezando en LOGO_SCALE_START.
+        const logoScaleScroll = Math.max(0, scrolled - this.LOGO_SCALE_START);
+        const logoScaleProgress = Math.min(1, logoScaleScroll / this.LOGO_SCALE_DISTANCE);
+        const logoScale = 1 + (this.LOGO_MAX_SCALE - 1) * logoScaleProgress;
+
+        // Opacidad del logo en dos fases:
+        //   Fase 1: LOGO_OPACITY_START → LOGO_OPACITY_MID  → 1 → LOGO_MID_OPACITY
+        //   Fase 2: LOGO_OPACITY_MID   → LOGO_OPACITY_END  → LOGO_MID_OPACITY → LOGO_MIN_OPACITY
+        let logoOpacity;
+        if (scrolled <= this.LOGO_OPACITY_START) {
+          logoOpacity = 1;
+        } else if (scrolled <= this.LOGO_OPACITY_MID) {
+          const span1 = Math.max(1, this.LOGO_OPACITY_MID - this.LOGO_OPACITY_START);
+          const p1 = (scrolled - this.LOGO_OPACITY_START) / span1;
+          logoOpacity = 1 - (1 - this.LOGO_MID_OPACITY) * p1;
+        } else {
+          const span2 = Math.max(1, this.LOGO_OPACITY_END - this.LOGO_OPACITY_MID);
+          const p2 = Math.min(1, (scrolled - this.LOGO_OPACITY_MID) / span2);
+          logoOpacity = this.LOGO_MID_OPACITY - (this.LOGO_MID_OPACITY - this.LOGO_MIN_OPACITY) * p2;
+        }
+
+        this.logoEl.style.transformOrigin = 'top center';
+        this.logoEl.style.transform = `translateY(${logoY}px) scale(${logoScale})`;
+        this.logoEl.style.opacity = String(logoOpacity);
+
+        // Máscara del logo: se ubica a la altura máxima que alcanza la BASE del logo.
+        const logoNaturalHeight = this.logoEl.offsetHeight || 1;
+        const maskLine = this.MAX_LOGO_Y + logoNaturalHeight * this.LOGO_MAX_SCALE;
+        const currentBase = logoY + logoNaturalHeight * logoScale;
+        const overshoot = Math.max(0, currentBase - maskLine);
+        if (overshoot > 0) {
+          const scaledHeight = logoNaturalHeight * logoScale;
+          const visibleBottomScaled = Math.max(0, scaledHeight - overshoot);
+          const visibleBottom = visibleBottomScaled / logoScale;
+          const fadeStart = Math.max(0, visibleBottom - this.LOGO_MASK_FADE / logoScale);
+          const maskValue = `linear-gradient(to bottom, #000 0px, #000 ${fadeStart}px, rgba(0,0,0,0) ${visibleBottom}px, rgba(0,0,0,0) 100%)`;
+          this.logoEl.style.webkitMaskImage = maskValue;
+          this.logoEl.style.maskImage = maskValue;
+        } else {
+          this.logoEl.style.webkitMaskImage = '';
+          this.logoEl.style.maskImage = '';
+        }
+      }
     },
   },
 
@@ -1914,6 +1798,40 @@ const Timbo = {
     },
   },
 
+  harasHeroTitleScroll: {
+    titleEl: null,
+    ticking: false,
+
+    update() {
+      if (!this.titleEl) return;
+      const scrollY = Math.max(window.scrollY, 0);
+      const firstPhase = Math.min(scrollY, 150);
+      const secondPhase = Math.min(Math.max(scrollY - 150, 0), 150);
+      const remainingPhase = Math.max(scrollY - 300, 0);
+      const translateY = firstPhase + (secondPhase * 0.7) + (remainingPhase * 0.7);
+      this.titleEl.style.transform = `translateY(${translateY.toFixed(1)}px)`;
+    },
+
+    requestUpdate() {
+      if (this.ticking) return;
+      this.ticking = true;
+      window.requestAnimationFrame(() => {
+        this.ticking = false;
+        this.update();
+      });
+    },
+
+    init() {
+      if (!document.body.classList.contains('page--haras-light')) return;
+      this.titleEl = document.querySelector('.project-hero__title');
+      if (!this.titleEl) return;
+
+      this.update();
+      window.addEventListener('scroll', () => this.requestUpdate(), { passive: true });
+      window.addEventListener('resize', () => this.requestUpdate());
+    },
+  },
+
 
   /* ============================================================
      IMAGE EXPAND (scroll-linked)
@@ -1935,6 +1853,32 @@ const Timbo = {
       };
 
       window.addEventListener('scroll', update, { passive: true });
+      update();
+    },
+  },
+
+  introPhotosParallax: {
+    init() {
+      const photosEl = document.querySelector('.intro__photos');
+      const narrowPhotoEl = photosEl?.querySelector('.intro__photo--narrow');
+      if (!photosEl || !narrowPhotoEl) return;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        narrowPhotoEl.style.setProperty('--intro-narrow-progress', '1');
+        return;
+      }
+
+      const update = () => {
+        const rect = photosEl.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const start = viewportHeight * 0.96;
+        const end = viewportHeight * 0.5;
+        const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+        narrowPhotoEl.style.setProperty('--intro-narrow-progress', progress.toFixed(3));
+      };
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
       update();
     },
   },
@@ -2822,6 +2766,67 @@ const Timbo = {
 
 
   /* ============================================================
+     SUST-CLIMATE COMPASS
+     Brújula scroll-driven basada en scrollY:
+       - La brújula baja a un rate configurable (RATE) respecto al scroll.
+         Arranca a bajar cuando el TOP de la sección toca el BOTTOM del viewport
+         (elapsed = 0) y se detiene cuando la sección se termina.
+       - La aguja gira TOTAL_DEGREES en todo el recorrido.
+     ============================================================ */
+  sustClimateCompass: {
+    RATE: 0.6,              // 1 unidad de scroll → 0.6 unidades de descenso
+    TOTAL_DEGREES: 360,
+    sectionEl: null,
+    stickyEl: null,
+    needleEl: null,
+    ticking: false,
+
+    init() {
+      this.sectionEl = document.getElementById('sust-climate');
+      if (!this.sectionEl) return;
+      this.stickyEl = this.sectionEl.querySelector('.sust-climate__compass-sticky');
+      this.needleEl = this.sectionEl.querySelector('.sust-climate__compass-needle');
+      if (!this.stickyEl || !this.needleEl) return;
+      this.update();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+      window.addEventListener('resize', () => this.update(), { passive: true });
+    },
+
+    onScroll() {
+      if (this.ticking) return;
+      this.ticking = true;
+      requestAnimationFrame(() => {
+        this.update();
+        this.ticking = false;
+      });
+    },
+
+    update() {
+      const rect = this.sectionEl.getBoundingClientRect();
+      const viewport = window.innerHeight;
+
+      // elapsed: px scrolleados desde que la sección empezó a aparecer.
+      // 0 cuando el top de la sección toca el bottom del viewport.
+      const elapsed = Math.max(0, viewport - rect.top);
+
+      // Máximo recorrido: hasta que la sección se acabe.
+      // total = sectionHeight + viewport (cuando bottom sale por top del viewport).
+      const total = rect.height + viewport;
+      const elapsedClamped = Math.min(elapsed, total);
+
+      // Descenso: rate 0.6 respecto al scroll acumulado dentro de la sección.
+      const translateY = elapsedClamped * this.RATE;
+      this.stickyEl.style.transform = `translateY(${translateY}px)`;
+
+      // Rotación aguja: progreso 0→1 sobre total.
+      const progress = total > 0 ? elapsedClamped / total : 0;
+      const deg = progress * this.TOTAL_DEGREES;
+      this.needleEl.style.transform = `rotate(${deg}deg)`;
+    },
+  },
+
+
+  /* ============================================================
      INICIALIZACIÓN
      ============================================================ */
   init() {
@@ -2841,14 +2846,16 @@ const Timbo = {
     this.sustBreatheTextReveal.init();
     this.sustStrategiesOrbit.init();
     this.sustStrategiesDetail.init();
+    this.sustClimateCompass.init();
     this.heroIntro.init();
-    this.heroLogoParallax.init();
-    this.heroTaglineParallax.init();
+    this.heroParallax.init();
     this.sustHeroIntro.init();
     this.heroVideoScrollFade.init();
+    this.harasHeroTitleScroll.init();
     this.heroBgToggle.init();
     this.plano3dControls.init();
     this.imageExpand.init();
+    this.introPhotosParallax.init();
     this.overlayTextReveal.init();
     this.projectMap.init();
     this.introDetailSlider.init();

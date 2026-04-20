@@ -107,6 +107,65 @@
         </div>
 
       </div>
+
+      <!-- Brújula scroll-driven (decorativa, no altera el layout del container) -->
+      <aside class="sust-climate__compass" aria-hidden="true">
+        <div class="sust-climate__compass-sticky">
+          <svg class="sust-climate__compass-svg" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+            <!-- Círculo exterior -->
+            <circle cx="120" cy="120" r="118" fill="none" stroke="currentColor" stroke-width="1" />
+            <!-- Círculo interior sutil -->
+            <circle cx="120" cy="120" r="100" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.35" />
+
+            <!-- Marcas radiales cada 30° (las cardinales son más largas) -->
+            <g stroke="currentColor" stroke-width="1">
+              <!-- 0° / N -->
+              <line x1="120" y1="4"   x2="120" y2="20" />
+              <!-- 30° -->
+              <line x1="178" y1="19.6" x2="170" y2="33.5" opacity="0.55" />
+              <!-- 60° -->
+              <line x1="220.4" y1="62" x2="206.5" y2="70" opacity="0.55" />
+              <!-- 90° / E -->
+              <line x1="236" y1="120" x2="220" y2="120" />
+              <!-- 120° -->
+              <line x1="220.4" y1="178" x2="206.5" y2="170" opacity="0.55" />
+              <!-- 150° -->
+              <line x1="178" y1="220.4" x2="170" y2="206.5" opacity="0.55" />
+              <!-- 180° / S -->
+              <line x1="120" y1="236" x2="120" y2="220" />
+              <!-- 210° -->
+              <line x1="62" y1="220.4" x2="70" y2="206.5" opacity="0.55" />
+              <!-- 240° -->
+              <line x1="19.6" y1="178" x2="33.5" y2="170" opacity="0.55" />
+              <!-- 270° / O -->
+              <line x1="4" y1="120" x2="20" y2="120" />
+              <!-- 300° -->
+              <line x1="19.6" y1="62" x2="33.5" y2="70" opacity="0.55" />
+              <!-- 330° -->
+              <line x1="62" y1="19.6" x2="70" y2="33.5" opacity="0.55" />
+            </g>
+
+            <!-- Letras cardinales -->
+            <g fill="currentColor" font-family="'Neue Haas Grotesk Display Pro', sans-serif" font-size="12" font-weight="500" text-anchor="middle" dominant-baseline="middle" letter-spacing="0.04em">
+              <text x="120" y="34">N</text>
+              <text x="206" y="120">E</text>
+              <text x="120" y="206">S</text>
+              <text x="34"  y="120">O</text>
+            </g>
+
+            <!-- Aguja (grupo rotable por JS) -->
+            <g class="sust-climate__compass-needle">
+              <!-- Brazo norte: triángulo fino apuntando hacia arriba -->
+              <polygon points="120,28 114,120 126,120" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" />
+              <!-- Brazo sur: triángulo más corto apuntando hacia abajo -->
+              <polygon points="120,196 115,120 125,120" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" opacity="0.55" />
+            </g>
+
+            <!-- Pivote central -->
+            <circle cx="120" cy="120" r="3" fill="currentColor" />
+          </svg>
+        </div>
+      </aside>
     </section>
 
     <section class="sust-breathe" id="sust-breathe" data-nav-theme="dark">
