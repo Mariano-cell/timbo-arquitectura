@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
     content="Timbó — Estudio de arquitectura ecológica y bioclimática. Diseño en armonía con el clima y la naturaleza.">
-  <title>Timbó — Arquitectura en armonía con la naturaleza</title>
+  <title>Timbó</title>
+  <link rel="icon" type="image/png" href="assets/images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
   <style>
     html, body { background-color: #000; }
   </style>
@@ -43,13 +44,13 @@
     <section class="hero" id="hero" data-nav-theme="dark">
       <div class="hero__bg">
         <video muted loop playsinline preload="auto">
-          <source src="assets/images/hero/hero-video_002.mp4" type="video/mp4">
+          <source src="assets/images/hero/hero-video_001.mp4" type="video/mp4">
         </video>
         <div class="hero__bg-photo" id="heroBgPhoto" aria-hidden="true"></div>
       </div>
       <div class="hero__content">
-        <h1 class="hero__tagline" data-i18n="home.heroTagline">
-          Arquitectura en armonía con el clima y la naturaleza.
+        <h1 class="hero__tagline" data-i18n="home.heroTagline" data-i18n-html="true">
+          <strong>Arquitectura</strong> en armonía<br>con el <strong>clima</strong> y la <strong>naturaleza</strong>.
         </h1>
         <img src="assets/images/logo/logo-nuevo-blanco-15.svg" alt="Timbó" class="hero__logo">
       </div>
@@ -76,10 +77,10 @@
           </p>
         </div>
         <div class="intro__photos">
-          <figure class="intro__photo intro__photo--wide">
+          <figure class="intro__photo intro__photo--wide intro__photo--animated anim-fade-in" data-anim-delay="0">
             <img src="assets/images/intro-section/DSC01984.jpg" alt="Timbó — naturaleza" loading="lazy">
           </figure>
-          <figure class="intro__photo intro__photo--narrow">
+          <figure class="intro__photo intro__photo--narrow intro__photo--slide-x" data-anim-delay="1400">
             <img src="assets/images/intro-section/DSC02312.jpg" alt="Timbó — arquitectura" loading="lazy">
           </figure>
         </div>
@@ -90,18 +91,16 @@
             <button class="intro__detail-dot is-active" data-slide="0" aria-label="Foto 1"></button>
             <button class="intro__detail-dot" data-slide="1" aria-label="Foto 2"></button>
           </div>
-          <figure class="intro__detail-photo">
+          <figure class="intro__detail-photo anim-zoom-in">
             <img class="intro__detail-img is-active" src="assets/images/intro-section/DSC01983.jpg" alt="Timbó — arquitectura entre la naturaleza" loading="lazy">
             <img class="intro__detail-img" src="assets/images/intro-section/segunda-opcion.jpg" alt="Timbó — arquitectura y naturaleza" loading="lazy">
           </figure>
         </div>
         <div class="intro__detail-body">
           <img class="intro__detail-icon" src="assets/images/intro-section/casita-y-sol.svg" alt="" aria-hidden="true" loading="lazy">
+          <h3 class="intro__detail-title">SUSTENTABILIDAD</h3>
           <p class="intro__detail-text">
             Mediante el análisis de datos climáticos, los proyectos se adaptan a las condiciones específicas de cada lugar, asegurando una baja demanda energética y una alta calidad ambiental tanto en espacios interiores como exteriores.
-          </p>
-          <p class="intro__detail-text intro__detail-text--strong">
-            Los elementos de la naturaleza configuran el lenguaje arquitectónico y dan forma a espacios que establecen un diálogo duradero entre las personas y el mundo natural.
           </p>
         </div>
       </div>
@@ -109,17 +108,17 @@
 
 
     <!-- ==========================================
-         SECCIÓN 3: PROYECTO DESTACADO
-         Imagen protagonista + texto + botón
+         SECCIÓN 3: DIÁLOGO CON LA NATURALEZA
+         Imagen protagonista + manifiesto
          ========================================== -->
-    <section class="featured-project" id="featured-project" data-nav-theme="dark">
-      <div class="featured-project__image">
-        <img src="assets/images/hero/hero_005.jpg" alt="Proyecto destacado" loading="lazy">
-        <p class="featured-project__overlay-text">Los elementos de la naturaleza configuran el lenguaje<br>arquitectónico y dan forma a espacios que establecen un<br>diálogo duradero entre las personas y el mundo natural.</p>
+    <section class="nature-dialogue" id="nature-dialogue" data-nav-theme="dark">
+      <div class="nature-dialogue__image">
+        <img src="assets/images/hero/hero_005.jpg" alt="Arquitectura en diálogo con la naturaleza" loading="lazy">
+        <p class="nature-dialogue__text">La arquitectura establece un diálogo duradero entre sus ocupantes y el mundo natural.</p>
       </div>
-      <div class="featured-project__info">
+      <div class="nature-dialogue__info">
         <div class="container">
-          <p class="featured-project__description">
+          <p class="nature-dialogue__description">
             <!-- Texto pendiente: se escribirá cuando se elija el proyecto -->
           </p>
         </div>
@@ -137,62 +136,62 @@
           <div class="philosophy__signals-track">
             <div class="philosophy__signals-group">
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/zona-climatica.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_47.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophyClimateZone" data-i18n-html="true">Zona<br>climática</p>
               </article>
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/trayectoria-solar.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_48.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophySunPath" data-i18n-html="true">Trayectoria<br>solar</p>
               </article>
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/temperatura-exterior.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_49.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophyOutdoorTemperature" data-i18n-html="true">Temperatura<br>exterior</p>
               </article>
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/humedad.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_50.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophyHumidity">Humedad</p>
               </article>
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/precipitaciones.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_51.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophyPrecipitation">Precipitaciones</p>
               </article>
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/patrones-de-viento.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_52.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophyWindPatterns" data-i18n-html="true">Patrones<br>de viento</p>
               </article>
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/ocupacion-del-cielo.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_53.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophySkyCoverage" data-i18n-html="true">Ocupación<br>del cielo</p>
               </article>
             </div>
 
             <div class="philosophy__signals-group" aria-hidden="true">
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/zona-climatica.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_47.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophyClimateZone" data-i18n-html="true">Zona<br>climática</p>
               </article>
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/trayectoria-solar.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_48.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophySunPath" data-i18n-html="true">Trayectoria<br>solar</p>
               </article>
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/temperatura-exterior.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_49.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophyOutdoorTemperature" data-i18n-html="true">Temperatura<br>exterior</p>
               </article>
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/humedad.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_50.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophyHumidity">Humedad</p>
               </article>
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/precipitaciones.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_51.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophyPrecipitation">Precipitaciones</p>
               </article>
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/patrones-de-viento.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_52.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophyWindPatterns" data-i18n-html="true">Patrones<br>de viento</p>
               </article>
               <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/ocupacion-del-cielo.svg" alt="" aria-hidden="true" loading="lazy">
+                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_53.svg" alt="" aria-hidden="true" loading="lazy">
                 <p class="philosophy__signal-label" data-i18n="home.philosophySkyCoverage" data-i18n-html="true">Ocupación<br>del cielo</p>
               </article>
             </div>
@@ -203,7 +202,7 @@
           <h2 class="philosophy__statement" data-i18n="home.sustainabilityStatement" data-i18n-html="true">
             Diseño resiliente y adaptado a las<br>condiciones ambientales
           </h2>
-          <a href="sustentabilidad.html" class="philosophy__cta" data-i18n="home.philosophyCta">Ver más</a>
+          <a href="sustentabilidad.html" class="philosophy__cta" data-i18n="home.philosophyCta">VER MÁS</a>
         </div>
       </div>
     </section>

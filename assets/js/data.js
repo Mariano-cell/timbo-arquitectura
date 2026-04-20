@@ -36,10 +36,10 @@ const SITE_DATA = {
   /* ----- Home ----- */
   home: {
     es: {
-      heroTagline:      'Arquitectura en armonía con el clima y la naturaleza.',
+      heroTagline:      '<strong>Arquitectura</strong> en armonía<br>con el <strong>clima</strong> y la <strong>naturaleza</strong>.',
       claim:            'Entre lo salvaje y<br>las personas.',
       sustainabilityStatement: 'Diseño resiliente y adaptado a las<br>condiciones ambientales',
-      philosophyCta:    'Ver más',
+      philosophyCta:    'VER MÁS',
       philosophyClimateZone: 'Zona<br>climática',
       philosophySunPath: 'Trayectoria<br>solar',
       philosophyOutdoorTemperature: 'Temperatura<br>exterior',
@@ -49,10 +49,10 @@ const SITE_DATA = {
       philosophySkyCoverage: 'Ocupación<br>del cielo',
     },
     en: {
-      heroTagline:      'Architecture in harmony with nature and climate.',
+      heroTagline:      '<strong>Architecture</strong> in harmony<br>with <strong>climate</strong> and <strong>nature</strong>.',
       claim:            'Between the wild and<br>the people.',
       sustainabilityStatement: 'Resilient design in response to<br>environmental conditions',
-      philosophyCta:    'See more',
+      philosophyCta:    'SEE MORE',
       philosophyClimateZone: 'Climate<br>zone',
       philosophySunPath: 'Solar<br>path',
       philosophyOutdoorTemperature: 'Outdoor<br>temperature',
@@ -96,7 +96,7 @@ const SITE_DATA = {
   /* ----- Proyectos ----- */
   projects: {
     es: {
-      title:            'Proyectos Seleccionados',
+      title:            'Nuestros proyectos',
       viewProject:      'Ver proyecto',
       items: [
         { slug: 'exuma-lodge',     page: 'proyectos/proyecto-exuma-lodge.html',     name: 'Exuma Lodge',     category: 'Hospitality Lodge',        location: 'Bahamas',        image: 'assets/images/projects/project-covers/exuma-lodge-bahamas.jpg' },
@@ -106,7 +106,7 @@ const SITE_DATA = {
       ],
     },
     en: {
-      title:            'Selected Projects',
+      title:            'Our Projects',
       viewProject:      'View project',
       items: [
         { slug: 'exuma-lodge',     page: 'proyectos/proyecto-exuma-lodge.html',     name: 'Exuma Lodge',     category: 'Hospitality Lodge',       location: 'Bahamas',       image: 'assets/images/projects/project-covers/exuma-lodge-bahamas.jpg' },

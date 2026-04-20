@@ -145,6 +145,60 @@ const Timbo = {
 
 
   /* ============================================================
+     NAV HIDE ON SCROLL (directional)
+     - Al scrollear hacia abajo pasado HIDE_AFTER_PX, esconde el nav.
+     - Al scrollear hacia arriba más de UP_THRESHOLD_PX, lo muestra.
+     - En el tope absoluto (scrollY === 0) siempre visible.
+     ============================================================ */
+  navHide: {
+    HIDE_AFTER_PX: 600,    // desde qué scroll puede empezar a esconderse
+    UP_THRESHOLD_PX: 8,    // cuánto hay que subir para re-mostrarlo
+
+    init() {
+      const nav = document.querySelector('.main-nav');
+      if (!nav) return;
+
+      let lastY = window.scrollY;
+      let accumulatedUp = 0;
+      let ticking = false;
+
+      const update = () => {
+        const currentY = window.scrollY;
+        const delta = currentY - lastY;
+
+        // En el tope: siempre visible y se resetea el acumulador.
+        if (currentY <= 0) {
+          nav.classList.remove('main-nav--hidden');
+          accumulatedUp = 0;
+        } else if (delta > 0) {
+          // Scroll hacia abajo: esconder una vez pasado el umbral mínimo.
+          accumulatedUp = 0;
+          if (currentY > this.HIDE_AFTER_PX) {
+            nav.classList.add('main-nav--hidden');
+          }
+        } else if (delta < 0) {
+          // Scroll hacia arriba: acumular distancia; al superar el umbral, mostrar.
+          accumulatedUp += -delta;
+          if (accumulatedUp > this.UP_THRESHOLD_PX) {
+            nav.classList.remove('main-nav--hidden');
+          }
+        }
+
+        lastY = currentY;
+        ticking = false;
+      };
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(update);
+          ticking = true;
+        }
+      }, { passive: true });
+    },
+  },
+
+
+  /* ============================================================
      NAV THEME — Intersection Observer
      Usa la sección activa bajo el nav mediante `data-nav-theme`.
      ============================================================ */
@@ -739,11 +793,13 @@ const Timbo = {
     HERO_RELEASE_OFFSET_PX: 140, // Mayor valor = el logo sale antes desde debajo del hero
     logoEl: null,
     heroSectionEl: null,
-    featuredImageEl: null,
+    dialogueImageEl: null,
+    introDetailImageEl: null,
     valuesBreakdownEl: null,
     philosophyEl: null,
-    sustBlendEls: [],
-    sustHeroEl: null,
+    philosophySignalsEl: null,
+    sustBreatheEl: null,
+    sustMetricsEl: null,
 
     render() {
       const existingLogo = document.querySelector('.floating-logo');
@@ -788,31 +844,31 @@ const Timbo = {
       this.logoEl.classList.toggle('floating-logo--under-hero', heroStillAboveLogoLine);
     },
 
-    updateFeaturedImageBlend() {
+    updateDialogueImageBlend() {
       if (!this.logoEl) return;
-      if (!this.featuredImageEl) {
-        this.logoEl.classList.remove('floating-logo--on-featured-blend');
-        this.logoEl.style.setProperty('--featured-overlap-top', '100%');
-        this.logoEl.style.setProperty('--featured-overlap-bottom', '0px');
-        this.logoEl.style.setProperty('--featured-overlap-left', '0px');
-        this.logoEl.style.setProperty('--featured-overlap-right', '0px');
+      if (!this.dialogueImageEl) {
+        this.logoEl.classList.remove('floating-logo--on-dialogue-blend');
+        this.logoEl.style.setProperty('--dialogue-overlap-top', '100%');
+        this.logoEl.style.setProperty('--dialogue-overlap-bottom', '0px');
+        this.logoEl.style.setProperty('--dialogue-overlap-left', '0px');
+        this.logoEl.style.setProperty('--dialogue-overlap-right', '0px');
         return;
       }
 
       const logoRect = this.logoEl.getBoundingClientRect();
-      const featuredRect = this.featuredImageEl.getBoundingClientRect();
-      const overlapTop = Math.max(logoRect.top, featuredRect.top);
-      const overlapBottom = Math.min(logoRect.bottom, featuredRect.bottom);
-      const overlapLeft = Math.max(logoRect.left, featuredRect.left);
-      const overlapRight = Math.min(logoRect.right, featuredRect.right);
+      const dialogueRect = this.dialogueImageEl.getBoundingClientRect();
+      const overlapTop = Math.max(logoRect.top, dialogueRect.top);
+      const overlapBottom = Math.min(logoRect.bottom, dialogueRect.bottom);
+      const overlapLeft = Math.max(logoRect.left, dialogueRect.left);
+      const overlapRight = Math.min(logoRect.right, dialogueRect.right);
       const hasOverlap = overlapBottom > overlapTop && overlapRight > overlapLeft;
 
       if (!hasOverlap) {
-        this.logoEl.classList.remove('floating-logo--on-featured-blend');
-        this.logoEl.style.setProperty('--featured-overlap-top', `${logoRect.height}px`);
-        this.logoEl.style.setProperty('--featured-overlap-bottom', '0px');
-        this.logoEl.style.setProperty('--featured-overlap-left', '0px');
-        this.logoEl.style.setProperty('--featured-overlap-right', `${logoRect.width}px`);
+        this.logoEl.classList.remove('floating-logo--on-dialogue-blend');
+        this.logoEl.style.setProperty('--dialogue-overlap-top', `${logoRect.height}px`);
+        this.logoEl.style.setProperty('--dialogue-overlap-bottom', '0px');
+        this.logoEl.style.setProperty('--dialogue-overlap-left', '0px');
+        this.logoEl.style.setProperty('--dialogue-overlap-right', `${logoRect.width}px`);
         return;
       }
 
@@ -821,11 +877,51 @@ const Timbo = {
       const leftInset = Math.max(0, overlapLeft - logoRect.left);
       const rightInset = Math.max(0, logoRect.right - overlapRight);
 
-      this.logoEl.style.setProperty('--featured-overlap-top', `${topInset}px`);
-      this.logoEl.style.setProperty('--featured-overlap-bottom', `${bottomInset}px`);
-      this.logoEl.style.setProperty('--featured-overlap-left', `${leftInset}px`);
-      this.logoEl.style.setProperty('--featured-overlap-right', `${rightInset}px`);
-      this.logoEl.classList.add('floating-logo--on-featured-blend');
+      this.logoEl.style.setProperty('--dialogue-overlap-top', `${topInset}px`);
+      this.logoEl.style.setProperty('--dialogue-overlap-bottom', `${bottomInset}px`);
+      this.logoEl.style.setProperty('--dialogue-overlap-left', `${leftInset}px`);
+      this.logoEl.style.setProperty('--dialogue-overlap-right', `${rightInset}px`);
+      this.logoEl.classList.add('floating-logo--on-dialogue-blend');
+    },
+
+    updateIntroDetailImageBlend() {
+      if (!this.logoEl) return;
+      if (!this.introDetailImageEl) {
+        this.logoEl.classList.remove('floating-logo--on-intro-detail');
+        this.logoEl.style.setProperty('--intro-detail-overlap-top', '100%');
+        this.logoEl.style.setProperty('--intro-detail-overlap-bottom', '0px');
+        this.logoEl.style.setProperty('--intro-detail-overlap-left', '0px');
+        this.logoEl.style.setProperty('--intro-detail-overlap-right', '0px');
+        return;
+      }
+
+      const logoRect = this.logoEl.getBoundingClientRect();
+      const imgRect = this.introDetailImageEl.getBoundingClientRect();
+      const overlapTop = Math.max(logoRect.top, imgRect.top);
+      const overlapBottom = Math.min(logoRect.bottom, imgRect.bottom);
+      const overlapLeft = Math.max(logoRect.left, imgRect.left);
+      const overlapRight = Math.min(logoRect.right, imgRect.right);
+      const hasOverlap = overlapBottom > overlapTop && overlapRight > overlapLeft;
+
+      if (!hasOverlap) {
+        this.logoEl.classList.remove('floating-logo--on-intro-detail');
+        this.logoEl.style.setProperty('--intro-detail-overlap-top', `${logoRect.height}px`);
+        this.logoEl.style.setProperty('--intro-detail-overlap-bottom', '0px');
+        this.logoEl.style.setProperty('--intro-detail-overlap-left', '0px');
+        this.logoEl.style.setProperty('--intro-detail-overlap-right', `${logoRect.width}px`);
+        return;
+      }
+
+      const topInset = Math.max(0, overlapTop - logoRect.top);
+      const bottomInset = Math.max(0, logoRect.bottom - overlapBottom);
+      const leftInset = Math.max(0, overlapLeft - logoRect.left);
+      const rightInset = Math.max(0, logoRect.right - overlapRight);
+
+      this.logoEl.style.setProperty('--intro-detail-overlap-top', `${topInset}px`);
+      this.logoEl.style.setProperty('--intro-detail-overlap-bottom', `${bottomInset}px`);
+      this.logoEl.style.setProperty('--intro-detail-overlap-left', `${leftInset}px`);
+      this.logoEl.style.setProperty('--intro-detail-overlap-right', `${rightInset}px`);
+      this.logoEl.classList.add('floating-logo--on-intro-detail');
     },
 
     updateValuesBreakdownBlend() {
@@ -888,9 +984,27 @@ const Timbo = {
       this.logoEl.classList.add('floating-logo--on-philosophy');
     },
 
+    updatePhilosophySignalsBlend() {
+      if (!this.logoEl) return;
+      if (!this.philosophySignalsEl) {
+        this.logoEl.classList.remove('floating-logo--behind-signals');
+        return;
+      }
+
+      const logoRect = this.logoEl.getBoundingClientRect();
+      const signalsRect = this.philosophySignalsEl.getBoundingClientRect();
+      const overlapTop = Math.max(logoRect.top, signalsRect.top);
+      const overlapBottom = Math.min(logoRect.bottom, signalsRect.bottom);
+      const overlapLeft = Math.max(logoRect.left, signalsRect.left);
+      const overlapRight = Math.min(logoRect.right, signalsRect.right);
+      const hasOverlap = overlapBottom > overlapTop && overlapRight > overlapLeft;
+
+      this.logoEl.classList.toggle('floating-logo--behind-signals', hasOverlap);
+    },
+
     updateSustOverviewBlend() {
       if (!this.logoEl) return;
-      if (!Array.isArray(this.sustBlendEls) || this.sustBlendEls.length === 0) {
+      if (!this.sustBreatheEl || !this.sustMetricsEl) {
         this.logoEl.classList.remove('floating-logo--on-sust-overview');
         this.logoEl.style.setProperty('--sust-overview-overlap-top', '100%');
         this.logoEl.style.setProperty('--sust-overview-overlap-bottom', '0px');
@@ -898,23 +1012,12 @@ const Timbo = {
       }
 
       const logoRect = this.logoEl.getBoundingClientRect();
-      const activeSection = this.sustBlendEls.find((sectionEl) => {
-        const sectionRect = sectionEl.getBoundingClientRect();
-        const overlapTop = Math.max(logoRect.top, sectionRect.top);
-        const overlapBottom = Math.min(logoRect.bottom, sectionRect.bottom);
-        return overlapBottom > overlapTop;
-      });
-
-      if (!activeSection) {
-        this.logoEl.classList.remove('floating-logo--on-sust-overview');
-        this.logoEl.style.setProperty('--sust-overview-overlap-top', `${logoRect.height}px`);
-        this.logoEl.style.setProperty('--sust-overview-overlap-bottom', '0px');
-        return;
-      }
-
-      const sectionRect = activeSection.getBoundingClientRect();
-      const overlapTop = Math.max(logoRect.top, sectionRect.top);
-      const overlapBottom = Math.min(logoRect.bottom, sectionRect.bottom);
+      const breatheRect = this.sustBreatheEl.getBoundingClientRect();
+      const metricsRect = this.sustMetricsEl.getBoundingClientRect();
+      const whiteZoneTop = breatheRect.top + (breatheRect.height / 2);
+      const whiteZoneBottom = metricsRect.bottom;
+      const overlapTop = Math.max(logoRect.top, whiteZoneTop);
+      const overlapBottom = Math.min(logoRect.bottom, whiteZoneBottom);
       const hasOverlap = overlapBottom > overlapTop;
 
       if (!hasOverlap) {
@@ -932,115 +1035,27 @@ const Timbo = {
       this.logoEl.classList.add('floating-logo--on-sust-overview');
     },
 
-    parseInsetClipPathPercentages(clipPathValue) {
-      if (typeof clipPathValue !== 'string' || clipPathValue.trim() === '') return null;
-
-      const insetMatch = clipPathValue.match(/inset\((.+)\)/i);
-      if (!insetMatch) return null;
-
-      const insetBody = insetMatch[1].split(/\s+round\s+/i)[0].trim();
-      if (!insetBody) return null;
-
-      const tokens = insetBody.split(/\s+/).filter(Boolean);
-      if (tokens.length === 0 || tokens.length > 4) return null;
-
-      const values = tokens.map((token) => {
-        const percentMatch = token.match(/^([+-]?\d*\.?\d+)%$/);
-        if (!percentMatch) return null;
-
-        const parsed = Number(percentMatch[1]);
-        if (!Number.isFinite(parsed)) return null;
-        return Math.min(Math.max(parsed, 0), 100);
-      });
-
-      if (values.some((value) => value == null)) return null;
-
-      if (values.length === 1) {
-        return { top: values[0], right: values[0], bottom: values[0], left: values[0] };
-      }
-
-      if (values.length === 2) {
-        return { top: values[0], right: values[1], bottom: values[0], left: values[1] };
-      }
-
-      if (values.length === 3) {
-        return { top: values[0], right: values[1], bottom: values[2], left: values[1] };
-      }
-
-      return { top: values[0], right: values[1], bottom: values[2], left: values[3] };
-    },
-
-    updateSustHeroBlend() {
-      if (!this.logoEl) return;
-      if (!this.sustHeroEl) {
-        this.logoEl.classList.remove('floating-logo--on-sust-hero');
-        this.logoEl.style.setProperty('--sust-overlap-top', '100%');
-        this.logoEl.style.setProperty('--sust-overlap-right', '0px');
-        this.logoEl.style.setProperty('--sust-overlap-bottom', '0px');
-        this.logoEl.style.setProperty('--sust-overlap-left', '0px');
-        return;
-      }
-
-      const logoRect = this.logoEl.getBoundingClientRect();
-      const heroRect = this.sustHeroEl.getBoundingClientRect();
-      const inlineClipPath = this.sustHeroEl.style.clipPath || '';
-      const computedClipPath = window.getComputedStyle(this.sustHeroEl).clipPath || '';
-      const insetValues =
-        this.parseInsetClipPathPercentages(inlineClipPath)
-        || this.parseInsetClipPathPercentages(computedClipPath)
-        || { top: 0, right: 0, bottom: 0, left: 0 };
-
-      const visibleTop = heroRect.top + (heroRect.height * insetValues.top) / 100;
-      const visibleBottom = heroRect.bottom - (heroRect.height * insetValues.bottom) / 100;
-      const visibleLeft = heroRect.left + (heroRect.width * insetValues.left) / 100;
-      const visibleRight = heroRect.right - (heroRect.width * insetValues.right) / 100;
-
-      const overlapTop = Math.max(logoRect.top, visibleTop);
-      const overlapBottom = Math.min(logoRect.bottom, visibleBottom);
-      const overlapLeft = Math.max(logoRect.left, visibleLeft);
-      const overlapRight = Math.min(logoRect.right, visibleRight);
-      const hasOverlap = overlapBottom > overlapTop && overlapRight > overlapLeft;
-
-      if (!hasOverlap) {
-        this.logoEl.classList.remove('floating-logo--on-sust-hero');
-        this.logoEl.style.setProperty('--sust-overlap-top', `${logoRect.height}px`);
-        this.logoEl.style.setProperty('--sust-overlap-right', '0px');
-        this.logoEl.style.setProperty('--sust-overlap-bottom', '0px');
-        this.logoEl.style.setProperty('--sust-overlap-left', '0px');
-        return;
-      }
-
-      const topInset = Math.max(0, overlapTop - logoRect.top);
-      const bottomInset = Math.max(0, logoRect.bottom - overlapBottom);
-      const leftInset = Math.max(0, overlapLeft - logoRect.left);
-      const rightInset = Math.max(0, logoRect.right - overlapRight);
-      const seamCompensationPx = 0.8;
-
-      this.logoEl.style.setProperty('--sust-overlap-top', `${Math.max(0, topInset - seamCompensationPx)}px`);
-      this.logoEl.style.setProperty('--sust-overlap-right', `${Math.max(0, rightInset - seamCompensationPx)}px`);
-      this.logoEl.style.setProperty('--sust-overlap-bottom', `${Math.max(0, bottomInset - seamCompensationPx)}px`);
-      this.logoEl.style.setProperty('--sust-overlap-left', `${Math.max(0, leftInset - seamCompensationPx)}px`);
-      this.logoEl.classList.add('floating-logo--on-sust-hero');
-    },
-
     init() {
       const logo = this.render();
       if (!logo) return;
       this.heroSectionEl = document.getElementById('hero') || document.querySelector('.sust-hero');
-      this.featuredImageEl = document.querySelector('.featured-project__image');
+      this.dialogueImageEl = document.querySelector('.nature-dialogue__image');
+      this.introDetailImageEl = document.querySelector('.intro__detail-photo');
       this.valuesBreakdownEl = document.getElementById('values-breakdown');
       this.philosophyEl = document.getElementById('philosophy');
-      this.sustBlendEls = Array.from(document.querySelectorAll('.sust-overview, .sust-process, .sust-climate, .sust-breathe, .sust-metrics'));
-      this.sustHeroEl = document.getElementById('sustHeroImage');
+      this.philosophySignalsEl = document.querySelector('.philosophy__signals');
+      this.sustBreatheEl = document.getElementById('sust-breathe');
+      this.sustMetricsEl = document.getElementById('sust-metrics');
 
       logo.classList.add('floating-logo--visible');
       const updateLogoState = () => {
         this.updateHeroLayer();
-        this.updateFeaturedImageBlend();
+        this.updateDialogueImageBlend();
+        this.updateIntroDetailImageBlend();
         this.updateValuesBreakdownBlend();
         this.updatePhilosophyBlend();
+        this.updatePhilosophySignalsBlend();
         this.updateSustOverviewBlend();
-        this.updateSustHeroBlend();
       };
 
       updateLogoState();
@@ -1055,7 +1070,7 @@ const Timbo = {
      ============================================================ */
   scrollReveal: {
     init() {
-      const animatedElements = document.querySelectorAll('.anim-fade-up, .anim-wind-in, .anim-fade-in');
+      const animatedElements = document.querySelectorAll('.anim-fade-up, .anim-wind-in, .anim-fade-in, .anim-zoom-in, .intro__photo--slide-x');
       if (animatedElements.length === 0) return;
 
       animatedElements.forEach((el) => {
@@ -1105,6 +1120,447 @@ const Timbo = {
     },
   },
 
+  sustBreatheTextReveal: {
+    sectionEl: null,
+    titleEl: null,
+    textEl: null,
+    ticking: false,
+    FINAL_OFFSET_Y: -20,
+    TITLE_START_Y: -200,
+    TEXT_START_Y: 44,
+    TEXT_MASK_FADE_PCT: 9,
+    TEXT_START_EARLY_PX: 140,
+
+    clamp(value, min = 0, max = 1) {
+      return Math.min(Math.max(value, min), max);
+    },
+
+    applyTitle(progress) {
+      if (!this.titleEl) return;
+      const clampedProgress = this.clamp(progress);
+      const translateY = this.TITLE_START_Y + ((this.FINAL_OFFSET_Y - this.TITLE_START_Y) * clampedProgress);
+      this.titleEl.style.opacity = clampedProgress.toFixed(3);
+      this.titleEl.style.transform = `translateY(${translateY.toFixed(1)}px)`;
+    },
+
+    applyText(progress) {
+      if (!this.textEl) return;
+      const clampedProgress = this.clamp(progress);
+      const translateY = this.TEXT_START_Y + ((this.FINAL_OFFSET_Y - this.TEXT_START_Y) * clampedProgress);
+      const revealEdge = (1 - clampedProgress) * 100;
+      const fadeStart = Math.max(0, revealEdge - this.TEXT_MASK_FADE_PCT);
+      const maskImage = clampedProgress <= 0
+        ? 'linear-gradient(to bottom, transparent 0%, transparent 100%)'
+        : `linear-gradient(to bottom, transparent 0%, transparent ${fadeStart.toFixed(3)}%, rgba(0, 0, 0, 1) ${revealEdge.toFixed(3)}%, rgba(0, 0, 0, 1) 100%)`;
+      this.textEl.style.opacity = clampedProgress.toFixed(3);
+      this.textEl.style.transform = `translateY(${translateY.toFixed(1)}px)`;
+      this.textEl.style.maskImage = maskImage;
+      this.textEl.style.webkitMaskImage = maskImage;
+    },
+
+    update() {
+      if (!this.sectionEl || !this.titleEl || !this.textEl) return;
+
+      const viewportHeight = window.innerHeight;
+      const titleRect = this.titleEl.getBoundingClientRect();
+      const titleStart = viewportHeight * 0.92;
+      const titleEnd = viewportHeight * 0.58;
+      const titleProgress = this.clamp((titleStart - titleRect.top) / (titleStart - titleEnd));
+
+      const textStart = titleEnd + this.TEXT_START_EARLY_PX;
+      const textEnd = viewportHeight * 0.42;
+      const textProgress = this.clamp((textStart - titleRect.top) / (textStart - textEnd));
+
+      this.applyTitle(titleProgress);
+      this.applyText(textProgress);
+    },
+
+    requestUpdate() {
+      if (this.ticking) return;
+      this.ticking = true;
+      window.requestAnimationFrame(() => {
+        this.ticking = false;
+        this.update();
+      });
+    },
+
+    init() {
+      this.sectionEl = document.getElementById('sust-breathe');
+      this.titleEl = this.sectionEl?.querySelector('.sust-breathe__title');
+      this.textEl = this.sectionEl?.querySelector('.sust-breathe__text');
+      if (!this.sectionEl || !this.titleEl || !this.textEl) return;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.applyTitle(1);
+        this.applyText(1);
+        return;
+      }
+
+      this.update();
+      window.addEventListener('scroll', () => this.requestUpdate(), { passive: true });
+      window.addEventListener('resize', () => this.requestUpdate());
+    },
+  },
+
+  sustStrategiesOrbit: {
+    api: null,
+
+    init() {
+      const module = this;
+      module.api = {
+        focusKey() {},
+        setDetailOpen() {},
+        clearReferenceSelection() {},
+        setReferenceChangeCallback() {},
+      };
+
+      const svg = document.querySelector('.sust-strategies__diagram-svg');
+      const orbitPoints = svg?.querySelector('.sust-strategies__orbit-points');
+      const orbitLabels = svg?.querySelector('.sust-strategies__orbit-labels');
+      const labelOrbitGuide = svg?.querySelector('.sust-strategies__label-orbit-guide');
+      const labelOrbitItems = orbitLabels
+        ? Array.from(orbitLabels.querySelectorAll('.sust-strategies__orbit-label-item[data-strategy]'))
+        : [];
+
+      if (!svg || !orbitPoints || !orbitLabels || !labelOrbitItems.length) return;
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const wheelEase = 0.14;
+      const autoFocusEase = 0.045;
+      const centerX = Number(labelOrbitGuide?.getAttribute('cx')) || 400;
+      const centerY = Number(labelOrbitGuide?.getAttribute('cy')) || 400;
+      const labelRadiusX = Number(labelOrbitGuide?.getAttribute('rx')) || 310;
+      const labelRadiusY = Number(labelOrbitGuide?.getAttribute('ry')) || 298;
+      const state = {
+        currentAngle: 0,
+        targetAngle: 0,
+        frameId: 0,
+        detailOpen: false,
+        trackReferenceSelection: false,
+        lastReferenceKey: '',
+        onReferenceChange: null,
+        motionEase: wheelEase,
+      };
+
+      const normalizeAngleRad = (angle) => Math.atan2(Math.sin(angle), Math.cos(angle));
+      const normalizeAngleDeg = (angle) => {
+        const wrapped = ((angle + 180) % 360 + 360) % 360;
+        return wrapped - 180;
+      };
+
+      const labelOrbits = labelOrbitItems
+        .map((item) => {
+          const transform = item.getAttribute('transform') || '';
+          const match = transform.match(/translate\(\s*(-?[\d.]+)[ ,]\s*(-?[\d.]+)\s*\)/);
+          if (!match) return null;
+
+          const x = Number(match[1]);
+          const y = Number(match[2]);
+          const key = item.dataset.strategy || '';
+          if (!Number.isFinite(x) || !Number.isFinite(y) || !key) return null;
+
+          return {
+            item,
+            key,
+            baseAngle: Math.atan2(y - centerY, x - centerX),
+          };
+        })
+        .filter(Boolean);
+
+      if (!labelOrbits.length) return;
+
+      const labelOrbitMap = new Map(labelOrbits.map((orbit) => [orbit.key, orbit]));
+
+      const getReferenceOrbit = (angle = state.currentAngle) => {
+        const angleInRadians = (angle * Math.PI) / 180;
+        let nearestOrbit = null;
+
+        labelOrbits.forEach((orbit) => {
+          const orbitAngle = orbit.baseAngle + angleInRadians;
+          const distanceToReference = Math.abs(normalizeAngleRad(orbitAngle));
+
+          if (!nearestOrbit || distanceToReference < nearestOrbit.distanceToReference) {
+            nearestOrbit = {
+              key: orbit.key,
+              distanceToReference,
+            };
+          }
+        });
+
+        return nearestOrbit;
+      };
+
+      const notifyReferenceChange = () => {
+        if (!state.detailOpen || !state.trackReferenceSelection || typeof state.onReferenceChange !== 'function') return;
+
+        const nearestOrbit = getReferenceOrbit();
+        if (!nearestOrbit || nearestOrbit.key === state.lastReferenceKey) return;
+
+        state.lastReferenceKey = nearestOrbit.key;
+        state.onReferenceChange(nearestOrbit.key);
+      };
+
+      const applyTransforms = (angle) => {
+        const rotation = `rotate(${angle.toFixed(3)} ${centerX} ${centerY})`;
+        orbitPoints.setAttribute('transform', rotation);
+
+        const angleInRadians = (angle * Math.PI) / 180;
+        labelOrbits.forEach(({ item, baseAngle }) => {
+          const orbitAngle = baseAngle + angleInRadians;
+          const x = centerX + labelRadiusX * Math.cos(orbitAngle);
+          const y = centerY + labelRadiusY * Math.sin(orbitAngle);
+          item.setAttribute('transform', `translate(${x.toFixed(3)} ${y.toFixed(3)})`);
+        });
+      };
+
+      const finishFrame = () => {
+        applyTransforms(state.currentAngle);
+        notifyReferenceChange();
+        state.frameId = 0;
+      };
+
+      const render = () => {
+        if (reduceMotion) {
+          state.currentAngle = state.targetAngle;
+          finishFrame();
+          return;
+        }
+
+        state.currentAngle += (state.targetAngle - state.currentAngle) * state.motionEase;
+        applyTransforms(state.currentAngle);
+        notifyReferenceChange();
+
+        if (Math.abs(state.targetAngle - state.currentAngle) < 0.05) {
+          state.currentAngle = state.targetAngle;
+          finishFrame();
+          return;
+        }
+
+        state.frameId = window.requestAnimationFrame(render);
+      };
+
+      const queueRender = () => {
+        if (reduceMotion) {
+          render();
+          return;
+        }
+
+        if (state.frameId) return;
+        state.frameId = window.requestAnimationFrame(render);
+      };
+
+      const normalizeWheelDelta = (event) => {
+        let delta = event.deltaY;
+
+        if (event.deltaMode === 1) delta *= 16;
+        if (event.deltaMode === 2) delta *= window.innerHeight;
+
+        return delta;
+      };
+
+      module.api = {
+        focusKey(key) {
+          const orbit = labelOrbitMap.get(key);
+          if (!orbit) return;
+
+          const baseTargetAngle = -(orbit.baseAngle * 180) / Math.PI;
+          const shortestDelta = normalizeAngleDeg(baseTargetAngle - state.currentAngle);
+
+          state.detailOpen = true;
+          state.trackReferenceSelection = false;
+          state.lastReferenceKey = key;
+          state.motionEase = autoFocusEase;
+          state.targetAngle = state.currentAngle + shortestDelta;
+          queueRender();
+        },
+
+        setDetailOpen(isOpen) {
+          state.detailOpen = isOpen;
+
+          if (!isOpen) {
+            state.trackReferenceSelection = false;
+            state.lastReferenceKey = '';
+          }
+        },
+
+        clearReferenceSelection() {
+          state.trackReferenceSelection = false;
+          state.lastReferenceKey = '';
+        },
+
+        setReferenceChangeCallback(callback) {
+          state.onReferenceChange = callback;
+        },
+      };
+
+      svg.addEventListener('wheel', (event) => {
+        const delta = normalizeWheelDelta(event);
+        if (!Number.isFinite(delta) || Math.abs(delta) < 0.01) return;
+
+        event.preventDefault();
+        state.motionEase = wheelEase;
+        state.targetAngle += delta * 0.06;
+
+        if (state.detailOpen) {
+          state.trackReferenceSelection = true;
+        }
+
+        queueRender();
+      }, { passive: false });
+
+      applyTransforms(0);
+    },
+  },
+
+  sustStrategiesDetail: {
+    init() {
+      const section = document.querySelector('.sust-strategies');
+      const detail = section?.querySelector('.sust-strategies__detail');
+      const closeButton = detail?.querySelector('.sust-strategies__detail-close');
+      const detailIcon = detail?.querySelector('.sust-strategies__detail-icon');
+      const detailTitle = detail?.querySelector('.sust-strategies__detail-title');
+      const detailText = detail?.querySelector('.sust-strategies__detail-text');
+      const labelItems = section
+        ? Array.from(section.querySelectorAll('.sust-strategies__orbit-label-item[data-strategy]'))
+        : [];
+      const orbitApi = Timbo.sustStrategiesOrbit.api;
+
+      if (!section || !detail || !closeButton || !detailIcon || !detailTitle || !detailText || !labelItems.length) return;
+
+      const strategies = {
+        ventilacion: {
+          title: 'VENTILACIÓN NATURAL Y NOCTURNA',
+          description: 'Renueva el aire interior y libera el calor acumulado durante el día para refrescar los ambientes de forma pasiva, especialmente cuando baja la temperatura exterior.',
+          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_47.svg',
+        },
+        orientacion: {
+          title: 'ORIENTACIÓN CORRECTA',
+          description: 'Ubica cada ambiente según el recorrido solar y los vientos dominantes para captar energía útil, proteger las zonas sensibles y mejorar el confort durante todo el año.',
+          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_48.svg',
+        },
+        transmitancia: {
+          title: 'TRANSMITANCIA TÉRMICA DE LA ENVOLVENTE',
+          description: 'Controla cuánto calor entra o sale a través de muros, techos y aberturas, ajustando la envolvente para reducir pérdidas energéticas y estabilizar la temperatura interior.',
+          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_49.svg',
+        },
+        masa: {
+          title: 'MASA TÉRMICA',
+          description: 'Aprovecha materiales con inercia térmica para guardar calor o fresco y liberarlo de forma gradual, ayudando a suavizar los cambios bruscos entre día y noche.',
+          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_50.svg',
+        },
+        proporcion: {
+          title: 'PROPORCIÓN VIDRIADA',
+          description: 'Equilibra luz natural, vistas y desempeño térmico definiendo cuánto vidrio conviene usar en cada orientación, evitando excesos que comprometan el confort interior.',
+          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_51.svg',
+        },
+        albedo: {
+          title: 'ALBEDO',
+          description: 'Usa superficies más reflectantes para bajar la absorción térmica de cubiertas y envolventes, evitando sobrecalentamiento y mejorando el comportamiento del conjunto.',
+          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_52.svg',
+        },
+        proteccion: {
+          title: 'PROTECCIÓN SOLAR',
+          description: 'Filtra el sol directo con aleros, parasoles o vegetación para mejorar el confort, reducir el deslumbramiento y disminuir la necesidad de enfriamiento artificial.',
+          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_53.svg',
+        },
+        cubiertas: {
+          title: 'CUBIERTAS VERDES',
+          description: 'Suman aislación, retención de agua y una relación más amable entre edificio y paisaje, aportando además inercia térmica y una presencia más integrada al entorno.',
+          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_47.svg',
+        },
+      };
+
+      let activeKey = '';
+
+      const setActive = (key = '') => {
+        const strategy = key ? strategies[key] : null;
+        activeKey = strategy ? key : '';
+
+        section.classList.toggle('is-detail-open', Boolean(strategy));
+        detail.setAttribute('aria-hidden', strategy ? 'false' : 'true');
+        orbitApi?.setDetailOpen(Boolean(strategy));
+
+        if (strategy) {
+          detailIcon.src = strategy.icon;
+          detailIcon.alt = `Icono de ${strategy.title}`;
+          detailIcon.hidden = false;
+        } else {
+          detailIcon.removeAttribute('src');
+          detailIcon.alt = '';
+          detailIcon.hidden = true;
+        }
+
+        detailTitle.textContent = strategy ? strategy.title : '';
+        detailText.textContent = strategy ? strategy.description : '';
+
+        labelItems.forEach((item) => {
+          const isActive = item.dataset.strategy === activeKey;
+          item.classList.toggle('is-active', isActive);
+          item.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+        });
+      };
+
+      const openStrategy = (key) => {
+        if (!strategies[key]) return;
+
+        setActive(key);
+        orbitApi?.focusKey(key);
+      };
+
+      labelItems.forEach((item) => {
+        const key = item.dataset.strategy;
+        const strategy = strategies[key];
+        if (!strategy) return;
+
+        item.setAttribute('role', 'button');
+        item.setAttribute('tabindex', '0');
+        item.setAttribute('aria-controls', 'sust-strategies-detail');
+        item.setAttribute('aria-expanded', 'false');
+        item.setAttribute('aria-label', strategy.title);
+
+        item.addEventListener('click', () => {
+          if (activeKey === key) {
+            setActive('');
+            orbitApi?.clearReferenceSelection();
+            return;
+          }
+
+          openStrategy(key);
+        });
+
+        item.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+
+            if (activeKey === key) {
+              setActive('');
+              orbitApi?.clearReferenceSelection();
+              return;
+            }
+
+            openStrategy(key);
+          }
+
+          if (event.key === 'Escape' && activeKey) {
+            event.preventDefault();
+            setActive('');
+            orbitApi?.clearReferenceSelection();
+          }
+        });
+      });
+
+      orbitApi?.setReferenceChangeCallback((key) => {
+        if (!key || !strategies[key]) return;
+        setActive(key);
+      });
+
+      closeButton.addEventListener('click', () => {
+        setActive('');
+        orbitApi?.clearReferenceSelection();
+      });
+    },
+  },
+
   /* ============================================================
      HERO INTRO (animación al cargar)
      ============================================================ */
@@ -1125,6 +1581,280 @@ const Timbo = {
       if (heroBg) heroBg.classList.add('hero__bg--video-loaded');
       video.play().catch(() => {});
       heroContent.classList.add('is-visible');
+    },
+  },
+
+  /* ---- Hero logo parallax: el logo baja con el scroll a 1/2 de rate ---- */
+  heroLogoParallax: {
+    RATE: 0.5,            // rate del parallax vertical (1/2)
+    BOTTOM_OFFSET: 130,        // distancia al borde inferior del hero donde arranca la fase 1 del logo (sin uso activo, sólo referencia)
+    BOTTOM_OFFSET_FINAL: 120,  // distancia final al borde inferior del hero (destino Y del logo)
+    MIN_OPACITY_Y: 0.5,        // opacidad mínima al final del recorrido (ahora se aplica durante la fase 2)
+    MAX_SCALE_Y: 1.08,         // escala máxima al alcanzar el "pre-destino" Y (1 = tamaño original)
+    SCALE_EARLY_STOP: 20,      // px antes del destino Y en los que la escala ya llegó a su máximo
+    X_TRIGGER_BEFORE_HIDDEN: 30, // px antes del scroll point en que el texto queda oculto
+    MASK_DISTANCE: 450,   // px de scroll que dura el corte bajo la franja invisible (derecha → izquierda)
+    MASK_RATE: 1 / 3,     // ratio horizontal: 10px por cada 30px de scroll
+    MASK_FADE: 10,        // px de zona de fade al arrancar la fase 2 (borde inicial de la franja invisible)
+    MASK_FADE_MAX: 200,   // px de zona de fade al final del recorrido (la franja se agranda con el scroll)
+    MASK_FADE_RAMP: 60,   // px de scroll durante los que el fade crece de 0 a MASK_FADE (suaviza activación)
+    logoEl: null,
+    heroEl: null,
+    maxOffset: 0,
+    ticking: false,
+
+    init() {
+      this.heroEl = document.getElementById('hero');
+      if (!this.heroEl) return;
+      this.logoEl = this.heroEl.querySelector('.hero__logo');
+      if (!this.logoEl) return;
+
+      this.measure();
+      this.update();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+      window.addEventListener('resize', () => {
+        this.measure();
+        this.update();
+      }, { passive: true });
+    },
+
+    measure() {
+      // Calcular los max offsets usando la posición NATURAL del logo.
+      // Sacamos el transform temporalmente para medir la posición natural.
+      const previousTransform = this.logoEl.style.transform;
+      this.logoEl.style.transform = '';
+      const heroRect = this.heroEl.getBoundingClientRect();
+      const logoRect = this.logoEl.getBoundingClientRect();
+      const heroBottom = heroRect.top + window.scrollY + heroRect.height;
+      const logoBottom = logoRect.top + window.scrollY + logoRect.height;
+      // maxOffset: hasta dónde baja en fase 1 (BOTTOM_OFFSET del borde inferior)
+      this.maxOffset = Math.max(0, heroBottom - this.BOTTOM_OFFSET - logoBottom);
+      // maxOffsetFinal: destino final del logo (BOTTOM_OFFSET_FINAL del borde inferior)
+      this.maxOffsetFinal = Math.max(this.maxOffset, heroBottom - this.BOTTOM_OFFSET_FINAL - logoBottom);
+      // Restauramos el transform previo.
+      this.logoEl.style.transform = previousTransform;
+    },
+
+    onScroll() {
+      if (this.ticking) return;
+      this.ticking = true;
+      requestAnimationFrame(() => {
+        this.update();
+        this.ticking = false;
+      });
+    },
+
+    update() {
+      const scrolled = Math.max(0, window.scrollY);
+
+      // --- Fase 1: el logo baja continuamente hasta maxOffsetFinal (posición de destino) ---
+      const desiredOffset = scrolled * this.RATE;
+      const phase1Y = Math.min(desiredOffset, this.maxOffsetFinal);
+
+      // --- Fase 2: el logo sigue bajando y se mete bajo una franja invisible horizontal ---
+      // La franja queda fija en la posición de destino (maxOffsetFinal). Al seguir bajando,
+      // la parte inferior del logo cruza la franja y se oculta con fade suave.
+      // Scroll necesario para llegar al destino.
+      const scrollToFinal = this.maxOffsetFinal > 0 ? this.maxOffsetFinal / this.RATE : Infinity;
+      const phaseYScroll = Math.max(0, scrolled - scrollToFinal);
+      let extraY = 0;
+      let applyMask = false;
+      let overshootY = 0;
+      if (phaseYScroll > 0) {
+        const phaseYScrollClamped = Math.min(this.MASK_DISTANCE, phaseYScroll);
+        // El logo sigue bajando a ratio MASK_RATE
+        extraY = phaseYScrollClamped * this.MASK_RATE;
+        overshootY = extraY;
+        applyMask = true;
+      }
+
+      const totalY = phase1Y + extraY;
+      this.logoEl.style.transform = `translate(0px, ${totalY}px) scale(1)`;
+
+      // Opacidad: arranca recién cuando el logo empieza a meterse bajo la franja invisible
+      // (fase 2). Antes de eso, el logo mantiene opacidad 1 (o la que fija el CSS si no hay scroll).
+      if (phaseYScroll > 0) {
+        // Progreso de la opacidad: 0 → 1 a lo largo de MASK_DISTANCE, igual que la máscara.
+        const opacityProgress = Math.min(1, phaseYScroll / this.MASK_DISTANCE);
+        const opacity = 1 - (1 - this.MIN_OPACITY_Y) * opacityProgress;
+        this.logoEl.style.transition = 'none';
+        this.logoEl.style.opacity = String(opacity);
+      } else if (scrolled > 0) {
+        // En fase 1 (antes del corte): opacidad plena, sin transition para evitar lag.
+        this.logoEl.style.transition = 'none';
+        this.logoEl.style.opacity = '1';
+      } else {
+        // Sin scroll: dejamos que el CSS maneje la entrada (fade-in 2200ms a opacity 1).
+        this.logoEl.style.transition = '';
+        this.logoEl.style.opacity = '';
+      }
+
+      // Máscara: aparece durante la fase 2. La franja invisible queda fija a la altura
+      // del destino (maxOffsetFinal). Al bajar el logo, su parte INFERIOR cruza la franja
+      // y queda oculta, con un fade suave de MASK_FADE px.
+      if (applyMask) {
+        const logoHeight = this.logoEl.offsetHeight || 1;
+        // Ramp inicial: al activarse, el fade vale 0 → crece a MASK_FADE durante MASK_FADE_RAMP
+        // px de scroll, para que no haya un salto visible.
+        const fadeRamp = Math.min(1, phaseYScroll / this.MASK_FADE_RAMP);
+        // Crecimiento continuo a lo largo de MASK_DISTANCE: el fade se agranda de MASK_FADE
+        // a MASK_FADE_MAX a medida que el logo se mete más bajo la franja invisible.
+        const growthProgress = Math.min(1, phaseYScroll / this.MASK_DISTANCE);
+        const baseFade = this.MASK_FADE + (this.MASK_FADE_MAX - this.MASK_FADE) * growthProgress;
+        const currentFade = baseFade * fadeRamp;
+        // visibleBottom: posición (desde el top) hasta donde el logo es visible.
+        // Cuando overshootY = 0 → visibleBottom = height (todo visible).
+        // Cuando overshootY = height → visibleBottom = 0 (todo oculto).
+        const visibleBottom = Math.max(0, logoHeight - overshootY);
+        const fadeStart = Math.max(0, visibleBottom - currentFade);
+        // Gradiente: opaco desde 0 hasta fadeStart, fade hasta visibleBottom, transparente hasta 100%.
+        const maskValue = `linear-gradient(to bottom, #000 0px, #000 ${fadeStart}px, rgba(0,0,0,0) ${visibleBottom}px, rgba(0,0,0,0) 100%)`;
+        this.logoEl.style.webkitMaskImage = maskValue;
+        this.logoEl.style.maskImage = maskValue;
+      } else {
+        // Sin máscara: logo sólido.
+        this.logoEl.style.webkitMaskImage = '';
+        this.logoEl.style.maskImage = '';
+      }
+    },
+  },
+
+  heroTaglineParallax: {
+    RATE: 0.42,          // ratio de desplazamiento del texto respecto al scroll
+    MAX_OFFSET: 100,     // desplazamiento total máximo (px) antes del "corte"
+    MIN_SCALE: 0.85,     // escala mínima al final del recorrido (1 = tamaño original)
+    MIN_OPACITY: 0.4,    // opacidad mínima antes de empezar el corte
+    MASK_DISTANCE: 150,  // px de scroll que dura el corte bajo la franja invisible
+    MASK_RATE: 1.0,      // ratio de desplazamiento durante el corte (1:1 con el scroll)
+    MASK_FADE: 24,       // px de zona de fade (borde suave de la franja invisible)
+    ENTRY_DURATION: 1800,   // ms que dura la animación de entrada
+    ENTRY_TRANSLATE: 20,    // px de translateY inicial (sube de +ENTRY_TRANSLATE a 0)
+    ENTRY_BLUR: 8,          // px de blur inicial (baja a 0 durante BLUR_DURATION)
+    BLUR_DURATION: 600,     // ms que dura el fade del blur (más breve que ENTRY_DURATION)
+    taglineEl: null,
+    ticking: false,
+    entryProgress: 0,       // 0 al arrancar, 1 cuando termina la entrada
+    blurProgress: 0,        // 0 al arrancar, 1 cuando termina el fade de blur
+    entryStartTime: null,
+    entryDone: false,
+
+    init() {
+      this.taglineEl = document.querySelector('.hero__tagline');
+      if (!this.taglineEl) return;
+      // Arranca invisible y fuera de lugar para que la entrada no "salte".
+      this.taglineEl.style.transformOrigin = 'center center';
+      this.update();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+      // Arrancar la animación de entrada en el próximo frame.
+      requestAnimationFrame((t) => this.tickEntry(t));
+    },
+
+    /**
+     * Devuelve el scroll point (px) en el que el texto queda completamente oculto
+     * bajo su franja invisible. Útil para coordinar otros módulos (ej: heroLogoParallax).
+     */
+    getFullyHiddenScroll() {
+      if (!this.taglineEl) return 0;
+      const taglineHeight = this.taglineEl.offsetHeight || 1;
+      const scrollToMax = this.MAX_OFFSET / this.RATE;
+      // Durante la fase 2, el overshoot crece a MASK_RATE px por px de scroll.
+      // El texto queda oculto cuando overshoot >= taglineHeight.
+      const phase2ScrollNeeded = taglineHeight / this.MASK_RATE;
+      return scrollToMax + phase2ScrollNeeded;
+    },
+
+    // Ease-out cubic aproxima cubic-bezier(0.22, 0.61, 0.36, 1)
+    ease(t) {
+      return 1 - Math.pow(1 - t, 3);
+    },
+
+    tickEntry(timestamp) {
+      if (this.entryStartTime === null) this.entryStartTime = timestamp;
+      const elapsed = timestamp - this.entryStartTime;
+      const raw = Math.min(1, elapsed / this.ENTRY_DURATION);
+      this.entryProgress = this.ease(raw);
+      // Progreso independiente para el blur (duración más breve)
+      const rawBlur = Math.min(1, elapsed / this.BLUR_DURATION);
+      this.blurProgress = this.ease(rawBlur);
+      this.update();
+      if (raw < 1) {
+        requestAnimationFrame((t) => this.tickEntry(t));
+      } else {
+        this.entryDone = true;
+      }
+    },
+
+    onScroll() {
+      if (this.ticking) return;
+      this.ticking = true;
+      requestAnimationFrame(() => {
+        this.update();
+        this.ticking = false;
+      });
+    },
+
+    update() {
+      const scrolled = Math.max(0, window.scrollY);
+
+      // --- Fase 1: parallax normal (0 → MAX_OFFSET) ---
+      // Scroll necesario para completar la fase 1
+      const scrollToMax = this.MAX_OFFSET / this.RATE;
+      const phase1Scroll = Math.min(scrolled, scrollToMax);
+      const phase1Offset = phase1Scroll * this.RATE;
+      // progreso de fase 1: 0 → 1
+      const progress1 = phase1Offset / this.MAX_OFFSET;
+      // opacidad baja de 1 a MIN_OPACITY
+      const parallaxOpacity = 1 - (1 - this.MIN_OPACITY) * progress1;
+      // escala baja de 1 a MIN_SCALE
+      const parallaxScale = 1 - (1 - this.MIN_SCALE) * progress1;
+
+      // --- Fase 2: corte bajo la franja invisible ---
+      // Scroll adicional después de terminar la fase 1
+      const phase2Scroll = Math.max(0, scrolled - scrollToMax);
+      // Cuánto avanza el texto durante la fase 2 (más rápido, para "escurrirse")
+      const phase2Offset = phase2Scroll * this.MASK_RATE;
+      // progreso de fase 2: 0 → 1 a lo largo de MASK_DISTANCE
+      const progress2 = Math.min(1, phase2Scroll / this.MASK_DISTANCE);
+
+      // El texto se desplaza total: el parallax normal + el adicional de la fase 2
+      const totalTranslate = phase1Offset + phase2Offset;
+
+      // La franja invisible está fija en MAX_OFFSET (la posición de destino del parallax).
+      // Solo cuando el texto empieza a cruzar la franja (overshoot > 0) aplicamos la máscara
+      // con fade. Mientras está en fase 1 (overshoot = 0), no hay máscara ni clip.
+      const overshoot = Math.max(0, totalTranslate - this.MAX_OFFSET);
+      const taglineHeight = this.taglineEl.offsetHeight || 1;
+
+      // offset de entrada
+      const entryTranslate = (1 - this.entryProgress) * this.ENTRY_TRANSLATE;
+
+      // opacidad final: multiplica por la entrada
+      const opacity = parallaxOpacity * this.entryProgress;
+
+      // blur de entrada: arranca en ENTRY_BLUR, baja a 0 a medida que blurProgress → 1.
+      // Usa BLUR_DURATION (más breve que ENTRY_DURATION).
+      const blurProgress = this.blurProgress != null ? this.blurProgress : 0;
+      const entryBlur = this.ENTRY_BLUR * (1 - blurProgress);
+
+      this.taglineEl.style.transform = `translateY(${totalTranslate + entryTranslate}px) scale(${parallaxScale})`;
+      this.taglineEl.style.opacity = String(opacity);
+      this.taglineEl.style.filter = entryBlur > 0.1 ? `blur(${entryBlur}px)` : '';
+
+      if (overshoot > 0) {
+        // Visible: desde 0 hasta visibleBottom. Entre fadeStart y visibleBottom
+        // hacemos un fade suave para que el corte no sea tajante.
+        const visibleBottom = Math.max(0, taglineHeight - overshoot);
+        const fadeStart = Math.max(0, visibleBottom - this.MASK_FADE);
+        const maskValue = `linear-gradient(to bottom, #000 0px, #000 ${fadeStart}px, rgba(0,0,0,0) ${visibleBottom}px, rgba(0,0,0,0) 100%)`;
+        this.taglineEl.style.webkitMaskImage = maskValue;
+        this.taglineEl.style.maskImage = maskValue;
+      } else {
+        // Sin overshoot: sin máscara, texto totalmente sólido.
+        this.taglineEl.style.webkitMaskImage = '';
+        this.taglineEl.style.maskImage = '';
+      }
+      // Limpiamos el clip-path viejo por si quedó aplicado de antes
+      this.taglineEl.style.clipPath = '';
     },
   },
 
@@ -1190,7 +1920,7 @@ const Timbo = {
      ============================================================ */
   imageExpand: {
     init() {
-      const el = document.querySelector('.featured-project__image');
+      const el = document.querySelector('.nature-dialogue__image');
       if (!el) return;
 
       // Respect prefers-reduced-motion
@@ -1216,7 +1946,7 @@ const Timbo = {
      ============================================================ */
   overlayTextReveal: {
     init() {
-      const text = document.querySelector('.featured-project__overlay-text');
+      const text = document.querySelector('.nature-dialogue__text');
       if (!text) return;
 
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -2103,11 +2833,17 @@ const Timbo = {
 
     // 2. Nav: fondo al scrollear + cambio de color por sección
     this.navScroll.init();
+    this.navHide.init();
     this.navTheme.init();
     this.navIntro.init();
     this.scrollReveal.init();
     this.sustMetricsReveal.init();
+    this.sustBreatheTextReveal.init();
+    this.sustStrategiesOrbit.init();
+    this.sustStrategiesDetail.init();
     this.heroIntro.init();
+    this.heroLogoParallax.init();
+    this.heroTaglineParallax.init();
     this.sustHeroIntro.init();
     this.heroVideoScrollFade.init();
     this.heroBgToggle.init();
@@ -2135,15 +2871,42 @@ const Timbo = {
       const imgs = document.querySelectorAll('.intro__detail-img');
       if (!dots.length || !imgs.length) return;
 
+      const slideCount = Math.min(dots.length, imgs.length);
+      let activeIndex = Array.from(dots).findIndex(dot => dot.classList.contains('is-active'));
+      if (activeIndex < 0) activeIndex = 0;
+
+      const setActive = (index) => {
+        const nextIndex = ((index % slideCount) + slideCount) % slideCount;
+        activeIndex = nextIndex;
+        dots.forEach((dot, idx) => {
+          dot.classList.toggle('is-active', idx === nextIndex);
+        });
+        imgs.forEach((img, idx) => {
+          img.classList.toggle('is-active', idx === nextIndex);
+        });
+      };
+
+      let autoRotateId = null;
+      const startAutoRotate = () => {
+        if (slideCount < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        window.clearInterval(autoRotateId);
+        autoRotateId = window.setInterval(() => {
+          setActive(activeIndex + 1);
+        }, 6000);
+      };
+
+      setActive(activeIndex);
+
       dots.forEach(dot => {
         dot.addEventListener('click', () => {
           const idx = Number(dot.dataset.slide);
-          dots.forEach(d => d.classList.remove('is-active'));
-          imgs.forEach(i => i.classList.remove('is-active'));
-          dot.classList.add('is-active');
-          if (imgs[idx]) imgs[idx].classList.add('is-active');
+          if (!Number.isFinite(idx)) return;
+          setActive(idx);
+          startAutoRotate();
         });
       });
+
+      startAutoRotate();
     },
   },
 

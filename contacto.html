@@ -5,89 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Timbó — Contacto. Escribinos para consultas sobre proyectos de arquitectura bioclimática.">
   <title>Timbó — Contacto</title>
+  <link rel="icon" type="image/png" href="assets/images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
   <link rel="stylesheet" href="assets/css/variables.css">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-<body>
-
-  <!-- ====== NAVEGACIÓN ====== -->
-  <nav class="main-nav main-nav--dark" aria-label="Main navigation">
-    <ul class="nav__links">
-      <li><a href="index.html" class="nav__link">Home</a></li>
-      <li><a href="proyectos.html" class="nav__link">Projects</a></li>
-      <li><a href="sustentabilidad.html" class="nav__link">Sustainability</a></li>
-      <li><a href="sobre-nosotros.html" class="nav__link">About Us</a></li>
-      <li><a href="contacto.html" class="nav__link nav__link--active">Contact</a></li>
-    </ul>
-  </nav>
-
-  <!-- ====== CONTENIDO PRINCIPAL ====== -->
+<body class="page--contact-image">
   <main class="page-content">
-
-    <!-- Hero -->
-    <section class="contact-hero" data-nav-theme="dark">
-      <div class="container contact-hero__container">
-        <h1 class="contact-hero__title anim-fade-up" data-anim-delay="0">Contacto</h1>
-        <p class="contact-hero__subtitle anim-fade-up" data-anim-delay="120">Contanos sobre tu proyecto. Nos encanta escuchar ideas nuevas.</p>
+    <section class="contact-image" data-nav-theme="light">
+      <div class="contact-image__media">
+        <img src="assets/images/contact/contact-hero.jpg" alt="Paisaje de contacto de Timbó" loading="eager" decoding="async">
       </div>
     </section>
-
-    <!-- Formulario + datos -->
-    <section class="contact-body" data-nav-theme="light">
-      <div class="container contact-body__container">
-
-        <!-- Columna izquierda: formulario -->
-        <form class="contact-form anim-fade-up" data-anim-delay="0" id="contactForm" novalidate>
-          <div class="contact-form__group">
-            <label class="contact-form__label" for="contactName">Nombre</label>
-            <input class="contact-form__input" type="text" id="contactName" name="name" required autocomplete="name">
-          </div>
-
-          <div class="contact-form__group">
-            <label class="contact-form__label" for="contactEmail">Email</label>
-            <input class="contact-form__input" type="email" id="contactEmail" name="email" required autocomplete="email">
-          </div>
-
-          <div class="contact-form__group">
-            <label class="contact-form__label" for="contactSubject">Asunto</label>
-            <input class="contact-form__input" type="text" id="contactSubject" name="subject">
-          </div>
-
-          <div class="contact-form__group">
-            <label class="contact-form__label" for="contactMessage">Mensaje</label>
-            <textarea class="contact-form__input contact-form__textarea" id="contactMessage" name="message" rows="6" required></textarea>
-          </div>
-
-          <button class="contact-form__submit" type="submit">Enviar mensaje</button>
-          <p class="contact-form__feedback" id="formFeedback" aria-live="polite"></p>
-        </form>
-
-        <!-- Columna derecha: información -->
-        <div class="contact-info anim-fade-up" data-anim-delay="180">
-          <div class="contact-info__block">
-            <h3 class="contact-info__heading">Email</h3>
-            <a href="mailto:estudio@timboarquitectura.com" class="contact-info__link">estudio@timboarquitectura.com</a>
-          </div>
-
-          <div class="contact-info__block">
-            <h3 class="contact-info__heading">Instagram</h3>
-            <a href="https://instagram.com/timbo.arquitectura" target="_blank" rel="noopener noreferrer" class="contact-info__link">@timbo.arquitectura</a>
-          </div>
-
-          <div class="contact-info__block">
-            <h3 class="contact-info__heading">Ubicación</h3>
-            <p class="contact-info__text">Buenos Aires, Argentina</p>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
   </main>
-
-  <footer id="main-footer" class="main-footer"></footer>
-
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/main.js"></script>
 </body>
 </html>

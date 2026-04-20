@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>Casa 3D</title>
+<link rel="icon" type="image/png" href="../images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: #b8b37a;
+    background: transparent;
     font-family: 'Space Mono', monospace;
     overflow: hidden;
     width: 100vw; height: 100vh;
@@ -40,17 +41,18 @@
 const container = document.getElementById('canvas-container');
 const W = window.innerWidth, H = window.innerHeight;
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setSize(W, H);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0x000000, 0);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputEncoding = THREE.sRGBEncoding;
 container.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xb8b37a);
-scene.fog = new THREE.Fog(0xb8b37a, 40, 90);
+// Sin background: el canvas WebGL es transparente y deja ver el fondo
+// gris del wrapper (.sust-process__interactive) detrás del iframe.
 
 const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 200);
 camera.position.set(18, 22, 22);
@@ -326,8 +328,8 @@ const paths = [
 
 paths.forEach((p, i) => makeFlowArrow(p, 0.003 + Math.random() * 0.003));
 
-let windActive = true;
-arrowGroups.forEach(({ arrow }) => { arrow.visible = true; });
+let windActive = false;
+arrowGroups.forEach(({ arrow }) => { arrow.visible = windActive; });
 
 function updateWind() {
   arrowGroups.forEach(({ arrow, shaft, cone, path, speed }, i) => {
@@ -532,7 +534,7 @@ glow.visible    = false;
 updateSun(0.5);
 
 
-let wireActive = true;
+let wireActive = false;
 
 const WIRE_COLOR = 0x000000;
 const edgeObjects = [];
@@ -555,10 +557,10 @@ houseMeshes.forEach(mesh => {
   lines.position.copy(mesh.position);
   lines.rotation.copy(mesh.rotation);
   lines.scale.copy(mesh.scale);
-  lines.visible = true;
+  lines.visible = wireActive;
   scene.add(lines);
   edgeObjects.push({ lines, mesh });
-  mesh.visible = false;
+  mesh.visible = !wireActive;
 });
 
 
