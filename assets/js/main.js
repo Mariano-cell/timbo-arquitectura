@@ -681,12 +681,22 @@ const Timbo = {
       const controller = new AbortController();
       this.eventsController = controller;
 
+      // Track del último item hovereado para disparar el sonido una sola vez
+      // por item, aunque el mouseenter vuelva a bubblear por hijos internos (<a>, spans).
+      let lastHoveredIndex = -1;
+
       list.addEventListener('mouseenter', (e) => {
         const item = e.target.closest('.projects__item');
         if (!item) return;
         const index = Number(item.dataset.projectIndex);
         const project = data.items[index];
         if (!project) return;
+
+        // Diseño sonoro: snap solo cuando cambia de item, no dentro del mismo.
+        if (index !== lastHoveredIndex) {
+          Timbo.sound.play('hover');
+          lastHoveredIndex = index;
+        }
 
         if (project.image) {
           this.setPreviewImage(previewImg, project.image, project.name);
@@ -701,6 +711,9 @@ const Timbo = {
       }, { capture: true, signal: controller.signal });
 
       list.addEventListener('mouseleave', () => {
+        // Al salir de la lista, reseteamos para que al volver a entrar al mismo
+        // item vuelva a sonar.
+        lastHoveredIndex = -1;
         this.hidePreviewImage(previewImg);
         previewMeta.innerHTML = '';
       }, { signal: controller.signal });
@@ -1070,7 +1083,7 @@ const Timbo = {
      ============================================================ */
   scrollReveal: {
     init() {
-      const animatedElements = document.querySelectorAll('.anim-fade-up, .anim-wind-in, .anim-fade-in, .anim-zoom-in, .intro__photo--slide-x');
+      const animatedElements = document.querySelectorAll('.anim-fade-up, .anim-wind-in, .anim-fade-in, .anim-zoom-in, .anim-title-drop, .intro__photo--slide-x');
       if (animatedElements.length === 0) return;
 
       animatedElements.forEach((el) => {
@@ -1092,7 +1105,26 @@ const Timbo = {
         threshold: 0.2,
       });
 
-      animatedElements.forEach((el) => observer.observe(el));
+      // Observer separado para .anim-title-drop: se dispara cuando el elemento
+      // esta 100px mas adentro del viewport (rootMargin inferior negativo).
+      const titleDropObserver = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        });
+      }, {
+        threshold: 0,
+        rootMargin: '0px 0px -100px 0px',
+      });
+
+      animatedElements.forEach((el) => {
+        if (el.classList.contains('anim-title-drop')) {
+          titleDropObserver.observe(el);
+        } else {
+          observer.observe(el);
+        }
+      });
     },
   },
 
@@ -1692,8 +1724,9 @@ const Timbo = {
     LOGO_SCALE_DISTANCE: 250,        // px de scroll durante los que crece
     LOGO_MAX_SCALE: 1.12,            // escala final del logo (12% más grande)
     LOGO_MASK_FADE: 4,               // px de fade suave en el borde de la franja del logo
-    LOGO_RESUME_SCROLL: 750,         // scrollY al que el logo retoma el descenso (fase 2)
-    LOGO_RESUME_RATE: 1.0,           // rate de descenso durante la fase 2 (post-pausa)
+    LOGO_SLOW_RATE: 0.2,             // rate durante la transición lenta antes del cambio 1:1
+    LOGO_RESUME_SCROLL: 788,         // scrollY a partir del cual el logo baja 1:1
+    LOGO_RESUME_RATE: 1.0,           // rate de descenso 1:1 desde LOGO_RESUME_SCROLL
     LOGO_OPACITY_START: 700,         // fase 1: scrollY al que empieza el fade de opacidad del logo
     LOGO_OPACITY_MID: 780,           // fase 1: scrollY al que el logo alcanza LOGO_MID_OPACITY
     LOGO_OPACITY_END: 930,           // fase 2: scrollY al que termina el fade (opacidad 0)
@@ -1720,6 +1753,22 @@ const Timbo = {
       });
     },
 
+    getLogoY(scrolled) {
+      const scrollCap = this.MAX_LOGO_Y / this.LOGO_RATE;
+
+      if (scrolled <= scrollCap) {
+        return scrolled * this.LOGO_RATE;
+      }
+
+      if (scrolled <= this.LOGO_RESUME_SCROLL) {
+        return this.MAX_LOGO_Y + (scrolled - scrollCap) * this.LOGO_SLOW_RATE;
+      }
+
+      const slowScrollSpan = Math.max(0, this.LOGO_RESUME_SCROLL - scrollCap);
+      const logoYAtResume = this.MAX_LOGO_Y + slowScrollSpan * this.LOGO_SLOW_RATE;
+      return logoYAtResume + (scrolled - this.LOGO_RESUME_SCROLL) * this.LOGO_RESUME_RATE;
+    },
+
     update() {
       const scrolled = Math.max(0, window.scrollY);
       // Scroll al que el logo alcanza su tope de fase 1. En ese momento el tagline
@@ -1735,13 +1784,11 @@ const Timbo = {
       } else {
         taglineY = taglineYAtMask + (scrolledEffective - this.TAGLINE_MASK_SCROLL) * this.TAGLINE_RATE_POST_MASK;
       }
-      // Fase 1 del logo: descenso normal hasta MAX_LOGO_Y.
-      let logoY = scrolledEffective * this.LOGO_RATE;
-      // Fase 2 (post-pausa): una vez que scrollY supera LOGO_RESUME_SCROLL,
-      // el logo retoma el descenso a LOGO_RESUME_RATE sumando a MAX_LOGO_Y.
-      if (scrolled > this.LOGO_RESUME_SCROLL) {
-        logoY = this.MAX_LOGO_Y + (scrolled - this.LOGO_RESUME_SCROLL) * this.LOGO_RESUME_RATE;
-      }
+      // Logo en tres fases:
+      //   Fase 1 (0 -> scrollCap): desciende a LOGO_RATE hasta MAX_LOGO_Y.
+      //   Fase 2 (scrollCap -> LOGO_RESUME_SCROLL): transición lenta a LOGO_SLOW_RATE.
+      //   Fase 3 (LOGO_RESUME_SCROLL -> ...): desciende 1:1 a LOGO_RESUME_RATE.
+      const logoY = this.getLogoY(scrolled);
 
       // Escala del tagline: 1 → TAGLINE_MIN_SCALE a lo largo de TAGLINE_SCALE_DISTANCE px
       const scaleProgress = Math.min(1, scrolled / this.TAGLINE_SCALE_DISTANCE);
@@ -1779,49 +1826,57 @@ const Timbo = {
         }
       }
 
-      if (this.logoEl) {
-        // Escala del logo: 1 → LOGO_MAX_SCALE a lo largo de LOGO_SCALE_DISTANCE px, empezando en LOGO_SCALE_START.
-        const logoScaleScroll = Math.max(0, scrolled - this.LOGO_SCALE_START);
-        const logoScaleProgress = Math.min(1, logoScaleScroll / this.LOGO_SCALE_DISTANCE);
-        const logoScale = 1 + (this.LOGO_MAX_SCALE - 1) * logoScaleProgress;
+      this.applyLogoMotion(this.logoEl, scrolled, logoY);
+    },
 
-        // Opacidad del logo en dos fases:
-        //   Fase 1: LOGO_OPACITY_START → LOGO_OPACITY_MID  → 1 → LOGO_MID_OPACITY
-        //   Fase 2: LOGO_OPACITY_MID   → LOGO_OPACITY_END  → LOGO_MID_OPACITY → LOGO_MIN_OPACITY
-        let logoOpacity;
-        if (scrolled <= this.LOGO_OPACITY_START) {
-          logoOpacity = 1;
-        } else if (scrolled <= this.LOGO_OPACITY_MID) {
-          const span1 = Math.max(1, this.LOGO_OPACITY_MID - this.LOGO_OPACITY_START);
-          const p1 = (scrolled - this.LOGO_OPACITY_START) / span1;
-          logoOpacity = 1 - (1 - this.LOGO_MID_OPACITY) * p1;
-        } else {
-          const span2 = Math.max(1, this.LOGO_OPACITY_END - this.LOGO_OPACITY_MID);
-          const p2 = Math.min(1, (scrolled - this.LOGO_OPACITY_MID) / span2);
-          logoOpacity = this.LOGO_MID_OPACITY - (this.LOGO_MID_OPACITY - this.LOGO_MIN_OPACITY) * p2;
-        }
+    applyLogoMotion(logoEl, scrolled, logoYOverride = null) {
+      if (!logoEl) return;
 
-        this.logoEl.style.transformOrigin = 'top center';
-        this.logoEl.style.transform = `translateY(${logoY}px) scale(${logoScale})`;
-        this.logoEl.style.opacity = String(logoOpacity);
+      const logoY = logoYOverride == null
+        ? this.getLogoY(scrolled)
+        : logoYOverride;
 
-        // Máscara del logo: se ubica a la altura máxima que alcanza la BASE del logo.
-        const logoNaturalHeight = this.logoEl.offsetHeight || 1;
-        const maskLine = this.MAX_LOGO_Y + logoNaturalHeight * this.LOGO_MAX_SCALE;
-        const currentBase = logoY + logoNaturalHeight * logoScale;
-        const overshoot = Math.max(0, currentBase - maskLine);
-        if (overshoot > 0) {
-          const scaledHeight = logoNaturalHeight * logoScale;
-          const visibleBottomScaled = Math.max(0, scaledHeight - overshoot);
-          const visibleBottom = visibleBottomScaled / logoScale;
-          const fadeStart = Math.max(0, visibleBottom - this.LOGO_MASK_FADE / logoScale);
-          const maskValue = `linear-gradient(to bottom, #000 0px, #000 ${fadeStart}px, rgba(0,0,0,0) ${visibleBottom}px, rgba(0,0,0,0) 100%)`;
-          this.logoEl.style.webkitMaskImage = maskValue;
-          this.logoEl.style.maskImage = maskValue;
-        } else {
-          this.logoEl.style.webkitMaskImage = '';
-          this.logoEl.style.maskImage = '';
-        }
+      // Escala del logo: 1 → LOGO_MAX_SCALE a lo largo de LOGO_SCALE_DISTANCE px, empezando en LOGO_SCALE_START.
+      const logoScaleScroll = Math.max(0, scrolled - this.LOGO_SCALE_START);
+      const logoScaleProgress = Math.min(1, logoScaleScroll / this.LOGO_SCALE_DISTANCE);
+      const logoScale = 1 + (this.LOGO_MAX_SCALE - 1) * logoScaleProgress;
+
+      // Opacidad del logo en dos fases:
+      //   Fase 1: LOGO_OPACITY_START → LOGO_OPACITY_MID  → 1 → LOGO_MID_OPACITY
+      //   Fase 2: LOGO_OPACITY_MID   → LOGO_OPACITY_END  → LOGO_MID_OPACITY → LOGO_MIN_OPACITY
+      let logoOpacity;
+      if (scrolled <= this.LOGO_OPACITY_START) {
+        logoOpacity = 1;
+      } else if (scrolled <= this.LOGO_OPACITY_MID) {
+        const span1 = Math.max(1, this.LOGO_OPACITY_MID - this.LOGO_OPACITY_START);
+        const p1 = (scrolled - this.LOGO_OPACITY_START) / span1;
+        logoOpacity = 1 - (1 - this.LOGO_MID_OPACITY) * p1;
+      } else {
+        const span2 = Math.max(1, this.LOGO_OPACITY_END - this.LOGO_OPACITY_MID);
+        const p2 = Math.min(1, (scrolled - this.LOGO_OPACITY_MID) / span2);
+        logoOpacity = this.LOGO_MID_OPACITY - (this.LOGO_MID_OPACITY - this.LOGO_MIN_OPACITY) * p2;
+      }
+
+      logoEl.style.transformOrigin = 'top center';
+      logoEl.style.transform = `translateY(${logoY}px) scale(${logoScale})`;
+      logoEl.style.opacity = String(logoOpacity);
+
+      // Máscara del logo: se ubica a la altura máxima que alcanza la BASE del logo.
+      const logoNaturalHeight = logoEl.offsetHeight || 1;
+      const maskLine = this.MAX_LOGO_Y + logoNaturalHeight * this.LOGO_MAX_SCALE;
+      const currentBase = logoY + logoNaturalHeight * logoScale;
+      const overshoot = Math.max(0, currentBase - maskLine);
+      if (overshoot > 0) {
+        const scaledHeight = logoNaturalHeight * logoScale;
+        const visibleBottomScaled = Math.max(0, scaledHeight - overshoot);
+        const visibleBottom = visibleBottomScaled / logoScale;
+        const fadeStart = Math.max(0, visibleBottom - this.LOGO_MASK_FADE / logoScale);
+        const maskValue = `linear-gradient(to bottom, #000 0px, #000 ${fadeStart}px, rgba(0,0,0,0) ${visibleBottom}px, rgba(0,0,0,0) 100%)`;
+        logoEl.style.webkitMaskImage = maskValue;
+        logoEl.style.maskImage = maskValue;
+      } else {
+        logoEl.style.webkitMaskImage = '';
+        logoEl.style.maskImage = '';
       }
     },
   },
@@ -1833,10 +1888,36 @@ const Timbo = {
       const heroImage = heroSection?.querySelector('.sust-hero__media img');
       if (!heroSection || !heroContent) return;
 
+      let scrollFadeActivated = false;
+      let scrollFadeFallbackId = null;
+
+      const activateScrollFade = () => {
+        if (scrollFadeActivated) return;
+        scrollFadeActivated = true;
+        if (scrollFadeFallbackId) window.clearTimeout(scrollFadeFallbackId);
+        heroSection.classList.add('is-scroll-fade-active');
+      };
+
       const reveal = () => {
         window.requestAnimationFrame(() => {
           heroSection.classList.add('is-visible');
           heroContent.classList.add('is-visible');
+          Timbo.sustHeroParallax.init();
+
+          if (!heroImage) {
+            activateScrollFade();
+            return;
+          }
+
+          const onImageRevealEnd = (event) => {
+            if (event.propertyName !== 'opacity') return;
+            heroImage.removeEventListener('transitionend', onImageRevealEnd);
+            activateScrollFade();
+          };
+
+          heroImage.addEventListener('transitionend', onImageRevealEnd);
+
+          scrollFadeFallbackId = window.setTimeout(activateScrollFade, 2000);
         });
       };
 
@@ -1851,8 +1932,97 @@ const Timbo = {
   },
 
   /* ============================================================
-     HERO VIDEO SCROLL FADE
-     Empieza a bajar opacidad del video luego de cierto scroll.
+     SUST HERO PARALLAX
+     Replica el comportamiento de entrada y scroll del hero principal
+     sobre el titulo y logo del hero de sustentabilidad.
+     ============================================================ */
+  sustHeroParallax: {
+    TITLE_RATE: 0.4,
+    TITLE_SCALE_DISTANCE: 150,
+    TITLE_MIN_SCALE: 0.9,
+    TITLE_OPACITY_DISTANCE: 50,
+    TITLE_MIN_OPACITY: 0.9,
+    TITLE_OPACITY_DISTANCE_2: 100,
+    TITLE_MIN_OPACITY_2: 0.6,
+    TITLE_MASK_SCROLL: 60,
+    TITLE_MASK_FADE: 12,
+    TITLE_RATE_POST_MASK: 0.5,
+    titleEl: null,
+    logoEl: null,
+    ticking: false,
+    initialized: false,
+
+    init() {
+      if (this.initialized) return;
+
+      this.titleEl = document.querySelector('.sust-hero__title');
+      this.logoEl = document.querySelector('.sust-hero__logo');
+      if (!this.titleEl && !this.logoEl) return;
+
+      this.initialized = true;
+      this.update();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+    },
+
+    onScroll() {
+      if (this.ticking) return;
+      this.ticking = true;
+      requestAnimationFrame(() => {
+        this.update();
+        this.ticking = false;
+      });
+    },
+
+    update() {
+      const scrolled = Math.max(0, window.scrollY);
+      const scrollCap = Timbo.heroParallax.MAX_LOGO_Y / Timbo.heroParallax.LOGO_RATE;
+      const scrolledEffective = Math.min(scrolled, scrollCap);
+      const titleYAtMask = this.TITLE_MASK_SCROLL * this.TITLE_RATE;
+      let titleY;
+
+      if (scrolledEffective <= this.TITLE_MASK_SCROLL) {
+        titleY = scrolledEffective * this.TITLE_RATE;
+      } else {
+        titleY = titleYAtMask + (scrolledEffective - this.TITLE_MASK_SCROLL) * this.TITLE_RATE_POST_MASK;
+      }
+
+      const scaleProgress = Math.min(1, scrolled / this.TITLE_SCALE_DISTANCE);
+      const titleScale = 1 - (1 - this.TITLE_MIN_SCALE) * scaleProgress;
+
+      let titleOpacity;
+      if (scrolled <= this.TITLE_OPACITY_DISTANCE) {
+        const p1 = scrolled / this.TITLE_OPACITY_DISTANCE;
+        titleOpacity = 1 - (1 - this.TITLE_MIN_OPACITY) * p1;
+      } else {
+        const p2 = Math.min(1, (scrolled - this.TITLE_OPACITY_DISTANCE) / this.TITLE_OPACITY_DISTANCE_2);
+        titleOpacity = this.TITLE_MIN_OPACITY - (this.TITLE_MIN_OPACITY - this.TITLE_MIN_OPACITY_2) * p2;
+      }
+
+      if (this.titleEl) {
+        this.titleEl.style.transform = `translateY(${titleY}px) scale(${titleScale})`;
+        this.titleEl.style.opacity = String(titleOpacity);
+
+        const overshoot = Math.max(0, titleY - titleYAtMask);
+        if (overshoot > 0) {
+          const titleHeight = this.titleEl.offsetHeight || 1;
+          const visibleBottom = Math.max(0, titleHeight - overshoot);
+          const fadeStart = Math.max(0, visibleBottom - this.TITLE_MASK_FADE);
+          const maskValue = `linear-gradient(to bottom, #000 0px, #000 ${fadeStart}px, rgba(0,0,0,0) ${visibleBottom}px, rgba(0,0,0,0) 100%)`;
+          this.titleEl.style.webkitMaskImage = maskValue;
+          this.titleEl.style.maskImage = maskValue;
+        } else {
+          this.titleEl.style.webkitMaskImage = '';
+          this.titleEl.style.maskImage = '';
+        }
+      }
+
+      Timbo.heroParallax.applyLogoMotion(this.logoEl, scrolled);
+    },
+  },
+
+  /* ============================================================
+     HERO MEDIA SCROLL FADE
+     Empieza a bajar opacidad del fondo del hero luego de cierto scroll.
      ============================================================ */
   heroVideoScrollFade: {
     START_SCROLL_PX: 200,
@@ -1861,7 +2031,8 @@ const Timbo = {
 
     init() {
       const video = document.querySelector('#hero .hero__bg video');
-      if (!video) return;
+      const sustImage = document.querySelector('.sust-hero .sust-hero__media img');
+      if (!video && !sustImage) return;
 
       const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
@@ -1873,7 +2044,15 @@ const Timbo = {
         );
         const fadeProgress = Math.pow(fadeProgressRaw, 1.2);
         const opacity = 1 - (1 - this.MIN_OPACITY) * fadeProgress;
-        video.style.setProperty('--hero-video-scroll-opacity', opacity.toFixed(3));
+        const opacityValue = opacity.toFixed(3);
+
+        if (video) {
+          video.style.setProperty('--hero-video-scroll-opacity', opacityValue);
+        }
+
+        if (sustImage) {
+          sustImage.style.setProperty('--sust-hero-scroll-opacity', opacityValue);
+        }
       };
 
       window.addEventListener('scroll', update, { passive: true });
@@ -1942,23 +2121,48 @@ const Timbo = {
   },
 
   introPhotosParallax: {
+    // Easing cubic in-out: arranca lento, acelera en el medio, frena suave al final.
+    // Da un movimiento más orgánico que el progreso lineal.
+    easeInOutCubic(t) {
+      return t < 0.5
+        ? 4 * t * t * t
+        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    },
+
     init() {
       const photosEl = document.querySelector('.intro__photos');
       const narrowPhotoEl = photosEl?.querySelector('.intro__photo--narrow');
+      const widePhotoEl = photosEl?.querySelector('.intro__photo--wide');
       if (!photosEl || !narrowPhotoEl) return;
 
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         narrowPhotoEl.style.setProperty('--intro-narrow-progress', '1');
+        if (widePhotoEl) widePhotoEl.style.setProperty('--intro-wide-progress', '0');
         return;
       }
+
+      const ease = this.easeInOutCubic;
 
       const update = () => {
         const rect = photosEl.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-        const start = viewportHeight * 0.96;
-        const end = viewportHeight * 0.5;
-        const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
-        narrowPhotoEl.style.setProperty('--intro-narrow-progress', progress.toFixed(3));
+
+        // Progreso narrow: 0 -> 1 mientras la seccion ENTRA al viewport por abajo.
+        const startNarrow = viewportHeight * 0.96;
+        const endNarrow = viewportHeight * 0.5;
+        const narrowLinear = Math.min(1, Math.max(0, (startNarrow - rect.top) / (startNarrow - endNarrow)));
+        const narrowProgress = ease(narrowLinear);
+        narrowPhotoEl.style.setProperty('--intro-narrow-progress', narrowProgress.toFixed(3));
+
+        // Progreso wide: 0 -> 1 mientras la seccion SALE por arriba.
+        // start: cuando el top de la seccion toca el top del viewport (rect.top = 0).
+        // end: cuando el bottom de la seccion sale por arriba (rect.bottom = 0).
+        if (widePhotoEl) {
+          const sectionHeight = rect.height;
+          const wideLinear = Math.min(1, Math.max(0, -rect.top / sectionHeight));
+          const wideProgress = ease(wideLinear);
+          widePhotoEl.style.setProperty('--intro-wide-progress', wideProgress.toFixed(3));
+        }
       };
 
       window.addEventListener('scroll', update, { passive: true });
@@ -3046,6 +3250,159 @@ const Timbo = {
 
 
   /* ============================================================
+     DISEÑO SONORO
+     Carga y reproducción de efectos de sonido de UI.
+     Uso: Timbo.sound.play('hover')
+     ============================================================ */
+  sound: {
+    enabled: true,
+    volume: 0.4,
+    sources: {
+      hover: 'assets/audio/snap-timbo.mp3',
+    },
+    buffers: {}, // { id: HTMLAudioElement }
+
+    init() {
+      // Respeta la preferencia de reducir movimiento → también silencia
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.enabled = false;
+        return;
+      }
+
+      // Ajustar ruta si estamos dentro de /proyectos/
+      const depth = window.location.pathname.includes('/proyectos/') ? '../' : '';
+
+      Object.entries(this.sources).forEach(([id, path]) => {
+        const audio = new Audio(depth + path);
+        audio.preload = 'auto';
+        audio.volume = this.volume;
+        this.buffers[id] = audio;
+      });
+    },
+
+    play(id) {
+      if (!this.enabled) return;
+      const audio = this.buffers[id];
+      if (!audio) return;
+      // Clonamos el nodo para poder superponer reproducciones si el usuario
+      // recorre la lista rápido, sin cortar el sonido anterior.
+      const instance = audio.cloneNode();
+      instance.volume = this.volume;
+      // play() devuelve una Promise que puede rechazar si el navegador bloquea
+      // autoplay (ej: antes de la primera interacción). Lo ignoramos en silencio.
+      const p = instance.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    },
+  },
+
+  /* ============================================================
+     RIPPLE FADE — ondas sutiles en la franja inferior al scrollear
+     Anima el `scale` del <feDisplacementMap> en función del delta de
+     scroll: más movimiento = más intensidad. Decae suave al parar.
+     Solo activo si existe el componente .ripple-fade en la página.
+     ============================================================ */
+  rippleFade: {
+    MAX_SCALE: 7,              // intensidad máxima de la distorsión de ondas (orgánico)
+    DECAY: 0.92,               // factor de decaimiento por frame cuando no hay scroll
+    SCROLL_SENSITIVITY: 0.35,  // cuánto suma cada píxel de scroll a la intensidad
+
+    // --- Altura reactiva a la velocidad de scroll ---
+    MIN_HEIGHT_PX: 50,         // altura mínima en px absolutos (scroll muy lento o idle)
+    MAX_HEIGHT_VH: 26,         // altura máxima (scroll rápido) — en vh del viewport
+    VELOCITY_SATURATION: 3,    // px/ms con los que se alcanza la altura máxima
+    HEIGHT_DECAY: 0.97,        // cuánto decae la velocidad suavizada por frame al frenar (más cerca de 1 = más lento)
+
+    // --- Opacidad reactiva a la velocidad de scroll (misma curva que la altura) ---
+    MIN_OPACITY: 0,            // opacidad mínima (idle): invisible
+    MAX_OPACITY: 1,            // opacidad máxima (scroll saturado)
+
+    init() {
+      const container = document.querySelector('.ripple-fade');
+      const layer = container && container.querySelector('.ripple-fade__layer');
+      const refractLayer = container && container.querySelector('.ripple-fade__refract');
+      const blurLayers = container && container.querySelectorAll('.ripple-fade__blur');
+      const displacement = document.getElementById('ripple-fade-displacement');
+      if (!container || !layer || !displacement) return;
+
+      // Si el usuario prefiere menos movimiento, no animamos el filtro.
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) return;
+
+      let lastY = window.scrollY;
+      let lastT = performance.now();
+      let currentScale = 0;
+      let smoothedVelocity = 0;   // px/ms suavizado
+      let rafId = null;
+
+      // Tope de altura adaptado a mobile (la pantalla es más chica)
+      const isMobile = window.matchMedia('(max-width: 768px)').matches;
+      const maxHeightVh = isMobile ? Math.min(18, this.MAX_HEIGHT_VH) : this.MAX_HEIGHT_VH;
+
+      const applyFromVelocity = () => {
+        // Ratio común a altura y opacidad, saturado en 1.
+        const ratio = Math.min(1, smoothedVelocity / this.VELOCITY_SATURATION);
+
+        // Altura: interpolada en px entre mínimo absoluto y máximo en vh.
+        const minPx = this.MIN_HEIGHT_PX;
+        const maxPx = (window.innerHeight * maxHeightVh) / 100;
+        const h = minPx + (maxPx - minPx) * ratio;
+        container.style.setProperty('--ripple-height', h.toFixed(1) + 'px');
+
+        // Opacidad: misma curva, entre MIN_OPACITY y MAX_OPACITY.
+        const o = this.MIN_OPACITY + (this.MAX_OPACITY - this.MIN_OPACITY) * ratio;
+        container.style.setProperty('--ripple-opacity', o.toFixed(3));
+      };
+
+      const loop = () => {
+        // Decaimiento de las ondas
+        currentScale *= this.DECAY;
+        if (currentScale < 0.05) currentScale = 0;
+        displacement.setAttribute('scale', currentScale.toFixed(2));
+
+        // Decaimiento suave de la velocidad → franja se desinfla y desvanece al frenar
+        smoothedVelocity *= this.HEIGHT_DECAY;
+        if (smoothedVelocity < 0.01) smoothedVelocity = 0;
+        applyFromVelocity();
+
+        if (currentScale > 0 || smoothedVelocity > 0) {
+          rafId = requestAnimationFrame(loop);
+        } else {
+          rafId = null;
+        }
+      };
+
+      window.addEventListener('scroll', () => {
+        const now = performance.now();
+        const dt = Math.max(1, now - lastT); // ms transcurridos (mínimo 1 para evitar div/0)
+        const currentY = window.scrollY;
+        const signedDelta = currentY - lastY;
+        const delta = Math.abs(signedDelta);
+        lastY = currentY;
+        lastT = now;
+
+        if (delta < 1) return;
+        if (signedDelta <= 0) return;
+
+        // Velocidad instantánea en px/ms
+        const instantVelocity = delta / dt;
+        // Suavizado tipo low-pass: integra con el valor actual para evitar saltos.
+        smoothedVelocity = smoothedVelocity * 0.6 + instantVelocity * 0.4;
+        applyFromVelocity();
+
+        currentScale = Math.min(
+          this.MAX_SCALE,
+          currentScale + delta * this.SCROLL_SENSITIVITY
+        );
+
+        if (!rafId) {
+          rafId = requestAnimationFrame(loop);
+        }
+      }, { passive: true });
+    },
+  },
+
+
+  /* ============================================================
      INICIALIZACIÓN
      ============================================================ */
   init() {
@@ -3054,6 +3411,7 @@ const Timbo = {
     this.floatingLogo.init();
     this.navLinkUnderline.init();
     this.introLinkOval.init();
+    this.sound.init();
 
     // 2. Nav: fondo al scrollear + cambio de color por sección
     this.navScroll.init();
@@ -3081,6 +3439,7 @@ const Timbo = {
     this.projectOverviewSlider.init();
     this.contactForm.init();
     this.keyboardNav.init();
+    this.rippleFade.init();
 
     // 3. Detectar idioma y aplicar
     const lang = this.i18n.detect();

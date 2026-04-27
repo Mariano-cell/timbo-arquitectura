@@ -66,6 +66,19 @@
   height: 100%;
 }
 
+/* Máscara invisible: cada <li> recorta al link que está desplazado
+   hacia arriba. Al bajar, el link "emerge" desde debajo del borde
+   superior del <li>. El padding vertical le da al link un área
+   donde vivir sin quedar pegado al borde cuando ya está visible.
+   El mask-image agrega una franja de fade de 2px en el borde superior
+   para que el link no aparezca con un corte duro. */
+.nav__links li {
+  overflow: hidden;
+  padding: 0.25em 0;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 6px);
+  mask-image: linear-gradient(to bottom, transparent 0, black 6px);
+}
+
 .nav__link {
   position: relative;
   display: inline-block;
@@ -75,9 +88,9 @@
   letter-spacing: 0.05em;
   line-height: 1;
   opacity: 0;
-  transform: translate3d(0, -20px, 0);
+  transform: translate3d(0, -40px, 0);
   transition:
-    opacity 700ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 1000ms cubic-bezier(0.22, 0.61, 0.36, 1),
     transform 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -282,15 +295,60 @@
   margin: 3rem auto 6rem;
 }
 
+.hero__logo,
+.sust-hero__logo {
+  /* Estado inicial: invisible + desenfocado */
+  opacity: 0;
+  filter: blur(5px);
+  /* Fade: arranca a 100ms (logo aparece primero).
+     Blur: espera 900ms y se resuelve muy rápido (150ms), como un "snap" de enfoque.
+     El paso blur→nítido es simultáneo con el tagline. */
+  transition:
+    opacity 1400ms cubic-bezier(0.22, 0.61, 0.36, 1) 100ms,
+    filter 700ms ease-out 900ms;
+}
+
 .hero__tagline {
   font-size: 4.25rem;
   font-weight: var(--fw-regular);
   margin-top: 10rem;
   line-height: 1.05;
+  /* Estado inicial: invisible + desenfocado */
+  opacity: 0;
+  filter: blur(3px);
+  /* Fade: arranca a 350ms (después del logo, 250ms de diferencia).
+     Blur: mismo delay/duración que el logo → snap simultáneo. */
+  transition:
+    opacity 1400ms cubic-bezier(0.22, 0.61, 0.36, 1) 350ms,
+    filter 700ms ease-in-out 900ms;
 }
 
 .hero__tagline strong {
   font-weight: var(--fw-bold);
+}
+
+/* Estado final: cuando el JS agrega .is-visible al contenedor,
+   ambos elementos aparecen con fade-in y pierden el blur */
+.hero__content.is-visible .hero__tagline,
+.hero__content.is-visible .hero__logo {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.sust-hero__content.is-visible .sust-hero__logo {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* Accesibilidad: si el usuario prefiere menos movimiento, sin animación */
+@media (prefers-reduced-motion: reduce) {
+  .hero__logo,
+  .sust-hero__logo,
+  .hero__tagline {
+    opacity: 1;
+    filter: none;
+    transition: none;
+  }
 }
 
 /* ---- Hero background photo layer ---- */
@@ -484,9 +542,13 @@
 }
 
 .intro__photo--wide {
+  --intro-wide-progress: 0;
+  --intro-wide-shift-end: clamp(6.5rem, 14vw, 11rem);
   position: relative;
   z-index: 2;
   aspect-ratio: 3 / 4.4;
+  transform: translateX(calc(var(--intro-wide-progress) * var(--intro-wide-shift-end)));
+  will-change: transform;
 }
 
 .intro__photo--narrow {
@@ -576,6 +638,18 @@
   transform: scale(1);
 }
 
+/* Mask-open reveal: el contenedor arranca recortado mostrando solo la franja
+   central (30%-70%) y se abre lentamente hasta el 0%-100%.
+   Corre en paralelo al zoom-in porque usa clip-path (no transform). */
+.intro__detail-photo.anim-zoom-in {
+  clip-path: inset(0 0 0 30% round 24px);
+  transition: clip-path 2400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.intro__detail-photo.anim-zoom-in.is-visible {
+  clip-path: inset(0 0 0 0 round 24px);
+}
+
 .intro__detail-body {
   display: flex;
   flex-direction: column;
@@ -589,6 +663,74 @@
   height: auto;
 }
 
+/* SVG inline: todos los trazos con stroke negro y sin fill */
+.intro__detail-icon path {
+  fill: none;
+  stroke: #000;
+  stroke-miterlimit: 10;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Flechas (viento/aire): estado inicial oculto (trazado recortado).
+   Usamos pathLength=1 para normalizar la longitud de todos los paths,
+   así dasharray/dashoffset=1 siempre "oculta" el 100% del trazo, sin
+   importar la longitud real. Requiere el atributo pathLength="1" en el
+   path — acá lo aplicamos vía JS (ver main.js, módulo intro__detail-icon-arrow)
+   o podés dejar valores fijos grandes (40 alcanza para estos trazos). */
+.intro__detail-icon-arrow {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  transition: stroke-dashoffset 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ----- Secuencia cuando el SVG entra en viewport -----
+   FLECHA 1 (derecha, abajo→arriba): tronco primero, puntas después.
+   FLECHA 2 (arriba, derecha→izquierda): tronco primero, puntas después.
+   La flecha 2 arranca cuando la 1 está por terminar. */
+
+/* Flecha 1 — tronco (t=0) */
+.intro__detail-icon.is-visible .intro__detail-icon-arrow--1-shaft {
+  stroke-dashoffset: 0;
+  transition-delay: 200ms;
+}
+
+/* Flecha 1 — puntas: aparecen una después de la otra, más lentas */
+.intro__detail-icon.is-visible .intro__detail-icon-arrow--1-tip {
+  stroke-dashoffset: 0;
+  transition-duration: 700ms;
+  transition-delay: 900ms;
+}
+
+.intro__detail-icon.is-visible .intro__detail-icon-arrow--1-tip-b {
+  transition-delay: 1400ms;
+}
+
+/* Flecha 2 — tronco (empieza cuando termina la flecha 1) */
+.intro__detail-icon.is-visible .intro__detail-icon-arrow--2-shaft {
+  stroke-dashoffset: 0;
+  transition-delay: 2100ms;
+}
+
+/* Flecha 2 — puntas: misma lógica, una después de la otra */
+.intro__detail-icon.is-visible .intro__detail-icon-arrow--2-tip {
+  stroke-dashoffset: 0;
+  transition-duration: 700ms;
+  transition-delay: 2800ms;
+}
+
+.intro__detail-icon.is-visible .intro__detail-icon-arrow--2-tip-b {
+  transition-delay: 3300ms;
+}
+
+/* Accesibilidad: si el usuario prefiere menos movimiento, sin animación */
+@media (prefers-reduced-motion: reduce) {
+  .intro__detail-icon-arrow {
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+}
+
 .intro__detail-title {
   margin: 0;
   font-size: var(--text-sm, 0.875rem);
@@ -597,6 +739,33 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: rgba(0, 0, 0, 0.924);
+}
+
+/* Title drop-in:
+   - El <h3> funciona como "ventana" con una mascara horizontal fija.
+   - La mascara es invisible arriba, tiene 4px de fade, y opaca de ahi para abajo.
+   - El <span> interno arranca 20px mas arriba y desciende a su posicion natural,
+     pasando "por debajo" de la mascara.
+   Como .intro__detail-title tambien tiene la clase .anim-zoom-in... no, tiene .anim-title-drop.
+   El observer le agrega .is-visible cuando entra al viewport. */
+.intro__detail-title.anim-title-drop {
+  display: block;
+  overflow: visible;
+  /* Mascara: 0-0px (arriba) transparente, 0px-4px degrade, 4px+ opaca.
+     Asi el texto que esta arriba de los 4px se ve fade-out. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 0px, black 4px, black 100%);
+          mask-image: linear-gradient(to bottom, transparent 0, transparent 0px, black 4px, black 100%);
+}
+
+.intro__detail-title-inner {
+  display: inline-block;
+  transform: translateY(-20px);
+  transition: transform 1400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+
+.intro__detail-title.anim-title-drop.is-visible .intro__detail-title-inner {
+  transform: translateY(0);
 }
 
 .intro__detail-text {
@@ -618,6 +787,10 @@
 
   .intro__photo--narrow {
     --intro-narrow-shift-start: clamp(-7rem, -18vw, -3.75rem);
+  }
+
+  .intro__photo--wide {
+    --intro-wide-shift-end: clamp(3.75rem, 18vw, 7rem);
   }
 
   .intro__detail {
@@ -2733,6 +2906,7 @@ html.is-entering-projects.is-entering-projects-active .projects__item {
   height: 100%;
   object-fit: cover;
   object-position: center;
+  --sust-hero-scroll-opacity: 1;
   opacity: 0;
   transform: scale(1.04);
   transition:
@@ -2758,11 +2932,6 @@ html.is-entering-projects.is-entering-projects-active .projects__item {
   width: 150px;
   height: auto;
   margin-top: clamp(2.5rem, 4vw, 4rem);
-  opacity: 0;
-  transform: scale(0.92);
-  transition:
-    opacity 6000ms cubic-bezier(0.22, 0.61, 0.36, 1) 450ms,
-    transform 6000ms cubic-bezier(0.22, 0.61, 0.36, 1) 450ms;
 }
 
 .sust-hero__title {
@@ -2773,25 +2942,31 @@ html.is-entering-projects.is-entering-projects-active .projects__item {
   margin: 0;
   color: var(--color-text-primary);
   opacity: 0;
-  transform: translateY(20px);
+  filter: blur(3px);
   transition:
-    opacity 6000ms cubic-bezier(0.22, 0.61, 0.36, 1) 200ms,
-    transform 6000ms cubic-bezier(0.22, 0.61, 0.36, 1) 200ms;
+    opacity 1400ms cubic-bezier(0.22, 0.61, 0.36, 1) 350ms,
+    filter 700ms ease-in-out 900ms;
 }
 
 .sust-hero.is-visible .sust-hero__media img {
-  opacity: 1;
+  opacity: var(--sust-hero-scroll-opacity, 1);
   transform: scale(1);
+}
+
+.sust-hero.is-scroll-fade-active .sust-hero__media img {
+  transition: transform 5200ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .sust-hero__content.is-visible .sust-hero__title {
   opacity: 1;
-  transform: translateY(0);
+  filter: blur(0);
 }
 
-.sust-hero__content.is-visible .sust-hero__logo {
-  opacity: 1;
-  transform: scale(1);
+@media (prefers-reduced-motion: reduce) {
+  .sust-hero__title {
+    filter: none;
+    transition: none;
+  }
 }
 
 .sust-overview {
@@ -4974,5 +5149,233 @@ html.is-entering-projects.is-entering-projects-active .projects__item {
   .contact-body {
     padding-top: var(--space-4xl);
     padding-bottom: var(--space-4xl);
+  }
+}
+
+
+/* =========================
+   RIPPLE FADE — franja inferior etérea con ondas al scrollear
+   (activado solo en páginas que incluyan el componente .ripple-fade)
+   ========================= */
+
+.ripple-fade {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  --ripple-height: 50px; /* altura mínima por defecto, el JS la sube con la velocidad */
+  height: var(--ripple-height);
+  pointer-events: none;
+  z-index: 90; /* por debajo del nav (100), por encima del contenido */
+  will-change: height, opacity;
+  transition: height 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* En páginas que tienen la capa ripple, el floating-logo queda por encima. */
+body:has(.ripple-fade) .floating-logo {
+  z-index: 95;
+}
+
+/* SVG que define el filtro: no tiene tamaño visible */
+.ripple-fade__svg {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/*
+  Capa visual: aplica el filtro SVG al contenido que pasa por detrás
+  (via backdrop-filter) y encima le pone un fade etéreo blanquecino
+  que se intensifica hacia abajo.
+  El mask-image hace que el borde superior sea suave (sin corte duro).
+*/
+/*
+  Sub-capas de blur escalonado.
+  Cada una aplica un backdrop-filter: blur() con distinta intensidad,
+  y usa una máscara vertical para que solo sea visible en su franja.
+  Así el blur sigue la misma curva vertical que el fade de opacidad:
+  arriba (transparente) = sin blur; abajo (sólido) = blur fuerte.
+*/
+.ripple-fade__blur {
+  position: absolute;
+  inset: 0;
+  opacity: var(--ripple-opacity, 0);
+  transition: opacity 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+}
+
+/*
+  Capa de refracción óptica — simula la luz rebotando en lamas.
+  Dentro de cada franja de 17px (mismo ritmo que las rayas del mask),
+  pinta un gradiente vertical: brillo blanco arriba → sombra abajo.
+  El patrón se repite, dando la sensación de que cada franja refracta
+  la luz en un ángulo distinto, como un vidrio biselado.
+*/
+.ripple-fade__refract {
+  position: absolute;
+  inset: 0;
+  opacity: var(--ripple-opacity, 0);
+  pointer-events: none;
+  transition: opacity 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  mix-blend-mode: overlay; /* integra los brillos/sombras con lo que hay debajo */
+
+  /* Cada ciclo de 17px es una "lama":
+     - 0-5px: brillo blanco (borde superior de la lama captura luz)
+     - 5-12px: zona neutra
+     - 12-17px: sombra (borde inferior de la lama, a la sombra) */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.55) 0px,
+    rgba(255, 255, 255, 0.15) 3px,
+    rgba(255, 255, 255, 0) 5px,
+    rgba(0, 0, 0, 0) 12px,
+    rgba(0, 0, 0, 0.25) 15px,
+    rgba(0, 0, 0, 0.45) 17px
+  );
+
+  /* Solo visible donde el fade tiene "material" */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.3) 25%,
+    rgba(0, 0, 0, 0.7) 55%,
+    rgba(0, 0, 0, 1) 85%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.3) 25%,
+    rgba(0, 0, 0, 0.7) 55%,
+    rgba(0, 0, 0, 1) 85%
+  );
+}
+
+
+/* Capa 1 — blur suave, cubre el tramo superior (zona casi transparente).
+   Apenas se nota, alinea con la parte del fade donde la opacidad es baja. */
+.ripple-fade__blur--1 {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.35) 18%,
+    rgba(0, 0, 0, 0.5) 35%,
+    rgba(0, 0, 0, 0) 55%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.35) 18%,
+    rgba(0, 0, 0, 0.5) 35%,
+    rgba(0, 0, 0, 0) 55%
+  );
+}
+
+/* Capa 2 — blur medio, cubre la zona intermedia. */
+.ripple-fade__blur--2 {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 30%,
+    rgba(0, 0, 0, 0.7) 50%,
+    rgba(0, 0, 0, 0.7) 70%,
+    rgba(0, 0, 0, 0) 85%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 30%,
+    rgba(0, 0, 0, 0.7) 50%,
+    rgba(0, 0, 0, 0.7) 70%,
+    rgba(0, 0, 0, 0) 85%
+  );
+}
+
+/* Capa 3 — blur fuerte, cubre la zona inferior (máxima opacidad del fade). */
+.ripple-fade__blur--3 {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 55%,
+    rgba(0, 0, 0, 0.8) 78%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 55%,
+    rgba(0, 0, 0, 0.8) 78%,
+    rgba(0, 0, 0, 1) 100%
+  );
+}
+
+.ripple-fade__layer {
+  position: absolute;
+  inset: 0;
+  opacity: var(--ripple-opacity, 0);
+  transition: opacity 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  backdrop-filter: url(#ripple-fade-filter);
+  -webkit-backdrop-filter: url(#ripple-fade-filter);
+
+  background: linear-gradient(
+    to bottom,
+    rgba(246, 246, 246, 0) 0%,
+    rgba(246, 246, 246, 0.08) 25%,
+    rgba(246, 246, 246, 0.22) 55%,
+    rgba(246, 246, 246, 0.42) 85%,
+    rgba(246, 246, 246, 0.55) 100%
+  );
+
+  /*
+    Máscara combinada (dos capas):
+    1) Fade de opacidad vertical — borde superior totalmente suave.
+    2) Patrón repetitivo cada 10px (7px curva base + 3px caída brusca
+       y reintegración), que superpone "rayas" horizontales al fade.
+    Las capas se multiplican con mask-composite: intersect, de modo que
+    las rayas bajan la opacidad donde tocan, sin romper el fade general.
+  */
+  -webkit-mask-image:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.35) 18%,
+      rgba(0, 0, 0, 0.7) 45%,
+      rgba(0, 0, 0, 1) 75%
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 1) 0px,
+      rgba(0, 0, 0, 1) 10px,
+      rgba(0, 0, 0, 0.15) 13.5px,
+      rgba(0, 0, 0, 1) 17px
+    );
+  -webkit-mask-composite: source-in; /* equivalente a intersect en WebKit */
+
+  mask-image:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.35) 18%,
+      rgba(0, 0, 0, 0.7) 45%,
+      rgba(0, 0, 0, 1) 75%
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 1) 0px,
+      rgba(0, 0, 0, 1) 10px,
+      rgba(0, 0, 0, 0.15) 13.5px,
+      rgba(0, 0, 0, 1) 17px
+    );
+  mask-composite: intersect;
+}
+
+
+/* Reduce motion: si el usuario pidió menos animaciones, desactivamos el filtro */
+@media (prefers-reduced-motion: reduce) {
+  .ripple-fade__layer {
+    backdrop-filter: blur(0.6px);
+    -webkit-backdrop-filter: blur(0.6px);
   }
 }
