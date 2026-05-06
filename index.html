@@ -28,6 +28,7 @@
       <li><a href="index.html" class="nav__link nav__link--active">Home</a></li>
       <li><a href="proyectos.html" class="nav__link">Projects</a></li>
       <li><a href="sustentabilidad.html" class="nav__link">Sustainability</a></li>
+      <li><a href="servicios.html" class="nav__link">Services</a></li>
       <li><a href="sobre-nosotros.html" class="nav__link">About Us</a></li>
       <li><a href="contacto.html" class="nav__link">Contact</a></li>
     </ul>
@@ -85,58 +86,61 @@
           </figure>
         </div>
       </div>
-      <div class="container intro__detail">
-        <div class="intro__detail-media">
-          <div class="intro__detail-dots">
-            <button class="intro__detail-dot is-active" data-slide="0" aria-label="Foto 1"></button>
-            <button class="intro__detail-dot" data-slide="1" aria-label="Foto 2"></button>
-          </div>
-          <figure class="intro__detail-photo anim-zoom-in">
-            <img class="intro__detail-img is-active" src="assets/images/intro-section/DSC01983.jpg" alt="Timbó — arquitectura entre la naturaleza" loading="lazy">
-            <img class="intro__detail-img" src="assets/images/intro-section/segunda-opcion.jpg" alt="Timbó — arquitectura y naturaleza" loading="lazy">
-          </figure>
-        </div>
-        <div class="intro__detail-body">
-          <svg class="intro__detail-icon anim-fade-up" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 83.16 83.36" aria-hidden="true" focusable="false">
-            <g class="intro__detail-icon-sun">
-              <path d="M50.15,16.15c2.27-4.74,9.57-8.16,11.63-1.19,1.62,5.5-5.08,10.25-9.99,7.8-2.65-1.32-3.71-4.65-1.43-6.82"/>
-              <path d="M48.3,10.82c-1.17-.83-2.23-2.05-3.28-3.07"/>
-              <path d="M54.04,7.13c-.32-1.37-.9-2.69-1.02-4.1"/>
-              <path d="M60.8,6.93c.11-1.27,1.19-2.23,1.43-3.48"/>
-              <path d="M65.51,11.44c1.13-.17,2-.96,2.87-1.64"/>
-              <path d="M66.13,18.2c1.39-.03,2.68.33,3.89,1.02"/>
-              <path d="M63.46,24.14c.18,1.48,1.55,2.44,2.25,3.69"/>
-              <path d="M45.23,18.61c-1.12,0-2.21-.04-3.28.2"/>
-              <path d="M48.51,25.98c-.19,1.12-.99,2.11-1.84,2.87"/>
-              <path d="M55.88,27.83c-.05,1.4.34,2.72.2,4.1"/>
-            </g>
-            <g class="intro__detail-icon-house">
-              <path d="M24.49,24.2c-2.78,4.33-8.08,8.07-11.71,11.94-3.36,3.58-7.26,6.67-10.72,10.23"/>
-              <path d="M25.33,24.69c6.26,6.8,10.87,15.21,16.47,22.5"/>
-              <path d="M42.24,47.22c-.72,11.1-1.87,22.04-2.58,33.07"/>
-              <path d="M39.62,80.73c-6.01-1.13-12.47.86-18.48,1.39-6.17.54-11.72-.39-17.87-.69"/>
-              <path d="M2.92,46.42c-.77,11.89-.74,23.65-1.42,35.34"/>
-            </g>
-            <!-- Flecha 2 (arriba): se dibuja segunda, de derecha a izquierda -->
-            <path class="intro__detail-icon-arrow intro__detail-icon-arrow--2-shaft" d="M35.33,4.29c-2.32-.96-4.51-2.48-7.16-2.73-2.26-.22-4.91-.22-7.19-.02-4.29.38-9.83,1.96-12.79,5.32"/>
-            <path class="intro__detail-icon-arrow intro__detail-icon-arrow--2-tip" d="M8.01,7.04c-.05-1.85,1.33-3.34,2.02-4.95"/>
-            <path class="intro__detail-icon-arrow intro__detail-icon-arrow--2-tip intro__detail-icon-arrow--2-tip-b" d="M8.2,7.04c1.62-.08,3.57-.28,5.13-.73"/>
-            <!-- Flecha 1 (derecha): se dibuja primera, de abajo hacia arriba -->
-            <path class="intro__detail-icon-arrow intro__detail-icon-arrow--1-shaft" d="M82.99,60.57c0-5.13-1.13-10.11-2.84-14.94-.8-2.25-1.96-4.34-3.14-6.4-.67-1.17-1.34-2.36-1.99-3.5-.63-1.08-1.81-1.95-2.29-3.02"/>
-            <path class="intro__detail-icon-arrow intro__detail-icon-arrow--1-tip" d="M72.73,32.7c.03,1.79-.72,3.52-.55,5.32"/>
-            <path class="intro__detail-icon-arrow intro__detail-icon-arrow--1-tip intro__detail-icon-arrow--1-tip-b" d="M72.91,32.52c2.07.06,4.06,1.53,5.87,2.38"/>
-          </svg>
-          <h3 class="intro__detail-title anim-title-drop"><span class="intro__detail-title-inner">SUSTENTABILIDAD</span></h3>
-          <p class="intro__detail-text">
+    </section>
+
+
+    <!-- ==========================================
+         SECCIÓN 3: FILOSOFÍA / VALORES
+         Frase manifiesto + 7 variables
+         ========================================== -->
+    <section class="philosophy" id="philosophy" data-nav-theme="dark">
+      <div class="container philosophy__container">
+        <div class="philosophy__content">
+          <h2 class="philosophy__statement" data-i18n="home.sustainabilityStatement" data-i18n-html="true">
+            Diseño resiliente y<br>adaptado<br>a las condiciones<br>ambientales
+          </h2>
+          <p class="philosophy__text" data-i18n="home.philosophyText">
             Mediante el análisis de datos climáticos, los proyectos se adaptan a las condiciones específicas de cada lugar, asegurando una baja demanda energética y una alta calidad ambiental tanto en espacios interiores como exteriores.
           </p>
+          <a href="sustentabilidad.html" class="philosophy__cta" data-i18n="home.philosophyCta">VER MÁS</a>
+        </div>
+
+        <div class="philosophy__signals">
+          <article class="philosophy__signal">
+            <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/zona-climatica.svg" alt="" aria-hidden="true" loading="lazy">
+            <p class="philosophy__signal-label" data-i18n="home.philosophyClimateZone" data-i18n-html="true">Zona<br>climática</p>
+          </article>
+          <article class="philosophy__signal">
+            <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/trayectoria-solar.svg" alt="" aria-hidden="true" loading="lazy">
+            <p class="philosophy__signal-label" data-i18n="home.philosophySunPath" data-i18n-html="true">Trayectoria<br>solar</p>
+          </article>
+          <article class="philosophy__signal">
+            <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/temperatura-exterior.svg" alt="" aria-hidden="true" loading="lazy">
+            <p class="philosophy__signal-label" data-i18n="home.philosophyOutdoorTemperature" data-i18n-html="true">Temperatura<br>exterior</p>
+          </article>
+          <article class="philosophy__signal">
+            <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/humedad.svg" alt="" aria-hidden="true" loading="lazy">
+            <p class="philosophy__signal-label" data-i18n="home.philosophyHumidity">Humedad</p>
+          </article>
+          <article class="philosophy__signal">
+            <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/precipitacion.svg" alt="" aria-hidden="true" loading="lazy">
+            <p class="philosophy__signal-label" data-i18n="home.philosophyPrecipitation">Precipitación</p>
+          </article>
+          <article class="philosophy__signal">
+            <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/patrones-de-viento.svg" alt="" aria-hidden="true" loading="lazy">
+            <p class="philosophy__signal-label" data-i18n="home.philosophyWindPatterns" data-i18n-html="true">Patrones<br>de viento</p>
+          </article>
+          <article class="philosophy__signal philosophy__signal--centered">
+            <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/cobertura-del-cielo.svg" alt="" aria-hidden="true" loading="lazy">
+            <p class="philosophy__signal-label" data-i18n="home.philosophySkyCoverage" data-i18n-html="true">Cobertura<br>del cielo</p>
+          </article>
         </div>
       </div>
     </section>
 
 
     <!-- ==========================================
-         SECCIÓN 3: DIÁLOGO CON LA NATURALEZA
+         SECCIÓN 4: DIÁLOGO CON LA NATURALEZA
          Imagen protagonista + manifiesto
          ========================================== -->
     <section class="nature-dialogue" id="nature-dialogue" data-nav-theme="dark">
@@ -149,88 +153,6 @@
           <p class="nature-dialogue__description">
             <!-- Texto pendiente: se escribirá cuando se elija el proyecto -->
           </p>
-        </div>
-      </div>
-    </section>
-
-
-    <!-- ==========================================
-         SECCIÓN 4: FILOSOFÍA / VALORES
-         Frase manifiesto + 7 variables
-         ========================================== -->
-    <section class="philosophy" id="philosophy" data-nav-theme="dark">
-      <div class="container container--wide philosophy__container">
-        <div class="philosophy__signals">
-          <div class="philosophy__signals-track">
-            <div class="philosophy__signals-group">
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_47.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophyClimateZone" data-i18n-html="true">Zona<br>climática</p>
-              </article>
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_48.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophySunPath" data-i18n-html="true">Trayectoria<br>solar</p>
-              </article>
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_49.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophyOutdoorTemperature" data-i18n-html="true">Temperatura<br>exterior</p>
-              </article>
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_50.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophyHumidity">Humedad</p>
-              </article>
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_51.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophyPrecipitation">Precipitaciones</p>
-              </article>
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_52.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophyWindPatterns" data-i18n-html="true">Patrones<br>de viento</p>
-              </article>
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_53.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophySkyCoverage" data-i18n-html="true">Ocupación<br>del cielo</p>
-              </article>
-            </div>
-
-            <div class="philosophy__signals-group" aria-hidden="true">
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_47.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophyClimateZone" data-i18n-html="true">Zona<br>climática</p>
-              </article>
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_48.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophySunPath" data-i18n-html="true">Trayectoria<br>solar</p>
-              </article>
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_49.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophyOutdoorTemperature" data-i18n-html="true">Temperatura<br>exterior</p>
-              </article>
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_50.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophyHumidity">Humedad</p>
-              </article>
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_51.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophyPrecipitation">Precipitaciones</p>
-              </article>
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_52.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophyWindPatterns" data-i18n-html="true">Patrones<br>de viento</p>
-              </article>
-              <article class="philosophy__signal">
-                <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-negros/iconos-negros-mios_53.svg" alt="" aria-hidden="true" loading="lazy">
-                <p class="philosophy__signal-label" data-i18n="home.philosophySkyCoverage" data-i18n-html="true">Ocupación<br>del cielo</p>
-              </article>
-            </div>
-          </div>
-        </div>
-
-        <div class="philosophy__content">
-          <h2 class="philosophy__statement" data-i18n="home.sustainabilityStatement" data-i18n-html="true">
-            Diseño resiliente y adaptado a las<br>condiciones ambientales
-          </h2>
-          <a href="sustentabilidad.html" class="philosophy__cta" data-i18n="home.philosophyCta">VER MÁS</a>
         </div>
       </div>
     </section>

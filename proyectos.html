@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Timbó — Selected bioclimatic architecture projects.">
-  <title>Timbó — Projects</title>
+  <meta name="description" content="Timbó — Proyectos de arquitectura bioclimática.">
+  <title>Timbó — Proyectos</title>
   <link rel="icon" type="image/png" href="assets/images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
   <link rel="stylesheet" href="assets/css/variables.css">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-<body class="page--projects-light">
+<body>
 
   <!-- ====== NAVEGACIÓN ====== -->
   <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
@@ -17,6 +17,7 @@
       <li><a href="index.html" class="nav__link">Home</a></li>
       <li><a href="proyectos.html" class="nav__link nav__link--active">Projects</a></li>
       <li><a href="sustentabilidad.html" class="nav__link">Sustainability</a></li>
+      <li><a href="servicios.html" class="nav__link">Services</a></li>
       <li><a href="sobre-nosotros.html" class="nav__link">About Us</a></li>
       <li><a href="contacto.html" class="nav__link">Contact</a></li>
     </ul>
@@ -26,36 +27,93 @@
   <!-- ====== CONTENIDO PRINCIPAL ====== -->
   <main class="page-content">
 
-    <section class="projects-section" id="projects-section">
-      <div class="container container--wide">
-        <h1 class="projects__title" data-i18n="projects.title">Nuestros proyectos</h1>
+    <!-- ====== GALERÍA DE PROYECTOS ====== -->
+    <section class="projects-gallery" id="projects-gallery">
 
-        <div class="projects__body">
+      <!-- ====== FILA 1 ====== -->
+      <div class="projects-gallery__row projects-gallery__row--1">
 
-          <!-- COLUMNA A: preview del proyecto en hover -->
-          <div class="projects__preview" id="projects-preview">
-            <div class="projects__preview-image-wrapper">
-              <img class="projects__preview-img" id="projects-preview-img" src="" alt="">
+        <!-- Item 1: Exuma Lodge -->
+        <a class="projects-gallery__item anim-fade-up" data-anim-delay="0ms" href="proyectos/proyecto-exuma-lodge.html">
+          <div class="projects-gallery__media projects-gallery__media--wide">
+            <img src="assets/images/projects/project-covers/exuma-lodge-bahamas.jpg" alt="Exuma Lodge">
+          </div>
+          <div class="projects-gallery__caption">
+            <span class="projects-gallery__name">EXUMA LODGE</span>
+            <span class="projects-gallery__location">Bahamas</span>
+            <span class="projects-gallery__category">Hospitality Lodge</span>
+          </div>
+        </a>
+
+        <!-- Item 2: Haras San Pablo -->
+        <a class="projects-gallery__item anim-fade-up" data-anim-delay="140ms" href="proyectos/proyecto-haras-san-pablo.html">
+          <div class="projects-gallery__media projects-gallery__media--wide">
+            <img src="assets/images/projects/project-covers/haras-sanpablo-001.jpg" alt="Haras San Pablo">
+          </div>
+          <div class="projects-gallery__caption">
+            <span class="projects-gallery__name">HARAS SAN PABLO</span>
+            <span class="projects-gallery__location">Argentina</span>
+            <span class="projects-gallery__category">Residential + Productive</span>
+          </div>
+        </a>
+
+      </div>
+
+      <!-- ====== FILA 2 ====== -->
+      <div class="projects-gallery__row projects-gallery__row--2">
+
+        <!-- Item 3: Tobar Lodge -->
+        <a class="projects-gallery__item projects-gallery__item--pair anim-fade-up" data-anim-delay="0ms" href="proyectos/proyecto-tobar-lodge.html">
+          <div class="projects-gallery__media-pair">
+            <div class="projects-gallery__media projects-gallery__media--square">
+              <img src="assets/images/projects/project-covers/tobar-lodge.jpg" alt="Tobar Lodge">
             </div>
-            <div class="projects__preview-meta" id="projects-preview-meta">
-              <!-- categoría y location se insertan por JS en hover -->
+            <div class="projects-gallery__media projects-gallery__media--square">
+              <img src="assets/images/projects/project-covers/tobar-lodge.jpg" alt="Tobar Lodge">
             </div>
           </div>
+          <div class="projects-gallery__caption">
+            <span class="projects-gallery__name">TOBAR LODGE</span>
+            <span class="projects-gallery__location">Argentina</span>
+            <span class="projects-gallery__category">Hospitality / Retreat</span>
+          </div>
+        </a>
 
-          <!-- COLUMNA B: lista de proyectos -->
-          <ul class="projects__list" id="projects-list">
-            <!-- Renderizado por main.js -->
-          </ul>
+        <!-- Item 4: Cabaña Suindá -->
+        <a class="projects-gallery__item anim-fade-up" data-anim-delay="140ms" href="proyectos/proyecto-cabana-suinda.html">
+          <div class="projects-gallery__media projects-gallery__media--wide">
+            <img src="assets/images/projects/project-covers/cabana-suinda.jpg" alt="Cabaña Suindá">
+          </div>
+          <div class="projects-gallery__caption">
+            <span class="projects-gallery__name">CABAÑA SUINDÁ</span>
+            <span class="projects-gallery__location">Corrientes, Argentina</span>
+            <span class="projects-gallery__category">Cabin / Retreat</span>
+          </div>
+        </a>
 
-        </div>
       </div>
+
+      <!-- ====== FILA 5 ====== -->
+      <div class="projects-gallery__row projects-gallery__row--5">
+
+        <!-- Item 5: Cherokee Ave -->
+        <a class="projects-gallery__item anim-fade-up" data-anim-delay="0ms" href="proyectos/proyecto-cherokee-ave.html">
+          <div class="projects-gallery__media projects-gallery__media--wide">
+            <img src="assets/images/projects/projects-page/maya-azul.JPG" alt="Cherokee Ave">
+          </div>
+          <div class="projects-gallery__caption">
+            <span class="projects-gallery__name">CHEROKEE AVE</span>
+            <span class="projects-gallery__location">United States</span>
+            <span class="projects-gallery__category">Urban Housing</span>
+          </div>
+        </a>
+
+      </div>
+
     </section>
 
   </main>
 
-
-  <!-- ====== FOOTER ====== -->
-  <footer id="main-footer" class="main-footer"></footer>
 
   <!-- JS -->
   <script src="assets/js/data.js"></script>

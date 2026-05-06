@@ -17,6 +17,7 @@
       <li><a href="index.html" class="nav__link">Inicio</a></li>
       <li><a href="proyectos.html" class="nav__link">Proyectos</a></li>
       <li><a href="sustentabilidad.html" class="nav__link nav__link--active">Sustentabilidad</a></li>
+      <li><a href="servicios.html" class="nav__link">Servicios</a></li>
       <li><a href="sobre-nosotros.html" class="nav__link">Sobre nosotros</a></li>
       <li><a href="contacto.html" class="nav__link">Contacto</a></li>
     </ul>
@@ -25,28 +26,18 @@
   <main class="page-content">
 
     <!-- 1. Hero -->
-    <section class="sust-hero" data-nav-theme="light">
-      <div class="sust-hero__media" id="sustHeroImage" aria-hidden="true">
-        <img src="assets/images/sustainability/sust-hero__background-img.jpg" alt="" loading="eager" decoding="async">
-      </div>
-      <div class="container sust-hero__content">
-        <h1 class="sust-hero__title">Sustentabilidad</h1>
-        <img src="assets/images/logo/logo-nuevo-negro-16.svg" alt="Timbó" class="sust-hero__logo">
-      </div>
-    </section>
-    <section class="sust-overview" id="sust-overview" data-nav-theme="light">
-      <div class="container sust-overview__container">
-        <div class="sust-overview__copy">
-          <h2 class="sust-overview__title anim-fade-up" data-anim-delay="0">Sustentabilidad<br>no es un rótulo ni<br>una
-            etiqueta.</h2>
-          <p class="sust-overview__text anim-fade-up" data-anim-delay="140">Para nosotros, significa diseñar
-            arquitectura<br>que consuma menos energía, dure más años<br>y profundice la relación entre las personas
-            y<br>la naturaleza.<br><br>Es la base de cómo proyectamos.</p>
+    <section class="sust-hero" id="sust-hero" data-nav-theme="light">
+      <div class="container sust-hero__container">
+        <div class="sust-hero__copy">
+          <h1 class="sust-hero__title anim-fade-up" data-anim-delay="0">Sustentabilidad<br>no es un rótulo ni<br>una
+            etiqueta.</h1>
+          <p class="sust-hero__text anim-fade-up" data-anim-delay="140">Para nosotros, significa diseñar
+            arquitectura que consuma menos energía, dure más años y profundice la relación entre las personas
+            y la naturaleza. <br><br>Es la base de cómo proyectamos.</p>
         </div>
 
-        <div class="sust-overview__photo anim-fade-in" data-anim-delay="220">
-          <img src="assets/images/sustainability/sust-overview.jpg" alt="" class="sust-overview__photo-img"
-            loading="lazy">
+        <div class="sust-hero__visual" aria-hidden="true">
+          <div class="sust-hero__visual-img" data-svg-src="assets/images/sustainability/hero-drawing.svg"></div>
         </div>
       </div>
     </section>
@@ -54,34 +45,14 @@
     <!-- 3. Proceso / Investigación -->
     <section class="sust-process" id="sust-process" data-nav-theme="light">
       <div class="container sust-process__container">
-        <div class="sust-process__interactive-wrap anim-fade-up" data-anim-delay="0">
-          <div class="sust-process__interactive anim-fade-in" data-anim-delay="220">
-            <iframe id="plano3dFrame" src="assets/interactives/plano-3d.html" title="Plano 3D interactivo — Vivienda"
-              loading="lazy" allowfullscreen></iframe>
-          </div>
-          <div class="sust-process__controls">
-            <button class="sust-process__toggle" data-action="toggleWind">
-              <span class="sust-process__toggle-track"><span class="sust-process__toggle-thumb"></span></span>
-              <span class="sust-process__toggle-label">Viento</span>
-            </button>
-            <button class="sust-process__toggle" data-action="toggleWire">
-              <span class="sust-process__toggle-track"><span class="sust-process__toggle-thumb"></span></span>
-              <span class="sust-process__toggle-label">Wireframe</span>
-            </button>
-            <button class="sust-process__toggle is-active" data-action="toggleRotate">
-              <span class="sust-process__toggle-track"><span class="sust-process__toggle-thumb"></span></span>
-              <span class="sust-process__toggle-label">Auto-rotar</span>
-            </button>
-            <button class="sust-process__toggle" data-action="toggleSun">
-              <span class="sust-process__toggle-track"><span class="sust-process__toggle-thumb"></span></span>
-              <span class="sust-process__toggle-label">Ciclo solar</span>
-            </button>
-            <div class="sust-process__speed-btns" id="plano3dSpeedBtns">
-              <button class="sust-process__speed-btn is-active" data-spd="1x">1x</button>
-              <button class="sust-process__speed-btn" data-spd="2x">2x</button>
-              <button class="sust-process__speed-btn" data-spd="5x">5x</button>
-              <button class="sust-process__speed-btn" data-spd="10x">10x</button>
-            </div>
+        <div class="sust-process__media-wrap anim-fade-up" data-anim-delay="0">
+          <div class="sust-process__media anim-fade-in" data-anim-delay="220">
+            <img
+              src="assets/images/sustainability/outdoor-climate.png"
+              alt="Gráfico climático exterior de Buenos Aires, Argentina"
+              class="sust-process__graphic"
+              loading="lazy"
+              decoding="async">
           </div>
         </div>
         <div class="sust-process__copy anim-fade-up" data-anim-delay="180">
@@ -89,6 +60,112 @@
           <p class="sust-process__text">A través del método científico, reducimos la dependencia de los edificios en
             energía proveniente de combustibles fósiles. Mediante la orientación, la forma y la materialidad,
             maximizamos el confort y la calidad ambiental interior.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pilares -->
+    <section class="sust-pilares" id="sust-pilares" data-nav-theme="light">
+      <div class="container">
+        <div class="sust-pilares__layout">
+          <div class="sust-pilares__diagram-shell">
+            <svg class="sust-pilares__diagram-svg anim-fade-in" data-anim-delay="0" viewBox="0 0 800 800"
+              aria-label="Pilares de diseño bioclimático">
+              <defs>
+                <radialGradient id="pilaresGlowGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="rgba(120,160,200,1)" />
+                  <stop offset="40%" stop-color="rgba(120,160,200,0.75)" />
+                  <stop offset="75%" stop-color="rgba(120,160,200,0.35)" />
+                  <stop offset="100%" stop-color="rgba(120,160,200,0)" />
+                </radialGradient>
+              </defs>
+
+              <!-- Glow central -->
+              <circle class="sust-pilares__glow" cx="400" cy="400" r="220" fill="url(#pilaresGlowGrad)" />
+
+              <!-- Anillo -->
+              <circle class="sust-pilares__ring" cx="400" cy="400" r="220" pathLength="100" fill="none"
+                stroke="rgba(29,29,27,0.3)" stroke-width="1" />
+
+              <!-- Guía temporal de la órbita de títulos (círculo, radio = 305) -->
+              <circle class="sust-pilares__label-orbit-guide" cx="400" cy="400" r="305" fill="none" />
+
+              <!-- Label central -->
+              <text class="sust-pilares__title" x="400" y="412" text-anchor="middle" font-size="38"
+                font-weight="400" letter-spacing="-0.02em"
+                fill="var(--color-black, #1D1D1B)"
+                font-family="'Neue Haas Grotesk Display Pro', sans-serif">PILARES</text>
+
+              <g class="sust-pilares__orbit-points">
+                <circle data-pilar="temperatura"  cx="290" cy="210" r="8" fill="#7a93a8" stroke="rgba(29,29,27,0.7)" stroke-width="2" />
+                <circle data-pilar="radiacion"    cx="510" cy="210" r="8" fill="#7a93a8" stroke="rgba(29,29,27,0.7)" stroke-width="2" />
+                <circle data-pilar="luz"          cx="620" cy="400" r="8" fill="#7a93a8" stroke="rgba(29,29,27,0.7)" stroke-width="2" />
+                <circle data-pilar="flujo_aire"   cx="510" cy="590" r="8" fill="#7a93a8" stroke="rgba(29,29,27,0.7)" stroke-width="2" />
+                <circle data-pilar="calidad_aire" cx="290" cy="590" r="8" fill="#7a93a8" stroke="rgba(29,29,27,0.7)" stroke-width="2" />
+                <circle data-pilar="emisiones"    cx="180" cy="400" r="8" fill="#7a93a8" stroke="rgba(29,29,27,0.7)" stroke-width="2" />
+              </g>
+
+              <g class="sust-pilares__orbit-labels">
+                <g class="sust-pilares__orbit-label-item" data-pilar="temperatura" transform="translate(248 136)">
+                  <g class="sust-pilares__orbit-label-content">
+                    <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                      font-family="'Neue Haas Grotesk Display Pro', sans-serif">TEMPERATURA</text>
+                  </g>
+                </g>
+
+                <g class="sust-pilares__orbit-label-item" data-pilar="radiacion" transform="translate(552 136)">
+                  <g class="sust-pilares__orbit-label-content">
+                    <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                      font-family="'Neue Haas Grotesk Display Pro', sans-serif">RADIACIÓN</text>
+                  </g>
+                </g>
+
+                <g class="sust-pilares__orbit-label-item" data-pilar="luz" transform="translate(705 400)">
+                  <g class="sust-pilares__orbit-label-content">
+                    <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                      font-family="'Neue Haas Grotesk Display Pro', sans-serif">LUZ</text>
+                  </g>
+                </g>
+
+                <g class="sust-pilares__orbit-label-item" data-pilar="flujo_aire" transform="translate(552 664)">
+                  <g class="sust-pilares__orbit-label-content">
+                    <text x="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                      font-family="'Neue Haas Grotesk Display Pro', sans-serif">
+                      <tspan x="0" y="-9">FLUJO</tspan>
+                      <tspan x="0" y="9">DE AIRE</tspan>
+                    </text>
+                  </g>
+                </g>
+
+                <g class="sust-pilares__orbit-label-item" data-pilar="calidad_aire" transform="translate(248 664)">
+                  <g class="sust-pilares__orbit-label-content">
+                    <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                      font-family="'Neue Haas Grotesk Display Pro', sans-serif">CALIDAD DE AIRE</text>
+                  </g>
+                </g>
+
+                <g class="sust-pilares__orbit-label-item" data-pilar="emisiones" transform="translate(95 400)">
+                  <g class="sust-pilares__orbit-label-content">
+                    <text x="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                      font-family="'Neue Haas Grotesk Display Pro', sans-serif">
+                      <tspan x="0" y="-9">EMISIONES</tspan>
+                      <tspan x="0" y="9">DE CARBONO</tspan>
+                    </text>
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </div>
+
+          <aside class="sust-pilares__detail" id="sust-pilares-detail" aria-live="polite" aria-hidden="true">
+            <div class="sust-pilares__detail-card">
+              <button class="sust-pilares__detail-close" type="button" aria-label="Cerrar detalle">×</button>
+              <div class="sust-pilares__detail-stack">
+                <h3 class="sust-pilares__detail-title"></h3>
+                <p class="sust-pilares__detail-text"></p>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </section>
@@ -105,119 +182,70 @@
               supone: se comprueba.</p>
           </div>
         </div>
-
-      </div>
-
-      <!-- Brújula scroll-driven (decorativa, no altera el layout del container) -->
-      <aside class="sust-climate__compass" aria-hidden="true">
-        <div class="sust-climate__compass-sticky">
-          <svg class="sust-climate__compass-svg" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
-            <!-- Círculo exterior -->
-            <circle cx="120" cy="120" r="118" fill="none" stroke="currentColor" stroke-width="1" />
-            <!-- Círculo interior sutil -->
-            <circle cx="120" cy="120" r="100" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.35" />
-
-            <!-- Marcas radiales cada 30° (las cardinales son más largas) -->
-            <g stroke="currentColor" stroke-width="1">
-              <!-- 0° / N -->
-              <line x1="120" y1="4"   x2="120" y2="20" />
-              <!-- 30° -->
-              <line x1="178" y1="19.6" x2="170" y2="33.5" opacity="0.55" />
-              <!-- 60° -->
-              <line x1="220.4" y1="62" x2="206.5" y2="70" opacity="0.55" />
-              <!-- 90° / E -->
-              <line x1="236" y1="120" x2="220" y2="120" />
-              <!-- 120° -->
-              <line x1="220.4" y1="178" x2="206.5" y2="170" opacity="0.55" />
-              <!-- 150° -->
-              <line x1="178" y1="220.4" x2="170" y2="206.5" opacity="0.55" />
-              <!-- 180° / S -->
-              <line x1="120" y1="236" x2="120" y2="220" />
-              <!-- 210° -->
-              <line x1="62" y1="220.4" x2="70" y2="206.5" opacity="0.55" />
-              <!-- 240° -->
-              <line x1="19.6" y1="178" x2="33.5" y2="170" opacity="0.55" />
-              <!-- 270° / O -->
-              <line x1="4" y1="120" x2="20" y2="120" />
-              <!-- 300° -->
-              <line x1="19.6" y1="62" x2="33.5" y2="70" opacity="0.55" />
-              <!-- 330° -->
-              <line x1="62" y1="19.6" x2="70" y2="33.5" opacity="0.55" />
-            </g>
-
-            <!-- Letras cardinales -->
-            <g fill="currentColor" font-family="'Neue Haas Grotesk Display Pro', sans-serif" font-size="12" font-weight="500" text-anchor="middle" dominant-baseline="middle" letter-spacing="0.04em">
-              <text x="120" y="34">N</text>
-              <text x="206" y="120">E</text>
-              <text x="120" y="206">S</text>
-              <text x="34"  y="120">O</text>
-            </g>
-
-            <!-- Aguja (grupo rotable por JS) -->
-            <g class="sust-climate__compass-needle">
-              <!-- Brazo norte: triángulo fino apuntando hacia arriba -->
-              <polygon points="120,28 114,120 126,120" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" />
-              <!-- Brazo sur: triángulo más corto apuntando hacia abajo -->
-              <polygon points="120,196 115,120 125,120" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" opacity="0.55" />
-            </g>
-
-            <!-- Pivote central -->
-            <circle cx="120" cy="120" r="3" fill="currentColor" />
-          </svg>
+        <div class="sust-climate__media-wrap anim-fade-up" data-anim-delay="140">
+          <img
+            src="assets/images/sustainability/climate-ocean.jpg"
+            alt="Cielo tormentoso sobre el océano"
+            class="sust-climate__image"
+            loading="lazy"
+            decoding="async">
         </div>
-      </aside>
-    </section>
-
-    <section class="sust-breathe" id="sust-breathe" data-nav-theme="dark">
-      <div class="sust-breathe__media anim-fade-in" data-anim-delay="0" aria-hidden="true">
-        <img src="assets/images/sustainability/sust-breathe-img.jpg" alt="" loading="lazy" decoding="async">
-      </div>
-
-      <div class="container sust-breathe__content">
-        <h2 class="sust-breathe__title">Un proyecto timbó<br>no es
-          hermético:<br>respira.</h2>
-
-        <p class="sust-breathe__text">Se vincula con su entorno y evoluciona con
-          quienes lo habitan.<br><br>Nuestra arquitectura se adapta a la vida y a sus cambios.</p>
       </div>
     </section>
 
-    <section class="sust-metrics" id="sust-metrics" data-nav-theme="light">
-      <div class="container sust-metrics__container">
-        <div class="sust-metrics__charts" aria-label="Indicadores de desempeño">
-          <article class="sust-metrics__item sust-metrics__item--high anim-fade-up" data-anim-delay="0"
-            data-bar-delay="0" style="--metric-fill: 80%;">
-            <p class="sust-metrics__value">80%</p>
-            <div class="sust-metrics__bar" aria-hidden="true">
-              <div class="sust-metrics__bar-fill"></div>
-            </div>
-            <div class="sust-metrics__caption">
-              <p class="sust-metrics__label">Lorem ipsum</p>
-              <p class="sust-metrics__note">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </div>
-          </article>
+    <!-- Emisiones de CO2 -->
+    <section class="sust-emissions" id="sust-emissions" data-nav-theme="light">
+      <div class="container sust-emissions__container">
+        <div class="sust-emissions__left">
+          <figure class="emissions-chart anim-fade-in" data-anim-delay="0" id="emissions-chart">
+            <h3 class="emissions-chart__title" data-i18n="sustainability.emissionsChartTitle" data-i18n-html="true">
+              Emisiones globales<br>de CO<sub>2</sub> por sectores
+            </h3>
 
-          <article class="sust-metrics__item sust-metrics__item--mid anim-fade-up" data-anim-delay="1600"
-            data-bar-delay="1600" style="--metric-fill: 50%;">
-            <p class="sust-metrics__value">50%</p>
-            <div class="sust-metrics__bar" aria-hidden="true">
-              <div class="sust-metrics__bar-fill"></div>
+            <div class="emissions-chart__pie-wrap">
+              <svg class="emissions-chart__pie" viewBox="0 0 200 200"
+                   aria-label="Gráfico de torta de emisiones globales de CO2 por sectores"
+                   role="img">
+                <g class="emissions-chart__slices"></g>
+              </svg>
             </div>
-            <div class="sust-metrics__caption">
-              <p class="sust-metrics__label">Lorem ipsum</p>
-              <p class="sust-metrics__note">Lorem ipsum dolor sit amet, consectetur adipiscing elit sed.</p>
-            </div>
-          </article>
+
+            <ul class="emissions-chart__legend">
+              <li class="emissions-chart__legend-item" data-slice="other">
+                <span class="emissions-chart__swatch"></span>
+                <p class="emissions-chart__legend-value">9,0%</p>
+                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelOther">Otros</p>
+              </li>
+              <li class="emissions-chart__legend-item" data-slice="ops">
+                <span class="emissions-chart__swatch"></span>
+                <p class="emissions-chart__legend-value">28,0%</p>
+                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelOps">Operaciones de construcción</p>
+              </li>
+              <li class="emissions-chart__legend-item" data-slice="transport">
+                <span class="emissions-chart__swatch"></span>
+                <p class="emissions-chart__legend-value">22,0%</p>
+                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelTransport">Transporte</p>
+              </li>
+              <li class="emissions-chart__legend-item" data-slice="materials">
+                <span class="emissions-chart__swatch"></span>
+                <p class="emissions-chart__legend-value">11,0%</p>
+                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelMaterials">Materiales de construcción</p>
+              </li>
+              <li class="emissions-chart__legend-item" data-slice="industry">
+                <span class="emissions-chart__swatch"></span>
+                <p class="emissions-chart__legend-value">30,0%</p>
+                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelIndustry">Industria</p>
+              </li>
+            </ul>
+          </figure>
         </div>
-
-        <div class="sust-metrics__copy anim-fade-up" data-anim-delay="240">
-          <p class="sust-metrics__text">Cuantificamos el carbono incorporado y el operacional, evaluando materiales y
-            demanda energética a lo largo del ciclo de vida del edificio. Maximizamos la luz natural y la ventilación
-            mientras controlamos las ganancias térmicas, logrando condiciones estables a lo largo de las estaciones.
-            <br><br>Este enfoque nos permite evitar soluciones "verdes" genéricas y desarrollar estrategias climáticas
-            específicas para cada proyecto: simples, efectivas y duraderas.</p>
-          <!-- <p class="sust-metrics__text">Este enfoque nos permite evitar soluciones "verdes" genéricas y desarrollar
-            estrategias climáticas específicas para cada proyecto: simples, efectivas y duraderas.</p> -->
+        <div class="sust-emissions__right sust-process__copy anim-fade-up" data-anim-delay="180">
+          <h2 class="sust-process__title">Cuantificamos el carbono incorporado y el operacional</h2>
+          <p class="sust-process__text">Evaluamos materiales y demanda energética a lo largo del ciclo de vida del
+            edificio. Maximizamos la luz natural y la ventilación mientras controlamos las ganancias térmicas, logrando
+            condiciones estables a lo largo de las estaciones.<br><br>Este enfoque nos permite evitar soluciones
+            "verdes" genéricas y desarrollar estrategias climáticas específicas para cada proyecto: simples, efectivas
+            y duraderas.</p>
         </div>
       </div>
     </section>
@@ -378,12 +406,25 @@
       </div>
     </section>
 
-  </main>
+    <section class="sust-breathe" id="sust-breathe" data-nav-theme="dark">
+      <div class="sust-breathe__media anim-fade-in" data-anim-delay="0" aria-hidden="true">
+        <img src="assets/images/sustainability/sust-breathe-img.jpg" alt="" loading="lazy" decoding="async">
+      </div>
 
-  <footer id="main-footer" class="main-footer"></footer>
+      <div class="container sust-breathe__content">
+        <h2 class="sust-breathe__title">Un proyecto timbó<br>no es
+          hermético:<br>respira.</h2>
+
+        <p class="sust-breathe__text">Se vincula con su entorno y evoluciona con
+          quienes lo habitan.<br><br>Nuestra arquitectura se adapta a la vida y a sus cambios.</p>
+      </div>
+    </section>
+
+  </main>
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/charts.js"></script>
 </body>
 
 </html>

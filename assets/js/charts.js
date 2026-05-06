@@ -986,11 +986,198 @@ const TimboCharts = {
     },
   },
 
+  /* ============================================================
+     GRÁFICO 5 — Emisiones globales de CO2 (pie chart)
+     ============================================================ */
+
+  emissionsPie: {
+
+    // Datos: orden = orden de dibujado, en sentido horario desde arriba (12hs).
+    // Los slices se dibujan en este orden, así que el primero arranca en el "top".
+    DATA: [
+      { id: 'industry',  value: 30, color: '#BCD8ED' }, // celeste
+      { id: 'materials', value: 11, color: '#74793E' }, // oliva/verde
+      { id: 'transport', value: 22, color: '#D6D6D6' }, // gris claro
+      { id: 'ops',       value: 28, color: '#A8A8A8' }, // gris medio
+      { id: 'other',     value:  9, color: '#7A7A7A' }, // gris oscuro
+    ],
+
+    // Geometría
+    CX: 100,
+    CY: 100,
+    R:  90,
+
+    rootEl: null,
+    svgEl: null,
+    slicesGroup: null,
+    legendItems: null,
+    drawn: false,
+    animated: false,
+    _slices: [], // {id, pathEl, startAngle, endAngle}
+
+    ns: 'http://www.w3.org/2000/svg',
+
+    el(tag, attrs) {
+      const e = document.createElementNS(this.ns, tag);
+      if (attrs) Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v));
+      return e;
+    },
+
+    // Convierte ángulo (0 = arriba, en sentido horario) y radio en (x, y).
+    polar(angleDeg, r) {
+      const rad = (angleDeg - 90) * Math.PI / 180;
+      return {
+        x: this.CX + r * Math.cos(rad),
+        y: this.CY + r * Math.sin(rad),
+      };
+    },
+
+    // Dibuja un slice como path (wedge) entre dos ángulos.
+    arcPath(startAngle, endAngle) {
+      const start = this.polar(endAngle, this.R);
+      const end   = this.polar(startAngle, this.R);
+      const largeArc = endAngle - startAngle > 180 ? 1 : 0;
+      return [
+        `M ${this.CX} ${this.CY}`,
+        `L ${start.x} ${start.y}`,
+        `A ${this.R} ${this.R} 0 ${largeArc} 0 ${end.x} ${end.y}`,
+        'Z',
+      ].join(' ');
+    },
+
+    /* ---- draw ---- */
+
+    draw() {
+      if (this.drawn) return;
+      this.drawn = true;
+
+      const total = this.DATA.reduce((sum, d) => sum + d.value, 0);
+      let angle = 0;
+
+      this.DATA.forEach(d => {
+        const sweep = (d.value / total) * 360;
+        const startAngle = angle;
+        const endAngle   = angle + sweep;
+        angle = endAngle;
+
+        const path = this.el('path', {
+          d: this.arcPath(startAngle, endAngle),
+          fill: d.color,
+          stroke: '#F6F6F6',
+          'stroke-width': '1.2',
+          'stroke-linejoin': 'round',
+          'data-slice': d.id,
+        });
+        this.slicesGroup.appendChild(path);
+
+        this._slices.push({ id: d.id, pathEl: path, startAngle, endAngle });
+      });
+    },
+
+    /* ---- animateIn: sweep horario desde 0 ---- */
+
+    animateIn() {
+      if (this.animated) return;
+      this.animated = true;
+
+      // Estrategia: usamos un clipPath circular animado. Más simple: animamos
+      // el path de cada slice "creciendo" desde 0° hasta su sweep final.
+      // Para no complicar, optamos por un fade-in escalonado por slice
+      // siguiendo el orden horario.
+      this._slices.forEach((s, i) => {
+        s.pathEl.style.opacity = '0';
+        s.pathEl.style.transition = 'opacity 1100ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+      });
+
+      // Forzamos reflow para que el opacity 0 se aplique antes del transition
+      // eslint-disable-next-line no-unused-expressions
+      this.svgEl.getBoundingClientRect();
+
+      this._slices.forEach((s, i) => {
+        const delay = 220 * i;
+        setTimeout(() => {
+          s.pathEl.style.opacity = '1';
+        }, delay);
+      });
+    },
+
+    /* ---- hover: highlight slice + matching legend item ---- */
+
+    bindHover() {
+      const setActive = (sliceId) => {
+        this._slices.forEach(s => {
+          if (sliceId && s.id !== sliceId) {
+            s.pathEl.style.opacity = '0.35';
+          } else {
+            s.pathEl.style.opacity = '1';
+          }
+        });
+        this.legendItems.forEach(item => {
+          const id = item.getAttribute('data-slice');
+          item.classList.toggle('is-active', sliceId !== null && id === sliceId);
+          item.classList.toggle('is-dim', sliceId !== null && id !== sliceId);
+        });
+      };
+
+      // Hover sobre los slices
+      this._slices.forEach(s => {
+        s.pathEl.addEventListener('mouseenter', () => setActive(s.id));
+        s.pathEl.addEventListener('mouseleave', () => setActive(null));
+      });
+
+      // Hover sobre la leyenda
+      this.legendItems.forEach(item => {
+        const id = item.getAttribute('data-slice');
+        item.addEventListener('mouseenter', () => setActive(id));
+        item.addEventListener('mouseleave', () => setActive(null));
+      });
+    },
+
+    /* ---- init ---- */
+
+    init() {
+      this.rootEl = document.getElementById('emissions-chart');
+      if (!this.rootEl) return;
+
+      this.svgEl       = this.rootEl.querySelector('.emissions-chart__pie');
+      this.slicesGroup = this.rootEl.querySelector('.emissions-chart__slices');
+      this.legendItems = this.rootEl.querySelectorAll('.emissions-chart__legend-item');
+      if (!this.svgEl || !this.slicesGroup) return;
+
+      // Pintamos los swatches de la leyenda con el mismo color del slice
+      this.legendItems.forEach(item => {
+        const id = item.getAttribute('data-slice');
+        const datum = this.DATA.find(d => d.id === id);
+        if (!datum) return;
+        const swatch = item.querySelector('.emissions-chart__swatch');
+        if (swatch) swatch.style.backgroundColor = datum.color;
+      });
+
+      this.draw();
+      this.bindHover();
+
+      // Animación de entrada cuando entra al viewport (una sola vez)
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            this.animateIn();
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+
+      // Estado inicial: invisible — animateIn lo prende
+      this._slices.forEach(s => { s.pathEl.style.opacity = '0'; });
+      observer.observe(this.svgEl);
+    },
+  },
+
   init() {
     this.tempHumidity.init();
     this.solarRadiation.init();
     this.windRose.init();
     this.rainfall.init();
+    this.emissionsPie.init();
   },
 };
 

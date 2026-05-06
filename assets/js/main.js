@@ -61,7 +61,6 @@ const Timbo = {
       this.updateToggle();
 
       // Re-renderizar componentes dinámicos que dependen del idioma
-      Timbo.projectsList.render();
       Timbo.projectPage.render();
     },
 
@@ -126,15 +125,22 @@ const Timbo = {
      ============================================================ */
   navScroll: {
     SCROLL_THRESHOLD: 900,  // ← Cambiá este número para ajustar cuándo aparece el fondo
+    ABOUT_SCROLL_THRESHOLD: 300,
+    SUST_SCROLL_THRESHOLD: 80,  // sustentabilidad: que aparezca casi de inmediato
 
     init() {
       const nav = document.querySelector('.main-nav');
       if (!nav) return;
 
-      const threshold = this.SCROLL_THRESHOLD;
+      const isAboutPage = document.body.classList.contains('page--about-light')
+        && Boolean(document.querySelector('.about-hero'));
+      const isSustPage = Boolean(document.querySelector('.sust-hero'));
+      let threshold = this.SCROLL_THRESHOLD;
+      if (isAboutPage) threshold = this.ABOUT_SCROLL_THRESHOLD;
+      else if (isSustPage) threshold = this.SUST_SCROLL_THRESHOLD;
 
       window.addEventListener('scroll', () => {
-        if (window.scrollY > threshold) {
+        if (window.scrollY >= threshold) {
           nav.classList.add('main-nav--scrolled');
         } else {
           nav.classList.remove('main-nav--scrolled');
@@ -344,14 +350,10 @@ const Timbo = {
   },
 
   /* ============================================================
-     PAGE TRANSITION (Home -> Projects)
-     Salida suave desde Home y entrada elegante en Proyectos.
+     PAGE TRANSITION
+     Entrada suave en Home y salida genérica desde páginas de detalle.
      ============================================================ */
   pageTransition: {
-    STORAGE_KEY: 'timbo-page-transition',
-    EXIT_CLASS: 'is-leaving-to-projects',
-    ENTER_CLASS: 'is-entering-projects',
-    ENTER_ACTIVE_CLASS: 'is-entering-projects-active',
     HOME_ENTER_CLASS: 'is-entering-home',
     HOME_ENTER_ACTIVE_CLASS: 'is-entering-home-active',
     EXIT_DURATION_MS: 440,
@@ -390,53 +392,6 @@ const Timbo = {
       return url;
     },
 
-    saveIntent() {
-      try {
-        const payload = {
-          from: 'index.html',
-          to: 'proyectos.html',
-          at: Date.now(),
-        };
-        sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(payload));
-      } catch (_err) {
-        // Ignore sessionStorage failures and continue navigation
-      }
-    },
-
-    consumeIntent() {
-      let raw = null;
-      try {
-        raw = sessionStorage.getItem(this.STORAGE_KEY);
-        sessionStorage.removeItem(this.STORAGE_KEY);
-      } catch (_err) {
-        return null;
-      }
-      if (!raw) return null;
-
-      let payload = null;
-      try {
-        payload = JSON.parse(raw);
-      } catch (_err) {
-        return null;
-      }
-      if (!payload || payload.to !== 'proyectos.html' || payload.from !== 'index.html') return null;
-      if (typeof payload.at !== 'number') return null;
-      if (Date.now() - payload.at > 6000) return null;
-      return payload;
-    },
-
-    startExit(targetUrl) {
-      if (this.isTransitioning) return;
-      this.isTransitioning = true;
-
-      this.saveIntent();
-      document.documentElement.classList.add(this.EXIT_CLASS);
-
-      window.setTimeout(() => {
-        window.location.assign(targetUrl.href);
-      }, this.EXIT_DURATION_MS);
-    },
-
     isProjectPage() {
       return window.location.pathname.includes('/proyectos/proyecto-');
     },
@@ -468,13 +423,6 @@ const Timbo = {
           const targetPage = this.getPageName(targetUrl.pathname);
           if (targetPage === currentPage) return;
 
-          // Home → Projects (existing specific transition)
-          if (currentPage === 'index.html' && targetPage === 'proyectos.html') {
-            event.preventDefault();
-            this.startExit(targetUrl);
-            return;
-          }
-
           // Project detail pages → any other page
           if (this.isProjectPage()) {
             event.preventDefault();
@@ -483,26 +431,6 @@ const Timbo = {
           }
         });
       });
-    },
-
-    runEntry() {
-      const intent = this.consumeIntent();
-      if (!intent) return;
-      if (!this.shouldAnimate()) return;
-      if (this.getPageName(window.location.pathname) !== 'proyectos.html') return;
-
-      const root = document.documentElement;
-      root.classList.add(this.ENTER_CLASS);
-
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          root.classList.add(this.ENTER_ACTIVE_CLASS);
-        });
-      });
-
-      window.setTimeout(() => {
-        root.classList.remove(this.ENTER_CLASS, this.ENTER_ACTIVE_CLASS);
-      }, 1100);
     },
 
     runHomeEntry() {
@@ -524,7 +452,6 @@ const Timbo = {
     },
 
     init() {
-      this.runEntry();
       this.runHomeEntry();
       this.bindExitLinks();
     },
@@ -551,188 +478,6 @@ const Timbo = {
           <p class="footer__rights" data-i18n="footer.rights">© 2026 Timbó. Todos los derechos reservados.</p>
         </div>
       `;
-    },
-  },
-
-  /* ============================================================
-     PROJECTS LIST (página Proyectos)
-     Renderiza la lista de proyectos desde SITE_DATA.projects
-     ============================================================ */
-  projectsList: {
-    eventsController: null,
-    previewSwapTimer: null,
-    PREVIEW_SWAP_DELAY_MS: 110,
-
-    clearPreviewSwapTimer() {
-      if (!this.previewSwapTimer) return;
-      clearTimeout(this.previewSwapTimer);
-      this.previewSwapTimer = null;
-    },
-
-    hidePreviewImage(previewImg) {
-      if (!previewImg) return;
-      this.clearPreviewSwapTimer();
-      previewImg.classList.remove('is-swapping', 'is-visible');
-    },
-
-    setPreviewImage(previewImg, imageSrc, altText = '') {
-      if (!previewImg || !imageSrc) {
-        this.hidePreviewImage(previewImg);
-        return;
-      }
-
-      const nextSrc = String(imageSrc);
-      const currentSrc = previewImg.dataset.currentSrc || '';
-      const isVisible = previewImg.classList.contains('is-visible');
-
-      const commitSwap = () => {
-        previewImg.src = nextSrc;
-        previewImg.alt = altText;
-        previewImg.dataset.currentSrc = nextSrc;
-        previewImg.classList.add('is-visible');
-        requestAnimationFrame(() => {
-          previewImg.classList.remove('is-swapping');
-        });
-      };
-
-      if (!isVisible || !currentSrc) {
-        this.clearPreviewSwapTimer();
-        previewImg.classList.remove('is-swapping');
-        commitSwap();
-        return;
-      }
-
-      if (currentSrc === nextSrc) {
-        this.clearPreviewSwapTimer();
-        previewImg.alt = altText || previewImg.alt;
-        previewImg.classList.remove('is-swapping');
-        previewImg.classList.add('is-visible');
-        return;
-      }
-
-      this.clearPreviewSwapTimer();
-      previewImg.classList.add('is-swapping');
-      this.previewSwapTimer = window.setTimeout(() => {
-        commitSwap();
-        this.previewSwapTimer = null;
-      }, this.PREVIEW_SWAP_DELAY_MS);
-    },
-
-    shouldSkipIntroAnimation() {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
-
-      try {
-        const rawIntent = sessionStorage.getItem('timbo-page-transition');
-        if (!rawIntent) return false;
-        const intent = JSON.parse(rawIntent);
-        return intent?.from === 'index.html' && intent?.to === 'proyectos.html';
-      } catch (_err) {
-        return false;
-      }
-    },
-
-    animateListEntry(list) {
-      if (!list) return;
-
-      list.classList.remove('projects__list--intro', 'projects__list--intro-ready');
-      if (this.shouldSkipIntroAnimation()) return;
-
-      list.classList.add('projects__list--intro');
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          list.classList.add('projects__list--intro-ready');
-        });
-      });
-    },
-
-    render() {
-      const list = document.getElementById('projects-list');
-      if (!list) return; // No estamos en la página de proyectos
-
-      const lang = Timbo.state.lang;
-      const data = SITE_DATA.projects[lang];
-      if (!data || !data.items || data.items.length === 0) return;
-
-      list.innerHTML = data.items.map((project, i) => `
-        <li class="projects__item" data-project-index="${i}" style="--project-item-index:${i};">
-          <a class="projects__item-link" href="${project.page}?lang=${lang}">
-            <div class="projects__item-info">
-              <span class="projects__item-name">${project.name}</span>
-              <div class="projects__item-bottom">
-                <span class="projects__item-location">${project.location}</span>
-                <span class="projects__item-cta">
-                  ${data.viewProject}
-                  <span class="projects__item-cta-arrow"></span>
-                </span>
-              </div>
-            </div>
-          </a>
-        </li>
-      `).join('');
-
-      this.animateListEntry(list);
-
-      // Preview hover interactivo
-      const previewImg = document.getElementById('projects-preview-img');
-      const previewMeta = document.getElementById('projects-preview-meta');
-      if (!previewImg || !previewMeta) return;
-
-      if (this.eventsController) this.eventsController.abort();
-      const controller = new AbortController();
-      this.eventsController = controller;
-
-      // Track del último item hovereado para disparar el sonido una sola vez
-      // por item, aunque el mouseenter vuelva a bubblear por hijos internos (<a>, spans).
-      let lastHoveredIndex = -1;
-
-      list.addEventListener('mouseenter', (e) => {
-        const item = e.target.closest('.projects__item');
-        if (!item) return;
-        const index = Number(item.dataset.projectIndex);
-        const project = data.items[index];
-        if (!project) return;
-
-        // Diseño sonoro: snap solo cuando cambia de item, no dentro del mismo.
-        if (index !== lastHoveredIndex) {
-          Timbo.sound.play('hover');
-          lastHoveredIndex = index;
-        }
-
-        if (project.image) {
-          this.setPreviewImage(previewImg, project.image, project.name);
-        } else {
-          this.hidePreviewImage(previewImg);
-        }
-
-        previewMeta.innerHTML = `
-          <div class="projects__preview-meta-category">${project.category || ''}</div>
-          <div class="projects__preview-meta-location">${project.location}</div>
-        `;
-      }, { capture: true, signal: controller.signal });
-
-      list.addEventListener('mouseleave', () => {
-        // Al salir de la lista, reseteamos para que al volver a entrar al mismo
-        // item vuelva a sonar.
-        lastHoveredIndex = -1;
-        this.hidePreviewImage(previewImg);
-        previewMeta.innerHTML = '';
-      }, { signal: controller.signal });
-
-      // Scroll contenido: absorbe el scroll mientras la lista pueda scrollear,
-      // lo deja pasar a la página cuando llega al límite.
-      list.addEventListener('wheel', (e) => {
-        const atTop = list.scrollTop <= 0;
-        const atBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 1;
-        const scrollingDown = e.deltaY > 0;
-        const scrollingUp = e.deltaY < 0;
-
-        // Si hay recorrido en la dirección del scroll, absorber el evento
-        if ((scrollingDown && !atBottom) || (scrollingUp && !atTop)) {
-          e.preventDefault();
-          list.scrollTop += e.deltaY;
-        }
-        // Si llegó al límite, no hacemos nada → el evento sube a la página
-      }, { passive: false, signal: controller.signal });
     },
   },
 
@@ -807,12 +552,9 @@ const Timbo = {
     logoEl: null,
     heroSectionEl: null,
     dialogueImageEl: null,
-    introDetailImageEl: null,
     valuesBreakdownEl: null,
     philosophyEl: null,
-    philosophySignalsEl: null,
     sustBreatheEl: null,
-    sustMetricsEl: null,
 
     render() {
       const existingLogo = document.querySelector('.floating-logo');
@@ -897,46 +639,6 @@ const Timbo = {
       this.logoEl.classList.add('floating-logo--on-dialogue-blend');
     },
 
-    updateIntroDetailImageBlend() {
-      if (!this.logoEl) return;
-      if (!this.introDetailImageEl) {
-        this.logoEl.classList.remove('floating-logo--on-intro-detail');
-        this.logoEl.style.setProperty('--intro-detail-overlap-top', '100%');
-        this.logoEl.style.setProperty('--intro-detail-overlap-bottom', '0px');
-        this.logoEl.style.setProperty('--intro-detail-overlap-left', '0px');
-        this.logoEl.style.setProperty('--intro-detail-overlap-right', '0px');
-        return;
-      }
-
-      const logoRect = this.logoEl.getBoundingClientRect();
-      const imgRect = this.introDetailImageEl.getBoundingClientRect();
-      const overlapTop = Math.max(logoRect.top, imgRect.top);
-      const overlapBottom = Math.min(logoRect.bottom, imgRect.bottom);
-      const overlapLeft = Math.max(logoRect.left, imgRect.left);
-      const overlapRight = Math.min(logoRect.right, imgRect.right);
-      const hasOverlap = overlapBottom > overlapTop && overlapRight > overlapLeft;
-
-      if (!hasOverlap) {
-        this.logoEl.classList.remove('floating-logo--on-intro-detail');
-        this.logoEl.style.setProperty('--intro-detail-overlap-top', `${logoRect.height}px`);
-        this.logoEl.style.setProperty('--intro-detail-overlap-bottom', '0px');
-        this.logoEl.style.setProperty('--intro-detail-overlap-left', '0px');
-        this.logoEl.style.setProperty('--intro-detail-overlap-right', `${logoRect.width}px`);
-        return;
-      }
-
-      const topInset = Math.max(0, overlapTop - logoRect.top);
-      const bottomInset = Math.max(0, logoRect.bottom - overlapBottom);
-      const leftInset = Math.max(0, overlapLeft - logoRect.left);
-      const rightInset = Math.max(0, logoRect.right - overlapRight);
-
-      this.logoEl.style.setProperty('--intro-detail-overlap-top', `${topInset}px`);
-      this.logoEl.style.setProperty('--intro-detail-overlap-bottom', `${bottomInset}px`);
-      this.logoEl.style.setProperty('--intro-detail-overlap-left', `${leftInset}px`);
-      this.logoEl.style.setProperty('--intro-detail-overlap-right', `${rightInset}px`);
-      this.logoEl.classList.add('floating-logo--on-intro-detail');
-    },
-
     updateValuesBreakdownBlend() {
       if (!this.logoEl) return;
       if (!this.valuesBreakdownEl) {
@@ -997,55 +699,36 @@ const Timbo = {
       this.logoEl.classList.add('floating-logo--on-philosophy');
     },
 
-    updatePhilosophySignalsBlend() {
+    updateSustHeroBlend() {
       if (!this.logoEl) return;
-      if (!this.philosophySignalsEl) {
-        this.logoEl.classList.remove('floating-logo--behind-signals');
-        return;
-      }
-
-      const logoRect = this.logoEl.getBoundingClientRect();
-      const signalsRect = this.philosophySignalsEl.getBoundingClientRect();
-      const overlapTop = Math.max(logoRect.top, signalsRect.top);
-      const overlapBottom = Math.min(logoRect.bottom, signalsRect.bottom);
-      const overlapLeft = Math.max(logoRect.left, signalsRect.left);
-      const overlapRight = Math.min(logoRect.right, signalsRect.right);
-      const hasOverlap = overlapBottom > overlapTop && overlapRight > overlapLeft;
-
-      this.logoEl.classList.toggle('floating-logo--behind-signals', hasOverlap);
-    },
-
-    updateSustOverviewBlend() {
-      if (!this.logoEl) return;
-      if (!this.sustBreatheEl || !this.sustMetricsEl) {
-        this.logoEl.classList.remove('floating-logo--on-sust-overview');
-        this.logoEl.style.setProperty('--sust-overview-overlap-top', '100%');
-        this.logoEl.style.setProperty('--sust-overview-overlap-bottom', '0px');
+      if (!this.sustBreatheEl) {
+        this.logoEl.classList.remove('floating-logo--on-sust-hero');
+        this.logoEl.style.setProperty('--sust-hero-overlap-top', '100%');
+        this.logoEl.style.setProperty('--sust-hero-overlap-bottom', '0px');
         return;
       }
 
       const logoRect = this.logoEl.getBoundingClientRect();
       const breatheRect = this.sustBreatheEl.getBoundingClientRect();
-      const metricsRect = this.sustMetricsEl.getBoundingClientRect();
       const whiteZoneTop = breatheRect.top + (breatheRect.height / 2);
-      const whiteZoneBottom = metricsRect.bottom;
+      const whiteZoneBottom = breatheRect.bottom;
       const overlapTop = Math.max(logoRect.top, whiteZoneTop);
       const overlapBottom = Math.min(logoRect.bottom, whiteZoneBottom);
       const hasOverlap = overlapBottom > overlapTop;
 
       if (!hasOverlap) {
-        this.logoEl.classList.remove('floating-logo--on-sust-overview');
-        this.logoEl.style.setProperty('--sust-overview-overlap-top', `${logoRect.height}px`);
-        this.logoEl.style.setProperty('--sust-overview-overlap-bottom', '0px');
+        this.logoEl.classList.remove('floating-logo--on-sust-hero');
+        this.logoEl.style.setProperty('--sust-hero-overlap-top', `${logoRect.height}px`);
+        this.logoEl.style.setProperty('--sust-hero-overlap-bottom', '0px');
         return;
       }
 
       const topInset = Math.max(0, overlapTop - logoRect.top);
       const bottomInset = Math.max(0, logoRect.bottom - overlapBottom);
 
-      this.logoEl.style.setProperty('--sust-overview-overlap-top', `${topInset}px`);
-      this.logoEl.style.setProperty('--sust-overview-overlap-bottom', `${bottomInset}px`);
-      this.logoEl.classList.add('floating-logo--on-sust-overview');
+      this.logoEl.style.setProperty('--sust-hero-overlap-top', `${topInset}px`);
+      this.logoEl.style.setProperty('--sust-hero-overlap-bottom', `${bottomInset}px`);
+      this.logoEl.classList.add('floating-logo--on-sust-hero');
     },
 
     init() {
@@ -1053,22 +736,17 @@ const Timbo = {
       if (!logo) return;
       this.heroSectionEl = document.getElementById('hero') || document.querySelector('.sust-hero');
       this.dialogueImageEl = document.querySelector('.nature-dialogue__image');
-      this.introDetailImageEl = document.querySelector('.intro__detail-photo');
       this.valuesBreakdownEl = document.getElementById('values-breakdown');
       this.philosophyEl = document.getElementById('philosophy');
-      this.philosophySignalsEl = document.querySelector('.philosophy__signals');
       this.sustBreatheEl = document.getElementById('sust-breathe');
-      this.sustMetricsEl = document.getElementById('sust-metrics');
 
       logo.classList.add('floating-logo--visible');
       const updateLogoState = () => {
         this.updateHeroLayer();
         this.updateDialogueImageBlend();
-        this.updateIntroDetailImageBlend();
         this.updateValuesBreakdownBlend();
         this.updatePhilosophyBlend();
-        this.updatePhilosophySignalsBlend();
-        this.updateSustOverviewBlend();
+        this.updateSustHeroBlend();
       };
 
       updateLogoState();
@@ -1125,30 +803,6 @@ const Timbo = {
           observer.observe(el);
         }
       });
-    },
-  },
-
-  sustMetricsReveal: {
-    init() {
-      const section = document.querySelector('.sust-metrics');
-      if (!section) return;
-
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        section.classList.add('is-visible');
-        return;
-      }
-
-      const observer = new IntersectionObserver((entries, obs) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          section.classList.add('is-visible');
-          obs.unobserve(entry.target);
-        });
-      }, {
-        threshold: 0.35,
-      });
-
-      observer.observe(section);
     },
   },
 
@@ -1425,7 +1079,25 @@ const Timbo = {
         },
       };
 
+      // Radio (en coords del viewBox) de la zona donde el wheel rota la rueda.
+      // Por fuera de este círculo, el wheel se deja pasar al scroll de la página.
+      const HOT_ZONE_RADIUS = 230;
+
+      const isPointerInsideHotZone = (event) => {
+        const rect = svg.getBoundingClientRect();
+        if (!rect.width || !rect.height) return false;
+
+        // viewBox es 800x800 cuadrado; convertimos coords del mouse al espacio del viewBox.
+        const viewBoxX = ((event.clientX - rect.left) / rect.width) * 800;
+        const viewBoxY = ((event.clientY - rect.top) / rect.height) * 800;
+        const dx = viewBoxX - centerX;
+        const dy = viewBoxY - centerY;
+        return (dx * dx + dy * dy) <= (HOT_ZONE_RADIUS * HOT_ZONE_RADIUS);
+      };
+
       svg.addEventListener('wheel', (event) => {
+        if (!isPointerInsideHotZone(event)) return; // dejá que la página scrollee
+
         const delta = normalizeWheelDelta(event);
         if (!Number.isFinite(delta) || Math.abs(delta) < 0.01) return;
 
@@ -1677,6 +1349,447 @@ const Timbo = {
     },
   },
 
+  sustPilaresOrbit: {
+    api: null,
+
+    init() {
+      const module = this;
+      module.api = {
+        focusKey() {},
+        setDetailOpen() {},
+        clearReferenceSelection() {},
+        setReferenceChangeCallback() {},
+      };
+
+      const svg = document.querySelector('.sust-pilares__diagram-svg');
+      const orbitPoints = svg?.querySelector('.sust-pilares__orbit-points');
+      const orbitLabels = svg?.querySelector('.sust-pilares__orbit-labels');
+      const labelOrbitGuide = svg?.querySelector('.sust-pilares__label-orbit-guide');
+      const labelOrbitItems = orbitLabels
+        ? Array.from(orbitLabels.querySelectorAll('.sust-pilares__orbit-label-item[data-pilar]'))
+        : [];
+
+      if (!svg || !orbitPoints || !orbitLabels || !labelOrbitItems.length) return;
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const wheelEase = 0.14;
+      const autoFocusEase = 0.045;
+      const centerX = Number(labelOrbitGuide?.getAttribute('cx')) || 400;
+      const centerY = Number(labelOrbitGuide?.getAttribute('cy')) || 400;
+      // Los labels se posicionan sobre un CÍRCULO (no elipse). El radio se
+      // toma del atributo r del guide. Esto asegura alineación radial perfecta
+      // entre cada punto y su label (mismo ángulo, distinta distancia).
+      const labelRadius = Number(labelOrbitGuide?.getAttribute('r')) || 305;
+      const state = {
+        currentAngle: 0,
+        targetAngle: 0,
+        frameId: 0,
+        detailOpen: false,
+        trackReferenceSelection: false,
+        lastReferenceKey: '',
+        onReferenceChange: null,
+        motionEase: wheelEase,
+      };
+
+      const normalizeAngleRad = (angle) => Math.atan2(Math.sin(angle), Math.cos(angle));
+      const normalizeAngleDeg = (angle) => {
+        const wrapped = ((angle + 180) % 360 + 360) % 360;
+        return wrapped - 180;
+      };
+
+      // baseAngle = ángulo del PUNTO. Como ahora los labels están sobre un
+      // círculo en la misma línea radial que el punto, ese mismo ángulo sirve
+      // para posicionar el label.
+      const labelOrbits = labelOrbitItems
+        .map((item) => {
+          const key = item.dataset.pilar || '';
+          if (!key) return null;
+
+          const point = orbitPoints.querySelector(`circle[data-pilar="${key}"]`);
+          if (!point) return null;
+
+          const px = Number(point.getAttribute('cx'));
+          const py = Number(point.getAttribute('cy'));
+          if (!Number.isFinite(px) || !Number.isFinite(py)) return null;
+
+          return {
+            item,
+            key,
+            baseAngle: Math.atan2(py - centerY, px - centerX),
+          };
+        })
+        .filter(Boolean);
+
+      if (!labelOrbits.length) return;
+
+      const labelOrbitMap = new Map(labelOrbits.map((orbit) => [orbit.key, orbit]));
+
+      const getReferenceOrbit = (angle = state.currentAngle) => {
+        const angleInRadians = (angle * Math.PI) / 180;
+        let nearestOrbit = null;
+
+        labelOrbits.forEach((orbit) => {
+          const orbitAngle = orbit.baseAngle + angleInRadians;
+          const distanceToReference = Math.abs(normalizeAngleRad(orbitAngle));
+
+          if (!nearestOrbit || distanceToReference < nearestOrbit.distanceToReference) {
+            nearestOrbit = {
+              key: orbit.key,
+              distanceToReference,
+            };
+          }
+        });
+
+        return nearestOrbit;
+      };
+
+      const notifyReferenceChange = () => {
+        if (!state.detailOpen || !state.trackReferenceSelection || typeof state.onReferenceChange !== 'function') return;
+
+        const nearestOrbit = getReferenceOrbit();
+        if (!nearestOrbit || nearestOrbit.key === state.lastReferenceKey) return;
+
+        state.lastReferenceKey = nearestOrbit.key;
+        state.onReferenceChange(nearestOrbit.key);
+      };
+
+      const applyTransforms = (angle) => {
+        const rotation = `rotate(${angle.toFixed(3)} ${centerX} ${centerY})`;
+        orbitPoints.setAttribute('transform', rotation);
+
+        const angleInRadians = (angle * Math.PI) / 180;
+        labelOrbits.forEach(({ item, baseAngle }) => {
+          const orbitAngle = baseAngle + angleInRadians;
+          const x = centerX + labelRadius * Math.cos(orbitAngle);
+          const y = centerY + labelRadius * Math.sin(orbitAngle);
+          item.setAttribute('transform', `translate(${x.toFixed(3)} ${y.toFixed(3)})`);
+        });
+      };
+
+      const finishFrame = () => {
+        applyTransforms(state.currentAngle);
+        notifyReferenceChange();
+        state.frameId = 0;
+      };
+
+      const render = () => {
+        if (reduceMotion) {
+          state.currentAngle = state.targetAngle;
+          finishFrame();
+          return;
+        }
+
+        state.currentAngle += (state.targetAngle - state.currentAngle) * state.motionEase;
+        applyTransforms(state.currentAngle);
+        notifyReferenceChange();
+
+        if (Math.abs(state.targetAngle - state.currentAngle) < 0.05) {
+          state.currentAngle = state.targetAngle;
+          finishFrame();
+          return;
+        }
+
+        state.frameId = window.requestAnimationFrame(render);
+      };
+
+      const queueRender = () => {
+        if (reduceMotion) {
+          render();
+          return;
+        }
+
+        if (state.frameId) return;
+        state.frameId = window.requestAnimationFrame(render);
+      };
+
+      const normalizeWheelDelta = (event) => {
+        let delta = event.deltaY;
+
+        if (event.deltaMode === 1) delta *= 16;
+        if (event.deltaMode === 2) delta *= window.innerHeight;
+
+        return delta;
+      };
+
+      module.api = {
+        focusKey(key) {
+          const orbit = labelOrbitMap.get(key);
+          if (!orbit) return;
+
+          const baseTargetAngle = -(orbit.baseAngle * 180) / Math.PI;
+          const shortestDelta = normalizeAngleDeg(baseTargetAngle - state.currentAngle);
+
+          state.detailOpen = true;
+          state.trackReferenceSelection = false;
+          state.lastReferenceKey = key;
+          state.motionEase = autoFocusEase;
+          state.targetAngle = state.currentAngle + shortestDelta;
+          queueRender();
+        },
+
+        setDetailOpen(isOpen) {
+          state.detailOpen = isOpen;
+
+          if (!isOpen) {
+            state.trackReferenceSelection = false;
+            state.lastReferenceKey = '';
+          }
+        },
+
+        clearReferenceSelection() {
+          state.trackReferenceSelection = false;
+          state.lastReferenceKey = '';
+        },
+
+        setReferenceChangeCallback(callback) {
+          state.onReferenceChange = callback;
+        },
+      };
+
+      // Radio del círculo donde el wheel debe rotar la rueda. Si el mouse
+      // está fuera de este radio (aunque siga dentro del SVG), el scroll va
+      // a la página normal.
+      const interactiveRadius = 220;
+
+      const isPointerInsideCircle = (event) => {
+        const rect = svg.getBoundingClientRect();
+        if (!rect.width || !rect.height) return false;
+        // El SVG renderiza con viewBox 0 0 800 800; mapeamos las coordenadas
+        // del mouse al espacio del viewBox.
+        const xInSvg = ((event.clientX - rect.left) / rect.width) * 800;
+        const yInSvg = ((event.clientY - rect.top) / rect.height) * 800;
+        const dx = xInSvg - centerX;
+        const dy = yInSvg - centerY;
+        return (dx * dx + dy * dy) <= interactiveRadius * interactiveRadius;
+      };
+
+      svg.addEventListener('wheel', (event) => {
+        if (!isPointerInsideCircle(event)) return;
+
+        const delta = normalizeWheelDelta(event);
+        if (!Number.isFinite(delta) || Math.abs(delta) < 0.01) return;
+
+        event.preventDefault();
+        state.motionEase = wheelEase;
+        state.targetAngle += delta * 0.06;
+
+        if (state.detailOpen) {
+          state.trackReferenceSelection = true;
+        }
+
+        queueRender();
+      }, { passive: false });
+
+      applyTransforms(0);
+    },
+  },
+
+  sustPilaresDetail: {
+    init() {
+      const section = document.querySelector('.sust-pilares');
+      const detail = section?.querySelector('.sust-pilares__detail');
+      const detailStack = detail?.querySelector('.sust-pilares__detail-stack');
+      const closeButton = detail?.querySelector('.sust-pilares__detail-close');
+      const detailTitle = detail?.querySelector('.sust-pilares__detail-title');
+      const detailText = detail?.querySelector('.sust-pilares__detail-text');
+      const labelItems = section
+        ? Array.from(section.querySelectorAll('.sust-pilares__orbit-label-item[data-pilar]'))
+        : [];
+      const orbitApi = Timbo.sustPilaresOrbit.api;
+      const reduceMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+
+      if (!section || !detail || !detailStack || !closeButton || !detailTitle || !detailText || !labelItems.length) return;
+
+      const pilares = {
+        temperatura: {
+          title: 'TEMPERATURA',
+          description: 'Variable clave del confort interior. Diseñamos para mantenerla estable a lo largo del año, evitando picos extremos y reduciendo la dependencia de sistemas mecánicos.',
+        },
+        radiacion: {
+          title: 'RADIACIÓN',
+          description: 'Estudiamos la radiación solar incidente en cada orientación para captarla cuando aporta calor útil y bloquearla cuando se vuelve carga térmica indeseada.',
+        },
+        luz: {
+          title: 'LUZ',
+          description: 'Maximizamos la luz natural y controlamos el deslumbramiento. La iluminación de calidad mejora el bienestar y reduce el consumo energético del edificio.',
+        },
+        flujo_aire: {
+          title: 'FLUJO DE AIRE',
+          description: 'Aprovechamos los vientos dominantes y las diferencias de presión para generar ventilación cruzada y nocturna que enfríe los ambientes de forma pasiva.',
+        },
+        calidad_aire: {
+          title: 'CALIDAD DE AIRE',
+          description: 'Garantizamos aire interior saludable a través de renovación constante, materiales no contaminantes y una ventilación pensada desde el inicio del proyecto.',
+        },
+        emisiones: {
+          title: 'EMISIONES DE CARBONO',
+          description: 'Cuantificamos el carbono incorporado en materiales y el operacional a lo largo de la vida útil, eligiendo soluciones que minimicen la huella del edificio.',
+        },
+      };
+
+      let activeKey = '';
+      let swapToken = 0;
+
+      const cancelDetailAnimations = () => {
+        detailStack.getAnimations().forEach((animation) => animation.cancel());
+      };
+
+      const setDetailContent = (pilar) => {
+        detailTitle.textContent = pilar ? pilar.title : '';
+        detailText.textContent = pilar ? pilar.description : '';
+      };
+
+      const animateDetailSwap = async (pilar, token) => {
+        const exitAnimation = detailStack.animate([
+          {
+            opacity: 1,
+            transform: 'translate3d(0, 0, 0) scale(1)',
+            filter: 'blur(0px)',
+          },
+          {
+            opacity: 0,
+            transform: 'translate3d(0, 3px, 0) scale(0.998)',
+            filter: 'blur(4px)',
+          },
+        ], {
+          duration: 150,
+          easing: 'cubic-bezier(0.4, 0, 1, 1)',
+          fill: 'forwards',
+        });
+
+        try {
+          await exitAnimation.finished;
+        } catch (_) {
+          return;
+        }
+
+        if (token !== swapToken) return;
+
+        setDetailContent(pilar);
+        cancelDetailAnimations();
+
+        const enterAnimation = detailStack.animate([
+          {
+            opacity: 0,
+            transform: 'translate3d(0, 2px, 0) scale(0.999)',
+            filter: 'blur(5px)',
+          },
+          {
+            opacity: 1,
+            transform: 'translate3d(0, 0, 0) scale(1)',
+            filter: 'blur(0px)',
+          },
+        ], {
+          duration: 260,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          fill: 'both',
+        });
+
+        enterAnimation.finished
+          .catch(() => {})
+          .finally(() => {
+            if (token !== swapToken) return;
+            cancelDetailAnimations();
+          });
+      };
+
+      const setActive = (key = '') => {
+        swapToken += 1;
+        const token = swapToken;
+        const previousKey = activeKey;
+        const pilar = key ? pilares[key] : null;
+        activeKey = pilar ? key : '';
+        const wasDetailOpen = section.classList.contains('is-detail-open');
+
+        section.classList.toggle('is-detail-open', Boolean(pilar));
+        detail.setAttribute('aria-hidden', pilar ? 'false' : 'true');
+        orbitApi?.setDetailOpen(Boolean(pilar));
+
+        labelItems.forEach((item) => {
+          const isActive = item.dataset.pilar === activeKey;
+          item.classList.toggle('is-active', isActive);
+          item.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+        });
+
+        cancelDetailAnimations();
+
+        const shouldAnimateSwap = Boolean(
+          pilar
+          && wasDetailOpen
+          && previousKey
+          && previousKey !== activeKey
+          && !reduceMotionQuery?.matches
+        );
+
+        if (shouldAnimateSwap) {
+          animateDetailSwap(pilar, token);
+          return;
+        }
+
+        setDetailContent(pilar);
+      };
+
+      const openPilar = (key) => {
+        if (!pilares[key]) return;
+
+        setActive(key);
+        orbitApi?.focusKey(key);
+      };
+
+      labelItems.forEach((item) => {
+        const key = item.dataset.pilar;
+        const pilar = pilares[key];
+        if (!pilar) return;
+
+        item.setAttribute('role', 'button');
+        item.setAttribute('tabindex', '0');
+        item.setAttribute('aria-controls', 'sust-pilares-detail');
+        item.setAttribute('aria-expanded', 'false');
+        item.setAttribute('aria-label', pilar.title);
+
+        item.addEventListener('click', () => {
+          if (activeKey === key) {
+            setActive('');
+            orbitApi?.clearReferenceSelection();
+            return;
+          }
+
+          openPilar(key);
+        });
+
+        item.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+
+            if (activeKey === key) {
+              setActive('');
+              orbitApi?.clearReferenceSelection();
+              return;
+            }
+
+            openPilar(key);
+          }
+
+          if (event.key === 'Escape' && activeKey) {
+            event.preventDefault();
+            setActive('');
+            orbitApi?.clearReferenceSelection();
+          }
+        });
+      });
+
+      orbitApi?.setReferenceChangeCallback((key) => {
+        if (!key || !pilares[key]) return;
+        setActive(key);
+      });
+
+      closeButton.addEventListener('click', () => {
+        setActive('');
+        orbitApi?.clearReferenceSelection();
+      });
+    },
+  },
+
   /* ============================================================
      HERO INTRO (animación al cargar)
      ============================================================ */
@@ -1709,8 +1822,8 @@ const Timbo = {
      ============================================================ */
   heroParallax: {
     TAGLINE_RATE: 0.4,
-    LOGO_RATE: 0.5,
-    MAX_LOGO_Y: 300,
+    LOGO_RATE: 0.25,
+    MAX_LOGO_Y: 150,
     TAGLINE_SCALE_DISTANCE: 150,   // px de scroll durante los que escala
     TAGLINE_MIN_SCALE: 0.9,        // escala final del tagline
     TAGLINE_OPACITY_DISTANCE: 50,    // fase 1: px de scroll durante los que baja la opacidad (1 → TAGLINE_MIN_OPACITY)
@@ -1724,6 +1837,7 @@ const Timbo = {
     LOGO_SCALE_DISTANCE: 250,        // px de scroll durante los que crece
     LOGO_MAX_SCALE: 1.12,            // escala final del logo (12% más grande)
     LOGO_MASK_FADE: 4,               // px de fade suave en el borde de la franja del logo
+    LOGO_MASK_Y_OFFSET: 64,          // desplaza la franja invisible más abajo para retrasar el recorte
     LOGO_SLOW_RATE: 0.2,             // rate durante la transición lenta antes del cambio 1:1
     LOGO_RESUME_SCROLL: 788,         // scrollY a partir del cual el logo baja 1:1
     LOGO_RESUME_RATE: 1.0,           // rate de descenso 1:1 desde LOGO_RESUME_SCROLL
@@ -1861,9 +1975,10 @@ const Timbo = {
       logoEl.style.transform = `translateY(${logoY}px) scale(${logoScale})`;
       logoEl.style.opacity = String(logoOpacity);
 
-      // Máscara del logo: se ubica a la altura máxima que alcanza la BASE del logo.
+      // Máscara del logo: se ubica a la altura máxima que alcanza la base del logo,
+      // con un offset extra hacia abajo para retrasar cuándo empieza a ocultarse.
       const logoNaturalHeight = logoEl.offsetHeight || 1;
-      const maskLine = this.MAX_LOGO_Y + logoNaturalHeight * this.LOGO_MAX_SCALE;
+      const maskLine = this.MAX_LOGO_Y + this.LOGO_MASK_Y_OFFSET + logoNaturalHeight * this.LOGO_MAX_SCALE;
       const currentBase = logoY + logoNaturalHeight * logoScale;
       const overshoot = Math.max(0, currentBase - maskLine);
       if (overshoot > 0) {
@@ -1954,6 +2069,11 @@ const Timbo = {
 
     init() {
       if (this.initialized) return;
+
+      // Solo aplica a la vieja hero full-screen (con .sust-hero__logo).
+      // La nueva hero (ex-overview) no usa este parallax.
+      const legacyHero = document.querySelector('.sust-hero__logo');
+      if (!legacyHero) return;
 
       this.titleEl = document.querySelector('.sust-hero__title');
       this.logoEl = document.querySelector('.sust-hero__logo');
@@ -2062,17 +2182,50 @@ const Timbo = {
   },
 
   harasHeroTitleScroll: {
+    TITLE_RATE: 0.9,
+    TITLE_SCALE_DISTANCE: 150,
+    TITLE_MIN_SCALE: 0.9,
+    TITLE_MIN_OPACITY: 0.7,
+    TITLE_MASK_SCROLL: 60,
+    TITLE_MASK_FADE: 12,
+    TITLE_RATE_POST_MASK: 0.9,
+    TITLE_SCROLL_CAP: 600,
     titleEl: null,
     ticking: false,
 
     update() {
       if (!this.titleEl) return;
-      const scrollY = Math.max(window.scrollY, 0);
-      const firstPhase = Math.min(scrollY, 150);
-      const secondPhase = Math.min(Math.max(scrollY - 150, 0), 150);
-      const remainingPhase = Math.max(scrollY - 300, 0);
-      const translateY = firstPhase + (secondPhase * 0.7) + (remainingPhase * 0.7);
-      this.titleEl.style.transform = `translateY(${translateY.toFixed(1)}px)`;
+      const scrolled = Math.max(0, window.scrollY);
+      const scrolledEffective = Math.min(scrolled, this.TITLE_SCROLL_CAP);
+      const titleYAtMask = this.TITLE_MASK_SCROLL * this.TITLE_RATE;
+      let titleY;
+
+      if (scrolledEffective <= this.TITLE_MASK_SCROLL) {
+        titleY = scrolledEffective * this.TITLE_RATE;
+      } else {
+        titleY = titleYAtMask + (scrolledEffective - this.TITLE_MASK_SCROLL) * this.TITLE_RATE_POST_MASK;
+      }
+
+      const scaleProgress = Math.min(1, scrolled / this.TITLE_SCALE_DISTANCE);
+      const titleScale = 1 - (1 - this.TITLE_MIN_SCALE) * scaleProgress;
+      const opacityProgress = Math.min(1, scrolledEffective / this.TITLE_SCROLL_CAP);
+      const titleOpacity = 1 - (1 - this.TITLE_MIN_OPACITY) * opacityProgress;
+
+      this.titleEl.style.transform = `translateY(${titleY.toFixed(1)}px) scale(${titleScale.toFixed(3)})`;
+      this.titleEl.style.opacity = String(titleOpacity.toFixed(3));
+
+      const overshoot = Math.max(0, titleY - titleYAtMask);
+      if (overshoot > 0) {
+        const titleHeight = this.titleEl.offsetHeight || 1;
+        const visibleBottom = Math.max(0, titleHeight - overshoot);
+        const fadeStart = Math.max(0, visibleBottom - this.TITLE_MASK_FADE);
+        const maskValue = `linear-gradient(to bottom, #000 0px, #000 ${fadeStart}px, rgba(0,0,0,0) ${visibleBottom}px, rgba(0,0,0,0) 100%)`;
+        this.titleEl.style.webkitMaskImage = maskValue;
+        this.titleEl.style.maskImage = maskValue;
+      } else {
+        this.titleEl.style.webkitMaskImage = '';
+        this.titleEl.style.maskImage = '';
+      }
     },
 
     requestUpdate() {
@@ -2110,13 +2263,56 @@ const Timbo = {
       const update = () => {
         const rect = el.getBoundingClientRect();
         const start = window.innerHeight; // element top enters viewport
-        const end = start - el.offsetHeight * 0.4; // 40% scrolled
+        const end = start - el.offsetHeight * 1.2; // necesita más scroll para llegar al 100%
         const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
         el.style.setProperty('--expand-progress', progress);
       };
 
       window.addEventListener('scroll', update, { passive: true });
       update();
+    },
+  },
+
+  aboutFinalZoom: {
+    sectionEl: null,
+    mediaEl: null,
+    ticking: false,
+
+    clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    },
+
+    update() {
+      if (!this.sectionEl || !this.mediaEl) return;
+
+      const rect = this.sectionEl.getBoundingClientRect();
+      const start = window.innerHeight;
+      const distance = Math.max(window.innerHeight + this.sectionEl.offsetHeight, 1);
+      const progress = this.clamp((start - rect.top) / distance, 0, 1);
+
+      this.mediaEl.style.setProperty('--about-final-zoom-progress', progress);
+    },
+
+    requestUpdate() {
+      if (this.ticking) return;
+
+      this.ticking = true;
+      window.requestAnimationFrame(() => {
+        this.ticking = false;
+        this.update();
+      });
+    },
+
+    init() {
+      this.sectionEl = document.querySelector('.about-final');
+      this.mediaEl = document.querySelector('.about-final__media');
+      if (!this.sectionEl || !this.mediaEl) return;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      this.update();
+      window.addEventListener('scroll', () => this.requestUpdate(), { passive: true });
+      window.addEventListener('resize', () => this.requestUpdate());
     },
   },
 
@@ -2944,49 +3140,6 @@ const Timbo = {
     },
   },
 
-
-  /* ============================================================
-     PLANO 3D CONTROLS
-     ============================================================ */
-  plano3dControls: {
-    init() {
-      const frame = document.getElementById('plano3dFrame');
-      if (!frame) return;
-
-      const toggles = document.querySelectorAll('.sust-process__toggle');
-      const speedBtns = document.getElementById('plano3dSpeedBtns');
-
-      toggles.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const action = btn.dataset.action;
-          btn.classList.toggle('is-active');
-          frame.contentWindow.postMessage({ action }, '*');
-
-          if (action === 'toggleSun') {
-            speedBtns.classList.toggle('is-visible', btn.classList.contains('is-active'));
-          }
-        });
-      });
-
-      speedBtns.addEventListener('click', (e) => {
-        const btn = e.target.closest('.sust-process__speed-btn');
-        if (!btn) return;
-        speedBtns.querySelectorAll('.sust-process__speed-btn').forEach(b => b.classList.remove('is-active'));
-        btn.classList.add('is-active');
-        frame.contentWindow.postMessage({ action: 'setSpeed', value: btn.dataset.spd }, '*');
-      });
-
-      window.addEventListener('message', (e) => {
-        if (e.data && e.data.action === 'sunDeactivated') {
-          const sunToggle = document.querySelector('.sust-process__toggle[data-action="toggleSun"]');
-          if (sunToggle) sunToggle.classList.remove('is-active');
-          speedBtns.classList.remove('is-visible');
-        }
-      });
-    },
-  },
-
-
   /* ============================================================
      CONTACT FORM — Envío vía Netlify Function
      ============================================================ */
@@ -3052,68 +3205,6 @@ const Timbo = {
     },
   },
 
-
-  /* ============================================================
-     SUST-CLIMATE COMPASS
-     Brújula scroll-driven basada en scrollY:
-       - La brújula baja a un rate configurable (RATE) respecto al scroll.
-         Arranca a bajar cuando el TOP de la sección toca el BOTTOM del viewport
-         (elapsed = 0) y se detiene cuando la sección se termina.
-       - La aguja gira TOTAL_DEGREES en todo el recorrido.
-     ============================================================ */
-  sustClimateCompass: {
-    RATE: 0.6,              // 1 unidad de scroll → 0.6 unidades de descenso
-    TOTAL_DEGREES: 360,
-    sectionEl: null,
-    stickyEl: null,
-    needleEl: null,
-    ticking: false,
-
-    init() {
-      this.sectionEl = document.getElementById('sust-climate');
-      if (!this.sectionEl) return;
-      this.stickyEl = this.sectionEl.querySelector('.sust-climate__compass-sticky');
-      this.needleEl = this.sectionEl.querySelector('.sust-climate__compass-needle');
-      if (!this.stickyEl || !this.needleEl) return;
-      this.update();
-      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
-      window.addEventListener('resize', () => this.update(), { passive: true });
-    },
-
-    onScroll() {
-      if (this.ticking) return;
-      this.ticking = true;
-      requestAnimationFrame(() => {
-        this.update();
-        this.ticking = false;
-      });
-    },
-
-    update() {
-      const rect = this.sectionEl.getBoundingClientRect();
-      const viewport = window.innerHeight;
-
-      // elapsed: px scrolleados desde que la sección empezó a aparecer.
-      // 0 cuando el top de la sección toca el bottom del viewport.
-      const elapsed = Math.max(0, viewport - rect.top);
-
-      // Máximo recorrido: hasta que la sección se acabe.
-      // total = sectionHeight + viewport (cuando bottom sale por top del viewport).
-      const total = rect.height + viewport;
-      const elapsedClamped = Math.min(elapsed, total);
-
-      // Descenso: rate 0.6 respecto al scroll acumulado dentro de la sección.
-      const translateY = elapsedClamped * this.RATE;
-      this.stickyEl.style.transform = `translateY(${translateY}px)`;
-
-      // Rotación aguja: progreso 0→1 sobre total.
-      const progress = total > 0 ? elapsedClamped / total : 0;
-      const deg = progress * this.TOTAL_DEGREES;
-      this.needleEl.style.transform = `rotate(${deg}deg)`;
-    },
-  },
-
-
   /* ============================================================
      KEYBOARD NAV
      Navegación por teclado con flechas arriba/abajo entre "stops"
@@ -3137,7 +3228,6 @@ const Timbo = {
         stops: [
           '#hero',
           '.intro__body',
-          '.intro__detail',
           '#nature-dialogue',
           '#philosophy',
         ],
@@ -3146,20 +3236,12 @@ const Timbo = {
         name: 'sustentabilidad',
         match: ['.sust-hero'],
         stops: [
-          '.sust-hero',
-          '#sust-overview',
+          '#sust-hero',
           '#sust-process',
+          '#sust-pilares',
           '#sust-climate',
           '#sust-breathe',
-          '#sust-metrics',
           '#sust-strategies',
-        ],
-      },
-      {
-        name: 'proyectos',
-        match: ['.projects-section'],
-        stops: [
-          '#projects-section',
         ],
       },
       {
@@ -3403,6 +3485,218 @@ const Timbo = {
 
 
   /* ============================================================
+     SUST-HERO DRAWING REVEAL
+     Carga el SVG inline, le aplica una máscara con degradado lineal
+     deformado por feTurbulence (efecto "tinta esparciéndose"), y
+     anima la posición del degradado para revelar el dibujo.
+     El seed de la turbulencia es random en cada carga, así la
+     mancha de revelado es distinta cada vez.
+     ============================================================ */
+  sustHeroDrawingReveal: {
+    SVG_NS: 'http://www.w3.org/2000/svg',
+
+    async init() {
+      const host = document.querySelector('.sust-hero__visual-img[data-svg-src]');
+      if (!host) return;
+
+      const src = host.dataset.svgSrc;
+      if (!src) return;
+
+      // Si algo falla más adelante, al menos mostramos el SVG como <img>
+      // para que el hero nunca quede en blanco.
+      const fallback = () => {
+        host.innerHTML = `<img src="${src}" alt="" style="display:block;width:100%;height:auto;">`;
+        host.classList.add('is-ready');
+        host.style.setProperty('--reveal-progress', '1');
+      };
+
+      // Fetch del SVG e inyección inline
+      let markup;
+      try {
+        const response = await fetch(src);
+        if (!response.ok) {
+          console.warn('[sustHeroDrawingReveal] fetch falló:', response.status, src);
+          fallback();
+          return;
+        }
+        markup = await response.text();
+      } catch (err) {
+        console.warn('[sustHeroDrawingReveal] error en fetch:', err);
+        fallback();
+        return;
+      }
+
+      host.innerHTML = markup;
+      const svg = host.querySelector('svg');
+      if (!svg) {
+        console.warn('[sustHeroDrawingReveal] no se encontró <svg> en el markup');
+        fallback();
+        return;
+      }
+
+      // ID únicos por si en algún momento hay más de una instancia
+      const uid = `sustHeroReveal-${Math.random().toString(36).slice(2, 8)}`;
+      const maskId = `${uid}-mask`;
+      const filterId = `${uid}-filter`;
+      const gradientId = `${uid}-gradient`;
+      const seed = Math.floor(Math.random() * 1000);
+
+      // Asegurar <defs>
+      let defs = svg.querySelector('defs');
+      if (!defs) {
+        defs = document.createElementNS(this.SVG_NS, 'defs');
+        svg.insertBefore(defs, svg.firstChild);
+      }
+
+      // Filter: turbulencia + displacement (deforma la máscara).
+      // IMPORTANTE: creamos cada elemento con createElementNS, no innerHTML.
+      // innerHTML parsea en namespace HTML y los filtros SVG no andan así.
+      const filter = document.createElementNS(this.SVG_NS, 'filter');
+      filter.setAttribute('id', filterId);
+      filter.setAttribute('x', '-20%');
+      filter.setAttribute('y', '-20%');
+      filter.setAttribute('width', '140%');
+      filter.setAttribute('height', '140%');
+
+      const turbulence = document.createElementNS(this.SVG_NS, 'feTurbulence');
+      turbulence.setAttribute('type', 'fractalNoise');
+      turbulence.setAttribute('baseFrequency', '0.018 0.025');
+      turbulence.setAttribute('numOctaves', '2');
+      turbulence.setAttribute('seed', String(seed));
+      turbulence.setAttribute('result', 'noise');
+      filter.appendChild(turbulence);
+
+      const displacement = document.createElementNS(this.SVG_NS, 'feDisplacementMap');
+      displacement.setAttribute('in', 'SourceGraphic');
+      displacement.setAttribute('in2', 'noise');
+      displacement.setAttribute('scale', '60');
+      displacement.setAttribute('xChannelSelector', 'R');
+      displacement.setAttribute('yChannelSelector', 'G');
+      filter.appendChild(displacement);
+
+      defs.appendChild(filter);
+
+      // Gradient para la máscara: zona blanca = visible, zona negra = oculta.
+      // 4 stops: las dos del medio se mueven juntas y forman un borde "duro"
+      // que recorre el ancho de la imagen al cambiar --reveal-progress.
+      const gradient = document.createElementNS(this.SVG_NS, 'linearGradient');
+      gradient.setAttribute('id', gradientId);
+      gradient.setAttribute('x1', '0%');
+      gradient.setAttribute('y1', '0%');
+      gradient.setAttribute('x2', '100%');
+      gradient.setAttribute('y2', '0%');
+
+      const makeStop = (offset, color) => {
+        const stop = document.createElementNS(this.SVG_NS, 'stop');
+        stop.setAttribute('offset', offset);
+        stop.setAttribute('stop-color', color);
+        return stop;
+      };
+      gradient.appendChild(makeStop('0%', 'white'));
+      gradient.appendChild(makeStop('0%', 'white'));
+      gradient.appendChild(makeStop('0%', 'black'));
+      gradient.appendChild(makeStop('100%', 'black'));
+
+      defs.appendChild(gradient);
+
+      // Mask: rect que ocupa todo el viewBox, lleno con el gradient,
+      // y deformado por el filter para tener bordes orgánicos.
+      const viewBox = (svg.getAttribute('viewBox') || '0 0 431.21 501.06').split(/\s+/).map(Number);
+      const [vbX, vbY, vbW, vbH] = viewBox;
+
+      const mask = document.createElementNS(this.SVG_NS, 'mask');
+      mask.setAttribute('id', maskId);
+      mask.setAttribute('maskUnits', 'userSpaceOnUse');
+      mask.setAttribute('x', String(vbX));
+      mask.setAttribute('y', String(vbY));
+      mask.setAttribute('width', String(vbW));
+      mask.setAttribute('height', String(vbH));
+
+      // El rect que va a contener el gradient deformado.
+      // Lo hacemos más grande que el viewBox (y desplazado) para que el
+      // displacement no muestre los bordes vacíos del filtro.
+      const maskRect = document.createElementNS(this.SVG_NS, 'rect');
+      maskRect.setAttribute('x', String(vbX - vbW * 0.5));
+      maskRect.setAttribute('y', String(vbY - vbH * 0.5));
+      maskRect.setAttribute('width', String(vbW * 2));
+      maskRect.setAttribute('height', String(vbH * 2));
+      maskRect.setAttribute('fill', `url(#${gradientId})`);
+      maskRect.setAttribute('filter', `url(#${filterId})`);
+      mask.appendChild(maskRect);
+      defs.appendChild(mask);
+
+      // Mover todo el contenido visible del svg dentro de un <g> con la máscara.
+      const wrapper = document.createElementNS(this.SVG_NS, 'g');
+      wrapper.setAttribute('mask', `url(#${maskId})`);
+
+      const childrenToWrap = Array.from(svg.children).filter((node) => node !== defs);
+      childrenToWrap.forEach((child) => wrapper.appendChild(child));
+      svg.appendChild(wrapper);
+
+      // Función que setea la posición del borde de la máscara según un
+      // progreso 0..1. progress=0 -> dibujo totalmente oculto.
+      // progress=1 -> dibujo totalmente visible.
+      const stops = gradient.querySelectorAll('stop');
+      const setProgress = (progress) => {
+        const p = Math.max(0, Math.min(1, progress));
+        // Mapeo: en p=0 el borde está en -0.1 (fuera, izquierda).
+        // En p=1 el borde está en 1.1 (fuera, derecha).
+        const center = -0.1 + p * 1.2;
+        const softEdge = 0.18; // ancho del degradado suave
+        const left = Math.max(0, Math.min(1, center - softEdge / 2));
+        const right = Math.max(0, Math.min(1, center + softEdge / 2));
+        stops[0].setAttribute('offset', `${(left * 100).toFixed(2)}%`);
+        stops[1].setAttribute('offset', `${(left * 100).toFixed(2)}%`);
+        stops[2].setAttribute('offset', `${(right * 100).toFixed(2)}%`);
+        stops[3].setAttribute('offset', `${(right * 100).toFixed(2)}%`);
+      };
+
+      // Easing: ease-out (arranca rápido, termina lento)
+      const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+
+      // Estado inicial: oculto. Recién acá hacemos visible el host
+      // (estaba visibility:hidden para evitar el flash del SVG sin máscara)
+      setProgress(0);
+      host.classList.add('is-ready');
+
+      const DURATION = 2400; // ms
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) {
+        setProgress(1);
+        return;
+      }
+
+      // Animación manejada enteramente en JS: más predecible que depender
+      // de @keyframes + getComputedStyle de una custom property.
+      const runAnimation = () => {
+        const startTime = performance.now();
+        const tick = (now) => {
+          const elapsed = now - startTime;
+          const t = Math.min(1, elapsed / DURATION);
+          setProgress(easeOut(t));
+          if (t < 1) {
+            window.requestAnimationFrame(tick);
+          }
+        };
+        window.requestAnimationFrame(tick);
+      };
+
+      // Disparador: IntersectionObserver — cuando el dibujo entra al viewport
+      // arrancamos la animación.
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          runAnimation();
+          obs.unobserve(entry.target);
+        });
+      }, { threshold: 0.25 });
+
+      observer.observe(host);
+    },
+  },
+
+  /* ============================================================
      INICIALIZACIÓN
      ============================================================ */
   init() {
@@ -3419,23 +3713,23 @@ const Timbo = {
     this.navTheme.init();
     this.navIntro.init();
     this.scrollReveal.init();
-    this.sustMetricsReveal.init();
     this.sustBreatheTextReveal.init();
     this.sustStrategiesOrbit.init();
     this.sustStrategiesDetail.init();
-    this.sustClimateCompass.init();
+    this.sustPilaresOrbit.init();
+    this.sustPilaresDetail.init();
     this.heroIntro.init();
     this.heroParallax.init();
     this.sustHeroIntro.init();
+    this.sustHeroDrawingReveal.init();
     this.heroVideoScrollFade.init();
     this.harasHeroTitleScroll.init();
     this.heroBgToggle.init();
-    this.plano3dControls.init();
     this.imageExpand.init();
+    this.aboutFinalZoom.init();
     this.introPhotosParallax.init();
     this.overlayTextReveal.init();
     this.projectMap.init();
-    this.introDetailSlider.init();
     this.projectOverviewSlider.init();
     this.contactForm.init();
     this.keyboardNav.init();
@@ -3448,52 +3742,6 @@ const Timbo = {
     // 4. Transición entre Home y Projects
     this.pageTransition.init();
 
-  },
-
-  /* ---- Slider de fotos intro__detail ---- */
-  introDetailSlider: {
-    init() {
-      const dots = document.querySelectorAll('.intro__detail-dot[data-slide]');
-      const imgs = document.querySelectorAll('.intro__detail-img');
-      if (!dots.length || !imgs.length) return;
-
-      const slideCount = Math.min(dots.length, imgs.length);
-      let activeIndex = Array.from(dots).findIndex(dot => dot.classList.contains('is-active'));
-      if (activeIndex < 0) activeIndex = 0;
-
-      const setActive = (index) => {
-        const nextIndex = ((index % slideCount) + slideCount) % slideCount;
-        activeIndex = nextIndex;
-        dots.forEach((dot, idx) => {
-          dot.classList.toggle('is-active', idx === nextIndex);
-        });
-        imgs.forEach((img, idx) => {
-          img.classList.toggle('is-active', idx === nextIndex);
-        });
-      };
-
-      let autoRotateId = null;
-      const startAutoRotate = () => {
-        if (slideCount < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        window.clearInterval(autoRotateId);
-        autoRotateId = window.setInterval(() => {
-          setActive(activeIndex + 1);
-        }, 6000);
-      };
-
-      setActive(activeIndex);
-
-      dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-          const idx = Number(dot.dataset.slide);
-          if (!Number.isFinite(idx)) return;
-          setActive(idx);
-          startAutoRotate();
-        });
-      });
-
-      startAutoRotate();
-    },
   },
 
   projectOverviewSlider: {
