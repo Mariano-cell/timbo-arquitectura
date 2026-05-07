@@ -38,7 +38,7 @@ const SITE_DATA = {
     es: {
       heroTagline:      '<strong>Arquitectura</strong> en armonía<br>con el <strong>clima</strong> y la <strong>naturaleza</strong>.',
       claim:            'Entre lo salvaje y<br>las personas.',
-      sustainabilityStatement: 'Diseño resiliente y<br>adaptado<br>a las condiciones<br>ambientales',
+      sustainabilityStatement: '<span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">Diseño resiliente y</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">adaptado</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">a las condiciones</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">ambientales</span></span>',
       philosophyText:   'Mediante el análisis de datos climáticos, los proyectos se adaptan a las condiciones específicas de cada lugar, asegurando una baja demanda energética y una alta calidad ambiental tanto en espacios interiores como exteriores.',
       philosophyCta:    'VER MÁS',
       philosophyClimateZone: 'Zona<br>climática',
@@ -52,7 +52,7 @@ const SITE_DATA = {
     en: {
       heroTagline:      '<strong>Architecture</strong> in harmony<br>with <strong>climate</strong> and <strong>nature</strong>.',
       claim:            'Between the wild and<br>the people.',
-      sustainabilityStatement: 'Resilient design<br>adapted<br>to environmental<br>conditions',
+      sustainabilityStatement: '<span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">Resilient design</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">adapted</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">to environmental</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">conditions</span></span>',
       philosophyText:   'Through the analysis of climate data, projects are adapted to the specific conditions of each location, ensuring low energy demand and high environmental quality in both indoor and outdoor spaces.',
       philosophyCta:    'SEE MORE',
       philosophyClimateZone: 'Climate<br>zone',
@@ -113,20 +113,20 @@ const SITE_DATA = {
       title:            'Nuestros proyectos',
       viewProject:      'Ver proyecto',
       items: [
-        { slug: 'exuma-lodge',     page: 'proyectos/proyecto-exuma-lodge.html',     name: 'Exuma Lodge',     category: 'Hospitality Lodge',        location: 'Bahamas',        image: 'assets/images/projects/project-covers/exuma-lodge-bahamas.jpg' },
-        { slug: 'haras-san-pablo', page: 'proyectos/proyecto-haras-san-pablo.html', name: 'Haras San Pablo', category: 'Residencial + Productivo', location: 'Argentina',      image: 'assets/images/projects/project-covers/haras-sanpablo-001.jpg' },
-        { slug: 'tobar-lodge',     page: 'proyectos/proyecto-tobar-lodge.html',     name: 'Tobar Lodge',     category: 'Hospitalidad / Retiro',    location: 'Argentina',      image: 'assets/images/projects/project-covers/tobar-lodge.jpg' },
-        { slug: 'cabana-suinda',   page: 'proyectos/proyecto-cabana-suinda.html',   name: 'Cabaña Suindá',   category: 'Cabaña / Refugio',         location: 'Argentina',      image: 'assets/images/projects/project-covers/cabana-suinda.jpg' },
+        { slug: 'exuma-lodge',     page: 'proyectos/proyecto-exuma-lodge.html',     name: 'Exuma Lodge',                    category: 'Hospitality Lodge',        location: 'Bahamas',                image: 'assets/images/projects/project-covers/exuma-lodge-bahamas-01.jpg' },
+        { slug: 'haras-san-pablo', page: 'proyectos/proyecto-haras-san-pablo.html', name: 'Haras San Pablo Private Estate', category: 'Residencial + Productivo', location: 'Buenos Aires, Argentina', image: 'assets/images/projects/project-covers/haras-sanpablo-001.jpg' },
+        { slug: 'tobar-lodge',     page: 'proyectos/proyecto-tobar-lodge.html',     name: 'Tobar Lodge',                    category: 'Hospitalidad / Retiro',    location: 'Tucumán, Argentina',      image: 'assets/images/projects/project-covers/tobar-lodge.jpg' },
+        { slug: 'cabana-suinda',   page: 'proyectos/proyecto-cabana-suinda.html',   name: 'Suindá Lodge',                   category: 'Cabaña / Refugio',         location: 'Corrientes, Argentina',   image: 'assets/images/projects/project-covers/cabana-suinda.jpg' },
       ],
     },
     en: {
       title:            'Our Projects',
       viewProject:      'View project',
       items: [
-        { slug: 'exuma-lodge',     page: 'proyectos/proyecto-exuma-lodge.html',     name: 'Exuma Lodge',     category: 'Hospitality Lodge',       location: 'Bahamas',       image: 'assets/images/projects/project-covers/exuma-lodge-bahamas.jpg' },
-        { slug: 'haras-san-pablo', page: 'proyectos/proyecto-haras-san-pablo.html', name: 'Haras San Pablo', category: 'Residential + Productive', location: 'Argentina',     image: 'assets/images/projects/project-covers/haras-sanpablo-001.jpg' },
-        { slug: 'tobar-lodge',     page: 'proyectos/proyecto-tobar-lodge.html',     name: 'Tobar Lodge',     category: 'Hospitality / Retreat',    location: 'Argentina',     image: 'assets/images/projects/project-covers/tobar-lodge.jpg' },
-        { slug: 'cabana-suinda',   page: 'proyectos/proyecto-cabana-suinda.html',   name: 'Cabaña Suindá',   category: 'Cabin / Retreat',         location: 'Argentina',     image: 'assets/images/projects/project-covers/cabana-suinda.jpg' },
+        { slug: 'exuma-lodge',     page: 'proyectos/proyecto-exuma-lodge.html',     name: 'Exuma Lodge',                    category: 'Hospitality Lodge',        location: 'Bahamas',                 image: 'assets/images/projects/project-covers/exuma-lodge-bahamas-01.jpg' },
+        { slug: 'haras-san-pablo', page: 'proyectos/proyecto-haras-san-pablo.html', name: 'Haras San Pablo Private Estate', category: 'Residential + Productive', location: 'Buenos Aires, Argentina', image: 'assets/images/projects/project-covers/haras-sanpablo-001.jpg' },
+        { slug: 'tobar-lodge',     page: 'proyectos/proyecto-tobar-lodge.html',     name: 'Tobar Lodge',                    category: 'Hospitality / Retreat',    location: 'Tucumán, Argentina',      image: 'assets/images/projects/project-covers/tobar-lodge.jpg' },
+        { slug: 'cabana-suinda',   page: 'proyectos/proyecto-cabana-suinda.html',   name: 'Suindá Lodge',                   category: 'Cabin / Retreat',          location: 'Corrientes, Argentina',   image: 'assets/images/projects/project-covers/cabana-suinda.jpg' },
       ],
     },
   },
@@ -150,8 +150,8 @@ const SITE_DATA = {
           description2: 'La arquitectura organiza las áreas comunes y privadas alrededor de patios de aire y recorridos exteriores cubiertos. El objetivo es sostener confort térmico con mínima dependencia mecánica, manteniendo una experiencia inmersiva con el entorno natural de Exuma.',
         },
         'haras-san-pablo': {
-          name:         'Haras San Pablo',
-          location:     'Argentina',
+          name:         'Haras San Pablo Private Estate',
+          location:     'Buenos Aires, Argentina',
 
           summary:      'Infraestructura residencial y productiva integrada al paisaje rural, con estrategias bioclimáticas para estaciones marcadas.',
           type:         'Residencial + Productivo',
@@ -161,7 +161,7 @@ const SITE_DATA = {
         },
         'tobar-lodge': {
           name:         'Tobar Lodge',
-          location:     'Argentina',
+          location:     'Tucumán, Argentina',
 
           summary:      'Arquitectura de baja huella para estancias temporarias, enfocada en confort pasivo y una fuerte continuidad interior-exterior.',
           type:         'Hospitality / Retiro',
@@ -170,8 +170,8 @@ const SITE_DATA = {
           description2: 'La materialidad contempla madera tratada, cerramientos livianos de alto desempeño y una paleta neutra que reduce el contraste con el sitio. La estrategia energética prioriza demanda reducida y operación simple en contextos alejados de redes intensivas.',
         },
         'cherokee-ave': {
-          name:         'Cherokee Ave',
-          location:     'Estados Unidos',
+          name:         'Cherokee Residence',
+          location:     'Miami, Florida, EE.UU.',
 
           summary:      'Intervención urbana compacta con foco en eficiencia térmica, iluminación natural y resiliencia climática en trama consolidada.',
           type:         'Vivienda Urbana',
@@ -180,7 +180,7 @@ const SITE_DATA = {
           description2: 'El lenguaje arquitectónico combina precisión técnica con una expresión sobria y materialidad durable. El proyecto busca demostrar que en tejidos urbanos exigentes es posible lograr confort ambiental y bajo consumo sin recurrir a soluciones invasivas.',
         },
         'cabana-suinda': {
-          name:         'Cabaña Suindá',
+          name:         'Suindá Lodge',
           location:     'Corrientes, Argentina',
 
           summary:      'Un refugio en el litoral argentino integrado al paisaje de esteros, diseñado con criterios bioclimáticos para el clima subtropical húmedo.',
@@ -208,8 +208,8 @@ const SITE_DATA = {
           description2: 'Architecture organizes shared and private spaces around air patios and covered exterior circulation. The goal is stable thermal comfort with minimal mechanical dependence, while keeping an immersive connection to Exuma\'s natural setting.',
         },
         'haras-san-pablo': {
-          name:         'Haras San Pablo',
-          location:     'Argentina',
+          name:         'Haras San Pablo Private Estate',
+          location:     'Buenos Aires, Argentina',
 
           summary:      'Residential and productive infrastructure integrated into a rural landscape, with bioclimatic strategies for marked seasons.',
           type:         'Residential + Productive',
@@ -219,7 +219,7 @@ const SITE_DATA = {
         },
         'tobar-lodge': {
           name:         'Tobar Lodge',
-          location:     'Argentina',
+          location:     'Tucumán, Argentina',
 
           summary:      'Low-footprint architecture for temporary stays, focused on passive comfort and strong indoor-outdoor continuity.',
           type:         'Hospitality / Retreat',
@@ -228,8 +228,8 @@ const SITE_DATA = {
           description2: 'Materiality combines treated timber, high-performance lightweight enclosures, and a neutral palette that reduces contrast with the site. The energy strategy prioritizes low demand and simple operation in contexts far from intensive infrastructure.',
         },
         'cherokee-ave': {
-          name:         'Cherokee Ave',
-          location:     'United States',
+          name:         'Cherokee Residence',
+          location:     'Miami, Florida, U.S.',
 
           summary:      'A compact urban intervention focused on thermal efficiency, daylight access, and climate resilience in a consolidated fabric.',
           type:         'Urban Housing',
@@ -238,7 +238,7 @@ const SITE_DATA = {
           description2: 'The architectural language combines technical precision with restrained expression and durable materials. The project aims to show that even in demanding urban fabrics, high environmental comfort and low consumption are achievable without invasive systems.',
         },
         'cabana-suinda': {
-          name:         'Cabaña Suindá',
+          name:         'Suindá Lodge',
           location:     'Corrientes, Argentina',
 
           summary:      'A retreat in the Argentine littoral integrated into the wetland landscape, designed with bioclimatic criteria for the humid subtropical climate.',

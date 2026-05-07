@@ -10,12 +10,52 @@
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body class="page--contact-image">
+  <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
+    <ul class="nav__links">
+      <li><a href="index.html" class="nav__link">Inicio</a></li>
+      <li><a href="proyectos.html" class="nav__link">Proyectos</a></li>
+      <li><a href="sustentabilidad.html" class="nav__link">Sustentabilidad</a></li>
+      <li><a href="servicios.html" class="nav__link">Servicios</a></li>
+      <li><a href="sobre-nosotros.html" class="nav__link">Sobre nosotros</a></li>
+      <li><a href="contacto.html" class="nav__link nav__link--active">Contacto</a></li>
+    </ul>
+  </nav>
+
   <main class="page-content">
     <section class="contact-image" data-nav-theme="light">
       <div class="contact-image__media">
         <img src="assets/images/contact/contact-hero.jpg" alt="Paisaje de contacto de Timbó" loading="eager" decoding="async">
       </div>
+
+      <div class="contact-image__content">
+        <div class="contact-image__intro anim-fade-up" data-anim-delay="80">
+          <h1 class="contact-image__title">Contacto</h1>
+        </div>
+
+        <ul class="contact-image__list" aria-label="Datos de contacto">
+          <li class="contact-image__item anim-fade-up" data-anim-delay="160">
+            <span class="contact-image__icon" aria-hidden="true">x</span>
+            <a class="contact-image__link" href="mailto:estudiotimboinfo@gmail.com">estudiotimboinfo@gmail.com</a>
+          </li>
+          <li class="contact-image__item anim-fade-up" data-anim-delay="240">
+            <span class="contact-image__icon" aria-hidden="true">x</span>
+            <div class="contact-image__phones">
+              <a class="contact-image__link" href="tel:+5491140252792">+54 9 11 40252792 (Mia)</a>
+              <span class="contact-image__separator" aria-hidden="true">/</span>
+              <a class="contact-image__link" href="tel:+5491140252792">+54 9 11 40252792 (Gero)</a>
+            </div>
+          </li>
+          <li class="contact-image__item anim-fade-up" data-anim-delay="320">
+            <span class="contact-image__icon" aria-hidden="true">x</span>
+            <a class="contact-image__link" href="https://www.instagram.com/estudio.timbo/" target="_blank" rel="noreferrer">estudio.timbo</a>
+          </li>
+        </ul>
+      </div>
+
     </section>
   </main>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
 </body>
 </html>

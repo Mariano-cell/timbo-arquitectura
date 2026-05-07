@@ -2402,30 +2402,47 @@ const Timbo = {
 
   /* ============================================================
      PHILOSOPHY STATEMENT REVEAL (scroll-linked)
-     Aparece antes y desciende 150px hasta su posición final.
+     Cuando el borde superior del .philosophy__statement cruza
+     la mitad del viewport, las 4 líneas suben desde abajo de
+     sus máscaras (overflow:hidden) y se hacen visibles.
+     Si el usuario scrollea para arriba, vuelven a esconderse.
      ============================================================ */
   philosophyStatementReveal: {
     init() {
       const statement = document.querySelector('.philosophy__statement');
       if (!statement) return;
 
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        statement.style.setProperty('--philosophy-statement-progress', 1);
-        return;
-      }
-
-      const TRAVEL = 150; // px de recorrido vertical
-
       const update = () => {
         const rect = statement.getBoundingClientRect();
-        const vh = window.innerHeight;
+        const trigger = window.innerHeight / 2;
 
-        // Empieza antes de entrar completamente al viewport.
-        const start = vh + TRAVEL;
-        // Termina cuando llega a su posición visual final.
-        const end = vh * 0.64;
-        const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
-        statement.style.setProperty('--philosophy-statement-progress', progress);
+        if (rect.top <= trigger) {
+          statement.classList.add('is-revealed');
+        } else {
+          statement.classList.remove('is-revealed');
+        }
+      };
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    },
+  },
+
+  sustClimateTitleReveal: {
+    init() {
+      const title = document.querySelector('.sust-climate__title');
+      if (!title) return;
+
+      const update = () => {
+        const rect = title.getBoundingClientRect();
+        const trigger = window.innerHeight / 2;
+
+        if (rect.top <= trigger) {
+          title.classList.add('is-revealed');
+        } else {
+          title.classList.remove('is-revealed');
+        }
       };
 
       window.addEventListener('scroll', update, { passive: true });
@@ -3713,6 +3730,8 @@ const Timbo = {
     this.navTheme.init();
     this.navIntro.init();
     this.scrollReveal.init();
+    this.philosophyStatementReveal.init();
+    this.sustClimateTitleReveal.init();
     this.sustBreatheTextReveal.init();
     this.sustStrategiesOrbit.init();
     this.sustStrategiesDetail.init();
@@ -3734,6 +3753,7 @@ const Timbo = {
     this.contactForm.init();
     this.keyboardNav.init();
     this.rippleFade.init();
+    this.galleryScrollDrift.init();
 
     // 3. Detectar idioma y aplicar
     const lang = this.i18n.detect();
@@ -3759,6 +3779,411 @@ const Timbo = {
           if (imgs[idx]) imgs[idx].classList.add('is-active');
         });
       });
+    },
+  },
+
+
+  /* ============================================================
+     GALLERY SCROLL DRIFT
+     ------------------------------------------------------------
+     Mueve horizontalmente items de la galería de proyectos a
+     medida que salen por arriba del viewport, ligado al progreso
+     del scroll. La idea es darles un movimiento "de despedida"
+     cuando ya no son el elemento visual principal.
+
+     Cómo se activa:
+     - Cualquier .projects-gallery__item con data-scroll-drift="N"
+       (N en px, positivo = derecha, negativo = izquierda).
+     - Solo desktop (>= 769px) y solo si el usuario no pidió
+       prefers-reduced-motion: reduce.
+     - Solo se aplica DESPUÉS de que el item ya haya entrado
+       (clase is-visible). Mientras la animación de entrada está
+       corriendo, no tocamos el transform del item.
+
+     Rango del progreso:
+     - 0 cuando el borde inferior del item cruza el 50% del
+       viewport (todavía es protagonista).
+     - 1 cuando el borde inferior del item cruza el 0% del
+       viewport (ya salió por arriba).
+
+     Easing: ease-out cúbico sobre el progreso, para que el
+     desplazamiento arranque suave y se acelere hacia el final
+     (justo cuando el item se está despidiendo).
+     ============================================================ */
+  galleryScrollDrift: {
+
+    items: [],
+    masks: [],
+    activeItems: new Set(),
+    activeMasks: new Set(),
+    rafId: null,
+    enabled: false,
+    mediaQuery: null,
+    motionQuery: null,
+
+    init() {
+      // --- DRIFT: cualquier elemento con data-scroll-drift ---
+      const driftEls = document.querySelectorAll('.projects-gallery [data-scroll-drift]');
+      this.items = Array.from(driftEls).map(el => {
+        const gate = el.classList.contains('projects-gallery__item')
+          ? el
+          : el.closest('.projects-gallery__item');
+        const pairItem = el.closest('.projects-gallery__item--pair');
+        const isPairSquare = pairItem && el.classList.contains('projects-gallery__media--square');
+        const pairSquares = isPairSquare
+          ? Array.from(pairItem.querySelectorAll('.projects-gallery__media--square'))
+          : [];
+        const squareIndex = isPairSquare ? pairSquares.indexOf(el) : -1;
+        const caption = pairItem ? pairItem.querySelector('.projects-gallery__caption') : null;
+        const name = caption ? caption.querySelector('.projects-gallery__name') : null;
+        const location = caption ? caption.querySelector('.projects-gallery__location') : null;
+        const category = caption ? caption.querySelector('.projects-gallery__category') : null;
+
+        return {
+          el,
+          gate: gate || el,
+          amount: parseFloat(el.getAttribute('data-scroll-drift')) || 0,
+          captionLeft: squareIndex === 0 ? [name, location].filter(Boolean) : [],
+          captionRight: squareIndex === pairSquares.length - 1 ? [category].filter(Boolean) : [],
+          primed: false,
+        };
+      });
+
+      // --- MÁSCARA: cualquier elemento con data-scroll-mask ---
+      // El valor es el porcentaje del ancho a recortar desde la izquierda
+      // al final del barrido (ej. data-scroll-mask="15" → 15%).
+      // Los textos de la columna izquierda del caption (name + location)
+      // se trasladan en sintonía con el borde izquierdo de la máscara.
+      // El category (columna derecha) se queda fijo, así nunca sobrepasa
+      // el borde derecho de la imagen.
+      const maskEls = document.querySelectorAll('.projects-gallery [data-scroll-mask]');
+      this.masks = Array.from(maskEls).map(el => {
+        const item = el.closest('.projects-gallery__item');
+        const caption = item ? item.querySelector('.projects-gallery__caption') : null;
+        const name = caption ? caption.querySelector('.projects-gallery__name') : null;
+        const location = caption ? caption.querySelector('.projects-gallery__location') : null;
+
+        return {
+          el,
+          gate: item || el,
+          captionLeft: [name, location].filter(Boolean),
+          percent: parseFloat(el.getAttribute('data-scroll-mask')) || 0,
+          primed: false,
+        };
+      });
+
+      if (!this.items.length && !this.masks.length) return;
+
+      this.mediaQuery = window.matchMedia('(min-width: 769px)');
+      this.motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      // Re-evaluar si cambia el viewport o la preferencia de motion
+      this.mediaQuery.addEventListener('change', () => this.evaluateEnabled());
+      this.motionQuery.addEventListener('change', () => this.evaluateEnabled());
+
+      this.evaluateEnabled();
+    },
+
+    /**
+     * Decide si el módulo debe estar activo según viewport + motion.
+     */
+    evaluateEnabled() {
+      const shouldBeEnabled = this.mediaQuery.matches && !this.motionQuery.matches;
+
+      if (shouldBeEnabled && !this.enabled) {
+        this.enable();
+      } else if (!shouldBeEnabled && this.enabled) {
+        this.disable();
+      }
+    },
+
+    enable() {
+      this.enabled = true;
+
+      // Promovemos a capa de composición a los elementos con drift.
+      this.items.forEach(({ el, captionLeft, captionRight }) => {
+        el.style.willChange = 'transform';
+        captionLeft.forEach(node => { node.style.willChange = 'transform'; });
+        captionRight.forEach(node => { node.style.willChange = 'transform'; });
+      });
+      // Y a los elementos con máscara y a los textos del caption izquierdo.
+      this.masks.forEach(({ el, captionLeft }) => {
+        el.style.willChange = 'clip-path';
+        captionLeft.forEach(node => { node.style.willChange = 'transform'; });
+      });
+
+      this.observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            if (this.items.find(d => d.el === entry.target)) this.activeItems.add(entry.target);
+            if (this.masks.find(d => d.el === entry.target)) this.activeMasks.add(entry.target);
+          } else {
+            this.activeItems.delete(entry.target);
+            this.activeMasks.delete(entry.target);
+            this.resetItemAtBoundary(entry.target);
+          }
+        });
+        this.maybeStartLoop();
+      }, {
+        rootMargin: '50% 0px 50% 0px',
+        threshold: 0,
+      });
+
+      this.items.forEach(({ el }) => this.observer.observe(el));
+      this.masks.forEach(({ el }) => this.observer.observe(el));
+
+      this.maybeStartLoop();
+    },
+
+    disable() {
+      this.enabled = false;
+      if (this.observer) this.observer.disconnect();
+      if (this.rafId) cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+      this.activeItems.clear();
+      this.activeMasks.clear();
+
+      this.items.forEach((data) => {
+        data.el.style.transform = '';
+        data.el.style.willChange = '';
+        data.el.style.transition = '';
+        data.captionLeft.forEach(node => {
+          node.style.transform = '';
+          node.style.willChange = '';
+        });
+        data.captionRight.forEach(node => {
+          node.style.transform = '';
+          node.style.willChange = '';
+        });
+        data.primed = false;
+      });
+      this.masks.forEach((data) => {
+        data.el.style.clipPath = '';
+        data.el.style.willChange = '';
+        data.el.style.transition = '';
+        data.captionLeft.forEach(node => {
+          node.style.transform = '';
+          node.style.willChange = '';
+          node.style.transition = '';
+          node.style.animation = '';
+          node.style.opacity = '';
+          node.style.clipPath = '';
+        });
+        data.primed = false;
+      });
+    },
+
+    /**
+     * Loop continuo mientras haya items o máscaras activos.
+     */
+    maybeStartLoop() {
+      if (this.rafId) return;
+      if (this.activeItems.size === 0 && this.activeMasks.size === 0) return;
+
+      const tick = () => {
+        this.update();
+        if ((this.activeItems.size > 0 || this.activeMasks.size > 0) && this.enabled) {
+          this.rafId = requestAnimationFrame(tick);
+        } else {
+          this.rafId = null;
+        }
+      };
+      this.rafId = requestAnimationFrame(tick);
+    },
+
+    update() {
+      const vh = window.innerHeight;
+
+      // ===== DRIFT =====
+      this.items.forEach((data) => {
+        const { el, gate, amount, captionLeft, captionRight } = data;
+        if (!this.activeItems.has(el)) return;
+        if (!gate.classList.contains('is-visible')) return;
+
+        if (!data.primed) {
+          el.style.transition = 'none';
+
+          // Si este target arrastra captionLeft o captionRight (caso
+          // par-de-imágenes), esperamos a que termine la animation
+          // projects-caption-drop antes de tomar control de los spans,
+          // así no pisamos la animación de entrada.
+          const captionNodes = [...captionLeft, ...captionRight];
+          if (captionNodes.length) {
+            if (!data.captionDropDone) {
+              if (!data.captionDropListenerAttached) {
+                data.captionDropListenerAttached = true;
+                const firstNode = captionNodes[0];
+                const onEnd = (ev) => {
+                  if (ev.animationName !== 'projects-caption-drop') return;
+                  data.captionDropDone = true;
+                  firstNode.removeEventListener('animationend', onEnd);
+                };
+                firstNode.addEventListener('animationend', onEnd);
+              }
+              return;
+            }
+            // Una vez que la animation terminó, liberamos los spans
+            // (matamos animation, replicamos opacity y clip-path
+            // del último keyframe como inline styles).
+            captionNodes.forEach(node => {
+              node.style.transition = 'none';
+              node.style.animation = 'none';
+              node.style.opacity = '1';
+              node.style.clipPath = 'inset(0 0 0 0)';
+            });
+          }
+
+          void el.offsetHeight;
+          data.primed = true;
+          return;
+        }
+
+        const rect = el.getBoundingClientRect();
+        const bottom = rect.bottom;
+
+        // Drift: 0 cuando bottom cruza el 40% del vh, 1 al 10%.
+        const start = vh * 0.4;
+        const end = vh * 0.1;
+        let p = (start - bottom) / (start - end);
+        p = Math.max(0, Math.min(1, p));
+
+        const x = amount * p;
+        const t = `translate3d(${x.toFixed(2)}px, 0, 0)`;
+        el.style.transform = t;
+        // Solo si este target tiene asignado captionLeft/Right (par
+        // de imágenes), mover los spans correspondientes.
+        captionLeft.forEach(node => { node.style.transform = t; });
+        captionRight.forEach(node => { node.style.transform = t; });
+      });
+
+      // ===== MÁSCARA =====
+      // Sub-ventana de scroll consecutiva al drift (que arranca al 40% del vh).
+      // Para evitar que el progreso arranque > 0 en la carga inicial
+      // (problema que ocurre cuando el bottom del item ya está dentro
+      // de un rango fijo de viewport), el "start" del progreso se
+      // calcula a partir del bottom REAL del item al momento del priming.
+      // Así, sin importar el tamaño de viewport, en la carga el progreso
+      // siempre es 0.
+      this.masks.forEach((data) => {
+        const { el, gate, captionLeft, percent } = data;
+        if (!this.activeMasks.has(el)) return;
+        if (!gate.classList.contains('is-visible')) return;
+
+        if (!data.primed) {
+          el.style.transition = 'none';
+
+          // Esperamos a que termine la animation projects-caption-drop
+          // (la que hace el "descenso bajo máscara invisible" del name).
+          // Recién cuando termina, la matamos y replicamos su estado
+          // final como inline styles, así nuestro transform puede operar
+          // sin pisar la animación de entrada.
+          // Si captionDropDone ya está marcado, primamos enseguida.
+          if (!data.captionDropDone) {
+            // Suscribirse una sola vez al animationend del primer span
+            if (!data.captionDropListenerAttached && captionLeft.length) {
+              data.captionDropListenerAttached = true;
+              const firstNode = captionLeft[0];
+              const onEnd = (ev) => {
+                if (ev.animationName !== 'projects-caption-drop') return;
+                data.captionDropDone = true;
+                firstNode.removeEventListener('animationend', onEnd);
+              };
+              firstNode.addEventListener('animationend', onEnd);
+            }
+            // Todavía no podemos primar: no tocar el span, dejar que la
+            // animation corra normal.
+            return;
+          }
+
+          captionLeft.forEach(node => {
+            node.style.transition = 'none';
+            node.style.animation = 'none';
+            node.style.opacity = '1';
+            node.style.clipPath = 'inset(0 0 0 0)';
+          });
+          data.initialBottom = el.getBoundingClientRect().bottom;
+          void el.offsetHeight;
+          data.primed = true;
+          return;
+        }
+
+        const rect = el.getBoundingClientRect();
+        const bottom = rect.bottom;
+
+        // Rango: arranca en el bottom inicial (progreso = 0) y termina
+        // aproximadamente donde termina el drift (10% del viewport).
+        // Esto hace que el barrido se reparta sobre todo el recorrido
+        // del item por la pantalla, sintiéndose lento y suave, mientras
+        // el drift hace lo suyo en su propio sub-rango (40% → 10%).
+        const start = data.initialBottom;
+        const end = vh * 0.1;
+        // Si el item arrancó debajo del end (caso poco probable pero
+        // posible en viewports muy chicos), evitamos división rara.
+        const denom = start - end;
+        let p = denom > 0 ? (start - bottom) / denom : 0;
+        p = Math.max(0, Math.min(1, p));
+
+        // % recortado desde la izquierda (0 → percent).
+        // El "round" preserva el border-radius del wrapper para que
+        // el borde izquierdo recortado mantenga las esquinas redondeadas
+        // originales de la imagen.
+        const cut = percent * p;
+        const radius = getComputedStyle(el).borderRadius || '0';
+        el.style.clipPath = `inset(0 0 0 ${cut.toFixed(3)}% round ${radius})`;
+
+        // Solo los textos de la columna izquierda del caption (name + location)
+        // se trasladan. Category, al estar en la columna derecha del grid,
+        // se queda fijo y nunca sobrepasa el borde de la imagen.
+        if (captionLeft.length) {
+          const px = rect.width * (cut / 100);
+          const t = `translate3d(${px.toFixed(2)}px, 0, 0)`;
+          captionLeft.forEach(node => { node.style.transform = t; });
+
+        }
+      });
+    },
+
+    /**
+     * Cuando un item sale del rango observable, lo dejamos en una
+     * posición consistente: si salió por arriba, en el drift máximo;
+     * si salió por abajo (todavía no entró), en 0.
+     */
+    resetItemAtBoundary(el) {
+      const rect = el.getBoundingClientRect();
+
+      // Drift
+      const driftData = this.items.find(i => i.el === el);
+      if (driftData) {
+        if (rect.bottom <= 0) {
+          const t = `translate3d(${driftData.amount}px, 0, 0)`;
+          el.style.transform = t;
+          driftData.captionLeft.forEach(node => { node.style.transform = t; });
+          driftData.captionRight.forEach(node => { node.style.transform = t; });
+        } else if (rect.top >= window.innerHeight) {
+          el.style.transform = '';
+          driftData.captionLeft.forEach(node => { node.style.transform = ''; });
+          driftData.captionRight.forEach(node => { node.style.transform = ''; });
+        }
+      }
+
+      // Máscara
+      const maskData = this.masks.find(m => m.el === el);
+      if (maskData) {
+        if (rect.bottom <= 0) {
+          // Salió por arriba: máscara en su valor final
+          const radius = getComputedStyle(el).borderRadius || '0';
+          el.style.clipPath = `inset(0 0 0 ${maskData.percent}% round ${radius})`;
+          if (maskData.captionLeft.length) {
+            const px = rect.width * (maskData.percent / 100);
+            const t = `translate3d(${px.toFixed(2)}px, 0, 0)`;
+            maskData.captionLeft.forEach(node => { node.style.transform = t; });
+          }
+        } else if (rect.top >= window.innerHeight) {
+          // Está abajo: máscara inicial
+          el.style.clipPath = '';
+          maskData.captionLeft.forEach(node => { node.style.transform = ''; });
+        }
+      }
     },
   },
 
