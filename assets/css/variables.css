@@ -210,10 +210,18 @@ h6 {
   /* 128px */
 
   /* --- Layout --- */
-  --max-width: 1200px;
+  /* Fluido: 960px mín (≤1230px) → ~1180px @ 1512px → 1200px máx (≥1538px).
+     Mantiene la vista actual en 1512px casi intacta y achica en pantallas medianas. */
+  --max-width: clamp(60rem, 78vw, 75rem);
   --nav-height: 60px;
   --border-radius: 12px;
   /* rounded corners de las imágenes de proyecto */
+
+  /* --- Padding lateral global de página ---
+     Mínimo ~16px (= 1rem) — alinea con .floating-logo y .main-nav.
+     Crece con el viewport hasta ~45px (= 2.8rem) en pantallas grandes.
+     ~16px @ ≤1024px, ~22px @ 1280px, ~28px @ 1440px, ~32px @ 1512px, ~40px @ 1920px (topea en 45px). */
+  --page-side-padding: clamp(1rem, 1.3vw + 0.3rem, 2.8rem);
 
   /* --- Transiciones --- */
   --transition-fast: 150ms ease;

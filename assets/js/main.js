@@ -2368,39 +2368,6 @@ const Timbo = {
   },
 
   /* ============================================================
-     OVERLAY TEXT REVEAL (scroll-linked)
-     Aparece 100px antes y desciende hasta su posición final
-     con fade-in simultáneo.
-     ============================================================ */
-  overlayTextReveal: {
-    init() {
-      const text = document.querySelector('.nature-dialogue__text');
-      if (!text) return;
-
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        text.style.setProperty('--overlay-text-progress', 1);
-        return;
-      }
-
-      const TRAVEL = 400; // px de recorrido vertical
-
-      const update = () => {
-        const rect = text.getBoundingClientRect();
-        const vh = window.innerHeight;
-        // Empieza cuando el texto (en su posición final) está a TRAVEL px
-        // por debajo del borde inferior del viewport
-        const start = vh + TRAVEL;
-        const end = vh * 0.65; // termina cuando llega a ~65% del viewport
-        const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
-        text.style.setProperty('--overlay-text-progress', progress);
-      };
-
-      window.addEventListener('scroll', update, { passive: true });
-      update();
-    },
-  },
-
-  /* ============================================================
      PHILOSOPHY STATEMENT REVEAL (scroll-linked)
      Cuando el borde superior del .philosophy__statement cruza
      la mitad del viewport, las 4 líneas suben desde abajo de
@@ -3102,61 +3069,6 @@ const Timbo = {
     },
   },
 
-
-  /* ============================================================
-     HERO BACKGROUND TOGGLE
-     ============================================================ */
-  heroBgToggle: {
-
-    BACKGROUNDS: [
-      { type: 'video', src: null },
-      { type: 'photo', src: 'assets/images/hero/alternate-hero-photos/foto-montañas-fondo.jpg' },
-      { type: 'photo', src: 'assets/images/hero/alternate-hero-photos/DJI_0475 (1).jpg' },
-      { type: 'photo', src: 'assets/images/hero/alternate-hero-photos/DJI_20240305170434_0265_D.jpg' },
-      { type: 'photo', src: 'assets/images/hero/alternate-hero-photos/DSC01983.jpg' },
-      { type: 'photo', src: 'assets/images/hero/alternate-hero-photos/DSC01984.jpg' },
-      { type: 'photo', src: 'assets/images/hero/alternate-hero-photos/DSC02312.jpg' },
-    ],
-
-    currentIndex: 0,
-
-    init() {
-      const btn      = document.getElementById('heroBgToggle');
-      const photoEl  = document.getElementById('heroBgPhoto');
-      const heroEl   = document.getElementById('hero');
-      const videoEl  = heroEl ? heroEl.querySelector('video') : null;
-
-      if (!btn || !photoEl || !heroEl || !videoEl) return;
-
-      btn.addEventListener('click', () => {
-        this.currentIndex = (this.currentIndex + 1) % this.BACKGROUNDS.length;
-        const bg = this.BACKGROUNDS[this.currentIndex];
-
-        if (bg.type === 'video') {
-          photoEl.style.backgroundImage = '';
-          photoEl.classList.remove('is-active');
-          videoEl.style.opacity = '';
-        } else {
-          photoEl.style.backgroundImage = `url('${bg.src}')`;
-          photoEl.classList.add('is-active');
-          videoEl.style.opacity = '0';
-        }
-      });
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            btn.classList.remove('is-hidden');
-          } else {
-            btn.classList.add('is-hidden');
-          }
-        });
-      }, { threshold: 0.1 });
-
-      observer.observe(heroEl);
-    },
-  },
-
   /* ============================================================
      CONTACT FORM — Envío vía Netlify Function
      ============================================================ */
@@ -3743,11 +3655,9 @@ const Timbo = {
     this.sustHeroDrawingReveal.init();
     this.heroVideoScrollFade.init();
     this.harasHeroTitleScroll.init();
-    this.heroBgToggle.init();
     this.imageExpand.init();
     this.aboutFinalZoom.init();
     this.introPhotosParallax.init();
-    this.overlayTextReveal.init();
     this.projectMap.init();
     this.projectOverviewSlider.init();
     this.contactForm.init();
@@ -3812,6 +3722,13 @@ const Timbo = {
      ============================================================ */
   galleryScrollDrift: {
 
+    // 0–1. Más bajo = más inercia (más "flotante").
+    // Más alto = más pegado al scroll. 1 = comportamiento original.
+    SMOOTHING: 0.12,
+    // Umbral (en px o %) para considerar que current alcanzó target
+    // y se puede frenar el RAF cuando ya no hay items activos.
+    SETTLE_EPSILON: 0.05,
+
     items: [],
     masks: [],
     activeItems: new Set(),
@@ -3846,6 +3763,8 @@ const Timbo = {
           captionLeft: squareIndex === 0 ? [name, location].filter(Boolean) : [],
           captionRight: squareIndex === pairSquares.length - 1 ? [category].filter(Boolean) : [],
           primed: false,
+          currentX: 0,
+          targetX: 0,
         };
       });
 
@@ -3869,6 +3788,8 @@ const Timbo = {
           captionLeft: [name, location].filter(Boolean),
           percent: parseFloat(el.getAttribute('data-scroll-mask')) || 0,
           primed: false,
+          currentCut: 0,
+          targetCut: 0,
         };
       });
 
@@ -3982,13 +3903,33 @@ const Timbo = {
 
       const tick = () => {
         this.update();
-        if ((this.activeItems.size > 0 || this.activeMasks.size > 0) && this.enabled) {
+        const hasActive = this.activeItems.size > 0 || this.activeMasks.size > 0;
+        // Mantenemos el loop vivo mientras haya items activos O
+        // mientras algún current todavía no haya alcanzado su target
+        // (la "cola" de inercia después de frenar el scroll).
+        if ((hasActive || this.hasUnsettled()) && this.enabled) {
           this.rafId = requestAnimationFrame(tick);
         } else {
           this.rafId = null;
         }
       };
       this.rafId = requestAnimationFrame(tick);
+    },
+
+    /**
+     * ¿Hay algún current que todavía no haya asentado en su target?
+     * Sirve para que el RAF no se apague antes de que termine la
+     * inercia residual cuando el item sale del rango observable.
+     */
+    hasUnsettled() {
+      const eps = this.SETTLE_EPSILON;
+      for (const d of this.items) {
+        if (Math.abs(d.targetX - d.currentX) > eps) return true;
+      }
+      for (const d of this.masks) {
+        if (Math.abs(d.targetCut - d.currentCut) > eps) return true;
+      }
+      return false;
     },
 
     update() {
@@ -4034,6 +3975,18 @@ const Timbo = {
           }
 
           void el.offsetHeight;
+          // Inicializamos current = target para que al primar no haya
+          // un "viaje" desde 0 hasta el valor real (sería visible si el
+          // item ya entró al rango con scroll avanzado).
+          {
+            const rect0 = el.getBoundingClientRect();
+            const start0 = vh * 0.4;
+            const end0 = vh * 0.1;
+            let p0 = (start0 - rect0.bottom) / (start0 - end0);
+            p0 = Math.max(0, Math.min(1, p0));
+            data.targetX = amount * p0;
+            data.currentX = data.targetX;
+          }
           data.primed = true;
           return;
         }
@@ -4047,8 +4000,12 @@ const Timbo = {
         let p = (start - bottom) / (start - end);
         p = Math.max(0, Math.min(1, p));
 
-        const x = amount * p;
-        const t = `translate3d(${x.toFixed(2)}px, 0, 0)`;
+        // Target: lo que el scroll "pide" en este frame.
+        data.targetX = amount * p;
+        // Current: persigue al target con lerp → sensación de inercia.
+        data.currentX += (data.targetX - data.currentX) * this.SMOOTHING;
+
+        const t = `translate3d(${data.currentX.toFixed(2)}px, 0, 0)`;
         el.style.transform = t;
         // Solo si este target tiene asignado captionLeft/Right (par
         // de imágenes), mover los spans correspondientes.
@@ -4103,6 +4060,18 @@ const Timbo = {
           });
           data.initialBottom = el.getBoundingClientRect().bottom;
           void el.offsetHeight;
+          // Inicializamos current = target (igual que en drift) para
+          // evitar saltos al primar con scroll ya avanzado.
+          {
+            const start0 = data.initialBottom;
+            const end0 = vh * 0.1;
+            const denom0 = start0 - end0;
+            const bottom0 = el.getBoundingClientRect().bottom;
+            let p0 = denom0 > 0 ? (start0 - bottom0) / denom0 : 0;
+            p0 = Math.max(0, Math.min(1, p0));
+            data.targetCut = percent * p0;
+            data.currentCut = data.targetCut;
+          }
           data.primed = true;
           return;
         }
@@ -4127,7 +4096,11 @@ const Timbo = {
         // El "round" preserva el border-radius del wrapper para que
         // el borde izquierdo recortado mantenga las esquinas redondeadas
         // originales de la imagen.
-        const cut = percent * p;
+        // Aplicamos lerp para que el barrido tenga la misma inercia
+        // que el drift y se mantenga sincronizado.
+        data.targetCut = percent * p;
+        data.currentCut += (data.targetCut - data.currentCut) * this.SMOOTHING;
+        const cut = data.currentCut;
         const radius = getComputedStyle(el).borderRadius || '0';
         el.style.clipPath = `inset(0 0 0 ${cut.toFixed(3)}% round ${radius})`;
 
@@ -4159,10 +4132,15 @@ const Timbo = {
           el.style.transform = t;
           driftData.captionLeft.forEach(node => { node.style.transform = t; });
           driftData.captionRight.forEach(node => { node.style.transform = t; });
+          // Sincronizar lerp para que al re-entrar no haya salto.
+          driftData.currentX = driftData.amount;
+          driftData.targetX = driftData.amount;
         } else if (rect.top >= window.innerHeight) {
           el.style.transform = '';
           driftData.captionLeft.forEach(node => { node.style.transform = ''; });
           driftData.captionRight.forEach(node => { node.style.transform = ''; });
+          driftData.currentX = 0;
+          driftData.targetX = 0;
         }
       }
 
@@ -4178,10 +4156,14 @@ const Timbo = {
             const t = `translate3d(${px.toFixed(2)}px, 0, 0)`;
             maskData.captionLeft.forEach(node => { node.style.transform = t; });
           }
+          maskData.currentCut = maskData.percent;
+          maskData.targetCut = maskData.percent;
         } else if (rect.top >= window.innerHeight) {
           // Está abajo: máscara inicial
           el.style.clipPath = '';
           maskData.captionLeft.forEach(node => { node.style.transform = ''; });
+          maskData.currentCut = 0;
+          maskData.targetCut = 0;
         }
       }
     },

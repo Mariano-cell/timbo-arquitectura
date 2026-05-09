@@ -115,7 +115,7 @@ const SITE_DATA = {
       items: [
         { slug: 'exuma-lodge',     page: 'proyectos/proyecto-exuma-lodge.html',     name: 'Exuma Lodge',                    category: 'Hospitality Lodge',        location: 'Bahamas',                image: 'assets/images/projects/project-covers/exuma-lodge-bahamas-01.jpg' },
         { slug: 'haras-san-pablo', page: 'proyectos/proyecto-haras-san-pablo.html', name: 'Haras San Pablo Private Estate', category: 'Residencial + Productivo', location: 'Buenos Aires, Argentina', image: 'assets/images/projects/project-covers/haras-sanpablo-001.jpg' },
-        { slug: 'tobar-lodge',     page: 'proyectos/proyecto-tobar-lodge.html',     name: 'Tobar Lodge',                    category: 'Hospitalidad / Retiro',    location: 'Tucumán, Argentina',      image: 'assets/images/projects/project-covers/tobar-lodge.jpg' },
+        { slug: 'tobar-lodge',     page: 'proyectos/proyecto-tobar-lodge.html',     name: 'Tobar Lodge',                    category: 'Hospitalidad / Retiro',    location: 'Tucumán, Argentina',      image: 'assets/images/projects/project-covers/tobar-lodge-02.jpg' },
         { slug: 'cabana-suinda',   page: 'proyectos/proyecto-cabana-suinda.html',   name: 'Suindá Lodge',                   category: 'Cabaña / Refugio',         location: 'Corrientes, Argentina',   image: 'assets/images/projects/project-covers/cabana-suinda.jpg' },
       ],
     },
@@ -125,7 +125,7 @@ const SITE_DATA = {
       items: [
         { slug: 'exuma-lodge',     page: 'proyectos/proyecto-exuma-lodge.html',     name: 'Exuma Lodge',                    category: 'Hospitality Lodge',        location: 'Bahamas',                 image: 'assets/images/projects/project-covers/exuma-lodge-bahamas-01.jpg' },
         { slug: 'haras-san-pablo', page: 'proyectos/proyecto-haras-san-pablo.html', name: 'Haras San Pablo Private Estate', category: 'Residential + Productive', location: 'Buenos Aires, Argentina', image: 'assets/images/projects/project-covers/haras-sanpablo-001.jpg' },
-        { slug: 'tobar-lodge',     page: 'proyectos/proyecto-tobar-lodge.html',     name: 'Tobar Lodge',                    category: 'Hospitality / Retreat',    location: 'Tucumán, Argentina',      image: 'assets/images/projects/project-covers/tobar-lodge.jpg' },
+        { slug: 'tobar-lodge',     page: 'proyectos/proyecto-tobar-lodge.html',     name: 'Tobar Lodge',                    category: 'Hospitality / Retreat',    location: 'Tucumán, Argentina',      image: 'assets/images/projects/project-covers/tobar-lodge-02.jpg' },
         { slug: 'cabana-suinda',   page: 'proyectos/proyecto-cabana-suinda.html',   name: 'Suindá Lodge',                   category: 'Cabin / Retreat',          location: 'Corrientes, Argentina',   image: 'assets/images/projects/project-covers/cabana-suinda.jpg' },
       ],
     },
