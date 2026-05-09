@@ -2186,6 +2186,7 @@ const Timbo = {
     TITLE_SCALE_DISTANCE: 150,
     TITLE_MIN_SCALE: 0.9,
     TITLE_MIN_OPACITY: 0.7,
+    TITLE_OPACITY_DISTANCE: 150,
     TITLE_MASK_SCROLL: 60,
     TITLE_MASK_FADE: 12,
     TITLE_RATE_POST_MASK: 0.9,
@@ -2208,7 +2209,7 @@ const Timbo = {
 
       const scaleProgress = Math.min(1, scrolled / this.TITLE_SCALE_DISTANCE);
       const titleScale = 1 - (1 - this.TITLE_MIN_SCALE) * scaleProgress;
-      const opacityProgress = Math.min(1, scrolledEffective / this.TITLE_SCROLL_CAP);
+      const opacityProgress = Math.min(1, scrolled / this.TITLE_OPACITY_DISTANCE);
       const titleOpacity = 1 - (1 - this.TITLE_MIN_OPACITY) * opacityProgress;
 
       this.titleEl.style.transform = `translateY(${titleY.toFixed(1)}px) scale(${titleScale.toFixed(3)})`;
@@ -3307,113 +3308,6 @@ const Timbo = {
   },
 
   /* ============================================================
-     RIPPLE FADE — ondas sutiles en la franja inferior al scrollear
-     Anima el `scale` del <feDisplacementMap> en función del delta de
-     scroll: más movimiento = más intensidad. Decae suave al parar.
-     Solo activo si existe el componente .ripple-fade en la página.
-     ============================================================ */
-  rippleFade: {
-    MAX_SCALE: 7,              // intensidad máxima de la distorsión de ondas (orgánico)
-    DECAY: 0.92,               // factor de decaimiento por frame cuando no hay scroll
-    SCROLL_SENSITIVITY: 0.35,  // cuánto suma cada píxel de scroll a la intensidad
-
-    // --- Altura reactiva a la velocidad de scroll ---
-    MIN_HEIGHT_PX: 50,         // altura mínima en px absolutos (scroll muy lento o idle)
-    MAX_HEIGHT_VH: 26,         // altura máxima (scroll rápido) — en vh del viewport
-    VELOCITY_SATURATION: 3,    // px/ms con los que se alcanza la altura máxima
-    HEIGHT_DECAY: 0.97,        // cuánto decae la velocidad suavizada por frame al frenar (más cerca de 1 = más lento)
-
-    // --- Opacidad reactiva a la velocidad de scroll (misma curva que la altura) ---
-    MIN_OPACITY: 0,            // opacidad mínima (idle): invisible
-    MAX_OPACITY: 1,            // opacidad máxima (scroll saturado)
-
-    init() {
-      const container = document.querySelector('.ripple-fade');
-      const layer = container && container.querySelector('.ripple-fade__layer');
-      const refractLayer = container && container.querySelector('.ripple-fade__refract');
-      const blurLayers = container && container.querySelectorAll('.ripple-fade__blur');
-      const displacement = document.getElementById('ripple-fade-displacement');
-      if (!container || !layer || !displacement) return;
-
-      // Si el usuario prefiere menos movimiento, no animamos el filtro.
-      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (prefersReduced) return;
-
-      let lastY = window.scrollY;
-      let lastT = performance.now();
-      let currentScale = 0;
-      let smoothedVelocity = 0;   // px/ms suavizado
-      let rafId = null;
-
-      // Tope de altura adaptado a mobile (la pantalla es más chica)
-      const isMobile = window.matchMedia('(max-width: 768px)').matches;
-      const maxHeightVh = isMobile ? Math.min(18, this.MAX_HEIGHT_VH) : this.MAX_HEIGHT_VH;
-
-      const applyFromVelocity = () => {
-        // Ratio común a altura y opacidad, saturado en 1.
-        const ratio = Math.min(1, smoothedVelocity / this.VELOCITY_SATURATION);
-
-        // Altura: interpolada en px entre mínimo absoluto y máximo en vh.
-        const minPx = this.MIN_HEIGHT_PX;
-        const maxPx = (window.innerHeight * maxHeightVh) / 100;
-        const h = minPx + (maxPx - minPx) * ratio;
-        container.style.setProperty('--ripple-height', h.toFixed(1) + 'px');
-
-        // Opacidad: misma curva, entre MIN_OPACITY y MAX_OPACITY.
-        const o = this.MIN_OPACITY + (this.MAX_OPACITY - this.MIN_OPACITY) * ratio;
-        container.style.setProperty('--ripple-opacity', o.toFixed(3));
-      };
-
-      const loop = () => {
-        // Decaimiento de las ondas
-        currentScale *= this.DECAY;
-        if (currentScale < 0.05) currentScale = 0;
-        displacement.setAttribute('scale', currentScale.toFixed(2));
-
-        // Decaimiento suave de la velocidad → franja se desinfla y desvanece al frenar
-        smoothedVelocity *= this.HEIGHT_DECAY;
-        if (smoothedVelocity < 0.01) smoothedVelocity = 0;
-        applyFromVelocity();
-
-        if (currentScale > 0 || smoothedVelocity > 0) {
-          rafId = requestAnimationFrame(loop);
-        } else {
-          rafId = null;
-        }
-      };
-
-      window.addEventListener('scroll', () => {
-        const now = performance.now();
-        const dt = Math.max(1, now - lastT); // ms transcurridos (mínimo 1 para evitar div/0)
-        const currentY = window.scrollY;
-        const signedDelta = currentY - lastY;
-        const delta = Math.abs(signedDelta);
-        lastY = currentY;
-        lastT = now;
-
-        if (delta < 1) return;
-        if (signedDelta <= 0) return;
-
-        // Velocidad instantánea en px/ms
-        const instantVelocity = delta / dt;
-        // Suavizado tipo low-pass: integra con el valor actual para evitar saltos.
-        smoothedVelocity = smoothedVelocity * 0.6 + instantVelocity * 0.4;
-        applyFromVelocity();
-
-        currentScale = Math.min(
-          this.MAX_SCALE,
-          currentScale + delta * this.SCROLL_SENSITIVITY
-        );
-
-        if (!rafId) {
-          rafId = requestAnimationFrame(loop);
-        }
-      }, { passive: true });
-    },
-  },
-
-
-  /* ============================================================
      SUST-HERO DRAWING REVEAL
      Carga el SVG inline, le aplica una máscara con degradado lineal
      deformado por feTurbulence (efecto "tinta esparciéndose"), y
@@ -3662,7 +3556,6 @@ const Timbo = {
     this.projectOverviewSlider.init();
     this.contactForm.init();
     this.keyboardNav.init();
-    this.rippleFade.init();
     this.galleryScrollDrift.init();
 
     // 3. Detectar idioma y aplicar
