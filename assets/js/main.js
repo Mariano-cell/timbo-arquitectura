@@ -2317,57 +2317,6 @@ const Timbo = {
     },
   },
 
-  introPhotosParallax: {
-    // Easing cubic in-out: arranca lento, acelera en el medio, frena suave al final.
-    // Da un movimiento más orgánico que el progreso lineal.
-    easeInOutCubic(t) {
-      return t < 0.5
-        ? 4 * t * t * t
-        : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    },
-
-    init() {
-      const photosEl = document.querySelector('.intro__photos');
-      const narrowPhotoEl = photosEl?.querySelector('.intro__photo--narrow');
-      const widePhotoEl = photosEl?.querySelector('.intro__photo--wide');
-      if (!photosEl || !narrowPhotoEl) return;
-
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        narrowPhotoEl.style.setProperty('--intro-narrow-progress', '1');
-        if (widePhotoEl) widePhotoEl.style.setProperty('--intro-wide-progress', '0');
-        return;
-      }
-
-      const ease = this.easeInOutCubic;
-
-      const update = () => {
-        const rect = photosEl.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-
-        // Progreso narrow: 0 -> 1 mientras la seccion ENTRA al viewport por abajo.
-        const startNarrow = viewportHeight * 0.96;
-        const endNarrow = viewportHeight * 0.5;
-        const narrowLinear = Math.min(1, Math.max(0, (startNarrow - rect.top) / (startNarrow - endNarrow)));
-        const narrowProgress = ease(narrowLinear);
-        narrowPhotoEl.style.setProperty('--intro-narrow-progress', narrowProgress.toFixed(3));
-
-        // Progreso wide: 0 -> 1 mientras la seccion SALE por arriba.
-        // start: cuando el top de la seccion toca el top del viewport (rect.top = 0).
-        // end: cuando el bottom de la seccion sale por arriba (rect.bottom = 0).
-        if (widePhotoEl) {
-          const sectionHeight = rect.height;
-          const wideLinear = Math.min(1, Math.max(0, -rect.top / sectionHeight));
-          const wideProgress = ease(wideLinear);
-          widePhotoEl.style.setProperty('--intro-wide-progress', wideProgress.toFixed(3));
-        }
-      };
-
-      window.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update);
-      update();
-    },
-  },
-
   /* ============================================================
      PHILOSOPHY STATEMENT REVEAL (scroll-linked)
      Cuando el borde superior del .philosophy__statement cruza
@@ -3551,7 +3500,6 @@ const Timbo = {
     this.harasHeroTitleScroll.init();
     this.imageExpand.init();
     this.aboutFinalZoom.init();
-    this.introPhotosParallax.init();
     this.projectMap.init();
     this.projectOverviewSlider.init();
     this.contactForm.init();
@@ -3655,6 +3603,9 @@ const Timbo = {
           amount: parseFloat(el.getAttribute('data-scroll-drift')) || 0,
           captionLeft: squareIndex === 0 ? [name, location].filter(Boolean) : [],
           captionRight: squareIndex === pairSquares.length - 1 ? [category].filter(Boolean) : [],
+          waitsForEntryTransition: el.classList.contains('projects-gallery__item') && el.classList.contains('anim-fade-up'),
+          entryTransitionDone: !el.classList.contains('projects-gallery__item') || !el.classList.contains('anim-fade-up'),
+          entryTransitionListenerAttached: false,
           primed: false,
           currentX: 0,
           targetX: 0,
@@ -3835,6 +3786,19 @@ const Timbo = {
         if (!gate.classList.contains('is-visible')) return;
 
         if (!data.primed) {
+          if (data.waitsForEntryTransition && !data.entryTransitionDone) {
+            if (!data.entryTransitionListenerAttached) {
+              data.entryTransitionListenerAttached = true;
+              const onEntryTransitionEnd = (ev) => {
+                if (ev.propertyName !== 'transform') return;
+                data.entryTransitionDone = true;
+                el.removeEventListener('transitionend', onEntryTransitionEnd);
+              };
+              el.addEventListener('transitionend', onEntryTransitionEnd);
+            }
+            return;
+          }
+
           el.style.transition = 'none';
 
           // Si este target arrastra captionLeft o captionRight (caso

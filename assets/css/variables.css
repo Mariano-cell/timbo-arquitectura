@@ -69,11 +69,81 @@ h6 {
 /* ----- @font-face ----- */
 
 /*
-  Pesos disponibles: Regular (400), Medium (500), Bold (700), Black (900).
-  Nota: Neue Haas no tiene Semibold; usamos Bold (700) en su lugar.
-  Archivos en .ttf (para mejor compatibilidad, convertir a .woff2 en producción).
+  Pesos disponibles:
+    100 XXThin · 200 XThin · 250 Thin · 300 Light ·
+    400 Roman  · 500 Medium · 700 Bold · 900 Black
+  Cada peso tiene su variante italic.
+  Nota: esta familia (versión cufonfonts) NO incluye Semibold (600).
+  --fw-semibold apunta a 500 (Medium) para preservar jerarquía
+  regular (400) → semibold (500) → bold (700).
+  Archivos en .ttf (convertir a .woff2 en producción para reducir peso).
 */
 
+/* --- 100 · XXThin --- */
+@font-face {
+  font-family: 'Neue Haas Grotesk Display Pro';
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayXXThin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Neue Haas Grotesk Display Pro';
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayXXThinItalic.ttf') format('truetype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* --- 200 · XThin --- */
+@font-face {
+  font-family: 'Neue Haas Grotesk Display Pro';
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayXThin.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Neue Haas Grotesk Display Pro';
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayXThinItalic.ttf') format('truetype');
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* --- 250 · Thin (entre XThin y Light) --- */
+@font-face {
+  font-family: 'Neue Haas Grotesk Display Pro';
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayThin.ttf') format('truetype');
+  font-weight: 250;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Neue Haas Grotesk Display Pro';
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayThinItalic.ttf') format('truetype');
+  font-weight: 250;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* --- 300 · Light --- */
+@font-face {
+  font-family: 'Neue Haas Grotesk Display Pro';
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayLight.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Neue Haas Grotesk Display Pro';
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayLightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* --- 400 · Roman / Regular --- */
 @font-face {
   font-family: 'Neue Haas Grotesk Display Pro';
   src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayRoman.ttf') format('truetype');
@@ -81,7 +151,15 @@ h6 {
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Neue Haas Grotesk Display Pro';
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayRomanItalic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
 
+/* --- 500 · Medium --- */
 @font-face {
   font-family: 'Neue Haas Grotesk Display Pro';
   src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayMediu.ttf') format('truetype');
@@ -89,7 +167,15 @@ h6 {
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Neue Haas Grotesk Display Pro';
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayMediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
 
+/* --- 700 · Bold --- */
 @font-face {
   font-family: 'Neue Haas Grotesk Display Pro';
   src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBold.ttf') format('truetype');
@@ -97,12 +183,27 @@ h6 {
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Neue Haas Grotesk Display Pro';
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
 
+/* --- 900 · Black --- */
 @font-face {
   font-family: 'Neue Haas Grotesk Display Pro';
   src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBlack.ttf') format('truetype');
   font-weight: 900;
   font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Neue Haas Grotesk Display Pro';
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
   font-display: swap;
 }
 
@@ -159,9 +260,14 @@ h6 {
   /* --- Tipografía --- */
   --font-primary: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
 
+  --fw-xxthin: 100;
+  --fw-xthin: 200;
+  --fw-thin: 250;
+  --fw-light: 300;
   --fw-regular: 400;
   --fw-medium: 500;
-  --fw-semibold: 700;
+  --fw-semibold: 500;
+  /* No hay 600 en esta familia; usamos Medium para mantener jerarquía 400 → 500 → 700 */
   --fw-bold: 700;
   --fw-black: 900;
 
@@ -222,6 +328,17 @@ h6 {
      Crece con el viewport hasta ~45px (= 2.8rem) en pantallas grandes.
      ~16px @ ≤1024px, ~22px @ 1280px, ~28px @ 1440px, ~32px @ 1512px, ~40px @ 1920px (topea en 45px). */
   --page-side-padding: clamp(1rem, 1.3vw + 0.3rem, 2.8rem);
+
+  /* --- Ancho del floating-logo (extraído para poder componer --margin-c) --- */
+  --floating-logo-width: clamp(58px, 7.3vw, 110px);
+
+  /* --- Márgenes laterales estandarizados ---
+     A: distancia base. Coincide con el padding lateral del nav y el left del floating-logo.
+     B: intermedio. Exactamente el doble de A.
+     C: A + ancho del floating-logo. Útil para alinear contenido a la derecha del logo. */
+  --margin-a: var(--page-side-padding);
+  --margin-b: calc(var(--margin-a) * 2);
+  --margin-c: calc(var(--margin-a) + var(--floating-logo-width) + 3px);
 
   /* --- Transiciones --- */
   --transition-fast: 150ms ease;
