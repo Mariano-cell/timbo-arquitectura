@@ -449,11 +449,14 @@
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
   gap: 8px;
-  align-items: stretch;
+  align-items: start;
   min-width: 0;
 }
 
 .intro__photo {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4.4;
   margin: 0;
   min-width: 0;
   overflow: hidden;
@@ -507,13 +510,11 @@
 .intro__photo--wide {
   position: relative;
   z-index: 2;
-  aspect-ratio: 3 / 4.4;
 }
 
 .intro__photo--narrow {
   position: relative;
   z-index: 1;
-  aspect-ratio: 3 / 4.4;
 }
 
 @media (max-width: 768px) {
