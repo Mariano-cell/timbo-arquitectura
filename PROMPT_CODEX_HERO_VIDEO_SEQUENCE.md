@@ -40,8 +40,7 @@ heroIntro: {
     const video = document.querySelector('#hero .hero__bg video');
     if (!heroContent) return;
 
-    // Si no hay video (por ejemplo, en el heroSwitcher se eligió una imagen),
-    // mostrar el contenido directamente con un delay mínimo
+    // Si no hay video, mostrar el contenido directamente con un delay mínimo
     if (!video) {
       setTimeout(() => heroContent.classList.add('is-visible'), 200);
       return;
@@ -104,10 +103,6 @@ const onReady = () => {
   }, 600);
 };
 ```
-
-### Consideración: heroSwitcher
-
-El módulo `Timbo.heroSwitcher` puede reemplazar el video por una imagen en runtime. En ese caso, el nuevo fondo es una `<img>`, no un `<video>`. La lógica del fallback (`if (!video)`) ya lo cubre: si no hay video, el contenido aparece de inmediato. No hay que modificar `heroSwitcher`.
 
 ### Consideración: prefers-reduced-motion
 

@@ -318,7 +318,7 @@ h6 {
   /* --- Layout --- */
   /* Fluido: 960px mín (≤1230px) → ~1180px @ 1512px → 1200px máx (≥1538px).
      Mantiene la vista actual en 1512px casi intacta y achica en pantallas medianas. */
-  --max-width: clamp(60rem, 78vw, 75rem);
+  --max-width: clamp(60rem, 78vw, 90rem);
   --nav-height: 60px;
   --border-radius: 12px;
   /* rounded corners de las imágenes de proyecto */

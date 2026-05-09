@@ -152,7 +152,7 @@ Mapeo de pesos:
 ## Páginas — estado actual
 
 ### Home (index.html)
-- Hero: video de fondo + toggle para alternar entre video y fotos (`position: fixed`)
+- Hero: video de fondo
 - Hero tagline con palabras **Arquitectura**, **clima**, **naturaleza** en `<strong>` (fw-bold)
 - Intro: dos columnas (texto + fotos), segundo bloque con foto + ícono SVG + texto
 - Featured project: imagen full-width (sin animación de expansión)
@@ -194,7 +194,6 @@ Mapeo de pesos:
 | `Timbo.scrollReveal` | IntersectionObserver para `anim-fade-up`, `anim-fade-in` |
 | `Timbo.footer` | Renderiza footer dinámicamente |
 | `Timbo.floatingLogo` | Logo flotante con cambio de z-index por fase |
-| `Timbo.heroBgToggle` | Toggle video/fotos en hero home |
 | `Timbo.heroIntro` | Animación de entrada del hero home |
 | `Timbo.sustHeroIntro` | Animación de entrada del hero sustentabilidad |
 | `Timbo.imageExpand` | Scroll-driven expansion de imagen (actualmente desactivado vía CSS) |

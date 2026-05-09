@@ -1813,6 +1813,16 @@ const Timbo = {
     },
   },
 
+  projectHeroIntro: {
+    init() {
+      if (!document.body.classList.contains('page--haras-light')) return;
+      const heroContent = document.querySelector('#hero .project-hero__content');
+      if (!heroContent) return;
+
+      heroContent.classList.add('is-visible');
+    },
+  },
+
   /* ============================================================
      HERO PARALLAX
      Tagline y logo bajan con el scroll a distintos ratios.
@@ -3497,6 +3507,7 @@ const Timbo = {
     this.sustHeroIntro.init();
     this.sustHeroDrawingReveal.init();
     this.heroVideoScrollFade.init();
+    this.projectHeroIntro.init();
     this.harasHeroTitleScroll.init();
     this.imageExpand.init();
     this.aboutFinalZoom.init();

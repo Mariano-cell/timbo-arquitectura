@@ -65,44 +65,14 @@ Eliminar o limpiar estas reglas que ya no tienen elemento al que aplicarse:
 }
 ```
 
-### 4. `assets/js/main.js` — actualizar `Timbo.heroSwitcher`
-
-El módulo `heroSwitcher` cuando seleccionás una imagen genera este HTML:
-
-```js
-heroBg.innerHTML = `<img src="${item.src}" alt="${item.label}" loading="eager">`;
-```
-
-Y cuando seleccionás el video:
-```js
-heroBg.innerHTML = `
-  <video autoplay muted loop playsinline poster="${item.poster}">
-    <source src="${item.src}" type="video/mp4">
-  </video>
-  <img src="${item.poster}" alt="..." loading="eager">
-`;
-```
-
-Actualizar el case del video para que no incluya `poster` ni la `<img>` de fallback, coherente con los cambios anteriores:
-
-```js
-heroBg.innerHTML = `
-  <video autoplay muted loop playsinline preload="auto">
-    <source src="${item.src}" type="video/mp4">
-  </video>
-`;
-```
-
-El case de imagen se puede dejar igual ya que ahí sí es correcto mostrar una imagen directamente.
-
 ## Archivos a modificar
 
 - `index.html` — quitar `poster` del video y eliminar el `<img>` de fallback
 - `assets/css/styles.css` — eliminar reglas de `.hero__bg img` y `@keyframes hero-fade-in`
-- `assets/js/main.js` — actualizar el template del video en `Timbo.heroSwitcher.select()`
 
 ## Archivos que NO hay que modificar
 
+- `assets/js/main.js`
 - `assets/js/data.js`
 - `assets/css/variables.css`
 
@@ -113,4 +83,3 @@ El case de imagen se puede dejar igual ya que ahí sí es correcto mostrar una i
 3. NO debe aparecer `hero_004.jpg` en ningún momento antes del video
 4. El video hace fade-in desde blanco correctamente
 5. El logo y tagline aparecen después del fade-in del video, como antes
-6. Con el heroSwitcher, cambiar al video y verificar que tampoco aparece el poster
