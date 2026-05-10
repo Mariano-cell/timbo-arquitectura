@@ -1076,6 +1076,26 @@ html.is-entering-home.is-entering-home-active .main-nav {
   color: var(--color-black);
 }
 
+.project-hero--cherokee .project-hero__title {
+  color: var(--color-black);
+}
+
+.project-hero--exuma .project-hero__title {
+  color: var(--color-black);
+}
+
+.project-hero--chacras .project-hero__title {
+  color: var(--color-black);
+}
+
+.project-hero--cardano .project-hero__title {
+  color: var(--color-black);
+}
+
+.project-hero--club-de-mar .project-hero__title {
+  color: var(--color-black);
+}
+
 .project-hero__content {
   position: relative;
   z-index: 2;
@@ -1408,7 +1428,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .project-refuge__text {
   margin: 0;
-  max-width: clamp(25rem, 32vw, 38rem);
+  max-width: clamp(21.25rem, 27.2vw, 32.3rem);
 }
 
 .project-refuge__gallery {
@@ -1462,7 +1482,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .project-frame__container {
   display: grid;
   grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
-  gap: clamp(1.5rem, 3vw, 4rem);
+  gap: clamp(3rem, 6vw, 8rem);
   align-items: center;
   max-width: none;
   margin: 6rem var(--margin-b) 0 var(--margin-b);
@@ -1477,6 +1497,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   margin: 0;
   min-width: 0;
   position: relative;
+  z-index: 6;
   overflow: hidden;
   border-radius: 12px;
   background-color: var(--color-bg-light);
@@ -1489,6 +1510,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
   height: 100%;
   object-fit: cover;
   display: block;
+  position: relative;
+  z-index: 6;
 }
 
 /* Animación de entrada: la imagen "crece" desde la izquierda hacia la derecha.
@@ -1520,7 +1543,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .project-frame__text {
   margin: 0;
-  max-width: clamp(28rem, 36vw, 42rem)
+  max-width: clamp(23.8rem, 30.6vw, 35.7rem)
 }
 
 .project-palette {
@@ -1649,23 +1672,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .page--haras-light .project-final__media {
-  z-index: 6;
-}
-
-.page--haras-light .project-frame__container {
-  gap: clamp(3rem, 6vw, 8rem);
-}
-
-.page--haras-light .project-refuge__copy .project-refuge__text {
-  max-width: clamp(21.25rem, 27.2vw, 32.3rem);
-}
-
-.page--haras-light .project-frame__copy .project-frame__text {
-  max-width: clamp(23.8rem, 30.6vw, 35.7rem);
-}
-
-.page--haras-light .project-frame__media img {
-  position: relative;
   z-index: 6;
 }
 
@@ -5610,7 +5616,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
    ----------------------------------------------------------- */
 .projects-gallery__row--1 {
   --row-gap-x:          1.5rem;   /* gap horizontal entre las 5 columnas */
+  --row-pair-gap:       1rem;     /* gap entre las 2 imágenes cuadradas del item par */
   --row-img-ratio:      16 / 9;  /* aspect-ratio de las imágenes */
+  --row-square-ratio:   1 / 1;    /* aspect-ratio de las imágenes cuadradas */
+  --row-pair-width:     calc(((var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height)) * 2) + var(--row-pair-gap));
   --row-height:         320px;    /* alto TOTAL de la fila (img + gap + caption) */
   --row-caption-height: var(--gallery-caption-height); /* alto reservado para el caption */
 
@@ -5647,6 +5656,22 @@ html.is-entering-home.is-entering-home-active .main-nav {
 /* Caption con altura reservada en la fila 1 */
 .projects-gallery__row--1 .projects-gallery__caption {
   height: var(--row-caption-height);
+}
+
+/* Tobar en fila 1: mismo patrón pair que Praderas,
+   con dos cuadrados 1:1 arriba y caption abajo. */
+.projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--row-pair-gap);
+  height: calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
+  width: var(--row-pair-width);
+}
+
+.projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media--square {
+  height: 100%;
+  width: auto;
+  aspect-ratio: var(--row-square-ratio);
 }
 
 /* --- FILA 2 (Tobar par + Suindá) -------------------------
