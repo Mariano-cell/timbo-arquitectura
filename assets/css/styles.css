@@ -587,21 +587,18 @@
 }
 
 .nature-dialogue__text {
-  --nature-dialogue-inline-start: max(
-    var(--space-xl),
-    calc((100vw - var(--max-width)) / 2 + var(--space-xl))
-  );
+  --nature-dialogue-inline-start: var(--margin-c);
   position: absolute;
   left: var(--nature-dialogue-inline-start);
   bottom: clamp(64px, 12vh, 144px);
   max-width: min(980px, calc(100vw - var(--nature-dialogue-inline-start) - var(--space-xl)));
   margin: 0;
-  color: var(--color-text-light);
+  color: var(--color-black);
   font-size: 3.25rem;
   font-weight: var(--fw-regular);
   letter-spacing: 0.04em;
   line-height: 1.05;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  text-shadow: none;
 }
 
 .nature-dialogue__info {
@@ -1071,6 +1068,14 @@ html.is-entering-home.is-entering-home-active .main-nav {
   transform: scale(1);
 }
 
+.project-hero--praderas .project-hero__media img {
+  object-position: 58% 58%;
+}
+
+.project-hero--praderas .project-hero__title {
+  color: var(--color-black);
+}
+
 .project-hero__content {
   position: relative;
   z-index: 2;
@@ -1404,7 +1409,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .project-refuge__text {
   margin: 0;
   max-width: clamp(25rem, 32vw, 38rem);
-  padding-left: 1rem;
 }
 
 .project-refuge__gallery {
@@ -1567,6 +1571,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
   will-change: transform;
 }
 
+.project-palette--praderas .project-palette__text {
+  margin-top: calc(clamp(1rem, 2vw, 2rem) + 100px);
+}
+
 .project-palette__text-line {
   display: block;
   overflow: hidden;
@@ -1642,6 +1650,18 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .page--haras-light .project-final__media {
   z-index: 6;
+}
+
+.page--haras-light .project-frame__container {
+  gap: clamp(3rem, 6vw, 8rem);
+}
+
+.page--haras-light .project-refuge__copy .project-refuge__text {
+  max-width: clamp(21.25rem, 27.2vw, 32.3rem);
+}
+
+.page--haras-light .project-frame__copy .project-frame__text {
+  max-width: clamp(23.8rem, 30.6vw, 35.7rem);
 }
 
 .page--haras-light .project-frame__media img {
@@ -1944,6 +1964,49 @@ html.is-entering-home.is-entering-home-active .main-nav {
   display: none;
 }
 
+/* --- Tobar Lodge map trial --- */
+
+.project-overview--tobar-lodge .project-overview__facts {
+  position: relative;
+  top: -2rem;
+}
+
+.project-overview--tobar-lodge .project-overview__map--tobar-lodge {
+  width: min(100%, 11.75rem);
+  max-width: 11.75rem;
+  align-self: flex-start;
+}
+
+.project-overview--tobar-lodge .project-map--tobar-lodge {
+  flex: none;
+  width: 100%;
+}
+
+.project-overview--tobar-lodge .project-map__canvas--tobar-lodge {
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg,
+    var(--color-gray-300) 0%,
+    var(--color-gray-400) 48%,
+    var(--color-gray-500) 100%);
+  border: 1px solid rgba(29, 29, 27, 0.8);
+}
+
+.project-overview--tobar-lodge .project-map--tobar-lodge .project-map-marker__dot {
+  background: var(--color-gray-100);
+}
+
+.project-overview--tobar-lodge .project-map--tobar-lodge .project-map-marker__ring {
+  border-color: var(--color-gray-200);
+}
+
+.project-overview--tobar-lodge .project-map--tobar-lodge .project-map-marker__name {
+  color: var(--color-black);
+}
+
+.project-overview--tobar-lodge .project-map--tobar-lodge .project-map-marker__detail {
+  color: var(--color-black);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .project-final__media img,
   .project-final__media.anim-fade-in.is-visible img {
@@ -1989,6 +2052,15 @@ html.is-entering-home.is-entering-home-active .main-nav {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.25rem 1.5rem;
     padding-top: 0;
+  }
+
+  .project-overview--tobar-lodge .project-overview__facts {
+    top: -2rem;
+  }
+
+  .project-overview--tobar-lodge .project-overview__map--tobar-lodge {
+    grid-column: 1 / -1;
+    justify-self: start;
   }
 
   .project-overview__fact {
@@ -2047,6 +2119,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .project-overview__facts {
     grid-template-columns: 1fr;
+  }
+
+  .project-overview--tobar-lodge .project-overview__map--tobar-lodge {
+    width: 100%;
   }
 
   .project-refuge__text {
@@ -5469,7 +5545,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .projects-gallery {
   /* --- Variables globales (compartidas por toda la galería) --- */
   --gallery-bg:              var(--color-gray-100);
-  --gallery-padding-top:     calc(var(--nav-height) + var(--space-2xl));
+  --gallery-padding-top:     clamp(12rem, 15vw, 22rem);
   --gallery-padding-bottom:  var(--space-2xl);
   --gallery-side-padding:    var(--space-4xl);
   --gallery-max-width:       1600px;

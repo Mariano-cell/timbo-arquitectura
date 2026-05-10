@@ -843,6 +843,18 @@ const Timbo = {
       const slug = page.getAttribute('data-project-slug');
       if (!slug) return;
 
+      // El cover del hero debe revelarse aunque todavía no exista metadata
+      // del proyecto en SITE_DATA.
+      const coverImg = document.getElementById('project-cover');
+      if (coverImg) {
+        const reveal = () => coverImg.classList.add('is-loaded');
+        if (coverImg.complete) {
+          requestAnimationFrame(reveal);
+        } else {
+          coverImg.addEventListener('load', reveal, { once: true });
+        }
+      }
+
       const lang = Timbo.state.lang;
       const pageData = SITE_DATA.projectPages?.[lang];
       const project = pageData?.projects?.[slug];
@@ -879,17 +891,6 @@ const Timbo = {
       }
 
       document.title = `Timbó — ${project.name}`;
-
-      // Hero cover entry animation
-      const coverImg = document.getElementById('project-cover');
-      if (coverImg) {
-        const reveal = () => coverImg.classList.add('is-loaded');
-        if (coverImg.complete) {
-          requestAnimationFrame(reveal);
-        } else {
-          coverImg.addEventListener('load', reveal, { once: true });
-        }
-      }
     },
   },
 
@@ -3413,16 +3414,19 @@ const Timbo = {
     map: null,
     container: null,
     marker: null,
+    mapTheme: '',
     sequencePlayed: false,
 
     init() {
       this.container = document.querySelector('[data-map-sequence]');
       if (!this.container) return;
+      this.mapTheme = this.container.dataset.mapTheme || '';
 
       // Read project slug from the page
       const section = document.querySelector('[data-project-slug]');
       const slug = section ? section.dataset.projectSlug : null;
-      this.config = slug ? this.MAP_CONFIGS[slug] : null;
+      const mapSlug = slug === 'tobar-lodge' ? 'exuma-lodge' : slug;
+      this.config = mapSlug ? this.MAP_CONFIGS[mapSlug] : null;
       if (!this.config) return;
 
       // Lazy-load MapLibre when container is ~2 viewports away
@@ -3466,6 +3470,8 @@ const Timbo = {
       });
 
       this.map.on('load', () => {
+        this.applyMapTheme();
+
         if (reducedMotion) {
           const offsetCenter = this.getOffsetCenter();
           this.map.jumpTo({ center: offsetCenter });
@@ -3485,6 +3491,109 @@ const Timbo = {
         }, { threshold: 0.3 });
 
         animObserver.observe(this.container);
+      });
+    },
+
+    getCssColor(variableName, fallback) {
+      const value = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+      return value || fallback;
+    },
+
+    hexToRgba(hex, alpha) {
+      if (!hex || hex[0] !== '#') return hex;
+      let normalized = hex.slice(1);
+      if (normalized.length === 3) {
+        normalized = normalized.split('').map((char) => char + char).join('');
+      }
+      if (normalized.length !== 6) return hex;
+
+      const r = parseInt(normalized.slice(0, 2), 16);
+      const g = parseInt(normalized.slice(2, 4), 16);
+      const b = parseInt(normalized.slice(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    },
+
+    getMapPalette() {
+      return {
+        gray100: this.getCssColor('--color-gray-100', '#F6F6F6'),
+        gray200: this.getCssColor('--color-gray-200', '#DADADA'),
+        gray300: this.getCssColor('--color-gray-300', '#9D9D9C'),
+        gray400: this.getCssColor('--color-gray-400', '#575756'),
+        gray500: this.getCssColor('--color-gray-500', '#3C3C3B'),
+        black: this.getCssColor('--color-black', '#1D1D1B'),
+      };
+    },
+
+    setLayerPaint(layerId, property, value) {
+      try {
+        this.map.setPaintProperty(layerId, property, value);
+      } catch (_) {}
+    },
+
+    applyMapTheme() {
+      if (this.mapTheme !== 'grayscale') return;
+
+      const palette = this.getMapPalette();
+      const layers = this.map.getStyle()?.layers || [];
+
+      layers.forEach((layer) => {
+        const id = (layer.id || '').toLowerCase();
+
+        if (layer.type === 'background') {
+          this.setLayerPaint(layer.id, 'background-color', palette.gray500);
+          return;
+        }
+
+        if (layer.type === 'fill') {
+          let fillColor = palette.gray500;
+
+          if (id.includes('water') || id.includes('ocean') || id.includes('sea') || id.includes('lake') || id.includes('river')) {
+            fillColor = palette.gray200;
+          } else if (id.includes('building')) {
+            fillColor = palette.gray400;
+          } else if (id.includes('park') || id.includes('landuse') || id.includes('landcover') || id.includes('wood')) {
+            fillColor = palette.gray500;
+          } else if (id.includes('land')) {
+            fillColor = palette.black;
+          }
+
+          this.setLayerPaint(layer.id, 'fill-color', fillColor);
+          this.setLayerPaint(layer.id, 'fill-outline-color', palette.gray300);
+          return;
+        }
+
+        if (layer.type === 'line') {
+          let lineColor = palette.gray300;
+
+          if (id.includes('road') || id.includes('street') || id.includes('motorway') || id.includes('highway') || id.includes('bridge') || id.includes('tunnel')) {
+            lineColor = palette.gray200;
+          } else if (id.includes('waterway')) {
+            lineColor = palette.gray300;
+          } else if (id.includes('boundary') || id.includes('admin') || id.includes('border') || id.includes('coast')) {
+            lineColor = palette.gray300;
+          }
+
+          this.setLayerPaint(layer.id, 'line-color', lineColor);
+          return;
+        }
+
+        if (layer.type === 'symbol') {
+          this.setLayerPaint(layer.id, 'text-color', palette.black);
+          this.setLayerPaint(layer.id, 'text-halo-color', palette.gray100);
+          this.setLayerPaint(layer.id, 'icon-color', palette.gray200);
+          this.setLayerPaint(layer.id, 'icon-halo-color', palette.gray500);
+          return;
+        }
+
+        if (layer.type === 'circle') {
+          this.setLayerPaint(layer.id, 'circle-color', palette.gray200);
+          this.setLayerPaint(layer.id, 'circle-stroke-color', palette.gray500);
+          return;
+        }
+
+        if (layer.type === 'fill-extrusion') {
+          this.setLayerPaint(layer.id, 'fill-extrusion-color', palette.gray400);
+        }
       });
     },
 
@@ -3581,7 +3690,9 @@ const Timbo = {
         type: 'fill',
         source: 'island-highlight',
         paint: {
-          'fill-color': 'rgba(255, 255, 255, 0.08)',
+          'fill-color': this.mapTheme === 'grayscale'
+            ? this.hexToRgba(this.getCssColor('--color-gray-100', '#F6F6F6'), 0.12)
+            : 'rgba(255, 255, 255, 0.08)',
           'fill-opacity': 0,
         },
       });
@@ -3592,7 +3703,9 @@ const Timbo = {
         type: 'line',
         source: 'island-highlight',
         paint: {
-          'line-color': 'rgba(255, 255, 255, 0.35)',
+          'line-color': this.mapTheme === 'grayscale'
+            ? this.hexToRgba(this.getCssColor('--color-gray-200', '#DADADA'), 0.58)
+            : 'rgba(255, 255, 255, 0.35)',
           'line-width': 1.5,
           'line-opacity': 0,
         },
@@ -5723,18 +5836,35 @@ const Timbo = {
     },
 
     init() {
-      const items = Array.from(document.querySelectorAll('[data-cover-cycle]'));
-      if (!items.length) return;
+      // Cada elemento [data-cover-cycle] es el que cicla (por convención,
+      // un .projects-gallery__media que contiene un .projects-gallery__cover-stack).
+      // El trigger del hover es el propio elemento, salvo que defina
+      // data-cover-cycle-trigger="<selector>" que apunte a un ancestro
+      // común (útil cuando el ciclo arranca al pasar por OTRA zona, por
+      // ejemplo el par A+B de Praderas Cabin).
+      const targets = Array.from(document.querySelectorAll('[data-cover-cycle]'));
+      if (!targets.length) return;
 
       // Nota: initialDelayMs e intervalMs viven como propiedades del módulo
-      // (1500ms cada uno) y son independientes de --gallery-hover-card-delay.
+      // (2000ms y 1500ms) y son independientes de --gallery-hover-card-delay.
 
-      this.items = items.map((item) => {
-        const covers = Array.from(item.querySelectorAll('.projects-gallery__cover'));
+      this.items = targets.map((target) => {
+        const covers = Array.from(target.querySelectorAll('.projects-gallery__cover'));
         if (covers.length < 2) return null;
 
+        // Resolvemos el trigger: si data-cover-cycle-trigger apunta a un
+        // selector, buscamos el ancestro más cercano que matchee. Si no,
+        // el trigger es el propio target.
+        let trigger = target;
+        const triggerSelector = target.getAttribute('data-cover-cycle-trigger');
+        if (triggerSelector) {
+          const ancestor = target.closest(triggerSelector);
+          if (ancestor) trigger = ancestor;
+        }
+
         const entry = {
-          item,
+          target,
+          trigger,
           covers,
           currentIndex: 0,
           startTimer: 0,
@@ -5744,18 +5874,16 @@ const Timbo = {
         // Aseguramos estado inicial coherente.
         this.setActiveCover(entry, 0);
 
-        // Disparamos por mouseenter sobre el media (zona visual),
-        // no sobre el item entero, para evitar que el caption u otros
-        // elementos del frame disparen el ciclo.
-        const media = item.querySelector('.projects-gallery__media');
-        if (!media) return null;
+        trigger.addEventListener('mouseenter', () => this.startCycle(entry));
+        trigger.addEventListener('mouseleave', () => this.resetToBase(entry));
 
-        media.addEventListener('mouseenter', () => this.startCycle(entry));
-        media.addEventListener('mouseleave', () => this.resetToBase(entry));
-
-        // Soporte teclado: foco/blur sobre el item.
-        item.addEventListener('focus', () => this.startCycle(entry));
-        item.addEventListener('blur', () => this.resetToBase(entry));
+        // Soporte teclado: el ítem-padre <a> recibe focus en navegación
+        // por teclado. Si encontramos un <a> ancestro, le colgamos focus/blur.
+        const focusable = target.closest('a, button, [tabindex]');
+        if (focusable) {
+          focusable.addEventListener('focus', () => this.startCycle(entry));
+          focusable.addEventListener('blur', () => this.resetToBase(entry));
+        }
 
         return entry;
       }).filter(Boolean);
