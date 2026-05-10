@@ -17,6 +17,112 @@ const Timbo = {
     lang: 'es',
   },
 
+  extractLineRevealSource(element) {
+    if (!element) return '';
+
+    const chunks = [];
+
+    const walk = (node) => {
+      node.childNodes.forEach((child) => {
+        if (child.nodeType === Node.TEXT_NODE) {
+          chunks.push(child.textContent || '');
+          return;
+        }
+
+        if (child.nodeType !== Node.ELEMENT_NODE) return;
+
+        if (child.tagName === 'BR') {
+          chunks.push('\n');
+          return;
+        }
+
+        walk(child);
+      });
+    };
+
+    walk(element);
+
+    return chunks
+      .join('')
+      .split('\n')
+      .map((line) => line.replace(/\s+/g, ' ').trim())
+      .filter((line) => line.length)
+      .join('\n');
+  },
+
+  splitTextIntoVisualLines(element, { lineClass, innerClass }) {
+    if (!element || !lineClass || !innerClass) return;
+
+    const sourceText =
+      element.dataset.lineRevealSource ||
+      this.extractLineRevealSource(element);
+
+    if (!sourceText) return;
+
+    element.dataset.lineRevealSource = sourceText;
+
+    const measureVisualLines = (sourceLine) => {
+      const cleanLine = sourceLine.replace(/\s+/g, ' ').trim();
+      if (!cleanLine) return [];
+
+      element.replaceChildren();
+
+      const words = cleanLine.split(' ');
+      const measureNodes = [];
+
+      words.forEach((word, index) => {
+        const node = document.createElement('span');
+        node.textContent = index === words.length - 1 ? word : `${word} `;
+        measureNodes.push(node);
+        element.appendChild(node);
+      });
+
+      const lines = [];
+      let currentTop = null;
+      let currentLine = [];
+
+      measureNodes.forEach((node) => {
+        const top = node.offsetTop;
+
+        if (currentTop === null || Math.abs(top - currentTop) <= 1) {
+          currentLine.push(node.textContent);
+          currentTop = currentTop ?? top;
+          return;
+        }
+
+        lines.push(currentLine.join('').trimEnd());
+        currentLine = [node.textContent];
+        currentTop = top;
+      });
+
+      if (currentLine.length) {
+        lines.push(currentLine.join('').trimEnd());
+      }
+
+      return lines;
+    };
+
+    const lines = sourceText
+      .split('\n')
+      .flatMap((sourceLine) => measureVisualLines(sourceLine));
+
+    const fragment = document.createDocumentFragment();
+
+    lines.forEach((lineText) => {
+      const line = document.createElement('span');
+      const inner = document.createElement('span');
+
+      line.className = lineClass;
+      inner.className = innerClass;
+      inner.textContent = lineText;
+
+      line.appendChild(inner);
+      fragment.appendChild(line);
+    });
+
+    element.replaceChildren(fragment);
+  },
+
 
   /* ============================================================
      SISTEMA DE IDIOMAS (i18n)
@@ -146,6 +252,250 @@ const Timbo = {
           nav.classList.remove('main-nav--scrolled');
         }
       }, { passive: true });
+    },
+  },
+
+
+  /* ============================================================
+     INTRO PHOTO SLIDE — Foto B totalmente atada al scroll (reversible)
+     Dos rangos de scroll independientes:
+       - X (desplazamiento horizontal): entre X_START_Y y X_END_Y.
+         Lineal de -100% a 0%.
+       - Crecimiento (escala 0.95→1 y opacidad 0.6→1): entre
+         GROW_START_Y y GROW_END_Y. Lineal.
+     Antes de X_START_Y / GROW_START_Y, cada parámetro queda en su
+     valor inicial. Después de X_END_Y / GROW_END_Y, en su valor final.
+     Todo es reversible: scrollear hacia arriba deshace el camino.
+     ============================================================ */
+  introPhotoSlide: {
+    X_START_Y: 200,                // ← scrollY en el que arranca el desplazamiento en X
+    X_END_Y: 900,                  // ← scrollY en el que la foto llega a destino en X
+    GROW_START_Y: 900,             // ← scrollY en el que arrancan a crecer escala y opacidad
+    GROW_END_Y: 950,               // ← scrollY en el que escala y opacidad llegan a 1
+
+    init() {
+      const photo = document.querySelector('.intro__photo--slide-x');
+      if (!photo) return;
+
+      photo.classList.add('is-active');
+
+      let ticking = false;
+
+      // Helper: mapea scrollY al progreso 0–1 dentro de [startY, endY], capado.
+      const rangeProgress = (y, startY, endY) => {
+        const range = endY - startY;
+        if (range <= 0) return y >= endY ? 1 : 0;
+        return Math.max(0, Math.min(1, (y - startY) / range));
+      };
+
+      const update = () => {
+        ticking = false;
+        const y = window.scrollY;
+
+        // Progreso de X (0–1) entre X_START_Y y X_END_Y.
+        const xT = rangeProgress(y, this.X_START_Y, this.X_END_Y);
+        const tx = -(1 - xT) * 100;   // -100% → 0%
+
+        // Progreso de crecimiento (0–1) entre GROW_START_Y y GROW_END_Y.
+        const growT = rangeProgress(y, this.GROW_START_Y, this.GROW_END_Y);
+        const scale = 0.95 + (1 - 0.95) * growT;
+        const opacity = 0.6 + (1 - 0.6) * growT;
+
+        photo.style.transform = 'translateX(' + tx + '%) scale(' + scale + ')';
+        photo.style.opacity = String(opacity);
+      };
+
+      const onScroll = () => {
+        if (!ticking) {
+          window.requestAnimationFrame(update);
+          ticking = true;
+        }
+      };
+
+      update();  // estado inicial (por si la página carga ya scrolleada)
+      window.addEventListener('scroll', onScroll, { passive: true });
+    },
+  },
+
+
+  /* ============================================================
+     INTRO PHOTO A — Foto A reacciona al scroll después de la B
+     Tres etapas independientes, todas atadas al scroll y reversibles:
+       1. Z_FLIP_Y: en este scrollY, foto A pasa a estar DETRÁS de
+          foto B (cambio instantáneo de z-index).
+       2. SHRINK_START_Y → SHRINK_END_Y: foto A se achica de 1 a 0.95
+          y baja opacidad de 1 a 0.7.
+       3. SLIDE_START_Y → SLIDE_END_Y: foto A se desplaza a la derecha
+          de translateX(0) hasta translateX(SLIDE_DISTANCE_PCT %).
+     ============================================================ */
+  introPhotoA: {
+    Z_FLIP_Y: 1300,              // ← scrollY en el que foto A pasa a estar detrás de foto B
+    SHRINK_START_Y: 1440,        // ← scrollY en el que arranca a achicarse y bajar opacidad
+    SHRINK_END_Y: 1500,          // ← scrollY en el que termina de achicarse (scale 0.95, opacity 0.7)
+    SLIDE_START_Y: 1500,         // ← scrollY en el que arranca a deslizarse a la derecha
+    SLIDE_END_Y: 1990,           // ← scrollY en el que termina el deslizamiento (rate ≈ foto B: 70%/490px)
+    SLIDE_DISTANCE_PCT: 70,      // ← cuánto se desplaza a la derecha (% del propio ancho)
+
+    init() {
+      const photo = document.querySelector('.intro__photo--slide-a');
+      if (!photo) return;
+
+      let ticking = false;
+
+      // Helper: mapea scrollY al progreso 0–1 dentro de [startY, endY], capado.
+      const rangeProgress = (y, startY, endY) => {
+        const range = endY - startY;
+        if (range <= 0) return y >= endY ? 1 : 0;
+        return Math.max(0, Math.min(1, (y - startY) / range));
+      };
+
+      const update = () => {
+        ticking = false;
+        const y = window.scrollY;
+
+        // 1) Z-index: instantáneo en Z_FLIP_Y. Antes: por encima (3). Después: por debajo (0).
+        //    Foto B tiene z-index 1 en CSS, así que con 0 queda detrás y con 3 queda adelante.
+        photo.style.zIndex = y >= this.Z_FLIP_Y ? '0' : '3';
+
+        // 2) Shrink + opacidad.
+        const shrinkT = rangeProgress(y, this.SHRINK_START_Y, this.SHRINK_END_Y);
+        const scale = 1 - (1 - 0.95) * shrinkT;       // 1 → 0.95
+        const opacity = 1 - (1 - 0.7) * shrinkT;      // 1 → 0.7
+
+        // 3) Slide a la derecha.
+        const slideT = rangeProgress(y, this.SLIDE_START_Y, this.SLIDE_END_Y);
+        const tx = this.SLIDE_DISTANCE_PCT * slideT;  // 0% → SLIDE_DISTANCE_PCT %
+
+        photo.style.transform = 'translateX(' + tx + '%) scale(' + scale + ')';
+        photo.style.opacity = String(opacity);
+      };
+
+      const onScroll = () => {
+        if (!ticking) {
+          window.requestAnimationFrame(update);
+          ticking = true;
+        }
+      };
+
+      update();  // estado inicial
+      window.addEventListener('scroll', onScroll, { passive: true });
+    },
+  },
+
+
+  /* ============================================================
+     REFUGE PHOTO SLIDE — Imagen B (derecha) de .project-refuge
+     Mismo patrón que introPhotoSlide (home), con START_Y propios.
+     Rate de slide tomado de la home: 100% en 700px (0.143%/px).
+     Ventana de grow tomada de la home: 50px al final.
+     ============================================================ */
+  refugePhotoSlide: {
+    X_START_Y: 1000,               // ← scrollY en el que arranca el desplazamiento en X
+    X_END_Y: 1700,                 // ← 1000 + 700 (rate home: 100% / 700px)
+    GROW_START_Y: 1700,            // ← scrollY en el que arrancan a crecer escala y opacidad
+    GROW_END_Y: 1750,              // ← 1700 + 50 (mismo lapso que home)
+
+    init() {
+      const photo = document.querySelector('.project-refuge__image--slide-x');
+      if (!photo) return;
+
+      photo.classList.add('is-active');
+
+      let ticking = false;
+
+      // Helper: mapea scrollY al progreso 0–1 dentro de [startY, endY], capado.
+      const rangeProgress = (y, startY, endY) => {
+        const range = endY - startY;
+        if (range <= 0) return y >= endY ? 1 : 0;
+        return Math.max(0, Math.min(1, (y - startY) / range));
+      };
+
+      const update = () => {
+        ticking = false;
+        const y = window.scrollY;
+
+        // Progreso de X (0–1) entre X_START_Y y X_END_Y.
+        const xT = rangeProgress(y, this.X_START_Y, this.X_END_Y);
+        const tx = -(1 - xT) * 100;   // -100% → 0%
+
+        // Progreso de crecimiento (0–1) entre GROW_START_Y y GROW_END_Y.
+        const growT = rangeProgress(y, this.GROW_START_Y, this.GROW_END_Y);
+        const scale = 0.95 + (1 - 0.95) * growT;
+        const opacity = 0.6 + (1 - 0.6) * growT;
+
+        photo.style.transform = 'translateX(' + tx + '%) scale(' + scale + ')';
+        photo.style.opacity = String(opacity);
+      };
+
+      const onScroll = () => {
+        if (!ticking) {
+          window.requestAnimationFrame(update);
+          ticking = true;
+        }
+      };
+
+      update();  // estado inicial (por si la página carga ya scrolleada)
+      window.addEventListener('scroll', onScroll, { passive: true });
+    },
+  },
+
+
+  /* ============================================================
+     REFUGE PHOTO A — Imagen A (izquierda) de .project-refuge
+     Mismo patrón que introPhotoA (home), con START_Y propios.
+     Lapsos tomados de la home: hueco 140px, shrink 60px, slide 70%/490px.
+     ============================================================ */
+  refugePhotoA: {
+    Z_FLIP_Y: 2100,              // ← scrollY en el que la imagen pasa a estar detrás de la B
+    SHRINK_START_Y: 2240,        // ← 2100 + 140 (mismo hueco que home)
+    SHRINK_END_Y: 2300,          // ← 2240 + 60 (mismo lapso de shrink que home)
+    SLIDE_START_Y: 2300,         // ← scrollY en el que arranca a deslizarse a la derecha
+    SLIDE_END_Y: 2790,           // ← 2300 + 490 (rate home: 70% / 490px)
+    SLIDE_DISTANCE_PCT: 70,      // ← cuánto se desplaza a la derecha (% del propio ancho)
+
+    init() {
+      const photo = document.querySelector('.project-refuge__image--slide-a');
+      if (!photo) return;
+
+      let ticking = false;
+
+      // Helper: mapea scrollY al progreso 0–1 dentro de [startY, endY], capado.
+      const rangeProgress = (y, startY, endY) => {
+        const range = endY - startY;
+        if (range <= 0) return y >= endY ? 1 : 0;
+        return Math.max(0, Math.min(1, (y - startY) / range));
+      };
+
+      const update = () => {
+        ticking = false;
+        const y = window.scrollY;
+
+        // 1) Z-index: instantáneo en Z_FLIP_Y. Antes: por encima (3). Después: por debajo (0).
+        //    La imagen B tiene z-index 1 en CSS, así que con 0 queda detrás y con 3 queda adelante.
+        photo.style.zIndex = y >= this.Z_FLIP_Y ? '0' : '3';
+
+        // 2) Shrink + opacidad.
+        const shrinkT = rangeProgress(y, this.SHRINK_START_Y, this.SHRINK_END_Y);
+        const scale = 1 - (1 - 0.95) * shrinkT;       // 1 → 0.95
+        const opacity = 1 - (1 - 0.7) * shrinkT;      // 1 → 0.7
+
+        // 3) Slide a la derecha.
+        const slideT = rangeProgress(y, this.SLIDE_START_Y, this.SLIDE_END_Y);
+        const tx = this.SLIDE_DISTANCE_PCT * slideT;  // 0% → SLIDE_DISTANCE_PCT %
+
+        photo.style.transform = 'translateX(' + tx + '%) scale(' + scale + ')';
+        photo.style.opacity = String(opacity);
+      };
+
+      const onScroll = () => {
+        if (!ticking) {
+          window.requestAnimationFrame(update);
+          ticking = true;
+        }
+      };
+
+      update();  // estado inicial
+      window.addEventListener('scroll', onScroll, { passive: true });
     },
   },
 
@@ -757,11 +1107,11 @@ const Timbo = {
 
   /* ============================================================
      SCROLL REVEAL (genérico)
-     Observa .anim-fade-up y activa .is-visible al entrar al viewport.
+     Observa animaciones de entrada por scroll y activa .is-visible.
      ============================================================ */
   scrollReveal: {
     init() {
-      const animatedElements = document.querySelectorAll('.anim-fade-up, .anim-wind-in, .anim-fade-in, .anim-zoom-in, .anim-title-drop, .intro__photo--slide-x');
+      const animatedElements = document.querySelectorAll('.anim-fade-up, .anim-wind-in, .anim-fade-in, .anim-zoom-in, .anim-title-drop, .anim-reveal-right');
       if (animatedElements.length === 0) return;
 
       animatedElements.forEach((el) => {
@@ -2201,12 +2551,16 @@ const Timbo = {
     TITLE_MASK_FADE: 12,
     TITLE_RATE_POST_MASK: 0.9,
     TITLE_SCROLL_CAP: 600,
+    SMOOTHING: 0.12, // 0 = sin suavizado, 1 = sigue el scroll instantáneo. Más bajo = más fluido.
     titleEl: null,
     ticking: false,
+    rafId: null,
+    currentScroll: 0,
+    targetScroll: 0,
 
     update() {
       if (!this.titleEl) return;
-      const scrolled = Math.max(0, window.scrollY);
+      const scrolled = Math.max(0, this.currentScroll);
       const scrolledEffective = Math.min(scrolled, this.TITLE_SCROLL_CAP);
       const titleYAtMask = this.TITLE_MASK_SCROLL * this.TITLE_RATE;
       let titleY;
@@ -2239,13 +2593,26 @@ const Timbo = {
       }
     },
 
-    requestUpdate() {
-      if (this.ticking) return;
-      this.ticking = true;
-      window.requestAnimationFrame(() => {
-        this.ticking = false;
+    tick() {
+      // Lerp: el scroll que "ve" el título se acerca al scroll real de a poquito,
+      // así no hay saltos bruscos cuando empieza/termina el scroll.
+      const diff = this.targetScroll - this.currentScroll;
+      if (Math.abs(diff) < 0.05) {
+        this.currentScroll = this.targetScroll;
         this.update();
-      });
+        this.rafId = null;
+        return;
+      }
+      this.currentScroll += diff * this.SMOOTHING;
+      this.update();
+      this.rafId = window.requestAnimationFrame(() => this.tick());
+    },
+
+    requestUpdate() {
+      this.targetScroll = Math.max(0, window.scrollY);
+      if (this.rafId === null) {
+        this.rafId = window.requestAnimationFrame(() => this.tick());
+      }
     },
 
     init() {
@@ -2253,6 +2620,8 @@ const Timbo = {
       this.titleEl = document.querySelector('.project-hero__title');
       if (!this.titleEl) return;
 
+      this.targetScroll = Math.max(0, window.scrollY);
+      this.currentScroll = this.targetScroll;
       this.update();
       window.addEventListener('scroll', () => this.requestUpdate(), { passive: true });
       window.addEventListener('resize', () => this.requestUpdate());
@@ -2327,6 +2696,134 @@ const Timbo = {
     },
   },
 
+  projectFinalLogoScroll: {
+    sectionEl: null,
+    maskEl: null,
+    logoEl: null,
+    ticking: false,
+    rafId: 0,
+    hasTriggered: false,
+    isAnimating: false,
+    MASK_FADE_PX: 12,
+    TRIGGER_FACTOR: 0.92,
+    ANIMATION_DURATION: 2800,
+
+    clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    },
+
+    easeOutQuart(value) {
+      return 1 - Math.pow(1 - value, 4);
+    },
+
+    getTravel() {
+      return this.maskEl ? this.maskEl.offsetHeight + 16 : 16;
+    },
+
+    applyState(progress) {
+      if (!this.maskEl || !this.logoEl) return;
+
+      const clamped = this.clamp(progress, 0, 1);
+      const eased = this.easeOutQuart(clamped);
+      const travel = this.getTravel();
+      const translateY = (eased - 1) * travel;
+      const isSettled = clamped >= 1;
+      const fade = isSettled ? 0 : this.MASK_FADE_PX;
+
+      this.logoEl.style.setProperty('--project-final-logo-translate', `${translateY.toFixed(2)}px`);
+      this.maskEl.style.setProperty('--project-final-logo-mask-fade-current', `${fade.toFixed(2)}px`);
+      this.maskEl.classList.toggle('is-settled', isSettled);
+    },
+
+    syncInitialState() {
+      if (this.hasTriggered) return;
+      this.maskEl.classList.remove('is-settled');
+      this.applyState(0);
+    },
+
+    triggerAnimation() {
+      if (this.hasTriggered || this.isAnimating || !this.maskEl || !this.logoEl) return;
+
+      this.hasTriggered = true;
+      this.isAnimating = true;
+      this.maskEl.classList.remove('is-settled');
+
+      const startTime = performance.now();
+      const tick = (now) => {
+        const elapsed = now - startTime;
+        const progress = this.clamp(elapsed / this.ANIMATION_DURATION, 0, 1);
+
+        this.applyState(progress);
+
+        if (progress < 1) {
+          this.rafId = window.requestAnimationFrame(tick);
+          return;
+        }
+
+        this.isAnimating = false;
+        this.rafId = 0;
+      };
+
+      this.rafId = window.requestAnimationFrame(tick);
+    },
+
+    update() {
+      if (!this.sectionEl || !this.maskEl || !this.logoEl || this.hasTriggered) return;
+
+      const maskRect = this.maskEl.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || 1;
+      const triggerLine = viewportHeight * this.TRIGGER_FACTOR;
+
+      if (maskRect.top <= triggerLine) {
+        this.triggerAnimation();
+      }
+    },
+
+    requestUpdate() {
+      if (this.ticking || this.hasTriggered) return;
+
+      this.ticking = true;
+      window.requestAnimationFrame(() => {
+        this.ticking = false;
+        this.update();
+      });
+    },
+
+    init() {
+      this.sectionEl = document.querySelector('.project-final');
+      this.maskEl = document.querySelector('.project-final__logo-mask');
+      this.logoEl = document.querySelector('.project-final__logo');
+      if (!this.sectionEl || !this.maskEl || !this.logoEl) return;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.logoEl.style.setProperty('--project-final-logo-translate', '0px');
+        this.maskEl.style.setProperty('--project-final-logo-mask-fade-current', '0px');
+        this.maskEl.classList.add('is-settled');
+        return;
+      }
+
+      this.syncInitialState();
+      this.update();
+
+      if (!this.logoEl.complete) {
+        this.logoEl.addEventListener('load', () => {
+          this.syncInitialState();
+          this.requestUpdate();
+        }, { once: true });
+      }
+
+      window.addEventListener('resize', () => {
+        this.syncInitialState();
+        this.requestUpdate();
+      });
+      window.addEventListener('scroll', () => this.requestUpdate(), { passive: true });
+      window.addEventListener('load', () => {
+        this.syncInitialState();
+        this.requestUpdate();
+      }, { once: true });
+    },
+  },
+
   /* ============================================================
      PHILOSOPHY STATEMENT REVEAL (scroll-linked)
      Cuando el borde superior del .philosophy__statement cruza
@@ -2375,6 +2872,150 @@ const Timbo = {
       window.addEventListener('scroll', update, { passive: true });
       window.addEventListener('resize', update);
       update();
+    },
+  },
+
+  projectOverviewTitleReveal: {
+    init() {
+      const title = document.querySelector('.project-overview__title');
+      if (!title) return;
+
+      const update = () => {
+        const rect = title.getBoundingClientRect();
+        const trigger = window.innerHeight / 2;
+
+        if (rect.top <= trigger) {
+          title.classList.add('is-revealed');
+        } else {
+          title.classList.remove('is-revealed');
+        }
+      };
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    },
+  },
+
+  introClaimReveal: {
+    init() {
+      const claim = document.querySelector('.intro__claim');
+      if (!claim) return;
+
+      const update = () => {
+        const rect = claim.getBoundingClientRect();
+        const trigger = window.innerHeight / 2;
+
+        if (rect.top <= trigger) {
+          claim.classList.add('is-revealed');
+        } else {
+          claim.classList.remove('is-revealed');
+        }
+      };
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    },
+  },
+
+  sustProcessTitleReveal: {
+    init() {
+      const titles = Array.from(document.querySelectorAll('.sust-process__title'));
+      if (!titles.length) return;
+
+      const rebuildLines = () => {
+        titles.forEach((title) => {
+          Timbo.splitTextIntoVisualLines(title, {
+            lineClass: 'sust-process__title-line',
+            innerClass: 'sust-process__title-line-inner',
+          });
+        });
+      };
+
+      const update = () => {
+        const trigger = window.innerHeight / 2;
+
+        titles.forEach((title) => {
+          const rect = title.getBoundingClientRect();
+
+          if (rect.top <= trigger) {
+            title.classList.add('is-revealed');
+          } else {
+            title.classList.remove('is-revealed');
+          }
+        });
+      };
+
+      let resizeRaf = 0;
+      const refresh = () => {
+        rebuildLines();
+        update();
+      };
+
+      const onResize = () => {
+        cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(refresh);
+      };
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', onResize);
+      window.addEventListener('load', refresh, { once: true });
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(refresh).catch(() => {});
+      }
+
+      refresh();
+    },
+  },
+
+  projectPaletteTextReveal: {
+    init() {
+      const text = document.querySelector('.project-palette__text');
+      if (!text) return;
+
+      const rebuildLines = () => {
+        Timbo.splitTextIntoVisualLines(text, {
+          lineClass: 'project-palette__text-line',
+          innerClass: 'project-palette__text-line-inner',
+        });
+      };
+
+      const update = () => {
+        const rect = text.getBoundingClientRect();
+        // Antes era window.innerHeight / 2 (mitad del viewport).
+        // Lo subimos a 0.85 para que el reveal se dispare antes,
+        // apenas el texto entra bien al viewport.
+        const trigger = window.innerHeight * 0.85;
+
+        if (rect.top <= trigger) {
+          text.classList.add('is-revealed');
+        } else {
+          text.classList.remove('is-revealed');
+        }
+      };
+
+      let resizeRaf = 0;
+      const refresh = () => {
+        rebuildLines();
+        update();
+      };
+
+      const onResize = () => {
+        cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(refresh);
+      };
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', onResize);
+      window.addEventListener('load', refresh, { once: true });
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(refresh).catch(() => {});
+      }
+
+      refresh();
     },
   },
 
@@ -3491,12 +4132,21 @@ const Timbo = {
 
     // 2. Nav: fondo al scrollear + cambio de color por sección
     this.navScroll.init();
+    this.introPhotoSlide.init();
+    this.introPhotoA.init();
+    this.refugePhotoSlide.init();
+    this.refugePhotoA.init();
     this.navHide.init();
     this.navTheme.init();
     this.navIntro.init();
     this.scrollReveal.init();
+    this.projectFinalLogoScroll.init();
+    this.introClaimReveal.init();
     this.philosophyStatementReveal.init();
+    this.sustProcessTitleReveal.init();
     this.sustClimateTitleReveal.init();
+    this.projectOverviewTitleReveal.init();
+    this.projectPaletteTextReveal.init();
     this.sustBreatheTextReveal.init();
     this.sustStrategiesOrbit.init();
     this.sustStrategiesDetail.init();
@@ -3513,9 +4163,17 @@ const Timbo = {
     this.aboutFinalZoom.init();
     this.projectMap.init();
     this.projectOverviewSlider.init();
+    this.projectFactsParallax.init();
+    this.projectFrameCopyParallax.init();
+    this.projectFrameScrollMask.init();
+    this.projectPaletteTextParallax.init();
+    this.projectPaletteScrollWidth.init();
     this.contactForm.init();
     this.keyboardNav.init();
+    this.projectsGalleryHoverBlur.init();
+    this.galleryCoverCycle.init();
     this.galleryScrollDrift.init();
+    this.galleryScrollRevealLeft.init();
 
     // 3. Detectar idioma y aplicar
     const lang = this.i18n.detect();
@@ -3544,6 +4202,189 @@ const Timbo = {
     },
   },
 
+
+  /* ============================================================
+     PROJECTS GALLERY HOVER BLUR
+     ------------------------------------------------------------
+     Activa el blur del resto de proyectos solo después de que
+     transcurra exactamente el mismo tiempo que tarda en aparecer
+     la hover-card. Lo manejamos por JS para evitar estados
+     "pegados" al entrar/salir rápido entre items.
+     ============================================================ */
+  projectsGalleryHoverBlur: {
+    gallery: null,
+    items: [],
+    activeItem: null,
+    activationTimer: 0,
+
+    parseTimeToMs(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return 0;
+
+      if (raw.endsWith('ms')) {
+        const parsedMs = parseFloat(raw);
+        return Number.isFinite(parsedMs) ? parsedMs : 0;
+      }
+
+      if (raw.endsWith('s')) {
+        const parsedSeconds = parseFloat(raw);
+        return Number.isFinite(parsedSeconds) ? parsedSeconds * 1000 : 0;
+      }
+
+      const parsedNumber = parseFloat(raw);
+      return Number.isFinite(parsedNumber) ? parsedNumber : 0;
+    },
+
+    resolveActivationDelay() {
+      if (!this.gallery) return 0;
+
+      // Delay propio del blur, independiente del de la hover-card.
+      // Si existe --gallery-blur-activation-delay lo usa; sino, 500ms.
+      const styles = getComputedStyle(this.gallery);
+      const customDelay = this.parseTimeToMs(
+        styles.getPropertyValue('--gallery-blur-activation-delay')
+      );
+
+      return customDelay > 0 ? customDelay : 800;
+    },
+
+    clearActivationTimer() {
+      if (!this.activationTimer) return;
+      window.clearTimeout(this.activationTimer);
+      this.activationTimer = 0;
+    },
+
+    setActiveItem(item) {
+      if (this.activeItem === item) return;
+
+      if (this.activeItem) {
+        this.activeItem.classList.remove('is-blur-target');
+      }
+
+      this.activeItem = item;
+
+      if (this.activeItem) {
+        this.activeItem.classList.add('is-blur-target');
+      }
+    },
+
+    activateBlur() {
+      if (!this.gallery || !this.activeItem) return;
+      this.gallery.classList.add('is-blur-active');
+    },
+
+    clearBlur() {
+      this.clearActivationTimer();
+
+      if (this.gallery) {
+        this.gallery.classList.remove('is-blur-active');
+      }
+
+      this.setActiveItem(null);
+    },
+
+    scheduleActivation(item) {
+      if (!item) {
+        this.clearBlur();
+        return;
+      }
+
+      this.clearActivationTimer();
+      this.setActiveItem(item);
+
+      const delay = this.resolveActivationDelay();
+
+      this.activationTimer = window.setTimeout(() => {
+        this.activationTimer = 0;
+
+        if (this.activeItem !== item) return;
+
+        // Verificamos hover sobre la zona visual (imagen), no sobre el item entero.
+        // Esto evita activar el blur si el cursor está solo sobre el caption
+        // o sobre la hover-card lateral.
+        const visual = item.querySelector('.projects-gallery__visual');
+        const target = visual || item;
+        if (!target.matches(':hover')) return;
+
+        this.activateBlur();
+      }, delay);
+    },
+
+    // Devuelve el item de la galería al que pertenece un nodo,
+    // SOLO si el nodo está dentro de la zona visual (imagen) de ese item.
+    // Si el nodo está sobre el caption o sobre el hover-card, devuelve null.
+    resolveItemFromVisual(node) {
+      if (!(node instanceof Element)) return null;
+      if (!this.gallery || !this.gallery.contains(node)) return null;
+
+      const visual = node.closest('.projects-gallery__visual');
+      if (!visual) return null;
+
+      // El hover-card vive dentro del visual pero NO debe activar el blur.
+      if (node.closest('.projects-gallery__hover-card')) return null;
+
+      return visual.closest('.projects-gallery__item');
+    },
+
+    init() {
+      this.gallery = document.querySelector('.projects-gallery');
+      if (!this.gallery) return;
+
+      this.items = Array.from(this.gallery.querySelectorAll('.projects-gallery__item'));
+      if (!this.items.length) return;
+
+      // Delegación a nivel de galería con pointer events.
+      // Más confiable que mouseenter/mouseleave por item (evita bugs de
+      // relatedTarget cuando el cursor se mueve rápido entre items o
+      // sale por el espacio entre filas).
+      this.gallery.addEventListener('pointerover', (event) => {
+        // Ignoramos eventos no-mouse (touch, pen): el blur es un efecto desktop.
+        if (event.pointerType && event.pointerType !== 'mouse') return;
+
+        const item = this.resolveItemFromVisual(event.target);
+
+        if (!item) {
+          // El cursor entró a una zona de la galería que NO es portada
+          // (caption, hover-card, gap entre filas, márgenes). Limpiamos
+          // el blur — si el usuario dejó la imagen, el efecto se apaga.
+          this.clearBlur();
+          return;
+        }
+
+        if (this.activeItem === item) return;
+
+        if (this.gallery.classList.contains('is-blur-active')) {
+          // Si el blur ya está activo, el cambio de item es instantáneo.
+          this.clearActivationTimer();
+          this.setActiveItem(item);
+          return;
+        }
+
+        this.scheduleActivation(item);
+      });
+
+      // pointerleave NO burbujea — se dispara solo cuando el cursor
+      // sale del contenedor de la galería entera. Es nuestro reset.
+      this.gallery.addEventListener('pointerleave', () => {
+        this.clearBlur();
+      });
+
+      // Red de seguridad: si el cursor sale del documento o cambia de
+      // pestaña, limpiamos sí o sí.
+      document.addEventListener('pointerleave', () => {
+        this.clearBlur();
+      });
+
+      window.addEventListener('blur', () => {
+        this.clearBlur();
+      });
+
+      // Si la pestaña se oculta (Cmd+Tab, minimizar), también limpiamos.
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) this.clearBlur();
+      });
+    },
+  },
 
   /* ============================================================
      GALLERY SCROLL DRIFT
@@ -3607,15 +4448,18 @@ const Timbo = {
         const name = caption ? caption.querySelector('.projects-gallery__name') : null;
         const location = caption ? caption.querySelector('.projects-gallery__location') : null;
         const category = caption ? caption.querySelector('.projects-gallery__category') : null;
+        const phase = el.getAttribute('data-scroll-drift-phase') === 'enter' ? 'enter' : 'exit';
 
         return {
           el,
           gate: gate || el,
           amount: parseFloat(el.getAttribute('data-scroll-drift')) || 0,
+          phase,
+          useTranslateProperty: phase === 'enter' && el.classList.contains('projects-gallery__item'),
           captionLeft: squareIndex === 0 ? [name, location].filter(Boolean) : [],
           captionRight: squareIndex === pairSquares.length - 1 ? [category].filter(Boolean) : [],
-          waitsForEntryTransition: el.classList.contains('projects-gallery__item') && el.classList.contains('anim-fade-up'),
-          entryTransitionDone: !el.classList.contains('projects-gallery__item') || !el.classList.contains('anim-fade-up'),
+          waitsForEntryTransition: phase !== 'enter' && el.classList.contains('projects-gallery__item') && el.classList.contains('anim-fade-up'),
+          entryTransitionDone: phase === 'enter' || !el.classList.contains('projects-gallery__item') || !el.classList.contains('anim-fade-up'),
           entryTransitionListenerAttached: false,
           primed: false,
           currentX: 0,
@@ -3720,18 +4564,18 @@ const Timbo = {
       this.activeMasks.clear();
 
       this.items.forEach((data) => {
-        data.el.style.transform = '';
+        this.clearDrift(data);
         data.el.style.willChange = '';
         data.el.style.transition = '';
         data.captionLeft.forEach(node => {
-          node.style.transform = '';
           node.style.willChange = '';
         });
         data.captionRight.forEach(node => {
-          node.style.transform = '';
           node.style.willChange = '';
         });
         data.primed = false;
+        data.currentX = 0;
+        data.targetX = 0;
       });
       this.masks.forEach((data) => {
         data.el.style.clipPath = '';
@@ -3785,6 +4629,47 @@ const Timbo = {
         if (Math.abs(d.targetCut - d.currentCut) > eps) return true;
       }
       return false;
+    },
+
+    getDriftProgress(data, rect, vh) {
+      if (data.phase === 'enter') {
+        const start = vh * 1;
+        const end = vh * 0.45;
+        let p = (start - rect.top) / (start - end);
+        p = Math.max(0, Math.min(1, p));
+        return p;
+      }
+
+      const start = vh * 0.4;
+      const end = vh * 0.1;
+      let p = (start - rect.bottom) / (start - end);
+      p = Math.max(0, Math.min(1, p));
+      return p;
+    },
+
+    applyDrift(data, x) {
+      const formattedX = x.toFixed(2);
+      const t = `translate3d(${formattedX}px, 0, 0)`;
+
+      if (data.useTranslateProperty) {
+        data.el.style.translate = `${formattedX}px 0`;
+      } else {
+        data.el.style.transform = t;
+      }
+
+      data.captionLeft.forEach(node => { node.style.transform = t; });
+      data.captionRight.forEach(node => { node.style.transform = t; });
+    },
+
+    clearDrift(data) {
+      if (data.useTranslateProperty) {
+        data.el.style.translate = '';
+      } else {
+        data.el.style.transform = '';
+      }
+
+      data.captionLeft.forEach(node => { node.style.transform = ''; });
+      data.captionRight.forEach(node => { node.style.transform = ''; });
     },
 
     update() {
@@ -3848,10 +4733,7 @@ const Timbo = {
           // item ya entró al rango con scroll avanzado).
           {
             const rect0 = el.getBoundingClientRect();
-            const start0 = vh * 0.4;
-            const end0 = vh * 0.1;
-            let p0 = (start0 - rect0.bottom) / (start0 - end0);
-            p0 = Math.max(0, Math.min(1, p0));
+            const p0 = this.getDriftProgress(data, rect0, vh);
             data.targetX = amount * p0;
             data.currentX = data.targetX;
           }
@@ -3860,25 +4742,14 @@ const Timbo = {
         }
 
         const rect = el.getBoundingClientRect();
-        const bottom = rect.bottom;
-
-        // Drift: 0 cuando bottom cruza el 40% del vh, 1 al 10%.
-        const start = vh * 0.4;
-        const end = vh * 0.1;
-        let p = (start - bottom) / (start - end);
-        p = Math.max(0, Math.min(1, p));
+        const p = this.getDriftProgress(data, rect, vh);
 
         // Target: lo que el scroll "pide" en este frame.
         data.targetX = amount * p;
         // Current: persigue al target con lerp → sensación de inercia.
         data.currentX += (data.targetX - data.currentX) * this.SMOOTHING;
 
-        const t = `translate3d(${data.currentX.toFixed(2)}px, 0, 0)`;
-        el.style.transform = t;
-        // Solo si este target tiene asignado captionLeft/Right (par
-        // de imágenes), mover los spans correspondientes.
-        captionLeft.forEach(node => { node.style.transform = t; });
-        captionRight.forEach(node => { node.style.transform = t; });
+        this.applyDrift(data, data.currentX);
       });
 
       // ===== MÁSCARA =====
@@ -3996,17 +4867,12 @@ const Timbo = {
       const driftData = this.items.find(i => i.el === el);
       if (driftData) {
         if (rect.bottom <= 0) {
-          const t = `translate3d(${driftData.amount}px, 0, 0)`;
-          el.style.transform = t;
-          driftData.captionLeft.forEach(node => { node.style.transform = t; });
-          driftData.captionRight.forEach(node => { node.style.transform = t; });
+          this.applyDrift(driftData, driftData.amount);
           // Sincronizar lerp para que al re-entrar no haya salto.
           driftData.currentX = driftData.amount;
           driftData.targetX = driftData.amount;
         } else if (rect.top >= window.innerHeight) {
-          el.style.transform = '';
-          driftData.captionLeft.forEach(node => { node.style.transform = ''; });
-          driftData.captionRight.forEach(node => { node.style.transform = ''; });
+          this.clearDrift(driftData);
           driftData.currentX = 0;
           driftData.targetX = 0;
         }
@@ -4037,6 +4903,866 @@ const Timbo = {
     },
   },
 
+  /* ============================================================
+     GALLERY SCROLL REVEAL LEFT
+     ------------------------------------------------------------
+     Variante inversa del mask de salida: ciertos covers arrancan
+     con una franja izquierda oculta y, a medida que el proyecto
+     sube dentro del viewport, esa franja se revela hasta mostrar
+     el ancho total original.
+
+     Cómo se activa:
+     - Cualquier .projects-gallery__media con data-scroll-reveal-left="N"
+       (N = % inicial oculto desde la izquierda).
+     - Solo desktop (>= 769px) y solo si el usuario no pidió
+       prefers-reduced-motion: reduce.
+
+     Rango del progreso:
+     - 0 cuando el borde inferior de la imagen está cerca del borde
+       inferior del viewport.
+     - 1 cuando ese borde inferior llega aprox. al 40% del viewport.
+     ============================================================ */
+  galleryScrollRevealLeft: {
+    SMOOTHING: 0.12,
+    SETTLE_EPSILON: 0.05,
+    START_FACTOR: 1,
+    END_FACTOR: 0.4,
+
+    items: [],
+    activeItems: new Set(),
+    rafId: null,
+    enabled: false,
+    mediaQuery: null,
+    motionQuery: null,
+
+    init() {
+      const revealEls = document.querySelectorAll('.projects-gallery [data-scroll-reveal-left]');
+      this.items = Array.from(revealEls).map(el => {
+        const gate = el.closest('.projects-gallery__item') || el;
+        const caption = gate.querySelector('.projects-gallery__caption');
+        const hoverCard = gate.classList.contains('projects-gallery__item--hover-card-left')
+          ? gate.querySelector('.projects-gallery__hover-card')
+          : null;
+
+        return {
+          el,
+          gate,
+          caption,
+          hoverCard,
+          percent: parseFloat(el.getAttribute('data-scroll-reveal-left')) || 0,
+          primed: false,
+          currentCut: 0,
+          targetCut: 0,
+        };
+      });
+
+      if (!this.items.length) return;
+
+      this.mediaQuery = window.matchMedia('(min-width: 769px)');
+      this.motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      this.mediaQuery.addEventListener('change', () => this.evaluateEnabled());
+      this.motionQuery.addEventListener('change', () => this.evaluateEnabled());
+
+      this.evaluateEnabled();
+    },
+
+    evaluateEnabled() {
+      const shouldBeEnabled = this.mediaQuery.matches && !this.motionQuery.matches;
+
+      if (shouldBeEnabled && !this.enabled) {
+        this.enable();
+      } else if (!shouldBeEnabled && this.enabled) {
+        this.disable();
+      }
+    },
+
+    enable() {
+      this.enabled = true;
+
+      this.items.forEach(({ el, caption, hoverCard }) => {
+        el.style.willChange = 'clip-path';
+        if (caption) caption.style.willChange = 'margin-left, width';
+        if (hoverCard) hoverCard.style.willChange = 'transform';
+      });
+
+      this.observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            this.activeItems.add(entry.target);
+          } else {
+            this.activeItems.delete(entry.target);
+            this.resetItemAtBoundary(entry.target);
+          }
+        });
+        this.maybeStartLoop();
+      }, {
+        rootMargin: '50% 0px 50% 0px',
+        threshold: 0,
+      });
+
+      this.items.forEach(({ el }) => this.observer.observe(el));
+      this.maybeStartLoop();
+    },
+
+    disable() {
+      this.enabled = false;
+      if (this.observer) this.observer.disconnect();
+      if (this.rafId) cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+      this.activeItems.clear();
+
+      this.items.forEach((data) => {
+        data.el.style.clipPath = '';
+        data.el.style.willChange = '';
+        this.clearCaptionSync(data);
+        this.clearHoverCardSync(data);
+        if (data.caption) data.caption.style.willChange = '';
+        if (data.hoverCard) data.hoverCard.style.willChange = '';
+        data.primed = false;
+        data.currentCut = 0;
+        data.targetCut = 0;
+      });
+    },
+
+    maybeStartLoop() {
+      if (this.rafId) return;
+      if (this.activeItems.size === 0) return;
+
+      const tick = () => {
+        this.update();
+        if ((this.activeItems.size > 0 || this.hasUnsettled()) && this.enabled) {
+          this.rafId = requestAnimationFrame(tick);
+        } else {
+          this.rafId = null;
+        }
+      };
+      this.rafId = requestAnimationFrame(tick);
+    },
+
+    hasUnsettled() {
+      const eps = this.SETTLE_EPSILON;
+      for (const d of this.items) {
+        if (Math.abs(d.targetCut - d.currentCut) > eps) return true;
+      }
+      return false;
+    },
+
+    applyCut(data, cut) {
+      const radius = getComputedStyle(data.el).borderRadius || '0';
+      data.el.style.clipPath = `inset(0 0 0 ${Math.max(0, cut).toFixed(3)}% round ${radius})`;
+    },
+
+    applyCaptionSync(data, cut) {
+      if (!data.caption) return;
+
+      const safeCut = Math.max(0, cut);
+      if (safeCut <= this.SETTLE_EPSILON) {
+        this.clearCaptionSync(data);
+        return;
+      }
+
+      const pct = `${safeCut.toFixed(3)}%`;
+      data.caption.style.marginLeft = pct;
+      data.caption.style.width = `calc(100% - ${pct})`;
+    },
+
+    clearCaptionSync(data) {
+      if (!data.caption) return;
+      data.caption.style.marginLeft = '';
+      data.caption.style.width = '';
+    },
+
+    applyHoverCardSync(data, cut) {
+      if (!data.hoverCard) return;
+
+      const safeCut = Math.max(0, cut);
+      if (safeCut <= this.SETTLE_EPSILON) {
+        this.clearHoverCardSync(data);
+        return;
+      }
+
+      const px = data.el.getBoundingClientRect().width * (safeCut / 100);
+      data.hoverCard.style.setProperty('--gallery-hover-card-anchor-offset', `${px.toFixed(2)}px`);
+    },
+
+    clearHoverCardSync(data) {
+      if (!data.hoverCard) return;
+      data.hoverCard.style.removeProperty('--gallery-hover-card-anchor-offset');
+    },
+
+    update() {
+      const vh = window.innerHeight;
+      const start = vh * this.START_FACTOR;
+      const end = vh * this.END_FACTOR;
+
+      this.items.forEach((data) => {
+        const { el, gate, percent } = data;
+        if (!this.activeItems.has(el)) return;
+
+        // Hasta que el item no haya entrado visualmente, se mantiene
+        // en su estado angosto inicial.
+        if (!gate.classList.contains('is-visible')) {
+          data.targetCut = percent;
+          data.currentCut = percent;
+          this.applyCut(data, percent);
+          this.applyCaptionSync(data, percent);
+          this.applyHoverCardSync(data, percent);
+          return;
+        }
+
+        if (!data.primed) {
+          const rect0 = el.getBoundingClientRect();
+          let p0 = (start - rect0.bottom) / (start - end);
+          p0 = Math.max(0, Math.min(1, p0));
+          data.targetCut = percent * (1 - p0);
+          data.currentCut = data.targetCut;
+          this.applyCut(data, data.currentCut);
+          this.applyCaptionSync(data, data.currentCut);
+          this.applyHoverCardSync(data, data.currentCut);
+          data.primed = true;
+          return;
+        }
+
+        const rect = el.getBoundingClientRect();
+        let p = (start - rect.bottom) / (start - end);
+        p = Math.max(0, Math.min(1, p));
+
+        data.targetCut = percent * (1 - p);
+        data.currentCut += (data.targetCut - data.currentCut) * this.SMOOTHING;
+        this.applyCut(data, data.currentCut);
+        this.applyCaptionSync(data, data.currentCut);
+        this.applyHoverCardSync(data, data.currentCut);
+      });
+    },
+
+    resetItemAtBoundary(el) {
+      const data = this.items.find(item => item.el === el);
+      if (!data) return;
+
+      const rect = el.getBoundingClientRect();
+
+      if (rect.bottom <= 0) {
+        this.applyCut(data, 0);
+        this.clearCaptionSync(data);
+        this.clearHoverCardSync(data);
+        data.currentCut = 0;
+        data.targetCut = 0;
+        data.primed = false;
+      } else if (rect.top >= window.innerHeight) {
+        this.applyCut(data, data.percent);
+        this.applyCaptionSync(data, data.percent);
+        this.applyHoverCardSync(data, data.percent);
+        data.currentCut = data.percent;
+        data.targetCut = data.percent;
+        data.primed = false;
+      }
+    },
+  },
+
+  /* ============================================================
+     PROJECT FACTS PARALLAX
+     Movimiento parallax sutil del bloque .project-overview__facts:
+     baja a un rate mucho menor que el scroll para dar profundidad.
+     ============================================================ */
+  projectFactsParallax: {
+    RATE: 0.15,           // 15% de la velocidad del scroll
+    MAX_OFFSET: 200,      // px máximos que puede desplazarse
+    el: null,
+    section: null,
+    ticking: false,
+
+    init() {
+      this.el = document.querySelector('.project-overview__facts');
+      if (!this.el) return;
+      this.section = this.el.closest('.project-overview') || this.el.parentElement;
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) return;
+
+      this.update();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+      window.addEventListener('resize', () => this.onScroll(), { passive: true });
+    },
+
+    onScroll() {
+      if (this.ticking) return;
+      this.ticking = true;
+      requestAnimationFrame(() => {
+        this.update();
+        this.ticking = false;
+      });
+    },
+
+    update() {
+      if (!this.el || !this.section) return;
+      const rect = this.section.getBoundingClientRect();
+      // Empieza el efecto cuando la sección entra en viewport
+      const entered = window.innerHeight - rect.top;
+      if (entered <= 0) {
+        this.el.style.transform = 'translate3d(0, 0, 0)';
+        return;
+      }
+      const offset = Math.min(entered * this.RATE, this.MAX_OFFSET);
+      this.el.style.transform = `translate3d(0, ${offset}px, 0)`;
+    },
+  },
+
+  /* ============================================================
+     PROJECT FRAME COPY PARALLAX
+     Misma idea que projectFactsParallax pero más sutil:
+     menor rate y menor desplazamiento maximo. Aplica al bloque
+     completo de copy (todos los textos).
+     ============================================================ */
+  projectFrameCopyParallax: {
+    RATE: 0.09,           // sutil pero un poco mas notorio
+    MAX_OFFSET: 130,      // tope un poco mas alto
+    START_OFFSET: 80,     // adelanta el inicio del movimiento ~80px
+    el: null,
+    section: null,
+    ticking: false,
+
+    init() {
+      this.el = document.querySelector('.project-frame__copy');
+      if (!this.el) return;
+      this.section = this.el.closest('.project-frame') || this.el.parentElement;
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) return;
+
+      this.update();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+      window.addEventListener('resize', () => this.onScroll(), { passive: true });
+    },
+
+    onScroll() {
+      if (this.ticking) return;
+      this.ticking = true;
+      requestAnimationFrame(() => {
+        this.update();
+        this.ticking = false;
+      });
+    },
+
+    update() {
+      if (!this.el || !this.section) return;
+      const rect = this.section.getBoundingClientRect();
+      const entered = window.innerHeight - rect.top;
+      if (entered <= 0) {
+        this.el.style.transform = `translate3d(0, ${-this.START_OFFSET}px, 0)`;
+        return;
+      }
+      const offset = Math.min(entered * this.RATE, this.MAX_OFFSET) - this.START_OFFSET;
+      this.el.style.transform = `translate3d(0, ${offset}px, 0)`;
+    },
+  },
+
+  projectFrameScrollMask: {
+    START_SCROLL_Y: 2500,
+    END_SCROLL_Y: 3000,
+    MASK_PERCENT: 20,
+    items: [],
+    ticking: false,
+
+    clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    },
+
+    parseNumber(value, fallback) {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : fallback;
+    },
+
+    resolveConfig(el) {
+      const start = this.parseNumber(
+        el.dataset.scrollMaskLeftStart,
+        this.START_SCROLL_Y
+      );
+      const end = this.parseNumber(
+        el.dataset.scrollMaskLeftEnd,
+        this.END_SCROLL_Y
+      );
+      const percent = this.parseNumber(
+        el.dataset.scrollMaskLeftPercent,
+        this.MASK_PERCENT
+      );
+
+      if (end <= start) {
+        return {
+          start: this.START_SCROLL_Y,
+          end: this.END_SCROLL_Y,
+          percent: this.MASK_PERCENT,
+        };
+      }
+
+      return {
+        start,
+        end,
+        percent: Math.max(0, percent),
+      };
+    },
+
+    setMask(el, percent) {
+      el.style.setProperty('--project-frame-scroll-mask-left', `${percent}%`);
+    },
+
+    update(scrollYOverride = null) {
+      const scrollY = scrollYOverride === null ? window.scrollY : scrollYOverride;
+
+      this.items.forEach(({ el, start, end, percent }) => {
+        const progress = this.clamp((scrollY - start) / (end - start), 0, 1);
+        this.setMask(el, percent * progress);
+      });
+    },
+
+    onScroll() {
+      if (this.ticking) return;
+      this.ticking = true;
+      requestAnimationFrame(() => {
+        this.update();
+        this.ticking = false;
+      });
+    },
+
+    init() {
+      const els = document.querySelectorAll('.project-frame__media[data-scroll-mask-left-start]');
+      if (!els.length) return;
+
+      this.items = Array.from(els).map((el) => ({
+        el,
+        ...this.resolveConfig(el),
+      }));
+
+      this.update();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+    },
+  },
+
+  /* ============================================================
+     PROJECT PALETTE TEXT PARALLAX
+     Mismo efecto que projectFrameCopyParallax. Aplica un translateY
+     al wrapper .project-palette__text. La animacion de mascara
+     usa transform en .project-palette__text-line-inner (hijo),
+     asi que no se pisa con este parallax.
+     ============================================================ */
+  projectPaletteTextParallax: {
+    RATE: 0.09,
+    MAX_OFFSET: 130,
+    START_OFFSET: 80,
+    items: [],
+    ticking: false,
+
+    init() {
+      const els = document.querySelectorAll('.project-palette__text');
+      if (!els.length) return;
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) return;
+
+      this.items = Array.from(els).map(el => ({
+        el,
+        section: el.closest('.project-palette') || el.parentElement,
+      }));
+
+      this.update();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+      window.addEventListener('resize', () => this.onScroll(), { passive: true });
+    },
+
+    onScroll() {
+      if (this.ticking) return;
+      this.ticking = true;
+      requestAnimationFrame(() => {
+        this.update();
+        this.ticking = false;
+      });
+    },
+
+    update() {
+      this.items.forEach(({ el, section }) => {
+        if (!el || !section) return;
+        const rect = section.getBoundingClientRect();
+        const entered = window.innerHeight - rect.top;
+        if (entered <= 0) {
+          el.style.transform = `translate3d(0, ${-this.START_OFFSET}px, 0)`;
+          return;
+        }
+        const offset = Math.min(entered * this.RATE, this.MAX_OFFSET) - this.START_OFFSET;
+        el.style.transform = `translate3d(0, ${offset}px, 0)`;
+      });
+    },
+  },
+
+  projectPaletteScrollWidth: {
+    SCROLL_POINTS: [2500, 3000, 3500, 4000, 4500],
+    PHOTO_A_WIDTH_POINTS: [60, 70, 100, 130, 140],
+    PHOTO_B_WIDTH_POINTS: [140, 130, 100, 70, 60],
+    items: [],
+    ticking: false,
+    resizeRaf: 0,
+
+    clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    },
+
+    lerp(start, end, progress) {
+      return start + (end - start) * progress;
+    },
+
+    parseNumberList(value, fallback) {
+      if (!value) return fallback.slice();
+
+      const numbers = value
+        .split(',')
+        .map((chunk) => Number(chunk.trim()))
+        .filter((number) => Number.isFinite(number));
+
+      return numbers.length ? numbers : fallback.slice();
+    },
+
+    resolveTimeline(section) {
+      const scrollPoints = this.parseNumberList(
+        section.dataset.scrollWidthPoints,
+        this.SCROLL_POINTS
+      );
+      const photoAWidthPoints = this.parseNumberList(
+        section.dataset.photoAWidthPoints,
+        this.PHOTO_A_WIDTH_POINTS
+      );
+      const photoBWidthPoints = this.parseNumberList(
+        section.dataset.photoBWidthPoints,
+        this.PHOTO_B_WIDTH_POINTS
+      );
+
+      const hasMatchingLengths =
+        scrollPoints.length >= 2 &&
+        scrollPoints.length === photoAWidthPoints.length &&
+        scrollPoints.length === photoBWidthPoints.length;
+
+      const isAscending = scrollPoints.every((point, index) => (
+        index === 0 || point > scrollPoints[index - 1]
+      ));
+
+      if (hasMatchingLengths && isAscending) {
+        return {
+          scrollPoints,
+          photoAWidthPoints,
+          photoBWidthPoints,
+        };
+      }
+
+      return {
+        scrollPoints: this.SCROLL_POINTS.slice(),
+        photoAWidthPoints: this.PHOTO_A_WIDTH_POINTS.slice(),
+        photoBWidthPoints: this.PHOTO_B_WIDTH_POINTS.slice(),
+      };
+    },
+
+    clearItemStyles(item) {
+      item.wrapper.classList.remove('project-palette__images--scroll-width-active');
+      item.wrapper.style.height = '';
+
+      item.photoA.style.width = '';
+      item.photoA.style.height = '';
+      item.photoA.style.left = '';
+      item.photoA.style.right = '';
+      item.photoA.style.top = '';
+      item.photoA.style.willChange = '';
+      item.photoAImage.style.objectPosition = '';
+
+      item.photoB.style.width = '';
+      item.photoB.style.height = '';
+      item.photoB.style.left = '';
+      item.photoB.style.right = '';
+      item.photoB.style.top = '';
+      item.photoB.style.willChange = '';
+      item.photoBImage.style.objectPosition = '';
+    },
+
+    measureItem(item) {
+      this.clearItemStyles(item);
+
+      const photoARect = item.photoA.getBoundingClientRect();
+      const photoBRect = item.photoB.getBoundingClientRect();
+
+      item.baseWidthA = photoARect.width;
+      item.baseWidthB = photoBRect.width;
+      item.baseHeight = Math.max(photoARect.height, photoBRect.height);
+    },
+
+    applyBaseLayout(item) {
+      item.wrapper.classList.add('project-palette__images--scroll-width-active');
+      item.wrapper.style.height = `${item.baseHeight}px`;
+
+      item.photoA.style.top = '0';
+      item.photoA.style.left = '0';
+      item.photoA.style.right = 'auto';
+      item.photoA.style.height = '100%';
+      item.photoA.style.willChange = 'width';
+      item.photoAImage.style.objectPosition = 'left center';
+
+      item.photoB.style.top = '0';
+      item.photoB.style.left = 'auto';
+      item.photoB.style.right = '0';
+      item.photoB.style.height = '100%';
+      item.photoB.style.willChange = 'width';
+      item.photoBImage.style.objectPosition = 'right center';
+    },
+
+    setItemWidths(item, photoAWidth, photoBWidth) {
+      item.photoA.style.width = `${photoAWidth}px`;
+      item.photoB.style.width = `${photoBWidth}px`;
+    },
+
+    getWidthFromTimeline(scrollY, scrollPoints, widthPoints, baseWidth) {
+      const firstPoint = scrollPoints[0];
+      const lastPoint = scrollPoints[scrollPoints.length - 1];
+
+      if (scrollY <= firstPoint) {
+        return baseWidth * (widthPoints[0] / 100);
+      }
+
+      if (scrollY >= lastPoint) {
+        return baseWidth * (widthPoints[widthPoints.length - 1] / 100);
+      }
+
+      for (let index = 0; index < scrollPoints.length - 1; index += 1) {
+        const startPoint = scrollPoints[index];
+        const endPoint = scrollPoints[index + 1];
+
+        if (scrollY > endPoint) continue;
+
+        const progress = this.clamp((scrollY - startPoint) / (endPoint - startPoint), 0, 1);
+        const startWidth = baseWidth * (widthPoints[index] / 100);
+        const endWidth = baseWidth * (widthPoints[index + 1] / 100);
+
+        return this.lerp(startWidth, endWidth, progress);
+      }
+
+      return baseWidth * (widthPoints[widthPoints.length - 1] / 100);
+    },
+
+    updateItem(item, scrollYOverride = null) {
+      const scrollY = scrollYOverride === null ? window.scrollY : scrollYOverride;
+      this.setItemWidths(
+        item,
+        this.getWidthFromTimeline(
+          scrollY,
+          item.scrollPoints,
+          item.photoAWidthPoints,
+          item.baseWidthA
+        ),
+        this.getWidthFromTimeline(
+          scrollY,
+          item.scrollPoints,
+          item.photoBWidthPoints,
+          item.baseWidthB
+        )
+      );
+    },
+
+    update(scrollYOverride = null) {
+      this.items.forEach((item) => this.updateItem(item, scrollYOverride));
+    },
+
+    refresh() {
+      this.items.forEach((item) => {
+        this.measureItem(item);
+        this.applyBaseLayout(item);
+      });
+
+      this.update();
+    },
+
+    onScroll() {
+      if (this.ticking) return;
+
+      this.ticking = true;
+      requestAnimationFrame(() => {
+        this.update();
+        this.ticking = false;
+      });
+    },
+
+    onResize() {
+      cancelAnimationFrame(this.resizeRaf);
+      this.resizeRaf = requestAnimationFrame(() => this.refresh());
+    },
+
+    init() {
+      const sections = document.querySelectorAll('.project-palette[data-scroll-width-points]');
+      if (!sections.length) return;
+
+      this.items = Array.from(sections).map((section) => {
+        const wrapper = section.querySelector('.project-palette__images');
+        if (!wrapper) return null;
+
+        const photos = wrapper.querySelectorAll('.project-palette__image');
+        if (photos.length < 2) return null;
+
+        const photoA = photos[0];
+        const photoB = photos[1];
+        const photoAImage = photoA.querySelector('img');
+        const photoBImage = photoB.querySelector('img');
+
+        if (!photoAImage || !photoBImage) return null;
+        const timeline = this.resolveTimeline(section);
+
+        return {
+          section,
+          wrapper,
+          photoA,
+          photoAImage,
+          photoB,
+          photoBImage,
+          scrollPoints: timeline.scrollPoints,
+          photoAWidthPoints: timeline.photoAWidthPoints,
+          photoBWidthPoints: timeline.photoBWidthPoints,
+          baseWidthA: 0,
+          baseWidthB: 0,
+          baseHeight: 0,
+        };
+      }).filter(Boolean);
+
+      if (!this.items.length) return;
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) {
+        this.items.forEach((item) => {
+          this.measureItem(item);
+          this.applyBaseLayout(item);
+          this.setItemWidths(item, item.baseWidthA, item.baseWidthB);
+        });
+        return;
+      }
+
+      this.refresh();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+      window.addEventListener('resize', () => this.onResize(), { passive: true });
+    },
+  },
+
+
+  /* ============================================================
+     GALLERY COVER CYCLE
+     ------------------------------------------------------------
+     Para cada item con [data-cover-cycle], al hacer hover esperamos
+     el mismo delay que la hover-card (--gallery-hover-card-delay,
+     1000ms) y a partir de ahí avanzamos cada 1000ms entre las
+     portadas: 01 → 02 → 03 → 04 → 01 → 02 ... La primera transición
+     coincide con la aparición de la hover-card.
+
+     Al salir del hover, limpiamos timers y volvemos a la portada base.
+     ============================================================ */
+  galleryCoverCycle: {
+    items: [],
+    intervalMs: 1500,
+    initialDelayMs: 2000,
+
+    parseTimeToMs(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return 0;
+      if (raw.endsWith('ms')) {
+        const v = parseFloat(raw);
+        return Number.isFinite(v) ? v : 0;
+      }
+      if (raw.endsWith('s')) {
+        const v = parseFloat(raw);
+        return Number.isFinite(v) ? v * 1000 : 0;
+      }
+      const v = parseFloat(raw);
+      return Number.isFinite(v) ? v : 0;
+    },
+
+    resolveDelay() {
+      // Leemos el mismo --gallery-hover-card-delay para mantenerlos sincronizados.
+      const root = document.documentElement;
+      const styles = getComputedStyle(root);
+      const fromVar = this.parseTimeToMs(styles.getPropertyValue('--gallery-hover-card-delay'));
+      return fromVar > 0 ? fromVar : 1000;
+    },
+
+    setActiveCover(entry, index) {
+      entry.covers.forEach((img, i) => {
+        img.classList.toggle('is-active', i === index);
+      });
+      entry.currentIndex = index;
+    },
+
+    startCycle(entry) {
+      this.stopCycle(entry);
+
+      // Primera transición: a los initialDelayMs cambiamos a la portada 02 (índice 1).
+      entry.startTimer = window.setTimeout(() => {
+        entry.startTimer = 0;
+        const next = (entry.currentIndex + 1) % entry.covers.length;
+        this.setActiveCover(entry, next);
+
+        // Después, cada intervalMs avanzamos una más.
+        entry.intervalTimer = window.setInterval(() => {
+          const n = (entry.currentIndex + 1) % entry.covers.length;
+          this.setActiveCover(entry, n);
+        }, this.intervalMs);
+      }, this.initialDelayMs);
+    },
+
+    stopCycle(entry) {
+      if (entry.startTimer) {
+        window.clearTimeout(entry.startTimer);
+        entry.startTimer = 0;
+      }
+      if (entry.intervalTimer) {
+        window.clearInterval(entry.intervalTimer);
+        entry.intervalTimer = 0;
+      }
+    },
+
+    resetToBase(entry) {
+      this.stopCycle(entry);
+      this.setActiveCover(entry, 0);
+    },
+
+    init() {
+      const items = Array.from(document.querySelectorAll('[data-cover-cycle]'));
+      if (!items.length) return;
+
+      // Nota: initialDelayMs e intervalMs viven como propiedades del módulo
+      // (1500ms cada uno) y son independientes de --gallery-hover-card-delay.
+
+      this.items = items.map((item) => {
+        const covers = Array.from(item.querySelectorAll('.projects-gallery__cover'));
+        if (covers.length < 2) return null;
+
+        const entry = {
+          item,
+          covers,
+          currentIndex: 0,
+          startTimer: 0,
+          intervalTimer: 0,
+        };
+
+        // Aseguramos estado inicial coherente.
+        this.setActiveCover(entry, 0);
+
+        // Disparamos por mouseenter sobre el media (zona visual),
+        // no sobre el item entero, para evitar que el caption u otros
+        // elementos del frame disparen el ciclo.
+        const media = item.querySelector('.projects-gallery__media');
+        if (!media) return null;
+
+        media.addEventListener('mouseenter', () => this.startCycle(entry));
+        media.addEventListener('mouseleave', () => this.resetToBase(entry));
+
+        // Soporte teclado: foco/blur sobre el item.
+        item.addEventListener('focus', () => this.startCycle(entry));
+        item.addEventListener('blur', () => this.resetToBase(entry));
+
+        return entry;
+      }).filter(Boolean);
+    },
+  },
+
+
 };
 
 
@@ -4044,3 +5770,24 @@ const Timbo = {
 document.addEventListener('DOMContentLoaded', () => {
   Timbo.init();
 });
+
+
+/* ============================================================
+   DEBUG SCROLL Y — temporal, borrar cuando termines de tunear
+   ============================================================ */
+   (function debugScrollY() {
+    const box = document.createElement('div');
+    box.style.cssText = `
+      position: fixed; top: 12px; right: 12px; z-index: 9999;
+      background: rgba(0, 0, 0, 0.75); color: #fff;
+      font: 14px/1.2 monospace; padding: 8px 12px; border-radius: 6px;
+      pointer-events: none; user-select: none;
+    `;
+    document.body.appendChild(box);
+  
+    const update = () => {
+      box.textContent = 'scrollY: ' + Math.round(window.scrollY);
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+  })();

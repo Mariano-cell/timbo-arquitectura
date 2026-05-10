@@ -37,7 +37,7 @@ const SITE_DATA = {
   home: {
     es: {
       heroTagline:      '<strong>Arquitectura</strong> en armonía<br>con el <strong>clima</strong> y la <strong>naturaleza</strong>.',
-      claim:            'Entre lo salvaje y<br>las personas.',
+      claim:            '<span class="intro__claim-line"><span class="intro__claim-line-inner">Entre lo salvaje y</span></span><span class="intro__claim-line"><span class="intro__claim-line-inner">las personas.</span></span>',
       sustainabilityStatement: '<span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">Diseño resiliente y</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">adaptado</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">a las condiciones</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">ambientales</span></span>',
       philosophyText:   'Mediante el análisis de datos climáticos, los proyectos se adaptan a las condiciones específicas de cada lugar, asegurando una baja demanda energética y una alta calidad ambiental tanto en espacios interiores como exteriores.',
       philosophyCta:    'VER MÁS',
@@ -51,7 +51,7 @@ const SITE_DATA = {
     },
     en: {
       heroTagline:      '<strong>Architecture</strong> in harmony<br>with <strong>climate</strong> and <strong>nature</strong>.',
-      claim:            'Between the wild and<br>the people.',
+      claim:            '<span class="intro__claim-line"><span class="intro__claim-line-inner">Between the wild and</span></span><span class="intro__claim-line"><span class="intro__claim-line-inner">the people.</span></span>',
       sustainabilityStatement: '<span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">Resilient design</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">adapted</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">to environmental</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">conditions</span></span>',
       philosophyText:   'Through the analysis of climate data, projects are adapted to the specific conditions of each location, ensuring low energy demand and high environmental quality in both indoor and outdoor spaces.',
       philosophyCta:    'SEE MORE',
