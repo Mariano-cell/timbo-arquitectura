@@ -5553,7 +5553,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
   --gallery-bg:              var(--color-gray-100);
   --gallery-padding-top:     clamp(12rem, 15vw, 22rem);
   --gallery-padding-bottom:  var(--space-2xl);
-  --gallery-side-padding:    var(--space-4xl);
+  --gallery-side-padding-right:    var(--margin-b);
+  --gallery-side-padding-left:    calc(var(--margin-c) );
   --gallery-max-width:       1600px;
   --gallery-row-gap-y:       1rem;       /* espacio vertical ENTRE filas */
   --gallery-radius:          4px;        /* radius de las imágenes */
@@ -5583,9 +5584,9 @@ html.is-entering-home.is-entering-home-active .main-nav {
   background-color: var(--gallery-bg);
   padding:
     var(--gallery-padding-top)
-    var(--gallery-side-padding)
+    var(--gallery-side-padding-right)
     var(--gallery-padding-bottom)
-    calc(var(--gallery-side-padding) + 6rem)
+    var(--gallery-side-padding-left)
     ;
   min-height: 100vh;
   display: flex;
@@ -5618,8 +5619,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
   --row-gap-x:          1.5rem;   /* gap horizontal entre las 5 columnas */
   --row-pair-gap:       1rem;     /* gap entre las 2 imágenes cuadradas del item par */
   --row-img-ratio:      16 / 9;  /* aspect-ratio de las imágenes */
+  --row-lead-ratio:     3 / 2;    /* imagen A: 50% más ancha que la cuadrada */
   --row-square-ratio:   1 / 1;    /* aspect-ratio de las imágenes cuadradas */
-  --row-pair-width:     calc(((var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height)) * 2) + var(--row-pair-gap));
+  --row-media-height:   calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
+  --row-pair-width:     calc((var(--row-media-height) * 2.5) + var(--row-pair-gap));
   --row-height:         320px;    /* alto TOTAL de la fila (img + gap + caption) */
   --row-caption-height: var(--gallery-caption-height); /* alto reservado para el caption */
 
@@ -5637,8 +5640,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   grid-column: 3 / span 2;
 }
 
-.projects-gallery__row--1 > .projects-gallery__item:first-child:has(.projects-gallery__media:hover) + .projects-gallery__item .projects-gallery__item-frame,
-.projects-gallery__row--1 > .projects-gallery__item:first-child:has(.projects-gallery__name:hover) + .projects-gallery__item .projects-gallery__item-frame,
+.projects-gallery__row--1 > .projects-gallery__item:first-child:hover + .projects-gallery__item .projects-gallery__item-frame,
 .projects-gallery__row--1 > .projects-gallery__item:first-child:focus-visible + .projects-gallery__item .projects-gallery__item-frame,
 .projects-gallery__row--1 > .projects-gallery__item:first-child:focus-within + .projects-gallery__item .projects-gallery__item-frame {
   transform: translate3d(var(--gallery-hover-card-push), 0, 0);
@@ -5648,7 +5650,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 /* Imagen de la fila 1: alto = total − gap − caption.
    Ancho según aspect-ratio (queda alineada a la izquierda de su celda). */
 .projects-gallery__row--1 .projects-gallery__media--wide {
-  height: calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
+  height: var(--row-media-height);
   width: auto;
   aspect-ratio: var(--row-img-ratio);
 }
@@ -5659,19 +5661,32 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 /* Tobar en fila 1: mismo patrón pair que Praderas,
-   con dos cuadrados 1:1 arriba y caption abajo. */
+   pero con A más ancha y B manteniendo su cuadrado 1:1. */
 .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media-pair {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr;
   gap: var(--row-pair-gap);
-  height: calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
+  height: var(--row-media-height);
   width: var(--row-pair-width);
+}
+
+.projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__visual {
+  width: var(--row-pair-width);
+  max-width: none;
 }
 
 .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media--square {
   height: 100%;
   width: auto;
   aspect-ratio: var(--row-square-ratio);
+}
+
+.projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media--square:first-child {
+  aspect-ratio: var(--row-lead-ratio);
+}
+
+.projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__caption {
+  width: var(--row-pair-width);
 }
 
 /* --- FILA 2 (Tobar par + Suindá) -------------------------
@@ -6295,6 +6310,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .projects-gallery__category {
   grid-column: 2;
   grid-row: 1;
+  justify-self: end;
   font-size: var(--gallery-name-size);
   font-weight: var(--fw-bold);
   line-height: 1.05;
