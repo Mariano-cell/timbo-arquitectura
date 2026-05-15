@@ -46,14 +46,92 @@
     <section class="sust-process" id="sust-process" data-nav-theme="light">
       <div class="container sust-process__container">
         <div class="sust-process__media-wrap anim-fade-up" data-anim-delay="0">
-          <div class="sust-process__media anim-fade-in" data-anim-delay="220">
-            <img
-              src="assets/images/sustainability/outdoor-climate.png"
-              alt="Gráfico climático exterior de Buenos Aires, Argentina"
-              class="sust-process__graphic"
-              loading="lazy"
-              decoding="async">
-          </div>
+          <figure class="outdoor-climate anim-fade-in" data-anim-delay="220" id="outdoor-climate"
+            aria-label="Datos climáticos anuales de Buenos Aires, Argentina">
+            <header class="outdoor-climate__header">
+              <p class="outdoor-climate__location">Buenos Aires, Argentina</p>
+              <p class="outdoor-climate__coords">34°33′23″S — 58°25′00″W</p>
+              <p class="outdoor-climate__koppen">Clima subtropical húmedo</p>
+            </header>
+
+            <div class="outdoor-climate__months" aria-hidden="true">
+              <span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span>
+              <span>May</span><span>Jun</span><span>Jul</span><span>Ago</span>
+              <span>Sep</span><span>Oct</span><span>Nov</span><span>Dic</span>
+            </div>
+
+            <!-- Panel 1: Temperatura + Humedad -->
+            <div class="outdoor-climate__panel" data-panel="temp">
+              <div class="outdoor-climate__panel-head">
+                <span class="outdoor-climate__panel-label">Temperatura</span>
+                <span class="outdoor-climate__panel-unit">°C</span>
+              </div>
+              <svg id="outdoor-climate-temp" class="outdoor-climate__svg"
+                viewBox="0 0 800 220" preserveAspectRatio="xMidYMid meet" role="img"
+                aria-label="Temperatura y humedad mensual"></svg>
+              <div class="outdoor-climate__readout" id="outdoor-climate-temp-readout" aria-live="polite">
+                <span class="outdoor-climate__readout-default">Pasá el cursor sobre el gráfico para ver los valores mes a mes</span>
+              </div>
+            </div>
+
+            <!-- Panel 2: Radiación solar + Lluvia (doble eje) -->
+            <div class="outdoor-climate__panel" data-panel="radiation">
+              <div class="outdoor-climate__panel-head">
+                <span class="outdoor-climate__panel-label">Radiación solar + lluvia</span>
+                <span class="outdoor-climate__panel-unit">
+                  <span class="outdoor-climate__unit-left">Wh/m²</span>
+                  <span class="outdoor-climate__unit-right">mm</span>
+                </span>
+              </div>
+              <svg id="outdoor-climate-radiation" class="outdoor-climate__svg"
+                viewBox="0 0 800 180" preserveAspectRatio="xMidYMid meet" role="img"
+                aria-label="Radiación solar y lluvia mensual"></svg>
+              <div class="outdoor-climate__readout" id="outdoor-climate-radiation-readout" aria-live="polite">
+                <span class="outdoor-climate__readout-default">Radiación global horizontal y precipitación mensual</span>
+              </div>
+            </div>
+
+            <!-- Panel 4: Viento -->
+            <div class="outdoor-climate__panel" data-panel="wind">
+              <div class="outdoor-climate__panel-head">
+                <span class="outdoor-climate__panel-label">Viento</span>
+                <span class="outdoor-climate__panel-unit">m/s</span>
+              </div>
+              <svg id="outdoor-climate-wind" class="outdoor-climate__svg"
+                viewBox="0 0 800 100" preserveAspectRatio="xMidYMid meet" role="img"
+                aria-label="Velocidad media del viento mensual"></svg>
+              <div class="outdoor-climate__readout" id="outdoor-climate-wind-readout" aria-live="polite">
+                <span class="outdoor-climate__readout-default">Velocidad media superficial</span>
+              </div>
+            </div>
+
+            <footer class="outdoor-climate__legend">
+              <span class="outdoor-climate__legend-item">
+                <span class="outdoor-climate__swatch outdoor-climate__swatch--temp"></span>
+                Temperatura media
+              </span>
+              <span class="outdoor-climate__legend-item">
+                <span class="outdoor-climate__swatch outdoor-climate__swatch--range"></span>
+                Rango min — máx
+              </span>
+              <span class="outdoor-climate__legend-item">
+                <span class="outdoor-climate__swatch outdoor-climate__swatch--humidity"></span>
+                Humedad relativa
+              </span>
+              <span class="outdoor-climate__legend-item">
+                <span class="outdoor-climate__swatch outdoor-climate__swatch--radiation"></span>
+                Radiación global
+              </span>
+              <span class="outdoor-climate__legend-item">
+                <span class="outdoor-climate__swatch outdoor-climate__swatch--rain"></span>
+                Lluvia
+              </span>
+              <span class="outdoor-climate__legend-item">
+                <span class="outdoor-climate__swatch outdoor-climate__swatch--wind"></span>
+                Viento
+              </span>
+            </footer>
+          </figure>
         </div>
         <div class="sust-process__copy anim-fade-up" data-anim-delay="180">
           <h2 class="sust-process__title">Nuestro proceso<br>comienza con la<br>investigación.</h2>

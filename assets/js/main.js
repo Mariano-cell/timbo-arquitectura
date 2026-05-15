@@ -255,139 +255,12 @@ const Timbo = {
     },
   },
 
-
-  /* ============================================================
-     INTRO PHOTO SLIDE — Foto B totalmente atada al scroll (reversible)
-     Dos rangos de scroll independientes:
-       - X (desplazamiento horizontal): entre X_START_Y y X_END_Y.
-         Lineal de -100% a 0%.
-       - Crecimiento (escala 0.95→1 y opacidad 0.6→1): entre
-         GROW_START_Y y GROW_END_Y. Lineal.
-     Antes de X_START_Y / GROW_START_Y, cada parámetro queda en su
-     valor inicial. Después de X_END_Y / GROW_END_Y, en su valor final.
-     Todo es reversible: scrollear hacia arriba deshace el camino.
-     ============================================================ */
-  introPhotoSlide: {
-    X_START_Y: 200,                // ← scrollY en el que arranca el desplazamiento en X
-    X_END_Y: 900,                  // ← scrollY en el que la foto llega a destino en X
-    GROW_START_Y: 900,             // ← scrollY en el que arrancan a crecer escala y opacidad
-    GROW_END_Y: 950,               // ← scrollY en el que escala y opacidad llegan a 1
-
-    init() {
-      const photo = document.querySelector('.intro__photo--slide-x');
-      if (!photo) return;
-
-      photo.classList.add('is-active');
-
-      let ticking = false;
-
-      // Helper: mapea scrollY al progreso 0–1 dentro de [startY, endY], capado.
-      const rangeProgress = (y, startY, endY) => {
-        const range = endY - startY;
-        if (range <= 0) return y >= endY ? 1 : 0;
-        return Math.max(0, Math.min(1, (y - startY) / range));
-      };
-
-      const update = () => {
-        ticking = false;
-        const y = window.scrollY;
-
-        // Progreso de X (0–1) entre X_START_Y y X_END_Y.
-        const xT = rangeProgress(y, this.X_START_Y, this.X_END_Y);
-        const tx = -(1 - xT) * 100;   // -100% → 0%
-
-        // Progreso de crecimiento (0–1) entre GROW_START_Y y GROW_END_Y.
-        const growT = rangeProgress(y, this.GROW_START_Y, this.GROW_END_Y);
-        const scale = 0.95 + (1 - 0.95) * growT;
-        const opacity = 0.6 + (1 - 0.6) * growT;
-
-        photo.style.transform = 'translateX(' + tx + '%) scale(' + scale + ')';
-        photo.style.opacity = String(opacity);
-      };
-
-      const onScroll = () => {
-        if (!ticking) {
-          window.requestAnimationFrame(update);
-          ticking = true;
-        }
-      };
-
-      update();  // estado inicial (por si la página carga ya scrolleada)
-      window.addEventListener('scroll', onScroll, { passive: true });
-    },
-  },
-
-
-  /* ============================================================
-     INTRO PHOTO A — Foto A reacciona al scroll después de la B
-     Tres etapas independientes, todas atadas al scroll y reversibles:
-       1. Z_FLIP_Y: en este scrollY, foto A pasa a estar DETRÁS de
-          foto B (cambio instantáneo de z-index).
-       2. SHRINK_START_Y → SHRINK_END_Y: foto A se achica de 1 a 0.95
-          y baja opacidad de 1 a 0.7.
-       3. SLIDE_START_Y → SLIDE_END_Y: foto A se desplaza a la derecha
-          de translateX(0) hasta translateX(SLIDE_DISTANCE_PCT %).
-     ============================================================ */
-  introPhotoA: {
-    Z_FLIP_Y: 1300,              // ← scrollY en el que foto A pasa a estar detrás de foto B
-    SHRINK_START_Y: 1440,        // ← scrollY en el que arranca a achicarse y bajar opacidad
-    SHRINK_END_Y: 1500,          // ← scrollY en el que termina de achicarse (scale 0.95, opacity 0.7)
-    SLIDE_START_Y: 1500,         // ← scrollY en el que arranca a deslizarse a la derecha
-    SLIDE_END_Y: 1990,           // ← scrollY en el que termina el deslizamiento (rate ≈ foto B: 70%/490px)
-    SLIDE_DISTANCE_PCT: 70,      // ← cuánto se desplaza a la derecha (% del propio ancho)
-
-    init() {
-      const photo = document.querySelector('.intro__photo--slide-a');
-      if (!photo) return;
-
-      let ticking = false;
-
-      // Helper: mapea scrollY al progreso 0–1 dentro de [startY, endY], capado.
-      const rangeProgress = (y, startY, endY) => {
-        const range = endY - startY;
-        if (range <= 0) return y >= endY ? 1 : 0;
-        return Math.max(0, Math.min(1, (y - startY) / range));
-      };
-
-      const update = () => {
-        ticking = false;
-        const y = window.scrollY;
-
-        // 1) Z-index: instantáneo en Z_FLIP_Y. Antes: por encima (3). Después: por debajo (0).
-        //    Foto B tiene z-index 1 en CSS, así que con 0 queda detrás y con 3 queda adelante.
-        photo.style.zIndex = y >= this.Z_FLIP_Y ? '0' : '3';
-
-        // 2) Shrink + opacidad.
-        const shrinkT = rangeProgress(y, this.SHRINK_START_Y, this.SHRINK_END_Y);
-        const scale = 1 - (1 - 0.95) * shrinkT;       // 1 → 0.95
-        const opacity = 1 - (1 - 0.7) * shrinkT;      // 1 → 0.7
-
-        // 3) Slide a la derecha.
-        const slideT = rangeProgress(y, this.SLIDE_START_Y, this.SLIDE_END_Y);
-        const tx = this.SLIDE_DISTANCE_PCT * slideT;  // 0% → SLIDE_DISTANCE_PCT %
-
-        photo.style.transform = 'translateX(' + tx + '%) scale(' + scale + ')';
-        photo.style.opacity = String(opacity);
-      };
-
-      const onScroll = () => {
-        if (!ticking) {
-          window.requestAnimationFrame(update);
-          ticking = true;
-        }
-      };
-
-      update();  // estado inicial
-      window.addEventListener('scroll', onScroll, { passive: true });
-    },
-  },
-
-
   /* ============================================================
      REFUGE PHOTO SLIDE — Imagen B (derecha) de .project-refuge
-     Mismo patrón que introPhotoSlide (home), con START_Y propios.
-     Rate de slide tomado de la home: 100% en 700px (0.143%/px).
-     Ventana de grow tomada de la home: 50px al final.
+     Dos rangos de scroll independientes:
+       - X (desplazamiento horizontal): entre X_START_Y y X_END_Y.
+       - Crecimiento (escala 0.95→1 y opacidad 0.6→1): entre
+         GROW_START_Y y GROW_END_Y.
      ============================================================ */
   refugePhotoSlide: {
     X_START_Y: 1000,               // ← scrollY en el que arranca el desplazamiento en X
@@ -442,8 +315,10 @@ const Timbo = {
 
   /* ============================================================
      REFUGE PHOTO A — Imagen A (izquierda) de .project-refuge
-     Mismo patrón que introPhotoA (home), con START_Y propios.
-     Lapsos tomados de la home: hueco 140px, shrink 60px, slide 70%/490px.
+     Tres etapas independientes, todas atadas al scroll y reversibles:
+       1. Z_FLIP_Y: la imagen pasa a estar detrás de la B.
+       2. SHRINK_START_Y → SHRINK_END_Y: se achica y baja opacidad.
+       3. SLIDE_START_Y → SLIDE_END_Y: se desplaza a la derecha.
      ============================================================ */
   refugePhotoA: {
     Z_FLIP_Y: 2100,              // ← scrollY en el que la imagen pasa a estar detrás de la B
@@ -2854,6 +2729,71 @@ const Timbo = {
     },
   },
 
+  philosophySignalOpacityReveal: {
+    items: [],
+    ticking: false,
+    ROW_RANGES: [
+      { start: 1350, end: 1650 },
+      { start: 1550, end: 1850 },
+      { start: 1450, end: 1750 },
+    ],
+
+    clamp(value, min = 0, max = 1) {
+      return Math.min(Math.max(value, min), max);
+    },
+
+    init() {
+      this.items = Array.from(document.querySelectorAll('.philosophy__signal')).map((item, index) => {
+        let rowIndex = 2;
+
+        if (index <= 2) {
+          rowIndex = 0;
+        } else if (index <= 5) {
+          rowIndex = 1;
+        }
+
+        return {
+          el: item,
+          range: this.ROW_RANGES[rowIndex],
+        };
+      });
+
+      if (!this.items.length) return;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.items.forEach(({ el }) => {
+          el.style.setProperty('--philosophy-signal-opacity', '1');
+        });
+        return;
+      }
+
+      this.update();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+      window.addEventListener('resize', () => this.onScroll(), { passive: true });
+    },
+
+    onScroll() {
+      if (this.ticking) return;
+      this.ticking = true;
+
+      window.requestAnimationFrame(() => {
+        this.update();
+        this.ticking = false;
+      });
+    },
+
+    update() {
+      const currentScrollY = window.scrollY || window.pageYOffset || 0;
+
+      this.items.forEach(({ el, range }) => {
+        const fadeDistance = Math.max(range.end - range.start, 1);
+        const progress = this.clamp((currentScrollY - range.start) / fadeDistance);
+
+        el.style.setProperty('--philosophy-signal-opacity', progress.toFixed(3));
+      });
+    },
+  },
+
   sustClimateTitleReveal: {
     init() {
       const title = document.querySelector('.sust-climate__title');
@@ -2879,6 +2819,28 @@ const Timbo = {
   projectOverviewTitleReveal: {
     init() {
       const title = document.querySelector('.project-overview__title');
+      if (!title) return;
+
+      const update = () => {
+        const rect = title.getBoundingClientRect();
+        const trigger = window.innerHeight / 2;
+
+        if (rect.top <= trigger) {
+          title.classList.add('is-revealed');
+        } else {
+          title.classList.remove('is-revealed');
+        }
+      };
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    },
+  },
+
+  projectHighlightTitleReveal: {
+    init() {
+      const title = document.querySelector('.project-highlight__title');
       if (!title) return;
 
       const update = () => {
@@ -3017,6 +2979,99 @@ const Timbo = {
       }
 
       refresh();
+    },
+  },
+
+  projectPhraseTextReveal: {
+    // Multiplicador del viewport para el trigger del reveal.
+    // Valor entre 0 y 1: mas bajo = el texto tiene que entrar mas
+    // adentro del viewport para revelarse (hay que scrollear mas).
+    TRIGGER_RATIO: 0.6,
+
+    init() {
+      const text = document.querySelector('.project-phrase__text');
+      if (!text) return;
+
+      const rebuildLines = () => {
+        Timbo.splitTextIntoVisualLines(text, {
+          lineClass: 'project-phrase__text-line',
+          innerClass: 'project-phrase__text-line-inner',
+        });
+      };
+
+      const update = () => {
+        const rect = text.getBoundingClientRect();
+        const trigger = window.innerHeight * this.TRIGGER_RATIO;
+
+        if (rect.top <= trigger) {
+          text.classList.add('is-revealed');
+        } else {
+          text.classList.remove('is-revealed');
+        }
+      };
+
+      let resizeRaf = 0;
+      const refresh = () => {
+        rebuildLines();
+        update();
+      };
+
+      const onResize = () => {
+        cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(refresh);
+      };
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', onResize);
+      window.addEventListener('load', refresh, { once: true });
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(refresh).catch(() => {});
+      }
+
+      refresh();
+    },
+  },
+
+  /* ============================================================
+     PROJECT PHRASE PAN
+     Dispara, una sola vez al entrar al viewport, las animaciones
+     de las imagenes en .project-phrase:
+       - .project-phrase__image--pan  -> pan horizontal (foto B)
+       - .project-phrase__image--zoom -> zoom-in sutil  (foto A)
+     Los keyframes viven en CSS. Aca solo agregamos la clase
+     .is-panning cuando la figura cruza el threshold.
+     ============================================================ */
+  projectPhrasePan: {
+    THRESHOLD: 0.35,
+
+    init() {
+      const targets = document.querySelectorAll(
+        '.project-phrase__image--pan, .project-phrase__image--zoom'
+      );
+      if (!targets.length) return;
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) {
+        targets.forEach((el) => el.classList.add('is-panning'));
+        return;
+      }
+
+      if (!('IntersectionObserver' in window)) {
+        targets.forEach((el) => el.classList.add('is-panning'));
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-panning');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: this.THRESHOLD });
+
+      targets.forEach((el) => observer.observe(el));
     },
   },
 
@@ -3328,6 +3383,25 @@ const Timbo = {
           [-76.43952, 24.17401],
         ],
       },
+      'praderas-cabin': {
+        stages: [
+          { center: [-69.5, -40.5], zoom: 4, hold: 800 },
+          { center: [-71.50, -41.75], zoom: 7.5, speed: 1.4 },
+          { center: [-71.700, -41.850], zoom: 12, speed: 1.0 },
+        ],
+        marker: [-71.700, -41.850],
+        label: { name: 'Perito Moreno', detail: 'Río Negro, Argentina' },
+        polygon: [
+          [-71.7150, -41.8200], [-71.7050, -41.8180], [-71.6950, -41.8210],
+          [-71.6870, -41.8260], [-71.6800, -41.8320], [-71.6760, -41.8400],
+          [-71.6740, -41.8480], [-71.6760, -41.8560], [-71.6800, -41.8630],
+          [-71.6860, -41.8690], [-71.6940, -41.8730], [-71.7030, -41.8745],
+          [-71.7120, -41.8740], [-71.7200, -41.8720], [-71.7270, -41.8680],
+          [-71.7320, -41.8620], [-71.7350, -41.8550], [-71.7355, -41.8470],
+          [-71.7340, -41.8390], [-71.7305, -41.8320], [-71.7250, -41.8260],
+          [-71.7180, -41.8220], [-71.7150, -41.8200],
+        ],
+      },
       'cabana-suinda': {
         stages: [
           { center: [-58, -30], zoom: 2.8, hold: 800 },
@@ -3531,68 +3605,124 @@ const Timbo = {
     },
 
     applyMapTheme() {
-      if (this.mapTheme !== 'grayscale') return;
+      if (this.mapTheme !== 'grayscale' && this.mapTheme !== 'grayscale-light') return;
 
       const palette = this.getMapPalette();
+      const isLight = this.mapTheme === 'grayscale-light';
+
+      // En la variante "light", el territorio se aclara un escalón
+      // respecto al theme oscuro original, pero sin pasarse a tonos casi
+      // blancos. Suficiente para que el texto negro contraste sin perder
+      // la lectura del mapa cuando está alejado.
+      const colors = isLight ? {
+        background: palette.gray300,   // territorio: un escalón más claro que gray400
+        water: palette.gray300,
+        building: palette.gray400,     // edificios un escalón más oscuros que el fondo
+        landuse: palette.gray300,
+        land: palette.gray400,         // tierra: un escalón más claro que gray500
+        outline: palette.gray500,      // contornos oscuros para que se lean
+        line: palette.gray500,         // líneas genéricas oscuras
+        road: palette.gray500,         // calles bien marcadas
+        boundary: palette.black,       // bordes administrativos / costas: lo más oscuro
+        symbolText: palette.black,
+        symbolHalo: palette.gray200,
+        iconColor: palette.gray500,
+        iconHalo: palette.gray200,
+        circleFill: palette.gray500,
+        circleStroke: palette.gray200,
+        extrusion: palette.gray400,
+      } : {
+        background: palette.gray500,
+        water: palette.gray200,
+        building: palette.gray400,
+        landuse: palette.gray500,
+        land: palette.black,
+        outline: palette.gray300,
+        line: palette.gray300,
+        road: palette.gray200,
+        boundary: palette.gray300,
+        symbolText: palette.black,
+        symbolHalo: palette.gray100,
+        iconColor: palette.gray200,
+        iconHalo: palette.gray500,
+        circleFill: palette.gray200,
+        circleStroke: palette.gray500,
+        extrusion: palette.gray400,
+      };
+
       const layers = this.map.getStyle()?.layers || [];
 
       layers.forEach((layer) => {
         const id = (layer.id || '').toLowerCase();
 
         if (layer.type === 'background') {
-          this.setLayerPaint(layer.id, 'background-color', palette.gray500);
+          this.setLayerPaint(layer.id, 'background-color', colors.background);
           return;
         }
 
         if (layer.type === 'fill') {
-          let fillColor = palette.gray500;
+          let fillColor = colors.background;
 
           if (id.includes('water') || id.includes('ocean') || id.includes('sea') || id.includes('lake') || id.includes('river')) {
-            fillColor = palette.gray200;
+            fillColor = colors.water;
           } else if (id.includes('building')) {
-            fillColor = palette.gray400;
+            fillColor = colors.building;
           } else if (id.includes('park') || id.includes('landuse') || id.includes('landcover') || id.includes('wood')) {
-            fillColor = palette.gray500;
+            fillColor = colors.landuse;
           } else if (id.includes('land')) {
-            fillColor = palette.black;
+            fillColor = colors.land;
           }
 
           this.setLayerPaint(layer.id, 'fill-color', fillColor);
-          this.setLayerPaint(layer.id, 'fill-outline-color', palette.gray300);
+          this.setLayerPaint(layer.id, 'fill-outline-color', colors.outline);
           return;
         }
 
         if (layer.type === 'line') {
-          let lineColor = palette.gray300;
+          let lineColor = colors.line;
 
           if (id.includes('road') || id.includes('street') || id.includes('motorway') || id.includes('highway') || id.includes('bridge') || id.includes('tunnel')) {
-            lineColor = palette.gray200;
+            lineColor = colors.road;
           } else if (id.includes('waterway')) {
-            lineColor = palette.gray300;
+            lineColor = colors.line;
           } else if (id.includes('boundary') || id.includes('admin') || id.includes('border') || id.includes('coast')) {
-            lineColor = palette.gray300;
+            lineColor = colors.boundary;
           }
 
           this.setLayerPaint(layer.id, 'line-color', lineColor);
+
+          // En el modo light, las líneas oscuras pueden quedar muy gruesas
+          // durante el zoom intermedio (sobre todo las capas casing/outline
+          // que el style original engrosa para verse sobre fondo oscuro).
+          // Las acotamos a un grosor máximo discreto.
+          if (isLight) {
+            this.setLayerPaint(layer.id, 'line-width', [
+              'interpolate', ['linear'], ['zoom'],
+              0, 0.4,
+              10, 0.6,
+              14, 1.0,
+              18, 1.4,
+            ]);
+          }
           return;
         }
 
         if (layer.type === 'symbol') {
-          this.setLayerPaint(layer.id, 'text-color', palette.black);
-          this.setLayerPaint(layer.id, 'text-halo-color', palette.gray100);
-          this.setLayerPaint(layer.id, 'icon-color', palette.gray200);
-          this.setLayerPaint(layer.id, 'icon-halo-color', palette.gray500);
+          this.setLayerPaint(layer.id, 'text-color', colors.symbolText);
+          this.setLayerPaint(layer.id, 'text-halo-color', colors.symbolHalo);
+          this.setLayerPaint(layer.id, 'icon-color', colors.iconColor);
+          this.setLayerPaint(layer.id, 'icon-halo-color', colors.iconHalo);
           return;
         }
 
         if (layer.type === 'circle') {
-          this.setLayerPaint(layer.id, 'circle-color', palette.gray200);
-          this.setLayerPaint(layer.id, 'circle-stroke-color', palette.gray500);
+          this.setLayerPaint(layer.id, 'circle-color', colors.circleFill);
+          this.setLayerPaint(layer.id, 'circle-stroke-color', colors.circleStroke);
           return;
         }
 
         if (layer.type === 'fill-extrusion') {
-          this.setLayerPaint(layer.id, 'fill-extrusion-color', palette.gray400);
+          this.setLayerPaint(layer.id, 'fill-extrusion-color', colors.extrusion);
         }
       });
     },
@@ -3685,14 +3815,26 @@ const Timbo = {
       });
 
       // Fill — semitransparent
+      let fillColor;
+      let lineColor;
+      if (this.mapTheme === 'grayscale-light') {
+        // Mapa con fondo claro: usar tonos oscuros para que el polígono se vea
+        fillColor = this.hexToRgba(this.getCssColor('--color-black', '#1D1D1B'), 0.10);
+        lineColor = this.hexToRgba(this.getCssColor('--color-black', '#1D1D1B'), 0.55);
+      } else if (this.mapTheme === 'grayscale') {
+        fillColor = this.hexToRgba(this.getCssColor('--color-gray-100', '#F6F6F6'), 0.12);
+        lineColor = this.hexToRgba(this.getCssColor('--color-gray-200', '#DADADA'), 0.58);
+      } else {
+        fillColor = 'rgba(255, 255, 255, 0.08)';
+        lineColor = 'rgba(255, 255, 255, 0.35)';
+      }
+
       this.map.addLayer({
         id: 'island-highlight-fill',
         type: 'fill',
         source: 'island-highlight',
         paint: {
-          'fill-color': this.mapTheme === 'grayscale'
-            ? this.hexToRgba(this.getCssColor('--color-gray-100', '#F6F6F6'), 0.12)
-            : 'rgba(255, 255, 255, 0.08)',
+          'fill-color': fillColor,
           'fill-opacity': 0,
         },
       });
@@ -3703,9 +3845,7 @@ const Timbo = {
         type: 'line',
         source: 'island-highlight',
         paint: {
-          'line-color': this.mapTheme === 'grayscale'
-            ? this.hexToRgba(this.getCssColor('--color-gray-200', '#DADADA'), 0.58)
-            : 'rgba(255, 255, 255, 0.35)',
+          'line-color': lineColor,
           'line-width': 1.5,
           'line-opacity': 0,
         },
@@ -3737,6 +3877,33 @@ const Timbo = {
       this.map.touchZoomRotate.enable();
       this.map.doubleClickZoom.enable();
       this.map.keyboard.enable();
+      this.addZoomControls();
+    },
+
+    addZoomControls() {
+      // Evitar duplicación si la animación se re-ejecuta
+      if (this.container.querySelector('.project-map__zoom')) return;
+
+      const wrap = document.createElement('div');
+      wrap.className = 'project-map__zoom';
+
+      const btnIn = document.createElement('button');
+      btnIn.type = 'button';
+      btnIn.className = 'project-map__zoom-btn';
+      btnIn.setAttribute('aria-label', 'Acercar');
+      btnIn.textContent = '+';
+      btnIn.addEventListener('click', () => this.map.zoomIn());
+
+      const btnOut = document.createElement('button');
+      btnOut.type = 'button';
+      btnOut.className = 'project-map__zoom-btn';
+      btnOut.setAttribute('aria-label', 'Alejar');
+      btnOut.textContent = '−';
+      btnOut.addEventListener('click', () => this.map.zoomOut());
+
+      wrap.appendChild(btnIn);
+      wrap.appendChild(btnOut);
+      this.container.appendChild(wrap);
     },
 
     disableInteraction() {
@@ -4245,8 +4412,6 @@ const Timbo = {
 
     // 2. Nav: fondo al scrollear + cambio de color por sección
     this.navScroll.init();
-    this.introPhotoSlide.init();
-    this.introPhotoA.init();
     this.refugePhotoSlide.init();
     this.refugePhotoA.init();
     this.navHide.init();
@@ -4256,10 +4421,14 @@ const Timbo = {
     this.projectFinalLogoScroll.init();
     this.introClaimReveal.init();
     this.philosophyStatementReveal.init();
+    this.philosophySignalOpacityReveal.init();
     this.sustProcessTitleReveal.init();
     this.sustClimateTitleReveal.init();
     this.projectOverviewTitleReveal.init();
+    this.projectHighlightTitleReveal.init();
     this.projectPaletteTextReveal.init();
+    this.projectPhraseTextReveal.init();
+    this.projectPhrasePan.init();
     this.sustBreatheTextReveal.init();
     this.sustStrategiesOrbit.init();
     this.sustStrategiesDetail.init();
@@ -4281,10 +4450,15 @@ const Timbo = {
     this.projectFrameScrollMask.init();
     this.projectPaletteTextParallax.init();
     this.projectPaletteScrollWidth.init();
+    this.projectPaletteDrag.init();
+    this.projectPhraseTextParallax.init();
+    this.projectPhraseScrollWidth.init();
     this.contactForm.init();
     this.keyboardNav.init();
-    this.projectsGalleryHoverBlur.init();
+    // Hover-blur de la galería desactivado a pedido del cliente.
+    // El módulo queda disponible por si se reactiva: this.projectsGalleryHoverBlur.init();
     this.galleryCoverCycle.init();
+    this.galleryCoverCyclePairs.init();
     this.galleryScrollDrift.init();
     this.galleryScrollRevealLeft.init();
 
@@ -5506,6 +5680,58 @@ const Timbo = {
     },
   },
 
+  /* ============================================================
+     PROJECT PHRASE TEXT PARALLAX
+     Clon de projectPaletteTextParallax para .project-phrase__text
+     ============================================================ */
+  projectPhraseTextParallax: {
+    RATE: 0.09,
+    MAX_OFFSET: 130,
+    START_OFFSET: 80,
+    items: [],
+    ticking: false,
+
+    init() {
+      const els = document.querySelectorAll('.project-phrase__text');
+      if (!els.length) return;
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) return;
+
+      this.items = Array.from(els).map(el => ({
+        el,
+        section: el.closest('.project-phrase') || el.parentElement,
+      }));
+
+      this.update();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+      window.addEventListener('resize', () => this.onScroll(), { passive: true });
+    },
+
+    onScroll() {
+      if (this.ticking) return;
+      this.ticking = true;
+      requestAnimationFrame(() => {
+        this.update();
+        this.ticking = false;
+      });
+    },
+
+    update() {
+      this.items.forEach(({ el, section }) => {
+        if (!el || !section) return;
+        const rect = section.getBoundingClientRect();
+        const entered = window.innerHeight - rect.top;
+        if (entered <= 0) {
+          el.style.transform = `translate3d(0, ${-this.START_OFFSET}px, 0)`;
+          return;
+        }
+        const offset = Math.min(entered * this.RATE, this.MAX_OFFSET) - this.START_OFFSET;
+        el.style.transform = `translate3d(0, ${offset}px, 0)`;
+      });
+    },
+  },
+
   projectPaletteScrollWidth: {
     SCROLL_POINTS: [2500, 3000, 3500, 4000, 4500],
     PHOTO_A_WIDTH_POINTS: [60, 70, 100, 130, 140],
@@ -5755,6 +5981,578 @@ const Timbo = {
     },
   },
 
+  /* ============================================================
+     PROJECT PALETTE DRAG
+     Divisor arrastrable entre las dos imágenes de .project-palette
+     cuando la section tiene data-palette-mode="drag".
+     El usuario controla el ancho relativo de cada imagen con
+     mouse o touch (pointer events).
+     ============================================================ */
+  projectPaletteDrag: {
+    MIN_PERCENT: 0.1,
+    MAX_PERCENT: 99.9,
+    // Aspect ratio del marco (vertical). Coincide con el aspect-ratio
+    // original de .project-palette__image (3 / 4.4). El alto del wrapper
+    // se calcula como (ancho_wrapper / 2) * (4.4 / 3), es decir: el alto
+    // que tendría una figura al 50% de ancho con ese aspecto. Así queda
+    // fijo y no varía al mover el divider.
+    FRAME_RATIO: 4.4 / 3,
+    // Animación de entrada: hint visual para que el usuario entienda
+    // que el divider se puede arrastrar.
+    INTRO_START_PERCENT: 35,   // A=35%, B=65% (equivale a A=70%/B=130% del estado neutro)
+    INTRO_END_PERCENT: 50,     // A=50%, B=50%
+    INTRO_DURATION_MS: 1400,
+    INTRO_DELAY_MS: 350,
+    // Efecto sutil: por cada 1px de scrollY (desde que la section entra
+    // en viewport), el divider se desplaza SCROLL_RATE px hacia la derecha.
+    // Con 0.1: 10px de scroll = 1px de desplazamiento del divider.
+    // No reemplaza al drag manual ni a la intro: se suma encima.
+    SCROLL_RATE: 0.1,
+    items: [],
+    resizeRaf: 0,
+    scrollTicking: false,
+
+    clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    },
+
+    // Easing suave (easeOutCubic) para que el divider llegue al
+    // estado neutro de forma orgánica.
+    easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    },
+
+    // Setea la "posición base" del divider (el porcentaje que define
+    // la intro animation o el drag manual del usuario) y re-renderiza
+    // sumando el offset actual del scroll.
+    applyPercent(item, percent) {
+      item.basePercent = percent;
+      this.renderItem(item);
+    },
+
+    // Renderiza la posición visual final del divider:
+    //   visible = basePercent + scrollOffsetPercent  (clamped)
+    // Cada imagen ocupa "visible%" o "(100-visible)%" del wrapper
+    // menos 4px (mitad del gap visual de 8px), de forma que la
+    // frontera real coincida exactamente con visible% del wrapper.
+    renderItem(item) {
+      const base = item.basePercent;
+      const offset = item.scrollOffsetPercent || 0;
+      const clamped = this.clamp(base + offset, this.MIN_PERCENT, this.MAX_PERCENT);
+      item.photoA.style.width = `calc(${clamped}% - 4px)`;
+      item.photoB.style.width = `calc(${100 - clamped}% - 4px)`;
+      item.divider.style.left = `${clamped}%`;
+      item.currentPercent = clamped;
+    },
+
+    // Calcula y actualiza el scrollOffsetPercent de cada item, en
+    // función de cuánto se scrolleó desde que la section entró en
+    // viewport. Convierte píxeles a porcentaje del wrapper.
+    updateScrollOffset() {
+      this.items.forEach((item) => {
+        if (item.scrollAnchor === null || item.scrollAnchor === undefined) return;
+        const rect = item.wrapper.getBoundingClientRect();
+        if (rect.width <= 0) return;
+        const deltaY = window.scrollY - item.scrollAnchor;
+        const offsetPx = deltaY * this.SCROLL_RATE;
+        const offsetPercent = (offsetPx / rect.width) * 100;
+        item.scrollOffsetPercent = offsetPercent;
+        this.renderItem(item);
+      });
+    },
+
+    onScroll() {
+      if (this.scrollTicking) return;
+      this.scrollTicking = true;
+      requestAnimationFrame(() => {
+        this.updateScrollOffset();
+        this.scrollTicking = false;
+      });
+    },
+
+    // Aplica una posición vertical al handle. Solo cosmético: no afecta
+    // a las imágenes. Recibe Y absoluto en píxeles, lo clampeamos al
+    // rango del wrapper.
+    applyDividerY(item, y) {
+      const rect = item.wrapper.getBoundingClientRect();
+      if (rect.height <= 0) return;
+      const dividerHeight = item.divider.offsetHeight || 0;
+      const minY = dividerHeight / 2;
+      const maxY = rect.height - dividerHeight / 2;
+      const clampedY = this.clamp(y, minY, maxY);
+      item.divider.style.top = `${clampedY}px`;
+      item.currentY = clampedY;
+    },
+
+    // Anima el divider desde INTRO_START_PERCENT hasta INTRO_END_PERCENT
+    // usando requestAnimationFrame. Si el usuario interactúa antes de que
+    // termine, se cancela y se respeta su posición actual.
+    playIntroAnimation(item) {
+      if (item.introPlayed) return;
+      item.introPlayed = true;
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) {
+        this.applyPercent(item, this.INTRO_END_PERCENT);
+        return;
+      }
+
+      const start = this.INTRO_START_PERCENT;
+      const end = this.INTRO_END_PERCENT;
+      const duration = this.INTRO_DURATION_MS;
+      const delay = this.INTRO_DELAY_MS;
+
+      // Estado inicial visible antes de que arranque el delay.
+      this.applyPercent(item, start);
+
+      const startAnimation = () => {
+        // Si el usuario empezó a arrastrar durante el delay, no animar.
+        if (item.isDragging || item.introCancelled) return;
+        const startTime = performance.now();
+
+        const step = (now) => {
+          if (item.isDragging || item.introCancelled) {
+            item.introRaf = 0;
+            return;
+          }
+          const elapsed = now - startTime;
+          const progress = this.clamp(elapsed / duration, 0, 1);
+          const eased = this.easeOutCubic(progress);
+          const current = start + (end - start) * eased;
+          this.applyPercent(item, current);
+          if (progress < 1) {
+            item.introRaf = requestAnimationFrame(step);
+          } else {
+            item.introRaf = 0;
+          }
+        };
+
+        item.introRaf = requestAnimationFrame(step);
+      };
+
+      item.introTimer = window.setTimeout(startAnimation, delay);
+    },
+
+    cancelIntroAnimation(item) {
+      item.introCancelled = true;
+      if (item.introTimer) {
+        clearTimeout(item.introTimer);
+        item.introTimer = 0;
+      }
+      if (item.introRaf) {
+        cancelAnimationFrame(item.introRaf);
+        item.introRaf = 0;
+      }
+    },
+
+    updateHeight(item) {
+      const rect = item.wrapper.getBoundingClientRect();
+      if (rect.width <= 0) return;
+      // Alto fijo basado en una figura al 50% del ancho del wrapper.
+      const height = (rect.width / 2) * this.FRAME_RATIO;
+      item.wrapper.style.setProperty('--palette-drag-height', `${height}px`);
+    },
+
+    onPointerDown(item, event) {
+      event.preventDefault();
+      // Si la animación de entrada todavía está corriendo, cortarla
+      // para no pelearla con el drag manual.
+      this.cancelIntroAnimation(item);
+      item.isDragging = true;
+      item.wrapper.classList.add('is-dragging');
+      try {
+        item.divider.setPointerCapture(event.pointerId);
+      } catch (err) {
+        // Algunos navegadores antiguos pueden fallar silenciosamente.
+      }
+    },
+
+    onPointerMove(item, event) {
+      if (!item.isDragging) return;
+      const rect = item.wrapper.getBoundingClientRect();
+      if (rect.width <= 0) return;
+      // X: el cursor define la posición VISIBLE del divider. Como el
+      // render suma scrollOffsetPercent al basePercent, hay que
+      // descontarlo para que el divider quede exactamente donde está
+      // el cursor.
+      const x = event.clientX - rect.left;
+      const percent = (x / rect.width) * 100;
+      const offset = item.scrollOffsetPercent || 0;
+      this.applyPercent(item, percent - offset);
+      // Y: solo reposiciona el handle, sin efecto sobre las imágenes.
+      const y = event.clientY - rect.top;
+      this.applyDividerY(item, y);
+    },
+
+    onPointerUp(item, event) {
+      if (!item.isDragging) return;
+      item.isDragging = false;
+      item.wrapper.classList.remove('is-dragging');
+      try {
+        if (item.divider.hasPointerCapture(event.pointerId)) {
+          item.divider.releasePointerCapture(event.pointerId);
+        }
+      } catch (err) {
+        // Ignorar.
+      }
+    },
+
+    bindItem(item) {
+      item.divider.addEventListener('pointerdown', (event) => this.onPointerDown(item, event));
+      item.divider.addEventListener('pointermove', (event) => this.onPointerMove(item, event));
+      item.divider.addEventListener('pointerup', (event) => this.onPointerUp(item, event));
+      item.divider.addEventListener('pointercancel', (event) => this.onPointerUp(item, event));
+      // Evita que un click accidental envíe el formulario / scroll.
+      item.divider.addEventListener('click', (event) => event.preventDefault());
+    },
+
+    init() {
+      const sections = document.querySelectorAll('.project-palette[data-palette-mode="drag"]');
+      if (!sections.length) return;
+
+      this.items = Array.from(sections).map((section) => {
+        const wrapper = section.querySelector('.project-palette__images');
+        if (!wrapper) return null;
+
+        const photoA = wrapper.querySelector('.project-palette__image--a');
+        const photoB = wrapper.querySelector('.project-palette__image--b');
+        const divider = wrapper.querySelector('.project-palette__divider');
+
+        if (!photoA || !photoB || !divider) return null;
+
+        return {
+          section,
+          wrapper,
+          photoA,
+          photoB,
+          divider,
+          isDragging: false,
+          // basePercent: porcentaje "lógico" del divider (intro / drag).
+          // scrollOffsetPercent: corrimiento sutil derivado del scroll.
+          // currentPercent: lo que efectivamente se renderiza (clamped).
+          basePercent: this.INTRO_START_PERCENT,
+          scrollOffsetPercent: 0,
+          scrollAnchor: null,
+          currentPercent: this.INTRO_START_PERCENT,
+          introPlayed: false,
+          introCancelled: false,
+          introTimer: 0,
+          introRaf: 0,
+        };
+      }).filter(Boolean);
+
+      if (!this.items.length) return;
+
+      this.items.forEach((item) => {
+        this.updateHeight(item);
+        // Arrancar en el estado inicial de la animación (35/65) para
+        // que la animación parta desde ahí cuando la section entre en
+        // viewport. Si el usuario interactúa antes, applyPercent del
+        // pointer override esto inmediatamente.
+        this.applyPercent(item, this.INTRO_START_PERCENT);
+        // Centrar el handle verticalmente al inicio.
+        const rect = item.wrapper.getBoundingClientRect();
+        this.applyDividerY(item, rect.height / 2);
+        this.bindItem(item);
+      });
+
+      // Disparar la animación de entrada cuando cada section se hace
+      // visible por primera vez, y anclar también el scrollY desde el
+      // cual se mide el efecto sutil de scroll-driven offset.
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const item = this.items.find((it) => it.section === entry.target);
+            if (!item) return;
+            item.scrollAnchor = window.scrollY;
+            this.playIntroAnimation(item);
+            observer.unobserve(entry.target);
+          });
+        }, { threshold: 0.3 });
+
+        this.items.forEach((item) => observer.observe(item.section));
+      } else {
+        // Fallback: disparar la animación inmediatamente.
+        this.items.forEach((item) => {
+          item.scrollAnchor = window.scrollY;
+          this.playIntroAnimation(item);
+        });
+      }
+
+      // Listener global de scroll: actualiza el offset sutil del divider.
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+
+      window.addEventListener('resize', () => {
+        cancelAnimationFrame(this.resizeRaf);
+        this.resizeRaf = requestAnimationFrame(() => {
+          this.items.forEach((item) => {
+            const prevRect = item.wrapper.getBoundingClientRect();
+            const prevHeight = prevRect.height || 1;
+            const ratio = (item.currentY || prevHeight / 2) / prevHeight;
+            this.updateHeight(item);
+            // Reaplicar Y proporcional al nuevo alto del wrapper.
+            const newRect = item.wrapper.getBoundingClientRect();
+            this.applyDividerY(item, ratio * newRect.height);
+          });
+        });
+      }, { passive: true });
+    },
+  },
+
+  /* ============================================================
+     PROJECT PHRASE SCROLL WIDTH
+     Clon de projectPaletteScrollWidth para .project-phrase
+     ============================================================ */
+  projectPhraseScrollWidth: {
+    SCROLL_POINTS: [2500, 3000, 3500, 4000, 4500],
+    PHOTO_A_WIDTH_POINTS: [60, 70, 100, 130, 140],
+    PHOTO_B_WIDTH_POINTS: [140, 130, 100, 70, 60],
+    items: [],
+    ticking: false,
+    resizeRaf: 0,
+
+    clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    },
+
+    lerp(start, end, progress) {
+      return start + (end - start) * progress;
+    },
+
+    parseNumberList(value, fallback) {
+      if (!value) return fallback.slice();
+
+      const numbers = value
+        .split(',')
+        .map((chunk) => Number(chunk.trim()))
+        .filter((number) => Number.isFinite(number));
+
+      return numbers.length ? numbers : fallback.slice();
+    },
+
+    resolveTimeline(section) {
+      const scrollPoints = this.parseNumberList(
+        section.dataset.scrollWidthPoints,
+        this.SCROLL_POINTS
+      );
+      const photoAWidthPoints = this.parseNumberList(
+        section.dataset.photoAWidthPoints,
+        this.PHOTO_A_WIDTH_POINTS
+      );
+      const photoBWidthPoints = this.parseNumberList(
+        section.dataset.photoBWidthPoints,
+        this.PHOTO_B_WIDTH_POINTS
+      );
+
+      const hasMatchingLengths =
+        scrollPoints.length >= 2 &&
+        scrollPoints.length === photoAWidthPoints.length &&
+        scrollPoints.length === photoBWidthPoints.length;
+
+      const isAscending = scrollPoints.every((point, index) => (
+        index === 0 || point > scrollPoints[index - 1]
+      ));
+
+      if (hasMatchingLengths && isAscending) {
+        return {
+          scrollPoints,
+          photoAWidthPoints,
+          photoBWidthPoints,
+        };
+      }
+
+      return {
+        scrollPoints: this.SCROLL_POINTS.slice(),
+        photoAWidthPoints: this.PHOTO_A_WIDTH_POINTS.slice(),
+        photoBWidthPoints: this.PHOTO_B_WIDTH_POINTS.slice(),
+      };
+    },
+
+    clearItemStyles(item) {
+      item.wrapper.classList.remove('project-phrase__images--scroll-width-active');
+      item.wrapper.style.height = '';
+
+      item.photoA.style.width = '';
+      item.photoA.style.height = '';
+      item.photoA.style.left = '';
+      item.photoA.style.right = '';
+      item.photoA.style.top = '';
+      item.photoA.style.willChange = '';
+      item.photoAImage.style.objectPosition = '';
+
+      item.photoB.style.width = '';
+      item.photoB.style.height = '';
+      item.photoB.style.left = '';
+      item.photoB.style.right = '';
+      item.photoB.style.top = '';
+      item.photoB.style.willChange = '';
+      item.photoBImage.style.objectPosition = '';
+    },
+
+    measureItem(item) {
+      this.clearItemStyles(item);
+
+      const photoARect = item.photoA.getBoundingClientRect();
+      const photoBRect = item.photoB.getBoundingClientRect();
+
+      item.baseWidthA = photoARect.width;
+      item.baseWidthB = photoBRect.width;
+      item.baseHeight = Math.max(photoARect.height, photoBRect.height);
+    },
+
+    applyBaseLayout(item) {
+      item.wrapper.classList.add('project-phrase__images--scroll-width-active');
+      item.wrapper.style.height = `${item.baseHeight}px`;
+
+      item.photoA.style.top = '0';
+      item.photoA.style.left = '0';
+      item.photoA.style.right = 'auto';
+      item.photoA.style.height = '100%';
+      item.photoA.style.willChange = 'width';
+      item.photoAImage.style.objectPosition = 'left center';
+
+      item.photoB.style.top = '0';
+      item.photoB.style.left = 'auto';
+      item.photoB.style.right = '0';
+      item.photoB.style.height = '100%';
+      item.photoB.style.willChange = 'width';
+      item.photoBImage.style.objectPosition = 'right center';
+    },
+
+    setItemWidths(item, photoAWidth, photoBWidth) {
+      item.photoA.style.width = `${photoAWidth}px`;
+      item.photoB.style.width = `${photoBWidth}px`;
+    },
+
+    getWidthFromTimeline(scrollY, scrollPoints, widthPoints, baseWidth) {
+      const firstPoint = scrollPoints[0];
+      const lastPoint = scrollPoints[scrollPoints.length - 1];
+
+      if (scrollY <= firstPoint) {
+        return baseWidth * (widthPoints[0] / 100);
+      }
+
+      if (scrollY >= lastPoint) {
+        return baseWidth * (widthPoints[widthPoints.length - 1] / 100);
+      }
+
+      for (let index = 0; index < scrollPoints.length - 1; index += 1) {
+        const startPoint = scrollPoints[index];
+        const endPoint = scrollPoints[index + 1];
+
+        if (scrollY > endPoint) continue;
+
+        const progress = this.clamp((scrollY - startPoint) / (endPoint - startPoint), 0, 1);
+        const startWidth = baseWidth * (widthPoints[index] / 100);
+        const endWidth = baseWidth * (widthPoints[index + 1] / 100);
+
+        return this.lerp(startWidth, endWidth, progress);
+      }
+
+      return baseWidth * (widthPoints[widthPoints.length - 1] / 100);
+    },
+
+    updateItem(item, scrollYOverride = null) {
+      const scrollY = scrollYOverride === null ? window.scrollY : scrollYOverride;
+      this.setItemWidths(
+        item,
+        this.getWidthFromTimeline(
+          scrollY,
+          item.scrollPoints,
+          item.photoAWidthPoints,
+          item.baseWidthA
+        ),
+        this.getWidthFromTimeline(
+          scrollY,
+          item.scrollPoints,
+          item.photoBWidthPoints,
+          item.baseWidthB
+        )
+      );
+    },
+
+    update(scrollYOverride = null) {
+      this.items.forEach((item) => this.updateItem(item, scrollYOverride));
+    },
+
+    refresh() {
+      this.items.forEach((item) => {
+        this.measureItem(item);
+        this.applyBaseLayout(item);
+      });
+
+      this.update();
+    },
+
+    onScroll() {
+      if (this.ticking) return;
+
+      this.ticking = true;
+      requestAnimationFrame(() => {
+        this.update();
+        this.ticking = false;
+      });
+    },
+
+    onResize() {
+      cancelAnimationFrame(this.resizeRaf);
+      this.resizeRaf = requestAnimationFrame(() => this.refresh());
+    },
+
+    init() {
+      const sections = document.querySelectorAll('.project-phrase[data-scroll-width-points]');
+      if (!sections.length) return;
+
+      this.items = Array.from(sections).map((section) => {
+        const wrapper = section.querySelector('.project-phrase__images');
+        if (!wrapper) return null;
+
+        const photos = wrapper.querySelectorAll('.project-phrase__image');
+        if (photos.length < 2) return null;
+
+        const photoA = photos[0];
+        const photoB = photos[1];
+        const photoAImage = photoA.querySelector('img');
+        const photoBImage = photoB.querySelector('img');
+
+        if (!photoAImage || !photoBImage) return null;
+        const timeline = this.resolveTimeline(section);
+
+        return {
+          section,
+          wrapper,
+          photoA,
+          photoAImage,
+          photoB,
+          photoBImage,
+          scrollPoints: timeline.scrollPoints,
+          photoAWidthPoints: timeline.photoAWidthPoints,
+          photoBWidthPoints: timeline.photoBWidthPoints,
+          baseWidthA: 0,
+          baseWidthB: 0,
+          baseHeight: 0,
+        };
+      }).filter(Boolean);
+
+      if (!this.items.length) return;
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) {
+        this.items.forEach((item) => {
+          this.measureItem(item);
+          this.applyBaseLayout(item);
+          this.setItemWidths(item, item.baseWidthA, item.baseWidthB);
+        });
+        return;
+      }
+
+      this.refresh();
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+      window.addEventListener('resize', () => this.onResize(), { passive: true });
+    },
+  },
+
 
   /* ============================================================
      GALLERY COVER CYCLE
@@ -5842,7 +6640,8 @@ const Timbo = {
       // data-cover-cycle-trigger="<selector>" que apunte a un ancestro
       // común (útil cuando el ciclo arranca al pasar por OTRA zona, por
       // ejemplo el par A+B de Praderas Cabin).
-      const targets = Array.from(document.querySelectorAll('[data-cover-cycle]'));
+      const targets = Array.from(document.querySelectorAll('[data-cover-cycle]'))
+        .filter((target) => !target.closest('[data-cover-cycle-pair]'));
       if (!targets.length) return;
 
       // Nota: initialDelayMs e intervalMs viven como propiedades del módulo
@@ -5886,6 +6685,117 @@ const Timbo = {
         }
 
         return entry;
+      }).filter(Boolean);
+    },
+  },
+
+  /* ============================================================
+     GALLERY COVER CYCLE PAIRS
+     ------------------------------------------------------------
+     Variante para pares de imágenes como Tobar Lodge:
+     - si hovereamos la imagen A, el primer cambio ocurre en B
+     - si hovereamos la imagen B, el primer cambio ocurre en A
+     - durante ese hover, solo cicla la imagen opuesta
+     ============================================================ */
+  galleryCoverCyclePairs: {
+    items: [],
+
+    setActiveCover(entry, index) {
+      Timbo.galleryCoverCycle.setActiveCover(entry, index);
+    },
+
+    advanceEntry(entry) {
+      const next = (entry.currentIndex + 1) % entry.covers.length;
+      this.setActiveCover(entry, next);
+    },
+
+    stopPair(pair) {
+      if (pair.timerId) {
+        window.clearTimeout(pair.timerId);
+        pair.timerId = 0;
+      }
+      if (pair.intervalTimer) {
+        window.clearInterval(pair.intervalTimer);
+        pair.intervalTimer = 0;
+      }
+    },
+
+    resetPair(pair) {
+      this.stopPair(pair);
+      pair.activeEntryIndex = null;
+      pair.entries.forEach((entry) => this.setActiveCover(entry, 0));
+    },
+
+    startPair(pair, activeEntryIndex) {
+      this.stopPair(pair);
+      pair.activeEntryIndex = activeEntryIndex;
+
+      pair.timerId = window.setTimeout(() => {
+        pair.timerId = 0;
+        const activeEntry = pair.entries[pair.activeEntryIndex];
+        if (!activeEntry) return;
+
+        this.advanceEntry(activeEntry);
+
+        pair.intervalTimer = window.setInterval(() => {
+          const currentEntry = pair.entries[pair.activeEntryIndex];
+          if (!currentEntry) return;
+          this.advanceEntry(currentEntry);
+        }, Timbo.galleryCoverCycle.intervalMs);
+      }, Timbo.galleryCoverCycle.initialDelayMs);
+    },
+
+    init() {
+      const pairs = Array.from(document.querySelectorAll('[data-cover-cycle-pair]'));
+      if (!pairs.length) return;
+
+      this.items = pairs.map((pairTarget) => {
+        const mediaTargets = Array.from(pairTarget.querySelectorAll('.projects-gallery__media[data-cover-cycle]'));
+        if (mediaTargets.length < 2) return null;
+
+        const entries = mediaTargets.map((target) => {
+          const covers = Array.from(target.querySelectorAll('.projects-gallery__cover'));
+          if (covers.length < 2) return null;
+
+          const entry = {
+            target,
+            covers,
+            currentIndex: 0,
+          };
+
+          this.setActiveCover(entry, 0);
+          return entry;
+        }).filter(Boolean);
+
+        if (entries.length < 2) return null;
+
+        const pair = {
+          target: pairTarget,
+          entries,
+          activeEntryIndex: null,
+          timerId: 0,
+          intervalTimer: 0,
+        };
+
+        entries.forEach((entry, index) => {
+          entry.target.addEventListener('mouseenter', () => {
+            const oppositeIndex = (index + 1) % pair.entries.length;
+            this.startPair(pair, oppositeIndex);
+          });
+        });
+
+        pairTarget.addEventListener('mouseleave', () => this.resetPair(pair));
+
+        const focusable = pairTarget.matches('a, button, [tabindex]')
+          ? pairTarget
+          : pairTarget.querySelector('a, button, [tabindex]');
+
+        if (focusable) {
+          focusable.addEventListener('focus', () => this.startPair(pair, 1 % pair.entries.length));
+          focusable.addEventListener('blur', () => this.resetPair(pair));
+        }
+
+        return pair;
       }).filter(Boolean);
     },
   },

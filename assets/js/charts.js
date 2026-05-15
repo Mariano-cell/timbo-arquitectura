@@ -1172,12 +1172,706 @@ const TimboCharts = {
     },
   },
 
+  /* ============================================================
+     GRÁFICO 6 — Outdoor Climate Card (Buenos Aires)
+     Reemplaza la imagen estática en la sección "sust-process".
+     4 paneles minimalistas: temp+humedad, radiación, lluvia, viento.
+     ============================================================ */
+
+  outdoorClimate: {
+
+    DATA: {
+      months:   ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+      // °C — Buenos Aires (aprox., basado en gráfico de referencia)
+      tempAvg:  [25, 24, 23, 19, 16, 13, 12, 14, 16, 19, 22, 24],
+      tempMin:  [21, 20, 19, 15, 12, 9,  8,  9, 11, 14, 17, 19],
+      tempMax:  [28, 29, 27, 23, 20, 17, 16, 18, 20, 23, 26, 28],
+      // % — Humedad relativa: 64 en Ene (mínimo), tres jorobas (Abr ~75,
+      // Jun ~76, Ago ~78 máximo anual), luego descenso sostenido a 64 en Dic.
+      humidity: [64, 73, 71, 73, 76, 75, 74, 70, 71, 70, 71, 65],
+      // Wh/m² — radiación global horizontal media diaria
+      radiation:[885, 800, 680, 540, 410, 340, 380, 480, 600, 740, 850, 890],
+      // mm — precipitación mensual
+      rain:     [110,  95, 105, 90, 80, 60, 70, 75, 80, 110, 100, 115],
+      // m/s — viento medio
+      wind:     [5.0, 4.6, 4.2, 3.8, 3.7, 3.9, 4.0, 4.3, 4.7, 5.2, 5.6, 5.3],
+    },
+
+    // Rangos de escala
+    TEMP_MIN: 5,  TEMP_MAX: 32,
+    HUM_MIN:  55, HUM_MAX:  85,
+    RAD_MAX:  1000,
+    RAIN_MAX: 116,
+    WIND_MIN: 3,
+    WIND_MAX: 6,
+
+    // Padding interno común (en unidades del viewBox horizontal de 800)
+    PAD_X: 42,
+
+    // Colores (alineados a variables.css)
+    COLOR_TEMP:     '#6D4D0B',           // --color-earth
+    COLOR_RANGE:    'rgba(109,77,11,0.12)',
+    COLOR_HUMIDITY: '#7a93a8',           // azul apagado (mismo que pilares)
+    COLOR_RADIATION:'#9EA052',           // --color-olive
+    COLOR_RAIN:     '#BCD8ED',           // --color-sky
+    COLOR_WIND:     '#575756',           // --color-gray-400
+    COLOR_GRID:     'rgba(29,29,27,0.08)',
+    COLOR_AXIS:     'rgba(29,29,27,0.35)',
+    LETTER_CHARSET: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+
+    rootEl: null,
+    coordsEl: null,
+    coordsText: '',
+    drawn: false,
+    animated: false,
+    coordsAnimated: false,
+    coordsScrambleRaf: 0,
+    _animTargets: [],
+    // Marcadores interactivos por panel (se rellenan en draw*)
+    _markers: {
+      temp:      { dotAvg: null, dotMin: null, dotMax: null, dotHum: null },
+      radiation: { bars: [] },
+      rain:      { bars: [] },
+      wind:      { dot: null },
+    },
+
+    ns: 'http://www.w3.org/2000/svg',
+
+    el(tag, attrs) {
+      const e = document.createElementNS(this.ns, tag);
+      if (attrs) Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v));
+      return e;
+    },
+
+    randomizeCoordsChar(char) {
+      if (/\d/.test(char)) {
+        return String(Math.floor(Math.random() * 10));
+      }
+
+      if (/[A-Za-z]/.test(char)) {
+        return this.LETTER_CHARSET[Math.floor(Math.random() * this.LETTER_CHARSET.length)];
+      }
+
+      return char;
+    },
+
+    animateCoordsScramble() {
+      if (!this.coordsEl || this.coordsAnimated) return;
+      this.coordsAnimated = true;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.coordsEl.textContent = this.coordsText;
+        return;
+      }
+
+      const finalText = this.coordsText;
+      const chars = Array.from(finalText);
+      const duration = 1800;
+      const startTime = performance.now();
+      const revealPoints = chars.map((char, index) => {
+        if (!/[A-Za-z0-9]/.test(char)) return 0;
+        const base = index / Math.max(chars.length - 1, 1);
+        return Math.min(1, base * 0.65 + Math.random() * 0.35);
+      });
+
+      const frame = (now) => {
+        const progress = Math.min(1, (now - startTime) / duration);
+        const nextText = chars.map((char, index) => {
+          if (!/[A-Za-z0-9]/.test(char)) return char;
+          if (progress >= revealPoints[index]) return char;
+          return this.randomizeCoordsChar(char);
+        }).join('');
+
+        this.coordsEl.textContent = nextText;
+
+        if (progress < 1) {
+          this.coordsScrambleRaf = window.requestAnimationFrame(frame);
+        } else {
+          this.coordsEl.textContent = finalText;
+          this.coordsScrambleRaf = 0;
+        }
+      };
+
+      this.coordsEl.textContent = chars.map((char) => (
+        /[A-Za-z0-9]/.test(char) ? this.randomizeCoordsChar(char) : char
+      )).join('');
+
+      this.coordsScrambleRaf = window.requestAnimationFrame(frame);
+    },
+
+    /* helpers */
+    xFor(i, vbW) {
+      const n = this.DATA.months.length;
+      const plotW = vbW - this.PAD_X * 2;
+      // centro de cada mes (12 columnas)
+      return this.PAD_X + (i + 0.5) * (plotW / n);
+    },
+
+    yMap(v, min, max, top, height) {
+      const t = (v - min) / (max - min);
+      return top + (1 - t) * height;
+    },
+
+    smoothPath(points) {
+      if (points.length < 2) return '';
+      const d = ['M', points[0][0], points[0][1]];
+      for (let i = 0; i < points.length - 1; i++) {
+        const p0 = points[i - 1] || points[i];
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        const p3 = points[i + 2] || p2;
+        const tension = 6;
+        const cp1x = p1[0] + (p2[0] - p0[0]) / tension;
+        const cp1y = p1[1] + (p2[1] - p0[1]) / tension;
+        const cp2x = p2[0] - (p3[0] - p1[0]) / tension;
+        const cp2y = p2[1] - (p3[1] - p1[1]) / tension;
+        d.push('C', cp1x, cp1y, cp2x, cp2y, p2[0], p2[1]);
+      }
+      return d.join(' ');
+    },
+
+    /* Catmull-Rom cíclico: interpola una serie mensual a una serie
+       de N*sub puntos (sub sub-puntos por mes). El primero coincide
+       con el dato original; el resto va entre meses. */
+    interpolateCyclic(values, sub) {
+      const n = values.length;
+      const out = [];
+      for (let i = 0; i < n; i++) {
+        const p0 = values[(i - 1 + n) % n];
+        const p1 = values[i];
+        const p2 = values[(i + 1) % n];
+        const p3 = values[(i + 2) % n];
+        for (let k = 0; k < sub; k++) {
+          const t = k / sub;
+          const t2 = t * t;
+          const t3 = t2 * t;
+          // Catmull-Rom uniforme
+          const v = 0.5 * (
+            (2 * p1) +
+            (-p0 + p2) * t +
+            (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
+            (-p0 + 3 * p1 - 3 * p2 + p3) * t3
+          );
+          out.push(v);
+        }
+      }
+      return out;
+    },
+
+    /* ---- Panel: Temperatura + Humedad ----
+       Resolución elevada: SUB sub-puntos por mes (48 puntos en total). */
+    drawTempPanel(svg) {
+      const vbW = 800, vbH = 220;
+      const padTop = 18, padBottom = 14;
+      const plotH = vbH - padTop - padBottom;
+
+      const { months, tempAvg, tempMin, tempMax, humidity } = this.DATA;
+
+      // === Sub-resolución ===
+      const SUB = 4;                   // sub-puntos por mes
+      const N   = months.length * SUB; // total de puntos (48)
+      const plotW = vbW - this.PAD_X * 2;
+
+      // x para sub-punto j ∈ [0, N)
+      const xAt = (j) => this.PAD_X + (j + 0.5) * (plotW / N);
+
+      // Mes/semana a partir del índice j
+      const weekLabel = (j) => {
+        const monthIdx = Math.floor(j / SUB);
+        const week     = (j % SUB) + 1;
+        return months[monthIdx] + ' · sem ' + week;
+      };
+
+      // Series interpoladas (Catmull-Rom cíclico)
+      const sAvg = this.interpolateCyclic(tempAvg, SUB);
+      const sMin = this.interpolateCyclic(tempMin, SUB);
+      const sMax = this.interpolateCyclic(tempMax, SUB);
+      const sHum = this.interpolateCyclic(humidity, SUB);
+
+      // gridlines temp (eje izquierdo)
+      [10, 20, 30].forEach(t => {
+        const y = this.yMap(t, this.TEMP_MIN, this.TEMP_MAX, padTop, plotH);
+        svg.appendChild(this.el('line', {
+          x1: this.PAD_X, y1: y, x2: vbW - this.PAD_X, y2: y,
+          stroke: this.COLOR_GRID, 'stroke-width': 1,
+        }));
+        const lbl = this.el('text', {
+          x: 8, y: y + 4, 'text-anchor': 'start',
+          'font-size': '10', fill: this.COLOR_AXIS, 'font-family': 'inherit',
+        });
+        lbl.textContent = t + '°';
+        svg.appendChild(lbl);
+      });
+
+      // eje derecho (humedad)
+      [60, 75].forEach(h => {
+        const y = this.yMap(h, this.HUM_MIN, this.HUM_MAX, padTop, plotH);
+        const lbl = this.el('text', {
+          x: vbW - 8, y: y + 4, 'text-anchor': 'end',
+          'font-size': '10', fill: this.COLOR_AXIS, 'font-family': 'inherit',
+        });
+        lbl.textContent = h + '%';
+        svg.appendChild(lbl);
+      });
+
+      // tick verticales tenues por sub-punto (cada sem)
+      for (let j = 0; j < N; j++) {
+        const isMonthStart = (j % SUB) === 0;
+        svg.appendChild(this.el('line', {
+          x1: xAt(j), y1: padTop + plotH - 4,
+          x2: xAt(j), y2: padTop + plotH,
+          stroke: isMonthStart ? this.COLOR_AXIS : this.COLOR_GRID,
+          'stroke-width': isMonthStart ? 0.8 : 0.5,
+        }));
+      }
+
+      // Área (rango min-max temperatura, con curva interpolada)
+      const topPts = [];
+      const botPts = [];
+      for (let j = 0; j < N; j++) {
+        topPts.push([xAt(j), this.yMap(sMax[j], this.TEMP_MIN, this.TEMP_MAX, padTop, plotH)]);
+        botPts.push([xAt(j), this.yMap(sMin[j], this.TEMP_MIN, this.TEMP_MAX, padTop, plotH)]);
+      }
+      const botRev = [...botPts].reverse();
+      const topD = this.smoothPath(topPts);
+      const botD = this.smoothPath(botRev);
+      const areaD = topD + ' L ' + botRev[0][0] + ' ' + botRev[0][1] + ' ' +
+                    botD.replace(/^M\s*[\d.]+\s+[\d.]+/, '') + ' Z';
+
+      const area = this.el('path', {
+        d: areaD, fill: this.COLOR_RANGE, opacity: '0',
+        class: 'outdoor-climate__area',
+      });
+      svg.appendChild(area);
+
+      // Línea temperatura media
+      const tempPts = [];
+      for (let j = 0; j < N; j++) tempPts.push([xAt(j), this.yMap(sAvg[j], this.TEMP_MIN, this.TEMP_MAX, padTop, plotH)]);
+      const tempLine = this.el('path', {
+        d: this.smoothPath(tempPts),
+        stroke: this.COLOR_TEMP, 'stroke-width': 1.6, fill: 'none',
+        'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+        class: 'outdoor-climate__line',
+      });
+      svg.appendChild(tempLine);
+
+      // Línea humedad (dashed)
+      const humPts = [];
+      for (let j = 0; j < N; j++) humPts.push([xAt(j), this.yMap(sHum[j], this.HUM_MIN, this.HUM_MAX, padTop, plotH)]);
+      const humLine = this.el('path', {
+        d: this.smoothPath(humPts),
+        stroke: this.COLOR_HUMIDITY, 'stroke-width': 1.2, fill: 'none',
+        'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+        'stroke-dasharray': '4 4',
+        class: 'outdoor-climate__line',
+      });
+      svg.appendChild(humLine);
+
+      // prepara animación de trazo
+      [tempLine, humLine].forEach(line => {
+        const len = line.getTotalLength();
+        line.style.strokeDasharray = (line.getAttribute('stroke-dasharray') === '4 4')
+          ? len + ' ' + len
+          : len;
+        line.style.strokeDashoffset = len;
+        this._animTargets.push({ type: 'line', el: line, len });
+      });
+      this._animTargets.push({ type: 'fade', el: area });
+
+      // marcadores interactivos (ocultos hasta hover)
+      const dotAvg = this.el('circle', { r: 3.5, fill: this.COLOR_TEMP, opacity: '0', class: 'outdoor-climate__marker' });
+      const dotMin = this.el('circle', { r: 2.5, fill: 'none', stroke: this.COLOR_TEMP, 'stroke-width': 1, opacity: '0', class: 'outdoor-climate__marker' });
+      const dotMax = this.el('circle', { r: 2.5, fill: 'none', stroke: this.COLOR_TEMP, 'stroke-width': 1, opacity: '0', class: 'outdoor-climate__marker' });
+      const dotHum = this.el('circle', { r: 3, fill: this.COLOR_HUMIDITY, opacity: '0', class: 'outdoor-climate__marker' });
+      [dotAvg, dotMin, dotMax, dotHum].forEach(d => svg.appendChild(d));
+      this._markers.temp = { dotAvg, dotMin, dotMax, dotHum };
+
+      // hover layer — N sub-puntos en lugar de 12 meses
+      this.attachInteractivity({
+        svg, panelKey: 'temp', vbW, vbH, padTop, plotH,
+        readoutId: 'outdoor-climate-temp-readout',
+        steps: N,
+        xResolver: xAt,
+        onIndex: (j) => {
+          const x    = xAt(j);
+          const yAvg = this.yMap(sAvg[j], this.TEMP_MIN, this.TEMP_MAX, padTop, plotH);
+          const yMin = this.yMap(sMin[j], this.TEMP_MIN, this.TEMP_MAX, padTop, plotH);
+          const yMax = this.yMap(sMax[j], this.TEMP_MIN, this.TEMP_MAX, padTop, plotH);
+          const yHum = this.yMap(sHum[j], this.HUM_MIN, this.HUM_MAX, padTop, plotH);
+          dotAvg.setAttribute('cx', x); dotAvg.setAttribute('cy', yAvg);
+          dotMin.setAttribute('cx', x); dotMin.setAttribute('cy', yMin);
+          dotMax.setAttribute('cx', x); dotMax.setAttribute('cy', yMax);
+          dotHum.setAttribute('cx', x); dotHum.setAttribute('cy', yHum);
+          [dotAvg, dotMin, dotMax, dotHum].forEach(d => d.setAttribute('opacity', '1'));
+
+          return [
+            '<span class="outdoor-climate__readout-month">' + weekLabel(j) + '</span>',
+            '<span class="outdoor-climate__readout-metric"><em>Media</em> ' + sAvg[j].toFixed(1) + '°</span>',
+            '<span class="outdoor-climate__readout-metric"><em>Mín</em> ' + sMin[j].toFixed(1) + '°</span>',
+            '<span class="outdoor-climate__readout-metric"><em>Máx</em> ' + sMax[j].toFixed(1) + '°</span>',
+            '<span class="outdoor-climate__readout-metric"><em>Humedad</em> ' + sHum[j].toFixed(0) + '%</span>',
+          ].join('');
+        },
+        onLeave: () => {
+          [dotAvg, dotMin, dotMax, dotHum].forEach(d => d.setAttribute('opacity', '0'));
+        },
+      });
+    },
+
+    /* ---- Panel: Radiación solar + Lluvia (doble eje)
+       Replica el segundo panel de la imagen original:
+       - Lluvia: área celeste suave de fondo, curva interpolada cíclica (eje derecho mm).
+       - Radiación: "montañas" mensuales tipo campana (eje izquierdo Wh/m²),
+         con tono más claro en la base (difusa) y más oscuro en la cima (global). */
+    drawRadiationPanel(svg) {
+      const vbW = 800, vbH = 180;
+      const padTop = 14, padBottom = 12;
+      const plotH = vbH - padTop - padBottom;
+
+      const { months, radiation, rain } = this.DATA;
+
+      // === Gridlines (referencia visual) ===
+      [250, 500, 750].forEach(v => {
+        const y = this.yMap(v, 0, this.RAD_MAX, padTop, plotH);
+        svg.appendChild(this.el('line', {
+          x1: this.PAD_X, y1: y, x2: vbW - this.PAD_X, y2: y,
+          stroke: this.COLOR_GRID, 'stroke-width': 1,
+        }));
+      });
+
+      // === Eje izquierdo (radiación) ===
+      [0, 500, 1000].forEach(v => {
+        const y = this.yMap(v, 0, this.RAD_MAX, padTop, plotH);
+        const lbl = this.el('text', {
+          x: 8, y: y + 4, 'text-anchor': 'start',
+          'font-size': '10', fill: this.COLOR_AXIS, 'font-family': 'inherit',
+        });
+        lbl.textContent = v;
+        svg.appendChild(lbl);
+      });
+
+      // === Eje derecho (lluvia) ===
+      [0, 29, 58, 87, 116].forEach(v => {
+        const y = this.yMap(v, 0, this.RAIN_MAX, padTop, plotH);
+        const lbl = this.el('text', {
+          x: vbW - 8, y: y + 4, 'text-anchor': 'end',
+          'font-size': '10', fill: this.COLOR_AXIS, 'font-family': 'inherit',
+        });
+        lbl.textContent = v;
+        svg.appendChild(lbl);
+      });
+
+      // === Lluvia: área celeste suave de fondo (interpolada cíclica) ===
+      const SUB = 6;                       // resolución de la curva de lluvia
+      const Nrain = months.length * SUB;
+      const plotW = vbW - this.PAD_X * 2;
+      const xRain = (j) => this.PAD_X + (j + 0.5) * (plotW / Nrain);
+
+      const sRain = this.interpolateCyclic(rain, SUB);
+      // Suavizar un poco más para evitar overshoots negativos
+      const baseY = padTop + plotH;
+
+      const rainTopPts = [];
+      for (let j = 0; j < Nrain; j++) {
+        const v = Math.max(0, sRain[j]);
+        rainTopPts.push([xRain(j), this.yMap(v, 0, this.RAIN_MAX, padTop, plotH)]);
+      }
+      // Path de área cerrada al baseline
+      const rainTopD = this.smoothPath(rainTopPts);
+      const xLeft  = this.PAD_X;
+      const xRight = vbW - this.PAD_X;
+      const rainAreaD =
+        rainTopD +
+        ` L ${rainTopPts[rainTopPts.length - 1][0]} ${baseY}` +
+        ` L ${xLeft} ${baseY} Z`;
+
+      const rainArea = this.el('path', {
+        d: rainAreaD,
+        fill: this.COLOR_RAIN, opacity: '0',
+        class: 'outdoor-climate__rain-area',
+      });
+      svg.appendChild(rainArea);
+      this._animTargets.push({ type: 'fade-soft', el: rainArea, target: 0.55 });
+
+      // === Radiación: "montañas" mensuales tipo campana ===
+      // Cada mes dibuja una curva campana que va desde 0 en (i-0.5) hasta 0 en (i+0.5),
+      // con pico igual al valor de radiación.
+      const colW = plotW / months.length;
+      const radMountains = [];
+      months.forEach((m, i) => {
+        const cx = this.xFor(i, vbW);
+        const xL = cx - colW / 2;
+        const xR = cx + colW / 2;
+        const yPeak  = this.yMap(radiation[i], 0, this.RAD_MAX, padTop, plotH);
+        const yBase0 = baseY;
+
+        // Curva tipo campana usando cubic Bezier: base izquierda → pico → base derecha.
+        // Aprovechamos puntos de control en y=peak para "redondear" la cima.
+        const cp1x = xL + colW * 0.18;
+        const cp1y = yBase0;
+        const cp2x = cx - colW * 0.22;
+        const cp2y = yPeak;
+        const cp3x = cx + colW * 0.22;
+        const cp3y = yPeak;
+        const cp4x = xR - colW * 0.18;
+        const cp4y = yBase0;
+
+        const d =
+          `M ${xL} ${yBase0} ` +
+          `C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${cx} ${yPeak} ` +
+          `C ${cp3x} ${cp3y}, ${cp4x} ${cp4y}, ${xR} ${yBase0} Z`;
+
+        const peak = this.el('path', {
+          d, fill: this.COLOR_RADIATION, opacity: '0',
+          class: 'outdoor-climate__rad-peak',
+          'data-index': i,
+        });
+        svg.appendChild(peak);
+        this._animTargets.push({ type: 'fade', el: peak });
+        radMountains.push(peak);
+      });
+      this._markers.radiation.bars = radMountains;
+
+      // === Baseline ===
+      svg.appendChild(this.el('line', {
+        x1: this.PAD_X, y1: baseY, x2: vbW - this.PAD_X, y2: baseY,
+        stroke: this.COLOR_AXIS, 'stroke-width': 0.5,
+      }));
+
+      // === Hover ===
+      this.attachInteractivity({
+        svg, panelKey: 'radiation', vbW, vbH, padTop, plotH,
+        readoutId: 'outdoor-climate-radiation-readout',
+        onIndex: (i) => {
+          radMountains.forEach((b, idx) => b.style.opacity = idx === i ? '1' : '0.3');
+          return [
+            '<span class="outdoor-climate__readout-month">' + months[i] + '</span>',
+            '<span class="outdoor-climate__readout-metric"><em>Radiación</em> ' + radiation[i] + ' Wh/m²</span>',
+            '<span class="outdoor-climate__readout-metric"><em>Lluvia</em> ' + rain[i] + ' mm</span>',
+          ].join('');
+        },
+        onLeave: () => {
+          radMountains.forEach(b => b.style.opacity = '1');
+        },
+      });
+    },
+
+    /* ---- Panel: Viento ---- */
+    drawWindPanel(svg) {
+      const vbW = 800, vbH = 100;
+      const padTop = 14, padBottom = 12;
+      const plotH = vbH - padTop - padBottom;
+
+      const { months, wind } = this.DATA;
+
+      [4, 5].forEach(v => {
+        const y = this.yMap(v, this.WIND_MIN, this.WIND_MAX, padTop, plotH);
+        svg.appendChild(this.el('line', {
+          x1: this.PAD_X, y1: y, x2: vbW - this.PAD_X, y2: y,
+          stroke: this.COLOR_GRID, 'stroke-width': 1,
+        }));
+      });
+
+      [this.WIND_MIN, 4, 5, this.WIND_MAX].forEach(v => {
+        const y = this.yMap(v, this.WIND_MIN, this.WIND_MAX, padTop, plotH);
+        const lbl = this.el('text', {
+          x: 8, y: y + 4, 'text-anchor': 'start',
+          'font-size': '10', fill: this.COLOR_AXIS, 'font-family': 'inherit',
+        });
+        lbl.textContent = v;
+        svg.appendChild(lbl);
+      });
+
+      const pts = months.map((_, i) => [this.xFor(i, vbW), this.yMap(wind[i], this.WIND_MIN, this.WIND_MAX, padTop, plotH)]);
+      const line = this.el('path', {
+        d: this.smoothPath(pts),
+        stroke: this.COLOR_WIND, 'stroke-width': 1.4, fill: 'none',
+        'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+        class: 'outdoor-climate__line',
+      });
+      svg.appendChild(line);
+
+      // puntos discretos en cada mes
+      months.forEach((m, i) => {
+        const dot = this.el('circle', {
+          cx: this.xFor(i, vbW),
+          cy: this.yMap(wind[i], this.WIND_MIN, this.WIND_MAX, padTop, plotH),
+          r: 2, fill: this.COLOR_WIND, opacity: 0,
+          class: 'outdoor-climate__dot',
+        });
+        svg.appendChild(dot);
+        this._animTargets.push({ type: 'fade', el: dot });
+      });
+
+      const len = line.getTotalLength();
+      line.style.strokeDasharray = len;
+      line.style.strokeDashoffset = len;
+      this._animTargets.push({ type: 'line', el: line, len });
+
+      // marcador interactivo
+      const dotHover = this.el('circle', {
+        r: 4, fill: '#ffffff', stroke: this.COLOR_WIND, 'stroke-width': 1.5,
+        opacity: '0', class: 'outdoor-climate__marker',
+      });
+      svg.appendChild(dotHover);
+      this._markers.wind.dot = dotHover;
+
+      this.attachInteractivity({
+        svg, panelKey: 'wind', vbW, vbH, padTop, plotH,
+        readoutId: 'outdoor-climate-wind-readout',
+        onIndex: (i) => {
+          const x = this.xFor(i, vbW);
+          const y = this.yMap(wind[i], this.WIND_MIN, this.WIND_MAX, padTop, plotH);
+          dotHover.setAttribute('cx', x);
+          dotHover.setAttribute('cy', y);
+          dotHover.setAttribute('opacity', '1');
+          return [
+            '<span class="outdoor-climate__readout-month">' + months[i] + '</span>',
+            '<span class="outdoor-climate__readout-metric"><em>Velocidad</em> ' + wind[i].toFixed(1) + ' m/s</span>',
+          ].join('');
+        },
+        onLeave: () => {
+          dotHover.setAttribute('opacity', '0');
+        },
+      });
+    },
+
+    /* ---- Interactividad compartida (guía vertical + hitboxes + readout)
+       `steps`     — cantidad de columnas/hitboxes (default = 12 meses).
+       `xResolver` — función opcional que dado el índice devuelve la x
+                     central; default usa xFor(i, vbW) (paneles mensuales). */
+    attachInteractivity({ svg, panelKey, vbW, vbH, padTop, plotH, readoutId, onIndex, onLeave, steps, xResolver }) {
+      const n = typeof steps === 'number' ? steps : this.DATA.months.length;
+      const plotW = vbW - this.PAD_X * 2;
+      const colW = plotW / n;
+      const xAt = typeof xResolver === 'function' ? xResolver : (i) => this.xFor(i, vbW);
+
+      // Guía vertical
+      const guide = this.el('line', {
+        x1: 0, y1: padTop, x2: 0, y2: padTop + plotH,
+        stroke: this.COLOR_AXIS, 'stroke-width': 0.5,
+        'stroke-dasharray': '2 3', opacity: '0',
+        class: 'outdoor-climate__guide',
+      });
+      svg.appendChild(guide);
+
+      // Grupo de hitboxes
+      const hitGroup = this.el('g', { class: 'outdoor-climate__hits' });
+      const readout = document.getElementById(readoutId);
+      const defaultHTML = readout ? readout.innerHTML : '';
+
+      const show = (i) => {
+        const x = xAt(i);
+        guide.setAttribute('x1', x);
+        guide.setAttribute('x2', x);
+        guide.setAttribute('opacity', '1');
+        if (readout) {
+          readout.classList.add('is-active');
+          readout.innerHTML = onIndex(i);
+        } else {
+          onIndex(i);
+        }
+      };
+
+      const hide = () => {
+        guide.setAttribute('opacity', '0');
+        if (onLeave) onLeave();
+        if (readout) {
+          readout.classList.remove('is-active');
+          readout.innerHTML = defaultHTML;
+        }
+      };
+
+      for (let i = 0; i < n; i++) {
+        const x = this.PAD_X + i * colW;
+        const hit = this.el('rect', {
+          x, y: padTop, width: colW, height: plotH,
+          fill: 'transparent', 'data-index': i,
+          class: 'outdoor-climate__hit',
+        });
+        hit.style.cursor = 'crosshair';
+        hit.addEventListener('mouseenter', () => show(i));
+        hit.addEventListener('mousemove',  () => show(i));
+        hit.addEventListener('touchstart', (e) => { e.preventDefault(); show(i); }, { passive: false });
+        hitGroup.appendChild(hit);
+      }
+
+      // Captura mouseleave a nivel SVG para asegurar limpieza
+      svg.addEventListener('mouseleave', hide);
+      svg.addEventListener('touchend', hide);
+
+      svg.appendChild(hitGroup);
+    },
+
+    /* ---- draw ---- */
+    draw() {
+      if (this.drawn) return;
+      this.drawn = true;
+
+      const tempSvg = document.getElementById('outdoor-climate-temp');
+      const radSvg  = document.getElementById('outdoor-climate-radiation');
+      const windSvg = document.getElementById('outdoor-climate-wind');
+
+      if (tempSvg) this.drawTempPanel(tempSvg);
+      if (radSvg)  this.drawRadiationPanel(radSvg);
+      if (windSvg) this.drawWindPanel(windSvg);
+    },
+
+    animateIn() {
+      if (this.animated) return;
+      this.animated = true;
+      this.animateCoordsScramble();
+
+      this._animTargets.forEach((target, i) => {
+        const delay = Math.min(i * 18, 800);
+        setTimeout(() => {
+          if (target.type === 'line') {
+            target.el.style.transition = 'stroke-dashoffset 1300ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+            target.el.style.strokeDashoffset = '0';
+          } else if (target.type === 'fade') {
+            target.el.style.transition = 'opacity 900ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+            target.el.style.opacity = '1';
+          } else if (target.type === 'fade-soft') {
+            target.el.style.transition = 'opacity 1100ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+            target.el.style.opacity = String(target.target != null ? target.target : 0.5);
+          } else if (target.type === 'bar') {
+            const easing = 'cubic-bezier(0.22,0.61,0.36,1)';
+            target.el.style.transition = `y 700ms ${easing}, height 700ms ${easing}`;
+            target.el.setAttribute('y', target.el.getAttribute('data-final-y'));
+            target.el.setAttribute('height', target.el.getAttribute('data-final-h'));
+          }
+        }, delay);
+      });
+    },
+
+    init() {
+      this.rootEl = document.getElementById('outdoor-climate');
+      if (!this.rootEl) return;
+      this.coordsEl = this.rootEl.querySelector('.outdoor-climate__coords');
+      this.coordsText = this.coordsEl ? this.coordsEl.textContent : '';
+
+      this.draw();
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            this.animateIn();
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.2 });
+
+      observer.observe(this.rootEl);
+    },
+  },
+
   init() {
     this.tempHumidity.init();
     this.solarRadiation.init();
     this.windRose.init();
     this.rainfall.init();
     this.emissionsPie.init();
+    this.outdoorClimate.init();
   },
 };
 

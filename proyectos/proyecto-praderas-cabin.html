@@ -47,44 +47,55 @@
         </h2>
 
         <div class="project-overview__content">
-          <div class="project-overview__facts">
-            <div class="project-overview__fact anim-fade-up" data-anim-delay="120">
-              <img class="project-overview__fact-icon project-overview__fact-icon--location"
-                src="../assets/images/projects/project-icons/ubicacion.svg" alt="" aria-hidden="true" decoding="async">
-              <p class="project-overview__fact-label">UBICACIÓN /</p>
-              <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Cerro Perito
-                  Moreno,<br>Río Negro, Argentina</span></p>
-            </div>
+          <div class="project-overview__sidebar">
+            <div class="project-overview__facts">
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="180">
+                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/clima.svg" alt=""
+                  aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">CLIMA /</p>
+                <p class="project-overview__fact-value"><span
+                    class="project-overview__fact-value-inner">Patagónico</span>
+                </p>
+              </div>
 
-            <div class="project-overview__fact anim-fade-up" data-anim-delay="180">
-              <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/clima.svg" alt=""
-                aria-hidden="true" decoding="async">
-              <p class="project-overview__fact-label">CLIMA /</p>
-              <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Patagónico</span>
-              </p>
-            </div>
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="240">
+                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/bioma.svg" alt=""
+                  aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">BIOMA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Bosque
+                    andino</span></p>
+              </div>
 
-            <div class="project-overview__fact anim-fade-up" data-anim-delay="240">
-              <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/bioma.svg" alt=""
-                aria-hidden="true" decoding="async">
-              <p class="project-overview__fact-label">BIOMA /</p>
-              <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Bosque
-                  andino</span></p>
-            </div>
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="300">
+                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/terreno.svg"
+                  alt="" aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">TERRENO /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">3.000 m²</span>
+                </p>
+              </div>
 
-            <div class="project-overview__fact anim-fade-up" data-anim-delay="300">
-              <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/terreno.svg" alt=""
-                aria-hidden="true" decoding="async">
-              <p class="project-overview__fact-label">TERRENO /</p>
-              <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">3.000 m²</span>
-              </p>
-            </div>
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="360">
+                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/area cubierta.svg"
+                  alt="" aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">ÁREA CUBIERTA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">220 m²</span>
+                </p>
+              </div>
 
-            <div class="project-overview__fact anim-fade-up" data-anim-delay="360">
-              <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/area cubierta.svg"
-                alt="" aria-hidden="true" decoding="async">
-              <p class="project-overview__fact-label">ÁREA CUBIERTA /</p>
-              <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">220 m²</span></p>
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="120">
+                <img class="project-overview__fact-icon project-overview__fact-icon--location"
+                  src="../assets/images/projects/project-icons/ubicacion.svg" alt="" aria-hidden="true"
+                  decoding="async">
+                <p class="project-overview__fact-label">UBICACIÓN /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Cerro Perito
+                    Moreno,<br>Río Negro, Argentina</span></p>
+              </div>
+
+              <div class="project-overview__map anim-fade-in" data-anim-delay="420">
+                <div class="project-map" data-map-sequence data-map-theme="grayscale-light">
+                  <div class="project-map__canvas" id="project-map-canvas"></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -146,6 +157,16 @@
         </figure>
 
         <div class="project-frame__copy">
+          <p class="project-phrase__text">Tanto aventureros, deportistas y exploradores como quienes buscan la calma del
+            paisaje patagónico encuentran en Praderas la calidez del hogar.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-phrase project-phrase--praderas" data-nav-theme="light">
+      <div class="project-phrase__container">
+        <div class="project-phrase__copy">
           <p class="project-frame__text anim-fade-up" data-anim-delay="0">
             Una serie de estrategias de respuesta climática permiten generar un microclima interior de condiciones
             agradables, controladas y estables. Cuidadosamente orientada, térmicamente eficiente y correctamente
@@ -157,31 +178,109 @@
 
           </p>
         </div>
+
+        <div class="project-phrase__images">
+          <figure class="project-phrase__image project-phrase__image--zoom anim-fade-in" data-anim-delay="120">
+            <img src="../assets/images/projects/praderas-cabin/praderas-overview-02.jpg" alt="Praderas Cabin"
+              loading="lazy" decoding="async">
+          </figure>
+
+          <figure class="project-phrase__image project-phrase__image--pan anim-fade-in anim-reveal-right"
+            data-anim-delay="220">
+            <img src="../assets/images/projects/praderas-cabin/praderas-overview-01.jpg" alt="Praderas Cabin"
+              loading="lazy" decoding="async">
+          </figure>
+        </div>
       </div>
     </section>
 
-    <section class="project-palette project-palette--praderas" data-nav-theme="light" data-scroll-width-points="2500,3000,3500,4000,4500"
-      data-photo-a-width-points="60,70,100,130,140" data-photo-b-width-points="140,130,100,70,60">
+    <section class="project-highlight project-highlight--split" data-project-slug="praderas-cabin"
+      data-nav-theme="light">
+      <div class="container project-highlight__container">
+        <figure class="project-highlight__media anim-reveal-right" data-scroll-mask-left-start="2500"
+          data-scroll-mask-left-end="3000" data-scroll-mask-left-percent="10">
+          <img src="../assets/images/projects/praderas-cabin/highlight-02.jpg" alt="Praderas Cabin" loading="lazy"
+            decoding="async">
+
+          <h2 class="project-highlight__title">
+            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">La paleta de
+                materiales de la envolvente se inspira en las texturas y los colores de la montaña nevada:
+                <br><br>
+              </span></span>
+            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">las piedras,
+                los troncos plateados y la vegetación de altura.</span></span>
+          </h2>
+        </figure>
+
+        <!-- Texto temporalmente anulado: la imagen ocupa todo el ancho del contenedor.
+        <div class="project-highlight__copy">
+          <p class="project-highlight__text anim-fade-up" data-anim-delay="0">
+            Una serie de estrategias de respuesta climática permiten generar un microclima interior de condiciones
+            agradables, controladas y estables. Cuidadosamente orientada, térmicamente eficiente y correctamente
+            aislada, la cabaña funciona como un refugio con todas las características que hacen de ella un cálido hogar
+            surgido del clima crudo y riguroso.
+          </p>
+
+          <p class="project-highlight__text anim-fade-up" data-anim-delay="120">
+
+          </p>
+        </div>
+        -->
+      </div>
+    </section>
+
+    <section class="project-palette project-palette--praderas" data-nav-theme="light" data-palette-mode="drag">
       <div class="project-palette__container">
         <div class="project-palette__copy">
           <!-- <p class="project-palette__intro anim-fade-up" data-anim-delay="0">La casa se organiza según una lógica clara
             y equilibrada, definida por la simetría y el orden. Una
             estructura de carácter industrial, inspirada en tipologías de galpón, se combina con una materialidad cálida
             y natural, dando lugar a una arquitectura contemporánea, sobria y atemporal.</p> -->
-          <p class="project-palette__text">Discreta hacia el exterior, su arquitectura revela un interior rico en
-            detalles que aportan calidez y contención frente a la inmensidad del paisaje.
+          <p class="project-palette__text">Discreta hacia el exterior, <br>su arquitectura revela <br>un interior rico en
+            detalles que aportan calidez <br>y contención frente a la inmensidad del paisaje.
           </p>
         </div>
 
-        <div class="project-palette__images">
-          <figure class="project-palette__image anim-fade-in" data-anim-delay="120">
-            <img src="../assets/images/projects/praderas-cabin/praderas-overview-02.jpg" alt="Praderas Cabin" loading="lazy"
-              decoding="async">
+        <div class="project-palette__images project-palette__images--drag">
+          <figure class="project-palette__image project-palette__image--a anim-fade-in" data-anim-delay="120">
+            <img src="../assets/images/projects/praderas-cabin/praderas-overview-02.jpg" alt="Praderas Cabin"
+              loading="lazy" decoding="async">
           </figure>
 
-          <figure class="project-palette__image anim-fade-in" data-anim-delay="220">
-            <img src="../assets/images/projects/praderas-cabin/praderas-overview-01.jpg" alt="Praderas Cabin" loading="lazy"
-              decoding="async">
+          <button type="button" class="project-palette__divider" aria-label="Arrastrar para redimensionar">
+            <span class="project-palette__divider-icon" aria-hidden="true">
+              <svg class="project-palette__divider-svg" viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <!-- Chevron izquierdo "<" — trazo humano con dos segmentos
+                     Bézier sutilmente curvados (no rectos perfectos) y puntas
+                     ligeramente desalineadas. Stroke gray-100 vía clase. -->
+                <path class="project-palette__divider-chevron" d="M 23.4 11.6
+                         C 21.8 13.9, 17.9 17.3, 14.7 19.8
+                         C 17.8 22.6, 21.5 26.1, 23.2 28.6" fill="none" />
+
+                <!-- Círculo trazado a mano: curvas Bézier con radios irregulares
+                     y un pequeño overshoot al final para simular un trazo humano.
+                     Centrado en (50, 20), radio ~14. Contorno negro, interior
+                     gray-100 (currentColor). -->
+                <path class="project-palette__divider-circle" d="M 50.4 6.2
+                         C 57.1 6.5, 63.2 11.8, 63.6 19.4
+                         C 64.1 26.9, 58.5 33.1, 51.2 33.8
+                         C 43.6 34.5, 37.1 28.9, 36.5 21.3
+                         C 35.9 13.9, 41.7 7.0, 49.6 6.2
+                         C 52.3 5.9, 54.5 6.6, 56.1 7.4" fill="currentColor" />
+
+                <!-- Chevron derecho ">" — espejo del izquierdo, con sus propias
+                     micro-imperfecciones para que no parezcan idénticos. -->
+                <path class="project-palette__divider-chevron" d="M 76.7 11.4
+                         C 78.4 13.7, 82.1 17.2, 85.4 19.9
+                         C 82.2 22.7, 78.6 26.0, 76.9 28.7" fill="none" />
+              </svg>
+            </span>
+          </button>
+
+          <figure class="project-palette__image project-palette__image--b anim-fade-in" data-anim-delay="220">
+            <img src="../assets/images/projects/praderas-cabin/praderas-overview-01.jpg" alt="Praderas Cabin"
+              loading="lazy" decoding="async">
           </figure>
         </div>
       </div>

@@ -497,38 +497,16 @@
   display: block;
 }
 
-.intro__photo--animated {
-  transform: scale(0.6);
-  transform-origin: top left;
-  transition: transform 1800ms cubic-bezier(0.22, 0.61, 0.36, 1);
-  position: relative;
-  z-index: 2;
-}
-
-.intro__photo--animated.is-visible {
-  transform: scale(1);
-}
-
-/* Estado base: el JS reemplaza estos valores en cada frame de scroll.
-   Si JS no corre (fallback), la foto queda en su estado inicial. */
-.intro__photo--slide-x {
-  position: relative;
-  z-index: 1;
-  opacity: 0.6;
-  transform: translateX(-100%) scale(0.95);
-  transform-origin: center center;
+.intro__photo.anim-fade-up {
+  transform: translateY(56px);
+  transition:
+    opacity 1500ms cubic-bezier(0.22, 0.61, 0.36, 1) var(--anim-delay),
+    transform 1500ms cubic-bezier(0.22, 0.61, 0.36, 1) var(--anim-delay);
 }
 
 .intro__photo--wide {
   position: relative;
   z-index: 2;
-}
-
-/* Foto A — el JS controla z-index, transform y opacity inline en función del scroll
-   (ver Timbo.introPhotoA en main.js). Acá solo aseguramos un origin centrado para
-   que el escalado se sienta natural. */
-.intro__photo--slide-a {
-  transform-origin: center center;
 }
 
 .intro__photo--narrow {
@@ -593,7 +571,7 @@
   bottom: clamp(64px, 12vh, 144px);
   max-width: min(980px, calc(100vw - var(--nature-dialogue-inline-start) - var(--space-xl)));
   margin: 0;
-  color: var(--color-black);
+  color: var(--color-white);
   font-size: 3.25rem;
   font-weight: var(--fw-regular);
   letter-spacing: 0.04em;
@@ -737,6 +715,8 @@
   gap: 1.25rem;
   text-align: center;
   width: 11rem;
+  opacity: var(--philosophy-signal-opacity, 0);
+  will-change: opacity;
 }
 
 .philosophy__signal--centered {
@@ -792,6 +772,13 @@ html[lang='es'] .philosophy__signal-label {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .philosophy__signal {
+    opacity: 1;
+    will-change: auto;
+  }
 }
 
 /* =========================
@@ -1220,7 +1207,15 @@ html.is-entering-home.is-entering-home-active .main-nav {
   flex-direction: column;
   gap: clamp(0.7rem, 1.1vw, 0.95rem);
   padding-top: clamp(0.5rem, 1.2vw, 1.5rem);
+  position: relative;
+  top: -2rem;
   will-change: transform;
+}
+
+.project-overview__map {
+  width: min(100%, 11.75rem);
+  max-width: 11.75rem;
+  align-self: flex-start;
 }
 
 .project-overview__fact {
@@ -1458,7 +1453,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   object-fit: cover;
 }
 
-/* Hooks scroll-driven (mismo patrón que .intro__photo--slide-x / --slide-a en home).
+/* Hooks scroll-driven para las imágenes de .project-refuge.
    Estado base como fallback si JS no corre; los valores reales los setea Timbo.refugePhoto* inline. */
 .project-refuge__image--slide-x {
   position: relative;
@@ -1546,6 +1541,121 @@ html.is-entering-home.is-entering-home-active .main-nav {
   max-width: clamp(23.8rem, 30.6vw, 35.7rem)
 }
 
+.project-highlight {
+  padding: var(--space-2xl) 0;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-primary);
+  overflow-x: clip;
+}
+
+.project-highlight__container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(3rem, 6vw, 8rem);
+  align-items: center;
+  max-width: none;
+  margin: 6rem var(--margin-c) 0 calc(var(--margin-c) + var(--margin-c));
+  padding: 0;
+}
+
+.project-highlight__media {
+  --project-highlight-scroll-mask-left: 0%;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  min-width: 0;
+  position: relative;
+  z-index: 6;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: var(--color-bg-light);
+  clip-path: inset(0 0 0 var(--project-highlight-scroll-mask-left, 0%) round 12px);
+  will-change: clip-path;
+}
+
+.project-highlight__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  position: relative;
+  z-index: 6;
+}
+
+/* Animación de entrada: la imagen "crece" desde la derecha hacia la izquierda.
+   Estado inicial: la franja izquierda está recortada (40% oculto).
+   Estado final (.is-visible): el recorte se reduce a 0 y se ve la imagen completa. */
+.project-highlight__media.anim-reveal-right img {
+  clip-path: inset(0 0 0 40% round 12px);
+  transition: clip-path 4s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: clip-path;
+}
+
+.project-highlight__media.anim-reveal-right.is-visible img {
+  clip-path: inset(0 0 0 0 round 12px);
+}
+
+.project-highlight__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1.85rem, 3vw, 2.75rem);
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  font-weight: var(--fw-regular);
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  color: var(--color-black);
+  min-width: 0;
+  will-change: transform;
+}
+
+.project-highlight__text {
+  margin: 0;
+  max-width: clamp(23.8rem, 30.6vw, 35.7rem)
+}
+
+/* Título superpuesto sobre la imagen del highlight.
+   Replica exacta del formato de .project-overview__title (tamaño, peso,
+   line-height, máscara y animación de entrada por scroll). */
+.project-highlight__title {
+  position: absolute;
+  top: clamp(2rem, 4vw, 5rem);
+  right: clamp(1.5rem, 3vw, 3rem);
+  z-index: 7;
+  margin: 0;
+  max-width: 22rem;
+  text-align: left;
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  font-weight: var(--fw-bold);
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  color: var(--color-black);
+  pointer-events: none;
+  will-change: transform;
+}
+
+.project-highlight__title-line {
+  display: block;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+}
+
+.project-highlight__title-line-inner {
+  display: block;
+  transform: translateY(100%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-highlight__title.is-revealed .project-highlight__title-line-inner {
+  transform: translateY(0);
+}
+
 .project-palette {
   padding: var(--space-2xl) 0 var(--space-5xl);
   background-color: var(--color-bg-light);
@@ -1596,6 +1706,26 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .project-palette--praderas .project-palette__text {
   margin-top: calc(clamp(1rem, 2vw, 2rem) + 100px);
+}
+
+/* Praderas: invertir orden visual manteniendo el ancho de cada componente.
+   El grid del container es 3fr 7fr (copy angosto, images ancho).
+   Cambiamos las columnas a 7fr 3fr y reasignamos cada hijo a su columna.
+   Solo en desktop: en mobile el container colapsa a 1fr y el orden
+   queda en el flujo natural del HTML (copy arriba, images abajo). */
+@media (min-width: 901px) {
+  .project-palette--praderas .project-palette__container {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+  }
+
+  .project-palette--praderas .project-palette__copy {
+    grid-column: 2;
+  }
+
+  .project-palette--praderas .project-palette__images {
+    grid-column: 1;
+    grid-row: 1;
+  }
 }
 
 .project-palette__text-line {
@@ -1680,6 +1810,388 @@ html.is-entering-home.is-entering-home-active .main-nav {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* ========================= PROJECT PALETTE — DRAG MODE (praderas) ========================= */
+/* Wrapper flex con dos figuras redimensionables por un divisor arrastrable.
+   Solo se aplica cuando el wrapper tiene la clase --drag. */
+.project-palette__images--drag {
+  display: flex;
+  align-items: stretch;
+  /* No usamos gap aquí: la separación entre imágenes se logra
+     restando 4px (mitad del gap visual de 8px) al width de cada
+     figura desde JS con calc(X% - 4px). De esta forma la frontera
+     real entre A y B coincide exactamente con el porcentaje X% del
+     wrapper, y el divider (que se posiciona en ese mismo porcentaje)
+     queda perfectamente centrado en el medio del hueco. */
+  gap: 0;
+  position: relative;
+  touch-action: pan-y;
+  user-select: none;
+  /* El JS calcula y setea --palette-drag-height en función del ancho
+     del wrapper, para que el alto sea fijo y NO dependa del ancho
+     individual de cada figura. */
+  height: var(--palette-drag-height, auto);
+}
+
+.project-palette__images--drag .project-palette__image {
+  flex: 0 0 auto;
+  width: 50%;
+  height: 100%;
+  min-width: 0;
+  aspect-ratio: auto;
+  transition: none;
+  overflow: hidden;
+  position: relative;
+}
+
+/* La imagen B lleva un margen izquierdo de 8px para crear el hueco
+   visual entre ambas (gap real). El JS resta 4px al width de cada
+   figura, de modo que la suma total siga dando 100%:
+   (X% - 4) + 8 + ((100-X)% - 4) = 100%. */
+.project-palette__images--drag .project-palette__image--b {
+  margin-left: 8px;
+}
+
+/* En modo drag las imágenes son horizontales presentadas en un marco vertical:
+   la <img> conserva su aspect ratio (alto = 100% del marco) y la <figure>
+   actúa como ventana que muestra más o menos material lateral según su ancho.
+   Por eso forzamos width: auto y un object-position por imagen. */
+.project-palette__images--drag .project-palette__image img {
+  width: auto;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+}
+
+/* Imagen A: la <img> queda anclada al borde IZQUIERDO de la figura
+   (que coincide con el borde izquierdo del wrapper, ya que la figura A
+   está pegada ahí por el flex). Así la foto no se mueve cuando cambia
+   el ancho de la figura: el lado derecho se va revelando o tapando.
+   Mantiene el border-radius en todas las esquinas (el contenedor recorta
+   la imagen interior con overflow: hidden). */
+.project-palette__images--drag .project-palette__image--a img {
+  left: 0;
+  right: auto;
+  object-position: left center;
+}
+
+/* Imagen B: la <img> queda anclada al borde DERECHO de la figura
+   (que coincide con el borde derecho del wrapper). El lado izquierdo
+   se revela o se tapa según el ancho de la figura. */
+.project-palette__images--drag .project-palette__image--b img {
+  right: 0;
+  left: auto;
+  object-position: right center;
+}
+
+.project-palette__divider {
+  /* En modo drag el divider sale del flujo flex y queda absoluto sobre
+     el wrapper, así puede moverse libremente en X (controla el width de
+     las imágenes vía JS) y en Y (sin efecto sobre las imágenes; solo
+     reposiciona el handle). */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Se traslada -50% en X para que su centro coincida con el borde entre
+     las dos imágenes, y -50% en Y para centrarlo verticalmente. */
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 48px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  z-index: 2;
+  /* El ícono se posiciona absolute para poder ser más grande
+     que el ancho del divider sin ser recortado por él. */
+  overflow: visible;
+  touch-action: none;
+}
+
+/* Hitbox extendido: el área clickeable del divider cubre el círculo del SVG
+   sin afectar al layout. El pseudo-elemento es transparente, queda centrado
+   sobre el divider, y tiene un tamaño aproximado al del círculo en pantalla. */
+.project-palette__divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(36px, 42px, 50px);
+  height: clamp(36px, 42px, 50px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: transparent;
+  pointer-events: auto;
+}
+
+.project-palette__divider:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 2px;
+}
+
+.project-palette__divider-icon {
+  /* Posicionado absoluto sobre el divider, centrado vertical y
+     horizontalmente. Así puede crecer más allá del ancho de 8px
+     del divider sin ser recortado.
+     Tamaño base 75% (scale 0.75); en hover del divider vuelve al
+     100% (scale 1). El transform combina el centrado (translate)
+     con el scale. */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Estado base: tamaño reducido. Hover: +10% sobre el base. */
+  transform: translate(-50%, -50%) scale(0.6);
+  transform-origin: center center;
+  transition: transform 0.25s ease-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-100);
+  line-height: 1;
+  pointer-events: none;
+  /* Ancho ajustado al ancho real del SVG (viewBox 100×40, altura 35px
+     da ~87px de ancho). Antes era 130px y dejaba "franja blureada"
+     extra a los costados del SVG. */
+  width: clamp(75px, 88px, 105px);
+  /* Fondo verde oliva (color-olive) detrás del SVG. El círculo y las flechas
+     son opacos, así que el oliva solo se percibe en los espacios entre
+     las formas. El border-radius redondea las puntas para que el
+     rectángulo se vea como una píldora. */
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  background-color: var(--color-olive);
+}
+
+/* En hover del divider (que cubre todo el hitbox extendido del ::before),
+   el icono crece un 10% respecto al estado base (0.6 → 0.66). */
+.project-palette__divider:hover .project-palette__divider-icon,
+.project-palette__divider:focus-visible .project-palette__divider-icon,
+.project-palette__images--drag.is-dragging .project-palette__divider-icon {
+  transform: translate(-50%, -50%) scale(0.66);
+}
+
+.project-palette__divider-svg {
+  /* viewBox 100x40 (2.5:1). El alto manda: 35px de alto da ~87px de ancho,
+     que cubre el círculo central y los dos chevrons laterales. */
+  height: clamp(30px, 35px, 42px);
+  width: auto;
+  display: block;
+}
+
+/* Contorno del círculo: negro. El interior usa fill=currentColor (gray-100). */
+.project-palette__divider-circle {
+  stroke: var(--color-black);
+}
+
+/* Flechas < y >: trazo negro, un poco más grueso que el círculo. */
+.project-palette__divider-chevron {
+  stroke: var(--color-black);
+  stroke-width: 3;
+}
+
+.project-palette__images--drag.is-dragging {
+  cursor: pointer;
+}
+
+.project-palette__images--drag.is-dragging .project-palette__image {
+  pointer-events: none;
+}
+
+/* ========================= PROJECT PHRASE ========================= */
+/* Clon de project-palette para insertar frases destacadas antes de la paleta */
+.project-phrase {
+  padding: var(--space-2xl) 0 var(--space-5xl);
+  background-color: var(--color-bg-light);
+  color: var(--color-text-primary);
+  overflow-x: clip;
+}
+
+.project-phrase__container {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
+  gap: clamp(1.5rem, 3vw, 4rem);
+  align-items: center;
+  max-width: none;
+  margin: 6rem var(--margin-b) 0 var(--margin-c);
+  padding: 0;
+}
+
+.project-phrase__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: clamp(1.5rem, 2.4vw, 2.25rem);
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  font-weight: var(--fw-regular);
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  color: var(--color-black);
+  min-width: 0;
+  padding-top: clamp(1.5rem, 2.4vw, 2.25rem);
+  align-self: start;
+}
+
+.project-phrase__intro,
+.project-phrase__text {
+  margin: 0;
+}
+
+.project-phrase__intro {
+  max-width: clamp(25rem, 32vw, 38rem);
+}
+
+.project-phrase__text {
+  margin-top: clamp(1rem, 2vw, 2rem);
+  font-weight: var(--fw-bold);
+  max-width: 22rem;
+  will-change: transform;
+}
+
+.project-phrase--praderas .project-phrase__text {
+  margin-top: calc(clamp(1rem, 2vw, 2rem) + 100px);
+}
+
+.project-phrase__text-line {
+  display: block;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+}
+
+.project-phrase__text-line-inner {
+  display: block;
+  transform: translateY(100%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-phrase__text.is-revealed .project-phrase__text-line-inner {
+  transform: translateY(0);
+}
+
+.project-phrase__images {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-items: start;
+  min-width: 0;
+}
+
+.project-phrase__images--scroll-width-active {
+  display: block;
+}
+
+.project-phrase__images--scroll-width-active .project-phrase__image {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  will-change: width;
+}
+
+.project-phrase__images--scroll-width-active .project-phrase__image:first-child {
+  left: 0;
+}
+
+.project-phrase__images--scroll-width-active .project-phrase__image:last-child {
+  right: 0;
+}
+
+.project-phrase__image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4.4;
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: var(--color-bg-light);
+}
+
+.page--haras-light .project-phrase__image {
+  background-color: var(--color-bg-light);
+}
+
+.project-phrase__image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Zoom-in sutil de la foto A: la imagen se acerca apenas un poco
+   dentro de su propio marco. El marco no cambia de tamano. */
+.project-phrase__image--zoom img {
+  transform: scale(1);
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.project-phrase__image--zoom.is-panning img {
+  animation: project-phrase-zoom 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes project-phrase-zoom {
+  from { transform: scale(1); }
+  to   { transform: scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-phrase__image--zoom.is-panning img {
+    animation: none;
+  }
+}
+
+/* Pan horizontal de la foto B: la imagen es mas ancha que su marco
+   y se desplaza lentamente para revelar parte de la franja oculta.
+   El marco no cambia de tamano; solo se mueve el contenido via object-position.
+   La distancia recorrida es solo un cuarto del rango oculto, y la duracion
+   es larga para que el movimiento sea casi imperceptible. */
+.project-phrase__image--pan img {
+  object-position: 0% center;
+}
+
+/* Reveal de la franja derecha: la imagen arranca con su 40% derecho
+   recortado (invisible) y al entrar al viewport se "abre" hacia la derecha.
+   Replica exacta del comportamiento de .project-frame__media.anim-reveal-right.
+   Compatible con --pan: clip-path y animation/object-position son propiedades
+   independientes, no se pisan. */
+.project-phrase__image.anim-reveal-right img {
+  clip-path: inset(0 40% 0 0 round 12px);
+  transition: clip-path 4s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: clip-path;
+}
+
+.project-phrase__image.anim-reveal-right.is-visible img {
+  clip-path: inset(0 0 0 0 round 12px);
+}
+
+.project-phrase__image--pan.is-panning img {
+  animation: project-phrase-pan 4s linear forwards;
+}
+
+/* Animacion en dos tramos:
+   - 0s -> 2s: velocidad constante (linear), recorre 70% del total
+   - 2s -> 4s: desacelera hasta detenerse (ease-out), recorre 30% restante
+   El cambio de timing-function se aplica AL salir del waypoint del 50%. */
+@keyframes project-phrase-pan {
+  0%   { object-position: 0% center; animation-timing-function: linear; }
+  50%  { object-position: 5.6% center; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+  100% { object-position: 8% center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-phrase__image--pan.is-panning img {
+    animation: none;
+  }
 }
 
 .project-final {
@@ -1887,6 +2399,44 @@ html.is-entering-home.is-entering-home-active .main-nav {
   overflow: hidden;
 }
 
+/* Controles de zoom minimalistas (esquina superior derecha del mapa) */
+.project-map__zoom {
+  position: absolute;
+  top: 4px;
+  right: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  z-index: 2;
+}
+
+.project-map__zoom-btn {
+  width: 10px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.project-map__zoom-btn:hover {
+  opacity: 0.6;
+}
+
+.project-map__zoom-btn:focus-visible {
+  outline: 1px solid #fff;
+  outline-offset: 2px;
+}
+
 .project-map-marker {
   position: relative;
   width: 24px;
@@ -1943,7 +2493,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   white-space: nowrap;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
   opacity: 0;
   transition: opacity 0.5s ease 0.2s;
 }
@@ -1957,12 +2507,14 @@ html.is-entering-home.is-entering-home-active .main-nav {
   font-weight: 600;
   color: #fff;
   letter-spacing: 0.03em;
+  line-height: 1.1;
 }
 
 .project-map-marker__detail {
   font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.55);
   letter-spacing: 0.03em;
+  line-height: 1.1;
 }
 
 .project-map__canvas .maplibregl-ctrl-bottom-left,
@@ -1970,25 +2522,14 @@ html.is-entering-home.is-entering-home-active .main-nav {
   display: none;
 }
 
-/* --- Tobar Lodge map trial --- */
+/* --- Project Overview map --- */
 
-.project-overview--tobar-lodge .project-overview__facts {
-  position: relative;
-  top: -2rem;
-}
-
-.project-overview--tobar-lodge .project-overview__map--tobar-lodge {
-  width: min(100%, 11.75rem);
-  max-width: 11.75rem;
-  align-self: flex-start;
-}
-
-.project-overview--tobar-lodge .project-map--tobar-lodge {
+.project-overview .project-map {
   flex: none;
   width: 100%;
 }
 
-.project-overview--tobar-lodge .project-map__canvas--tobar-lodge {
+.project-overview .project-map__canvas {
   aspect-ratio: 4 / 3;
   background: linear-gradient(135deg,
     var(--color-gray-300) 0%,
@@ -1997,19 +2538,19 @@ html.is-entering-home.is-entering-home-active .main-nav {
   border: 1px solid rgba(29, 29, 27, 0.8);
 }
 
-.project-overview--tobar-lodge .project-map--tobar-lodge .project-map-marker__dot {
+.project-overview .project-map-marker__dot {
   background: var(--color-gray-100);
 }
 
-.project-overview--tobar-lodge .project-map--tobar-lodge .project-map-marker__ring {
+.project-overview .project-map-marker__ring {
   border-color: var(--color-gray-200);
 }
 
-.project-overview--tobar-lodge .project-map--tobar-lodge .project-map-marker__name {
+.project-overview .project-map-marker__name {
   color: var(--color-black);
 }
 
-.project-overview--tobar-lodge .project-map--tobar-lodge .project-map-marker__detail {
+.project-overview .project-map-marker__detail {
   color: var(--color-black);
 }
 
@@ -2060,11 +2601,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
     padding-top: 0;
   }
 
-  .project-overview--tobar-lodge .project-overview__facts {
-    top: -2rem;
-  }
-
-  .project-overview--tobar-lodge .project-overview__map--tobar-lodge {
+  .project-overview__map {
     grid-column: 1 / -1;
     justify-self: start;
   }
@@ -2079,6 +2616,11 @@ html.is-entering-home.is-entering-home-active .main-nav {
   }
 
   .project-frame__container {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .project-highlight__container {
     grid-template-columns: 1fr;
     align-items: start;
   }
@@ -2100,6 +2642,26 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .project-palette__intro,
   .project-palette__text {
+    max-width: none;
+  }
+
+  .project-phrase {
+    min-height: auto;
+  }
+
+  .project-phrase__container {
+    width: auto;
+    max-width: var(--max-width);
+    min-height: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .project-phrase__copy {
+    padding-right: 0;
+  }
+
+  .project-phrase__intro,
+  .project-phrase__text {
     max-width: none;
   }
 
@@ -2127,7 +2689,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
     grid-template-columns: 1fr;
   }
 
-  .project-overview--tobar-lodge .project-overview__map--tobar-lodge {
+  .project-overview__map {
     width: 100%;
   }
 
@@ -2142,6 +2704,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .project-palette__intro,
   .project-palette__text {
+    font-size: clamp(1rem, 4.2vw, 1.2rem);
+    line-height: 1.5;
+  }
+
+  .project-phrase__intro,
+  .project-phrase__text {
     font-size: clamp(1rem, 4.2vw, 1.2rem);
     line-height: 1.5;
   }
@@ -2908,6 +3476,256 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .sust-process__text {
     font-size: 1.2rem;
+  }
+}
+
+/* =========================
+   OUTDOOR CLIMATE CARD (gráfico Buenos Aires)
+   ========================= */
+
+.outdoor-climate {
+  margin: 0;
+  padding: clamp(1.25rem, 1.6vw, 1.75rem) clamp(1.25rem, 1.6vw, 1.75rem) clamp(1rem, 1.4vw, 1.5rem);
+  background-color: #ffffff;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius);
+  color: var(--color-black);
+  font-family: var(--font-primary);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.3rem, 0.4vw, 0.5rem);
+}
+
+.outdoor-climate__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'location coords'
+    'koppen koppen';
+  column-gap: 1rem;
+  row-gap: 0;
+  align-items: baseline;
+  margin-bottom: clamp(0.5rem, 1vw, 0.85rem);
+}
+
+.outdoor-climate__location {
+  grid-area: location;
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.01em;
+  color: var(--color-black);
+}
+
+.outdoor-climate__coords,
+.outdoor-climate__koppen {
+  margin: 0;
+  font-size: var(--text-xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: 0.04em;
+  color: var(--color-gray-400);
+}
+
+.outdoor-climate__coords {
+  grid-area: coords;
+  justify-self: end;
+  text-align: right;
+}
+
+.outdoor-climate__koppen {
+  grid-area: koppen;
+}
+
+.outdoor-climate__months {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  padding: 0 calc(42 / 800 * 100%);
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  color: var(--color-gray-400);
+  text-transform: uppercase;
+}
+
+.outdoor-climate__months span {
+  text-align: center;
+}
+
+.outdoor-climate__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.outdoor-climate__panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gray-400);
+  padding: 0 0.25rem;
+}
+
+.outdoor-climate__panel-label {
+  font-weight: var(--fw-medium);
+  color: var(--color-black);
+}
+
+.outdoor-climate__panel-unit {
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  gap: 0.6rem;
+}
+
+.outdoor-climate__unit-left,
+.outdoor-climate__unit-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  letter-spacing: 0.06em;
+}
+
+.outdoor-climate__unit-left::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: #9EA052;
+  border-radius: 2px;
+}
+
+.outdoor-climate__unit-right::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: #BCD8ED;
+  border-radius: 2px;
+}
+
+.outdoor-climate__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.outdoor-climate__readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  min-height: 1.4em;
+  padding: 0.5rem 0.25rem 0.75rem;
+  border-bottom: 1px solid var(--color-gray-200);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-gray-400);
+  font-variant-numeric: tabular-nums;
+  transition: color 180ms ease;
+}
+
+.outdoor-climate__panel:last-of-type .outdoor-climate__readout {
+  border-bottom: none;
+}
+
+.outdoor-climate__readout.is-active {
+  color: var(--color-black);
+}
+
+.outdoor-climate__readout-default {
+  color: var(--color-gray-300);
+  font-style: italic;
+}
+
+.outdoor-climate__readout-month {
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-black);
+}
+
+.outdoor-climate__readout-metric em {
+  font-style: normal;
+  color: var(--color-gray-400);
+  margin-right: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.95em;
+}
+
+.outdoor-climate__guide {
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+.outdoor-climate__marker {
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+.outdoor-climate__bar {
+  transition: opacity 160ms ease;
+}
+
+.outdoor-climate__hit {
+  cursor: crosshair;
+}
+
+.outdoor-climate__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.1rem;
+  padding-top: clamp(0.5rem, 1vw, 0.85rem);
+  border-top: 1px solid var(--color-gray-200);
+  font-size: 0.6875rem;
+  letter-spacing: 0.03em;
+  color: var(--color-gray-400);
+}
+
+.outdoor-climate__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.outdoor-climate__swatch {
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  background-color: currentColor;
+  border-radius: 2px;
+}
+
+.outdoor-climate__swatch--temp     { background-color: #6D4D0B; height: 2px; }
+.outdoor-climate__swatch--range    { background-color: rgba(109,77,11,0.25); height: 8px; }
+.outdoor-climate__swatch--humidity {
+  background-color: transparent;
+  height: 2px;
+  background-image: linear-gradient(to right, #7a93a8 0 4px, transparent 4px 8px);
+  background-size: 8px 2px;
+  background-repeat: repeat-x;
+}
+.outdoor-climate__swatch--radiation{ background-color: #9EA052; height: 8px; }
+.outdoor-climate__swatch--rain     { background-color: #BCD8ED; height: 8px; }
+.outdoor-climate__swatch--wind     { background-color: #575756; height: 2px; }
+
+@media (max-width: 1100px) {
+  .outdoor-climate {
+    max-width: 640px;
+  }
+}
+
+@media (max-width: 640px) {
+  .outdoor-climate {
+    padding: 1rem;
+  }
+  .outdoor-climate__months {
+    font-size: 0.55rem;
+    letter-spacing: 0.04em;
+  }
+  .outdoor-climate__legend {
+    font-size: 0.625rem;
+    gap: 0.4rem 0.8rem;
   }
 }
 
@@ -6096,31 +6914,40 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .projects-gallery__item[data-cover-cycle] .projects-gallery__media:hover .projects-gallery__cover-stack,
 .projects-gallery__item[data-cover-cycle]:has(.projects-gallery__name:hover) .projects-gallery__cover-stack,
-.projects-gallery__item[data-cover-cycle]:focus-visible .projects-gallery__cover-stack {
+.projects-gallery__item[data-cover-cycle]:focus-visible .projects-gallery__cover-stack,
+.projects-gallery__media[data-cover-cycle]:hover .projects-gallery__cover-stack,
+.projects-gallery__item:has(.projects-gallery__name:hover) .projects-gallery__media[data-cover-cycle] .projects-gallery__cover-stack,
+.projects-gallery__item:focus-visible .projects-gallery__media[data-cover-cycle] .projects-gallery__cover-stack {
   transform: scale(1.06);
 }
 
-.projects-gallery__item[data-cover-cycle] .projects-gallery__media .projects-gallery__cover {
+.projects-gallery__item[data-cover-cycle] .projects-gallery__media .projects-gallery__cover,
+.projects-gallery__media[data-cover-cycle] .projects-gallery__cover {
   position: absolute;
   inset: 0;
   opacity: 0;
   transition: opacity var(--gallery-cover-cycle-fade, 900ms) ease-in-out;
 }
 
-.projects-gallery__item[data-cover-cycle] .projects-gallery__media .projects-gallery__cover.is-active {
+.projects-gallery__item[data-cover-cycle] .projects-gallery__media .projects-gallery__cover.is-active,
+.projects-gallery__media[data-cover-cycle] .projects-gallery__cover.is-active {
   opacity: 1;
 }
 
 /* Neutralizamos la regla general de zoom per-img solo en items
    con cover-cycle: el zoom ya está en el stack. Si dejáramos las
    dos, competirían y reaparecería el "espasmo". */
-.projects-gallery__item[data-cover-cycle] .projects-gallery__media .projects-gallery__cover {
+.projects-gallery__item[data-cover-cycle] .projects-gallery__media .projects-gallery__cover,
+.projects-gallery__media[data-cover-cycle] .projects-gallery__cover {
   transform: none;
 }
 
 .projects-gallery__item[data-cover-cycle] .projects-gallery__media:hover .projects-gallery__cover,
 .projects-gallery__item[data-cover-cycle]:has(.projects-gallery__name:hover) .projects-gallery__media .projects-gallery__cover,
-.projects-gallery__item[data-cover-cycle]:focus-visible .projects-gallery__media .projects-gallery__cover {
+.projects-gallery__item[data-cover-cycle]:focus-visible .projects-gallery__media .projects-gallery__cover,
+.projects-gallery__media[data-cover-cycle]:hover .projects-gallery__cover,
+.projects-gallery__item:has(.projects-gallery__name:hover) .projects-gallery__media[data-cover-cycle] .projects-gallery__cover,
+.projects-gallery__item:focus-visible .projects-gallery__media[data-cover-cycle] .projects-gallery__cover {
   transform: none;
 }
 
