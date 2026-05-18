@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
-<body class="page--crema">
+<body class="page--sust-light">
   <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
     <ul class="nav__links">
       <li><a href="index.html" class="nav__link">Inicio</a></li>
@@ -69,8 +69,24 @@
               <svg id="outdoor-climate-temp" class="outdoor-climate__svg"
                 viewBox="0 0 800 220" preserveAspectRatio="xMidYMid meet" role="img"
                 aria-label="Temperatura y humedad mensual"></svg>
-              <div class="outdoor-climate__readout" id="outdoor-climate-temp-readout" aria-live="polite">
-                <span class="outdoor-climate__readout-default">Pasá el cursor sobre el gráfico para ver los valores mes a mes</span>
+              <div class="outdoor-climate__panel-footer">
+                <div class="outdoor-climate__readout" id="outdoor-climate-temp-readout" aria-live="polite">
+                  <span class="outdoor-climate__readout-default">Pasá el cursor sobre el gráfico para ver los valores mes a mes</span>
+                </div>
+                <div class="outdoor-climate__panel-legend">
+                  <span class="outdoor-climate__legend-item">
+                    <span class="outdoor-climate__swatch outdoor-climate__swatch--temp"></span>
+                    Temperatura media
+                  </span>
+                  <span class="outdoor-climate__legend-item">
+                    <span class="outdoor-climate__swatch outdoor-climate__swatch--range"></span>
+                    Rango min — máx
+                  </span>
+                  <span class="outdoor-climate__legend-item">
+                    <span class="outdoor-climate__swatch outdoor-climate__swatch--humidity"></span>
+                    Humedad relativa
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -86,8 +102,20 @@
               <svg id="outdoor-climate-radiation" class="outdoor-climate__svg"
                 viewBox="0 0 800 180" preserveAspectRatio="xMidYMid meet" role="img"
                 aria-label="Radiación solar y lluvia mensual"></svg>
-              <div class="outdoor-climate__readout" id="outdoor-climate-radiation-readout" aria-live="polite">
-                <span class="outdoor-climate__readout-default">Radiación global horizontal y precipitación mensual</span>
+              <div class="outdoor-climate__panel-footer">
+                <div class="outdoor-climate__readout" id="outdoor-climate-radiation-readout" aria-live="polite">
+                  <span class="outdoor-climate__readout-default">Radiación global horizontal y precipitación mensual</span>
+                </div>
+                <div class="outdoor-climate__panel-legend">
+                  <span class="outdoor-climate__legend-item">
+                    <span class="outdoor-climate__swatch outdoor-climate__swatch--radiation"></span>
+                    Radiación global
+                  </span>
+                  <span class="outdoor-climate__legend-item">
+                    <span class="outdoor-climate__swatch outdoor-climate__swatch--rain"></span>
+                    Lluvia
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -100,37 +128,18 @@
               <svg id="outdoor-climate-wind" class="outdoor-climate__svg"
                 viewBox="0 0 800 100" preserveAspectRatio="xMidYMid meet" role="img"
                 aria-label="Velocidad media del viento mensual"></svg>
-              <div class="outdoor-climate__readout" id="outdoor-climate-wind-readout" aria-live="polite">
-                <span class="outdoor-climate__readout-default">Velocidad media superficial</span>
+              <div class="outdoor-climate__panel-footer">
+                <div class="outdoor-climate__readout" id="outdoor-climate-wind-readout" aria-live="polite">
+                  <span class="outdoor-climate__readout-default">Velocidad media superficial</span>
+                </div>
+                <div class="outdoor-climate__panel-legend">
+                  <span class="outdoor-climate__legend-item">
+                    <span class="outdoor-climate__swatch outdoor-climate__swatch--wind"></span>
+                    Viento
+                  </span>
+                </div>
               </div>
             </div>
-
-            <footer class="outdoor-climate__legend">
-              <span class="outdoor-climate__legend-item">
-                <span class="outdoor-climate__swatch outdoor-climate__swatch--temp"></span>
-                Temperatura media
-              </span>
-              <span class="outdoor-climate__legend-item">
-                <span class="outdoor-climate__swatch outdoor-climate__swatch--range"></span>
-                Rango min — máx
-              </span>
-              <span class="outdoor-climate__legend-item">
-                <span class="outdoor-climate__swatch outdoor-climate__swatch--humidity"></span>
-                Humedad relativa
-              </span>
-              <span class="outdoor-climate__legend-item">
-                <span class="outdoor-climate__swatch outdoor-climate__swatch--radiation"></span>
-                Radiación global
-              </span>
-              <span class="outdoor-climate__legend-item">
-                <span class="outdoor-climate__swatch outdoor-climate__swatch--rain"></span>
-                Lluvia
-              </span>
-              <span class="outdoor-climate__legend-item">
-                <span class="outdoor-climate__swatch outdoor-climate__swatch--wind"></span>
-                Viento
-              </span>
-            </footer>
           </figure>
         </div>
         <div class="sust-process__copy anim-fade-up" data-anim-delay="180">
@@ -264,7 +273,7 @@
               supone: se comprueba.</p>
           </div>
         </div>
-        <div class="sust-climate__media-wrap anim-fade-up" data-anim-delay="140">
+        <div class="sust-climate__media-wrap anim-reveal-right">
           <img
             src="assets/images/sustainability/climate-ocean.jpg"
             alt="Cielo tormentoso sobre el océano"
@@ -415,9 +424,8 @@
               <g class="sust-strategies__orbit-label-content">
                 <text x="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
                   font-family="'Neue Haas Grotesk Display Pro', sans-serif">
-                  <tspan x="0" y="-18">TRANSMITANCIA</tspan>
-                  <tspan x="0" y="0">TÉRMICA DE LA</tspan>
-                  <tspan x="0" y="18">ENVOLVENTE</tspan>
+                  <tspan x="0" y="-9">TRANSMITANCIA</tspan>
+                  <tspan x="0" y="9">TÉRMICA</tspan>
                 </text>
               </g>
             </g>
@@ -476,8 +484,11 @@
             <div class="sust-strategies__detail-card">
               <button class="sust-strategies__detail-close" type="button" aria-label="Cerrar detalle">×</button>
               <div class="sust-strategies__detail-stack">
-                <div class="sust-strategies__detail-icon-frame">
-                  <img class="sust-strategies__detail-icon" alt="" hidden />
+                <div class="sust-strategies__detail-media">
+                  <div class="sust-strategies__detail-icon-frame">
+                    <img class="sust-strategies__detail-icon" alt="" hidden />
+                  </div>
+                  <img class="sust-strategies__detail-label" alt="" hidden />
                 </div>
                 <h3 class="sust-strategies__detail-title"></h3>
                 <p class="sust-strategies__detail-text"></p>

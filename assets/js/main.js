@@ -241,17 +241,80 @@ const Timbo = {
       const isAboutPage = document.body.classList.contains('page--about-light')
         && Boolean(document.querySelector('.about-hero'));
       const isSustPage = Boolean(document.querySelector('.sust-hero'));
+
+      // Sustentabilidad en desktop: queremos que main-nav--scrolled solo aparezca
+      // cuando el nav esté efectivamente visible (al subir desde abajo).
+      // Si está oculto (main-nav--hidden, gestionado por navHide al scrollear hacia
+      // abajo), no se agrega, así no se ve el nav con fondo entrando y saliendo
+      // a la vez. Cuando navHide vuelve a mostrarlo (scroll hacia arriba), el
+      // siguiente evento de scroll lo agrega normalmente.
+      const desktopMQ = window.matchMedia('(min-width: 1024px)');
+      const skipWhenHidden = isSustPage && desktopMQ.matches;
+
       let threshold = this.SCROLL_THRESHOLD;
       if (isAboutPage) threshold = this.ABOUT_SCROLL_THRESHOLD;
       else if (isSustPage) threshold = this.SUST_SCROLL_THRESHOLD;
 
       window.addEventListener('scroll', () => {
         if (window.scrollY >= threshold) {
+          if (skipWhenHidden && nav.classList.contains('main-nav--hidden')) return;
           nav.classList.add('main-nav--scrolled');
         } else {
           nav.classList.remove('main-nav--scrolled');
         }
       }, { passive: true });
+    },
+  },
+
+
+  /* ============================================================
+     NAV MOBILE — Transición scroll
+     Sólo aplica en mobile (<1024px). Tres fases:
+       - scrollY <  HIDE_NAV_LIST_AT     → muestra la nav desplegada.
+       - rango intermedio                → no muestra nada.
+       - scrollY >= SHOW_FLOATING_AT     → muestra floating logo + hamburguesa.
+     ============================================================ */
+  navMobile: {
+    HIDE_NAV_LIST_AT: 100,    // scrollY donde la lista desplegada desaparece
+    SHOW_FLOATING_AT: 500,    // scrollY donde aparecen logo + hamburguesa
+    MOBILE_QUERY: '(max-width: 1023.98px)',
+
+    init() {
+      const mediaQuery = window.matchMedia(this.MOBILE_QUERY);
+
+      const onScroll = () => {
+        const y = window.scrollY;
+        // Fase 1: lista visible
+        document.body.classList.toggle('nav-mobile-hide-list', y >= this.HIDE_NAV_LIST_AT);
+        // Fase 2: floating logo + hamburguesa visibles
+        document.body.classList.toggle('nav-mobile-show-floating', y >= this.SHOW_FLOATING_AT);
+      };
+
+      let scrollListenerAttached = false;
+
+      const enable = () => {
+        if (scrollListenerAttached) return;
+        window.addEventListener('scroll', onScroll, { passive: true });
+        scrollListenerAttached = true;
+        onScroll(); // estado inicial
+      };
+
+      const disable = () => {
+        if (!scrollListenerAttached) return;
+        window.removeEventListener('scroll', onScroll);
+        scrollListenerAttached = false;
+        document.body.classList.remove('nav-mobile-hide-list');
+        document.body.classList.remove('nav-mobile-show-floating');
+      };
+
+      if (mediaQuery.matches) enable();
+
+      // Si el usuario rota el dispositivo o cambia el tamaño de ventana,
+      // activamos/desactivamos el listener acorde al viewport.
+      mediaQuery.addEventListener('change', (e) => {
+        if (e.matches) enable();
+        else disable();
+      });
     },
   },
 
@@ -388,6 +451,36 @@ const Timbo = {
     init() {
       const nav = document.querySelector('.main-nav');
       if (!nav) return;
+
+      // En mobile (<1024px) este comportamiento se desactiva: el .main-nav
+      // contiene el floating logo y la hamburguesa, y no queremos que se
+      // oculten al scrollear hacia abajo. La nav mobile la maneja Timbo.navMobile.
+      const desktopMQ = window.matchMedia('(min-width: 1024px)');
+      if (!desktopMQ.matches) return;
+
+      // Páginas con comportamiento estricto (solo desktop, el guard de arriba ya lo asegura):
+      // el nav se oculta apenas hay scroll y solo reaparece al volver al top exacto.
+      // Aplica a proyectos.
+      const isProjectsPage = document.body.classList.contains('page--projects-light');
+
+      if (isProjectsPage) {
+        let tickingStrict = false;
+        const updateStrict = () => {
+          if (window.scrollY <= 0) {
+            nav.classList.remove('main-nav--hidden');
+          } else {
+            nav.classList.add('main-nav--hidden');
+          }
+          tickingStrict = false;
+        };
+        window.addEventListener('scroll', () => {
+          if (!tickingStrict) {
+            window.requestAnimationFrame(updateStrict);
+            tickingStrict = true;
+          }
+        }, { passive: true });
+        return;
+      }
 
       let lastY = window.scrollY;
       let accumulatedUp = 0;
@@ -987,7 +1080,7 @@ const Timbo = {
      ============================================================ */
   scrollReveal: {
     init() {
-      const animatedElements = document.querySelectorAll('.anim-fade-up, .anim-wind-in, .anim-fade-in, .anim-zoom-in, .anim-title-drop, .anim-reveal-right');
+      const animatedElements = document.querySelectorAll('.anim-fade-up, .anim-wind-in, .anim-fade-in, .anim-zoom-in, .anim-title-drop, .anim-reveal-right, .anim-reveal-down');
       if (animatedElements.length === 0) return;
 
       animatedElements.forEach((el) => {
@@ -1349,6 +1442,7 @@ const Timbo = {
       const detailStack = detail?.querySelector('.sust-strategies__detail-stack');
       const closeButton = detail?.querySelector('.sust-strategies__detail-close');
       const detailIcon = detail?.querySelector('.sust-strategies__detail-icon');
+      const detailLabel = detail?.querySelector('.sust-strategies__detail-label');
       const detailTitle = detail?.querySelector('.sust-strategies__detail-title');
       const detailText = detail?.querySelector('.sust-strategies__detail-text');
       const labelItems = section
@@ -1357,48 +1451,58 @@ const Timbo = {
       const orbitApi = Timbo.sustStrategiesOrbit.api;
       const reduceMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
 
-      if (!section || !detail || !detailStack || !closeButton || !detailIcon || !detailTitle || !detailText || !labelItems.length) return;
+      const detailMedia = detail?.querySelector('.sust-strategies__detail-media');
+
+      if (!section || !detail || !detailMedia || !detailStack || !closeButton || !detailIcon || !detailLabel || !detailTitle || !detailText || !labelItems.length) return;
 
       const strategies = {
         ventilacion: {
           title: 'VENTILACIÓN NATURAL Y NOCTURNA',
           description: 'Renueva el aire interior y libera el calor acumulado durante el día para refrescar los ambientes de forma pasiva, especialmente cuando baja la temperatura exterior.',
-          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_47.svg',
+          icon: 'assets/images/sustainability/sust-strategy/ventilacion-natural-y-nocturna.svg',
+          labelSvg: 'assets/images/sustainability/sust-strategy/ventilacion-natural-y-nocturna-texto.svg',
         },
         orientacion: {
           title: 'ORIENTACIÓN CORRECTA',
           description: 'Ubica cada ambiente según el recorrido solar y los vientos dominantes para captar energía útil, proteger las zonas sensibles y mejorar el confort durante todo el año.',
-          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_48.svg',
+          icon: 'assets/images/sustainability/sust-strategy/orientacion-correcta.svg',
+          labelSvg: 'assets/images/sustainability/sust-strategy/orientacion-correcta-texto.svg',
         },
         transmitancia: {
           title: 'TRANSMITANCIA TÉRMICA DE LA ENVOLVENTE',
           description: 'Controla cuánto calor entra o sale a través de muros, techos y aberturas, ajustando la envolvente para reducir pérdidas energéticas y estabilizar la temperatura interior.',
-          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_49.svg',
+          icon: 'assets/images/sustainability/sust-strategy/transmitancia-termica.svg',
+          labelSvg: 'assets/images/sustainability/sust-strategy/transmitancia-termica-texto.svg',
         },
         masa: {
           title: 'MASA TÉRMICA',
           description: 'Aprovecha materiales con inercia térmica para guardar calor o fresco y liberarlo de forma gradual, ayudando a suavizar los cambios bruscos entre día y noche.',
-          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_50.svg',
+          icon: 'assets/images/sustainability/sust-strategy/masa-termica.svg',
+          labelSvg: 'assets/images/sustainability/sust-strategy/masa-termica-texto.svg',
         },
         proporcion: {
           title: 'PROPORCIÓN VIDRIADA',
           description: 'Equilibra luz natural, vistas y desempeño térmico definiendo cuánto vidrio conviene usar en cada orientación, evitando excesos que comprometan el confort interior.',
-          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_51.svg',
+          icon: 'assets/images/sustainability/sust-strategy/proporcion-vidriada.svg',
+          labelSvg: 'assets/images/sustainability/sust-strategy/proporcion-vidriada-texto.svg',
         },
         albedo: {
           title: 'ALBEDO',
           description: 'Usa superficies más reflectantes para bajar la absorción térmica de cubiertas y envolventes, evitando sobrecalentamiento y mejorando el comportamiento del conjunto.',
-          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_52.svg',
+          icon: 'assets/images/sustainability/sust-strategy/albedo.svg',
+          labelSvg: 'assets/images/sustainability/sust-strategy/albedo-texto.svg',
         },
         proteccion: {
           title: 'PROTECCIÓN SOLAR',
           description: 'Filtra el sol directo con aleros, parasoles o vegetación para mejorar el confort, reducir el deslumbramiento y disminuir la necesidad de enfriamiento artificial.',
-          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_53.svg',
+          icon: 'assets/images/sustainability/sust-strategy/proteccion-solar.svg',
+          labelSvg: 'assets/images/sustainability/sust-strategy/proteccion-solar-texto.svg',
         },
         cubiertas: {
           title: 'CUBIERTAS VERDES',
           description: 'Suman aislación, retención de agua y una relación más amable entre edificio y paisaje, aportando además inercia térmica y una presencia más integrada al entorno.',
-          icon: 'assets/images/sustainability/sust-strategy/iconos-negros/iconos-negros-mios_47.svg',
+          icon: 'assets/images/sustainability/sust-strategy/cubiertas-verdes.svg',
+          labelSvg: 'assets/images/sustainability/sust-strategy/cubiertas-verdes-texto.svg',
         },
       };
 
@@ -1410,6 +1514,8 @@ const Timbo = {
       };
 
       const setDetailContent = (strategy) => {
+        detailMedia.dataset.strategy = strategy ? activeKey : '';
+
         if (strategy) {
           detailIcon.src = strategy.icon;
           detailIcon.alt = `Icono de ${strategy.title}`;
@@ -1418,6 +1524,18 @@ const Timbo = {
           detailIcon.removeAttribute('src');
           detailIcon.alt = '';
           detailIcon.hidden = true;
+        }
+
+        if (strategy?.labelSvg) {
+          detailLabel.src = strategy.labelSvg;
+          detailLabel.alt = '';
+          detailLabel.hidden = false;
+          detailTitle.classList.add('visually-hidden');
+        } else {
+          detailLabel.removeAttribute('src');
+          detailLabel.alt = '';
+          detailLabel.hidden = true;
+          detailTitle.classList.remove('visually-hidden');
         }
 
         detailTitle.textContent = strategy ? strategy.title : '';
@@ -2082,9 +2200,13 @@ const Timbo = {
     LOGO_OPACITY_END: 930,           // fase 2: scrollY al que termina el fade (opacidad 0)
     LOGO_MID_OPACITY: 0.6,           // opacidad intermedia (al final de la fase 1)
     LOGO_MIN_OPACITY: 0,             // opacidad final del logo
+    LERP_EASE: 0.12,                 // suavizado del translateY (0-1). Más bajo = más flojo. Típico 0.08-0.18
+    LERP_EPSILON: 0.05,              // diferencia mínima (px) para seguir animando. Evita loop infinito
     taglineEl: null,
     logoEl: null,
-    ticking: false,
+    taglineYSmooth: 0,               // translateY del tagline suavizado (persigue al target cada frame)
+    logoYSmooth: 0,                  // translateY del logo suavizado
+    rafId: null,                     // id del requestAnimationFrame activo (null = loop dormido)
 
     init() {
       this.taglineEl = document.querySelector('.hero__tagline');
@@ -2095,12 +2217,33 @@ const Timbo = {
     },
 
     onScroll() {
-      if (this.ticking) return;
-      this.ticking = true;
-      requestAnimationFrame(() => {
-        this.update();
-        this.ticking = false;
-      });
+      // Si el loop ya está corriendo, no arranco otro: el loop se entera del nuevo scrollY solo.
+      if (this.rafId != null) return;
+      this.rafId = requestAnimationFrame(() => this.tick());
+    },
+
+    tick() {
+      this.update();
+      // Decidimos si seguir animando: comparamos los valores suavizados con los targets actuales.
+      const scrolled = Math.max(0, window.scrollY);
+      const scrollCap = this.MAX_LOGO_Y / this.LOGO_RATE;
+      const scrolledEffective = Math.min(scrolled, scrollCap);
+      const taglineYAtMask = this.TAGLINE_MASK_SCROLL * this.TAGLINE_RATE;
+      const taglineTarget = scrolledEffective <= this.TAGLINE_MASK_SCROLL
+        ? scrolledEffective * this.TAGLINE_RATE
+        : taglineYAtMask + (scrolledEffective - this.TAGLINE_MASK_SCROLL) * this.TAGLINE_RATE_POST_MASK;
+      const logoTarget = this.getLogoY(scrolled);
+      const stillMoving =
+        Math.abs(taglineTarget - this.taglineYSmooth) > this.LERP_EPSILON ||
+        Math.abs(logoTarget - this.logoYSmooth) > this.LERP_EPSILON;
+      if (stillMoving) {
+        this.rafId = requestAnimationFrame(() => this.tick());
+      } else {
+        // Snap final para que no quede una fracción de px residual.
+        this.taglineYSmooth = taglineTarget;
+        this.logoYSmooth = logoTarget;
+        this.rafId = null;
+      }
     },
 
     getLogoY(scrolled) {
@@ -2128,17 +2271,24 @@ const Timbo = {
       // Tagline: baja a TAGLINE_RATE hasta que toca la máscara (scrollY = TAGLINE_MASK_SCROLL);
       // a partir de ahí baja a TAGLINE_RATE_POST_MASK.
       const taglineYAtMask = this.TAGLINE_MASK_SCROLL * this.TAGLINE_RATE;
-      let taglineY;
+      let taglineYTarget;
       if (scrolledEffective <= this.TAGLINE_MASK_SCROLL) {
-        taglineY = scrolledEffective * this.TAGLINE_RATE;
+        taglineYTarget = scrolledEffective * this.TAGLINE_RATE;
       } else {
-        taglineY = taglineYAtMask + (scrolledEffective - this.TAGLINE_MASK_SCROLL) * this.TAGLINE_RATE_POST_MASK;
+        taglineYTarget = taglineYAtMask + (scrolledEffective - this.TAGLINE_MASK_SCROLL) * this.TAGLINE_RATE_POST_MASK;
       }
       // Logo en tres fases:
       //   Fase 1 (0 -> scrollCap): desciende a LOGO_RATE hasta MAX_LOGO_Y.
       //   Fase 2 (scrollCap -> LOGO_RESUME_SCROLL): transición lenta a LOGO_SLOW_RATE.
       //   Fase 3 (LOGO_RESUME_SCROLL -> ...): desciende 1:1 a LOGO_RESUME_RATE.
-      const logoY = this.getLogoY(scrolled);
+      const logoYTarget = this.getLogoY(scrolled);
+
+      // Lerp: los Y "suavizados" persiguen a sus targets cada frame.
+      // El resto (scale, opacity, máscaras) se calcula con scroll directo para no desfasarse.
+      this.taglineYSmooth += (taglineYTarget - this.taglineYSmooth) * this.LERP_EASE;
+      this.logoYSmooth += (logoYTarget - this.logoYSmooth) * this.LERP_EASE;
+      const taglineY = this.taglineYSmooth;
+      const logoY = this.logoYSmooth;
 
       // Escala del tagline: 1 → TAGLINE_MIN_SCALE a lo largo de TAGLINE_SCALE_DISTANCE px
       const scaleProgress = Math.min(1, scrolled / this.TAGLINE_SCALE_DISTANCE);
@@ -4016,6 +4166,90 @@ const Timbo = {
   },
 
   /* ============================================================
+     CONTACT PHONE ACTIONS
+     En la página de contacto, cada teléfono abre una elección:
+     llamar o continuar por WhatsApp.
+     ============================================================ */
+  contactPhoneActions: {
+    init() {
+      const items = Array.from(document.querySelectorAll('[data-contact-phone]'))
+        .map((option) => {
+          const trigger = option.querySelector('[data-contact-phone-trigger]');
+          const panel = option.querySelector('[data-contact-phone-actions]');
+          if (!trigger || !panel) return null;
+          return {
+            option,
+            trigger,
+            panel,
+            row: option.closest('.contact-image__item'),
+          };
+        })
+        .filter(Boolean);
+
+      if (!items.length) return;
+
+      let activeItem = null;
+
+      const closeItem = (item, { restoreFocus = false } = {}) => {
+        if (!item) return;
+        item.option.classList.remove('is-open');
+        item.row?.classList.remove('contact-image__item--phone-menu-open');
+        item.trigger.setAttribute('aria-expanded', 'false');
+        item.panel.hidden = true;
+
+        if (restoreFocus) {
+          item.trigger.focus();
+        }
+
+        if (activeItem === item) {
+          activeItem = null;
+        }
+      };
+
+      const openItem = (item) => {
+        if (activeItem && activeItem !== item) {
+          closeItem(activeItem);
+        }
+
+        item.option.classList.add('is-open');
+        item.row?.classList.add('contact-image__item--phone-menu-open');
+        item.trigger.setAttribute('aria-expanded', 'true');
+        item.panel.hidden = false;
+        activeItem = item;
+      };
+
+      items.forEach((item) => {
+        item.trigger.addEventListener('click', () => {
+          const isOpen = item.trigger.getAttribute('aria-expanded') === 'true';
+
+          if (isOpen) {
+            closeItem(item);
+            return;
+          }
+
+          openItem(item);
+        });
+
+        item.panel.addEventListener('click', (event) => {
+          if (!event.target.closest('a')) return;
+          closeItem(item);
+        });
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!activeItem) return;
+        if (activeItem.option.contains(event.target)) return;
+        closeItem(activeItem);
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || !activeItem) return;
+        closeItem(activeItem, { restoreFocus: true });
+      });
+    },
+  },
+
+  /* ============================================================
      KEYBOARD NAV
      Navegación por teclado con flechas arriba/abajo entre "stops"
      (anclas) definidos por página. Cada stop es un selector CSS;
@@ -4412,6 +4646,7 @@ const Timbo = {
 
     // 2. Nav: fondo al scrollear + cambio de color por sección
     this.navScroll.init();
+    this.navMobile.init();
     this.refugePhotoSlide.init();
     this.refugePhotoA.init();
     this.navHide.init();
@@ -4454,13 +4689,12 @@ const Timbo = {
     this.projectPhraseTextParallax.init();
     this.projectPhraseScrollWidth.init();
     this.contactForm.init();
+    this.contactPhoneActions.init();
     this.keyboardNav.init();
     // Hover-blur de la galería desactivado a pedido del cliente.
     // El módulo queda disponible por si se reactiva: this.projectsGalleryHoverBlur.init();
     this.galleryCoverCycle.init();
     this.galleryCoverCyclePairs.init();
-    this.galleryScrollDrift.init();
-    this.galleryScrollRevealLeft.init();
 
     // 3. Detectar idioma y aplicar
     const lang = this.i18n.detect();
@@ -5191,263 +5425,6 @@ const Timbo = {
   },
 
   /* ============================================================
-     GALLERY SCROLL REVEAL LEFT
-     ------------------------------------------------------------
-     Variante inversa del mask de salida: ciertos covers arrancan
-     con una franja izquierda oculta y, a medida que el proyecto
-     sube dentro del viewport, esa franja se revela hasta mostrar
-     el ancho total original.
-
-     Cómo se activa:
-     - Cualquier .projects-gallery__media con data-scroll-reveal-left="N"
-       (N = % inicial oculto desde la izquierda).
-     - Solo desktop (>= 769px) y solo si el usuario no pidió
-       prefers-reduced-motion: reduce.
-
-     Rango del progreso:
-     - 0 cuando el borde inferior de la imagen está cerca del borde
-       inferior del viewport.
-     - 1 cuando ese borde inferior llega aprox. al 40% del viewport.
-     ============================================================ */
-  galleryScrollRevealLeft: {
-    SMOOTHING: 0.12,
-    SETTLE_EPSILON: 0.05,
-    START_FACTOR: 1,
-    END_FACTOR: 0.4,
-
-    items: [],
-    activeItems: new Set(),
-    rafId: null,
-    enabled: false,
-    mediaQuery: null,
-    motionQuery: null,
-
-    init() {
-      const revealEls = document.querySelectorAll('.projects-gallery [data-scroll-reveal-left]');
-      this.items = Array.from(revealEls).map(el => {
-        const gate = el.closest('.projects-gallery__item') || el;
-        const caption = gate.querySelector('.projects-gallery__caption');
-        const hoverCard = gate.classList.contains('projects-gallery__item--hover-card-left')
-          ? gate.querySelector('.projects-gallery__hover-card')
-          : null;
-
-        return {
-          el,
-          gate,
-          caption,
-          hoverCard,
-          percent: parseFloat(el.getAttribute('data-scroll-reveal-left')) || 0,
-          primed: false,
-          currentCut: 0,
-          targetCut: 0,
-        };
-      });
-
-      if (!this.items.length) return;
-
-      this.mediaQuery = window.matchMedia('(min-width: 769px)');
-      this.motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-      this.mediaQuery.addEventListener('change', () => this.evaluateEnabled());
-      this.motionQuery.addEventListener('change', () => this.evaluateEnabled());
-
-      this.evaluateEnabled();
-    },
-
-    evaluateEnabled() {
-      const shouldBeEnabled = this.mediaQuery.matches && !this.motionQuery.matches;
-
-      if (shouldBeEnabled && !this.enabled) {
-        this.enable();
-      } else if (!shouldBeEnabled && this.enabled) {
-        this.disable();
-      }
-    },
-
-    enable() {
-      this.enabled = true;
-
-      this.items.forEach(({ el, caption, hoverCard }) => {
-        el.style.willChange = 'clip-path';
-        if (caption) caption.style.willChange = 'margin-left, width';
-        if (hoverCard) hoverCard.style.willChange = 'transform';
-      });
-
-      this.observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            this.activeItems.add(entry.target);
-          } else {
-            this.activeItems.delete(entry.target);
-            this.resetItemAtBoundary(entry.target);
-          }
-        });
-        this.maybeStartLoop();
-      }, {
-        rootMargin: '50% 0px 50% 0px',
-        threshold: 0,
-      });
-
-      this.items.forEach(({ el }) => this.observer.observe(el));
-      this.maybeStartLoop();
-    },
-
-    disable() {
-      this.enabled = false;
-      if (this.observer) this.observer.disconnect();
-      if (this.rafId) cancelAnimationFrame(this.rafId);
-      this.rafId = null;
-      this.activeItems.clear();
-
-      this.items.forEach((data) => {
-        data.el.style.clipPath = '';
-        data.el.style.willChange = '';
-        this.clearCaptionSync(data);
-        this.clearHoverCardSync(data);
-        if (data.caption) data.caption.style.willChange = '';
-        if (data.hoverCard) data.hoverCard.style.willChange = '';
-        data.primed = false;
-        data.currentCut = 0;
-        data.targetCut = 0;
-      });
-    },
-
-    maybeStartLoop() {
-      if (this.rafId) return;
-      if (this.activeItems.size === 0) return;
-
-      const tick = () => {
-        this.update();
-        if ((this.activeItems.size > 0 || this.hasUnsettled()) && this.enabled) {
-          this.rafId = requestAnimationFrame(tick);
-        } else {
-          this.rafId = null;
-        }
-      };
-      this.rafId = requestAnimationFrame(tick);
-    },
-
-    hasUnsettled() {
-      const eps = this.SETTLE_EPSILON;
-      for (const d of this.items) {
-        if (Math.abs(d.targetCut - d.currentCut) > eps) return true;
-      }
-      return false;
-    },
-
-    applyCut(data, cut) {
-      const radius = getComputedStyle(data.el).borderRadius || '0';
-      data.el.style.clipPath = `inset(0 0 0 ${Math.max(0, cut).toFixed(3)}% round ${radius})`;
-    },
-
-    applyCaptionSync(data, cut) {
-      if (!data.caption) return;
-
-      const safeCut = Math.max(0, cut);
-      if (safeCut <= this.SETTLE_EPSILON) {
-        this.clearCaptionSync(data);
-        return;
-      }
-
-      const pct = `${safeCut.toFixed(3)}%`;
-      data.caption.style.marginLeft = pct;
-      data.caption.style.width = `calc(100% - ${pct})`;
-    },
-
-    clearCaptionSync(data) {
-      if (!data.caption) return;
-      data.caption.style.marginLeft = '';
-      data.caption.style.width = '';
-    },
-
-    applyHoverCardSync(data, cut) {
-      if (!data.hoverCard) return;
-
-      const safeCut = Math.max(0, cut);
-      if (safeCut <= this.SETTLE_EPSILON) {
-        this.clearHoverCardSync(data);
-        return;
-      }
-
-      const px = data.el.getBoundingClientRect().width * (safeCut / 100);
-      data.hoverCard.style.setProperty('--gallery-hover-card-anchor-offset', `${px.toFixed(2)}px`);
-    },
-
-    clearHoverCardSync(data) {
-      if (!data.hoverCard) return;
-      data.hoverCard.style.removeProperty('--gallery-hover-card-anchor-offset');
-    },
-
-    update() {
-      const vh = window.innerHeight;
-      const start = vh * this.START_FACTOR;
-      const end = vh * this.END_FACTOR;
-
-      this.items.forEach((data) => {
-        const { el, gate, percent } = data;
-        if (!this.activeItems.has(el)) return;
-
-        // Hasta que el item no haya entrado visualmente, se mantiene
-        // en su estado angosto inicial.
-        if (!gate.classList.contains('is-visible')) {
-          data.targetCut = percent;
-          data.currentCut = percent;
-          this.applyCut(data, percent);
-          this.applyCaptionSync(data, percent);
-          this.applyHoverCardSync(data, percent);
-          return;
-        }
-
-        if (!data.primed) {
-          const rect0 = el.getBoundingClientRect();
-          let p0 = (start - rect0.bottom) / (start - end);
-          p0 = Math.max(0, Math.min(1, p0));
-          data.targetCut = percent * (1 - p0);
-          data.currentCut = data.targetCut;
-          this.applyCut(data, data.currentCut);
-          this.applyCaptionSync(data, data.currentCut);
-          this.applyHoverCardSync(data, data.currentCut);
-          data.primed = true;
-          return;
-        }
-
-        const rect = el.getBoundingClientRect();
-        let p = (start - rect.bottom) / (start - end);
-        p = Math.max(0, Math.min(1, p));
-
-        data.targetCut = percent * (1 - p);
-        data.currentCut += (data.targetCut - data.currentCut) * this.SMOOTHING;
-        this.applyCut(data, data.currentCut);
-        this.applyCaptionSync(data, data.currentCut);
-        this.applyHoverCardSync(data, data.currentCut);
-      });
-    },
-
-    resetItemAtBoundary(el) {
-      const data = this.items.find(item => item.el === el);
-      if (!data) return;
-
-      const rect = el.getBoundingClientRect();
-
-      if (rect.bottom <= 0) {
-        this.applyCut(data, 0);
-        this.clearCaptionSync(data);
-        this.clearHoverCardSync(data);
-        data.currentCut = 0;
-        data.targetCut = 0;
-        data.primed = false;
-      } else if (rect.top >= window.innerHeight) {
-        this.applyCut(data, data.percent);
-        this.applyCaptionSync(data, data.percent);
-        this.applyHoverCardSync(data, data.percent);
-        data.currentCut = data.percent;
-        data.targetCut = data.percent;
-        data.primed = false;
-      }
-    },
-  },
-
-  /* ============================================================
      PROJECT FACTS PARALLAX
      Movimiento parallax sutil del bloque .project-overview__facts:
      baja a un rate mucho menor que el scroll para dar profundidad.
@@ -5997,6 +5974,12 @@ const Timbo = {
     // que tendría una figura al 50% de ancho con ese aspecto. Así queda
     // fijo y no varía al mover el divider.
     FRAME_RATIO: 4.4 / 3,
+    // Aspect ratio de las fotos (horizontal). Praderas usa 1920×1080
+    // aproximadamente, ratio ≈ 16/9. Se usa para calcular cuánto
+    // corre la imagen lateralmente cuando la figura se aproxima al
+    // 100% del wrapper, para que quede centrada en lugar de pegada
+    // al borde exterior.
+    PHOTO_RATIO: 16 / 9,
     // Animación de entrada: hint visual para que el usuario entienda
     // que el divider se puede arrastrar.
     INTRO_START_PERCENT: 35,   // A=35%, B=65% (equivale a A=70%/B=130% del estado neutro)
@@ -6035,6 +6018,12 @@ const Timbo = {
     // Cada imagen ocupa "visible%" o "(100-visible)%" del wrapper
     // menos 4px (mitad del gap visual de 8px), de forma que la
     // frontera real coincida exactamente con visible% del wrapper.
+    //
+    // Además, para que cuando una imagen ocupe el 100% del wrapper
+    // quede CENTRADA (en lugar de pegada al borde exterior con todo
+    // el recorte de un solo lado), corremos cada <img> hacia el centro
+    // proporcionalmente al excedente de ancho que tenga la figura
+    // respecto al estado neutro (50%).
     renderItem(item) {
       const base = item.basePercent;
       const offset = item.scrollOffsetPercent || 0;
@@ -6043,6 +6032,23 @@ const Timbo = {
       item.photoB.style.width = `calc(${100 - clamped}% - 4px)`;
       item.divider.style.left = `${clamped}%`;
       item.currentPercent = clamped;
+
+      // Posición fija de cada <img>: la calculamos para que cuando
+      // la figura ocupe el 100% del wrapper, la imagen quede centrada.
+      // Como el shift no depende del width actual de la figura, la
+      // imagen NO se panea cuando se arrastra el divider: simplemente
+      // queda fija en su lugar y el contenedor la va destapando o
+      // tapando con su overflow: hidden.
+      //
+      // imgWidth = alto del marco × PHOTO_RATIO
+      // shift = -(imgWidth - wrapperWidth) / 2
+      const wrapperWidth = item.wrapper.getBoundingClientRect().width;
+      if (wrapperWidth <= 0) return;
+      const frameHeight = (wrapperWidth / 2) * this.FRAME_RATIO;
+      const imgWidth = frameHeight * this.PHOTO_RATIO;
+      const shift = -(imgWidth - wrapperWidth) / 2;
+      item.photoA.querySelector('img').style.left = `${shift}px`;
+      item.photoB.querySelector('img').style.right = `${shift}px`;
     },
 
     // Calcula y actualiza el scrollOffsetPercent de cada item, en
@@ -6145,6 +6151,46 @@ const Timbo = {
       }
     },
 
+    // Animación generalizada: lleva el basePercent del item desde su
+    // valor actual hasta targetPercent, en duration ms, con easeOutCubic.
+    // Se usa para el "reset al neutro" cuando el usuario hace click sin
+    // arrastrar. Si el usuario empieza a arrastrar mientras corre, se
+    // cancela.
+    animateToPercent(item, targetPercent, duration = 600) {
+      if (item.resetRaf) {
+        cancelAnimationFrame(item.resetRaf);
+        item.resetRaf = 0;
+      }
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) {
+        this.applyPercent(item, targetPercent);
+        return;
+      }
+
+      const start = item.basePercent;
+      const startTime = performance.now();
+
+      const step = (now) => {
+        if (item.isDragging) {
+          item.resetRaf = 0;
+          return;
+        }
+        const elapsed = now - startTime;
+        const progress = this.clamp(elapsed / duration, 0, 1);
+        const eased = this.easeOutCubic(progress);
+        const current = start + (targetPercent - start) * eased;
+        this.applyPercent(item, current);
+        if (progress < 1) {
+          item.resetRaf = requestAnimationFrame(step);
+        } else {
+          item.resetRaf = 0;
+        }
+      };
+
+      item.resetRaf = requestAnimationFrame(step);
+    },
+
     updateHeight(item) {
       const rect = item.wrapper.getBoundingClientRect();
       if (rect.width <= 0) return;
@@ -6158,7 +6204,17 @@ const Timbo = {
       // Si la animación de entrada todavía está corriendo, cortarla
       // para no pelearla con el drag manual.
       this.cancelIntroAnimation(item);
+      // Cancelar también la animación de reset si está corriendo.
+      if (item.resetRaf) {
+        cancelAnimationFrame(item.resetRaf);
+        item.resetRaf = 0;
+      }
       item.isDragging = true;
+      // Guardar posición inicial del pointer para detectar después
+      // si fue un click puro (sin movimiento) o un drag real.
+      item.pointerDownX = event.clientX;
+      item.pointerDownY = event.clientY;
+      item.pointerMoved = false;
       item.wrapper.classList.add('is-dragging');
       try {
         item.divider.setPointerCapture(event.pointerId);
@@ -6169,6 +6225,17 @@ const Timbo = {
 
     onPointerMove(item, event) {
       if (!item.isDragging) return;
+
+      // Detectar si el pointer se movió lo suficiente como para
+      // considerarse un drag (umbral de 5px en cualquier dirección).
+      if (!item.pointerMoved) {
+        const dx = event.clientX - item.pointerDownX;
+        const dy = event.clientY - item.pointerDownY;
+        if (Math.hypot(dx, dy) > 5) {
+          item.pointerMoved = true;
+        }
+      }
+
       const rect = item.wrapper.getBoundingClientRect();
       if (rect.width <= 0) return;
       // X: el cursor define la posición VISIBLE del divider. Como el
@@ -6194,6 +6261,16 @@ const Timbo = {
         }
       } catch (err) {
         // Ignorar.
+      }
+
+      // Si el pointer no se movió: fue un click puro. Animar el
+      // divider de vuelta al neutro (50% VISIBLE). Como el render
+      // suma scrollOffsetPercent al basePercent, hay que descontarlo
+      // del target para que la posición renderizada caiga exactamente
+      // en 50.
+      if (!item.pointerMoved && event.type === 'pointerup') {
+        const offset = item.scrollOffsetPercent || 0;
+        this.animateToPercent(item, 50 - offset);
       }
     },
 

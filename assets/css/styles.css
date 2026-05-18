@@ -155,6 +155,135 @@
   }
 }
 
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* Nav mobile: lista vertical alineada arriba a la izquierda, sobre el hero.
+     El nav deja de ser una barra horizontal de 60px y pasa a ser un bloque
+     vertical que respeta el alto que ocupa la lista de items. */
+  .main-nav {
+    height: auto;
+    padding: var(--space-xl) var(--space-lg);
+  }
+
+  .nav__links {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 4px;
+    height: auto;
+    /* Transición suave para la aparición/desaparición al scrollear */
+    transition: opacity 300ms ease;
+  }
+
+  /* Cada item queda alineado a la izquierda, sin la máscara de fade
+     (no hace falta en una lista vertical) y con line-height ajustado
+     para que los links queden pegados entre sí. */
+  .nav__links li {
+    padding: 0;
+    line-height: 1;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .nav__link {
+    font-size: var(--text-xs);
+    line-height: 1.4;
+  }
+
+  /* En mobile no hay hover real: ocultamos el underline animado
+     para evitar comportamiento raro al tocar. */
+  .nav__link-underline {
+    display: none;
+  }
+
+  .nav__link:hover {
+    opacity: 1;
+  }
+
+  /* Ocultamos el floating logo de desktop en mobile: en mobile usamos
+     uno propio (.floating-logo-mobile) con posición y comportamiento distintos. */
+  .floating-logo {
+    display: none !important;
+  }
+
+  /* Contenedor del floating logo + hamburguesa.
+     Maneja la posición fija arriba-izquierda y el gap entre ambos. */
+  .nav-floating-mobile {
+    position: fixed;
+    top: var(--space-xl);
+    left: var(--space-lg);
+    z-index: 101;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;  /* ← Cambia este número para acercar/alejar la hamburguesa del logo */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+  }
+
+  /* Floating logo mobile: árbol negro. Sin posición propia: vive dentro
+     del contenedor .nav-floating-mobile. */
+  .floating-logo-mobile {
+    display: block;
+    width: 100px;
+    height: auto;
+  }
+
+  .floating-logo-mobile img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Botón hamburguesa: sin posición propia, vive dentro del contenedor.
+     Desplazado 6px hacia la derecha respecto al borde izquierdo del contenedor. */
+  .nav-toggle-mobile {
+    width: 26px;
+    height: 20px;
+    margin-left: 6px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .nav-toggle-mobile__bar {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-black);
+    border-radius: 1px;
+  }
+
+  /* Fase 1: scroll cruzó HIDE_NAV_LIST_AT (100px). La lista desplegada desaparece. */
+  body.nav-mobile-hide-list .nav__links {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Fase 2: scroll cruzó SHOW_FLOATING_AT (500px). Aparecen logo + hamburguesa.
+     Entre fase 1 y fase 2 no se muestra ningún elemento de navegación. */
+  body.nav-mobile-show-floating .nav-floating-mobile {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* Desktop: el contenedor del floating logo mobile queda siempre oculto.
+   (En desktop usamos .floating-logo, no .floating-logo-mobile.) */
+.nav-floating-mobile {
+  display: none;
+}
+
+@media (max-width: 1023.98px) {
+  .nav-floating-mobile {
+    display: flex;
+  }
+}
 
 
 /* =========================
@@ -352,6 +481,60 @@
   }
 }
 
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* En mobile: escondemos el video y usamos imagen como fondo del hero.
+     Decisión: ahorrar data y evitar reproducir un video 4K en celular. */
+  .hero__bg video {
+    display: none;
+  }
+
+  .hero__bg {
+    background-image: url('../images/hero/hero-mobile.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* Hero ocupa el viewport completo en mobile (en desktop usa min-height: 1000px). */
+  .hero {
+    min-height: 100vh;
+    padding-top: 0;
+    /* Distribuimos: tagline al centro, logo al pie. */
+    justify-content: space-between;
+  }
+
+  /* El contenido se estira para ocupar toda la altura disponible y
+     repartir tagline (centro) y logo (pie) verticalmente. */
+  .hero__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2xl) var(--space-lg);
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* Tagline posicionada levemente debajo del centro vertical
+     (margin-top mayor que margin-bottom la empuja hacia abajo). */
+  .hero__tagline {
+    margin-top: auto;
+    margin-bottom: 28vh;
+    font-size: 1.6rem;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    max-width: 100%;
+  }
+
+  /* Logo al pie del hero, centrado horizontalmente. */
+  .hero__logo {
+    width: 70px;
+    margin: 0 auto;
+  }
+}
+
 /* =========================
    ANIMACIONES REVELADO
    ========================= */
@@ -497,11 +680,23 @@
   display: block;
 }
 
-.intro__photo.anim-fade-up {
-  transform: translateY(56px);
-  transition:
-    opacity 1500ms cubic-bezier(0.22, 0.61, 0.36, 1) var(--anim-delay),
-    transform 1500ms cubic-bezier(0.22, 0.61, 0.36, 1) var(--anim-delay);
+/* Misma animación de entrada que .project-refuge__image:
+   la imagen "crece" desde arriba hacia abajo (clip-path inset). */
+.intro__photo.anim-reveal-down {
+  --anim-delay: 0ms;
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.intro__photo.anim-reveal-down img {
+  clip-path: inset(0 0 40% 0 round 12px);
+  transition: clip-path 4s cubic-bezier(0.22, 1, 0.36, 1) var(--anim-delay);
+  will-change: clip-path;
+}
+
+.intro__photo.anim-reveal-down.is-visible img {
+  clip-path: inset(0 0 0 0 round 12px);
 }
 
 .intro__photo--wide {
@@ -564,19 +759,21 @@
   will-change: transform;
 }
 
-.nature-dialogue__text {
+.nature-dialogue__text-mask {
   --nature-dialogue-inline-start: var(--margin-c);
   position: absolute;
   left: var(--nature-dialogue-inline-start);
   bottom: clamp(64px, 12vh, 144px);
   max-width: min(980px, calc(100vw - var(--nature-dialogue-inline-start) - var(--space-xl)));
+}
+
+.nature-dialogue__text {
   margin: 0;
   color: var(--color-white);
   font-size: 3.25rem;
   font-weight: var(--fw-regular);
   letter-spacing: 0.04em;
   line-height: 1.05;
-  text-shadow: none;
 }
 
 .nature-dialogue__info {
@@ -831,6 +1028,15 @@ html[lang='es'] .philosophy__signal-label {
 }
 
 .page--services-light .page-content {
+  background-color: var(--color-gray-100);
+}
+
+.page--sust-light {
+  background-color: var(--color-gray-100);
+  color: var(--color-text-primary);
+}
+
+.page--sust-light .page-content {
   background-color: var(--color-gray-100);
 }
 
@@ -1467,6 +1673,25 @@ html.is-entering-home.is-entering-home-active .main-nav {
   transform-origin: center center;
 }
 
+/* Animación de entrada: la imagen "crece" desde arriba hacia abajo.
+   Estado inicial: la franja inferior está recortada (40% oculto).
+   Estado final (.is-visible): el recorte se reduce a 0 y se ve la imagen completa.
+   Misma duración y curva que .project-frame__media.anim-reveal-right. */
+.project-refuge__image.anim-reveal-down {
+  --anim-delay: 0ms;
+  overflow: hidden;
+}
+
+.project-refuge__image.anim-reveal-down img {
+  clip-path: inset(0 0 40% 0 round 12px);
+  transition: clip-path 4s cubic-bezier(0.22, 1, 0.36, 1) var(--anim-delay);
+  will-change: clip-path;
+}
+
+.project-refuge__image.anim-reveal-down.is-visible img {
+  clip-path: inset(0 0 0 0 round 12px);
+}
+
 .project-frame {
   padding: var(--space-2xl) 0;
   background-color: var(--color-bg-light);
@@ -1559,7 +1784,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .project-highlight__media {
-  --project-highlight-scroll-mask-left: 0%;
   width: 100%;
   height: auto;
   aspect-ratio: 16 / 9;
@@ -1570,8 +1794,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
   overflow: hidden;
   border-radius: 12px;
   background-color: var(--color-bg-light);
-  clip-path: inset(0 0 0 var(--project-highlight-scroll-mask-left, 0%) round 12px);
-  will-change: clip-path;
 }
 
 .project-highlight__media img {
@@ -1583,17 +1805,27 @@ html.is-entering-home.is-entering-home-active .main-nav {
   z-index: 6;
 }
 
-/* Animación de entrada: la imagen "crece" desde la derecha hacia la izquierda.
-   Estado inicial: la franja izquierda está recortada (40% oculto).
-   Estado final (.is-visible): el recorte se reduce a 0 y se ve la imagen completa. */
-.project-highlight__media.anim-reveal-right img {
-  clip-path: inset(0 0 0 40% round 12px);
-  transition: clip-path 4s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: clip-path;
+/* Animación de entrada: la imagen hace un zoom-in lento sobre sí misma
+   dentro de su marco, una sola vez al entrar al viewport.
+   Estado inicial: scale(1). Estado final (.is-visible): scale(1.06). */
+.project-highlight__media.anim-zoom-in img {
+  transform: scale(1);
+  transform-origin: center center;
+  transition: transform 2200ms ease-out;
+  will-change: transform;
 }
 
-.project-highlight__media.anim-reveal-right.is-visible img {
-  clip-path: inset(0 0 0 0 round 12px);
+.project-highlight__media.anim-zoom-in.is-visible img {
+  transform: scale(1.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-highlight__media.anim-zoom-in img {
+    transition: none;
+  }
+  .project-highlight__media.anim-zoom-in.is-visible img {
+    transform: scale(1);
+  }
 }
 
 .project-highlight__copy {
@@ -1791,7 +2023,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .page--haras-light .project-overview__photo,
 .page--haras-light .project-refuge__image,
 .page--haras-light .project-palette__image {
-  background-color: var(--color-gray-200);
+  background-color: var(--color-gray-100);
 }
 
 .page--haras-light .project-final__content {
@@ -1954,10 +2186,11 @@ html.is-entering-home.is-entering-home-active .main-nav {
   color: var(--color-gray-100);
   line-height: 1;
   pointer-events: none;
-  /* Ancho ajustado al ancho real del SVG (viewBox 100×40, altura 35px
-     da ~87px de ancho). Antes era 130px y dejaba "franja blureada"
-     extra a los costados del SVG. */
-  width: clamp(75px, 88px, 105px);
+  /* Ancho de la "píldora" (background-color + border-radius). Base:
+     levemente más angosta (acompaña a las flechas más cerca del círculo).
+     Hover: se expande al ancho del SVG (~88px). Transición lenta y suave. */
+  width: clamp(70px, 82px, 98px);
+  transition: width 0.5s ease-out, transform 0.5s ease-out;
   /* Fondo verde oliva (color-olive) detrás del SVG. El círculo y las flechas
      son opacos, así que el oliva solo se percibe en los espacios entre
      las formas. El border-radius redondea las puntas para que el
@@ -1968,11 +2201,19 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 /* En hover del divider (que cubre todo el hitbox extendido del ::before),
-   el icono crece un 10% respecto al estado base (0.6 → 0.66). */
+   el interior del círculo pasa de negro a gray-100. */
+.project-palette__divider:hover .project-palette__divider-circle,
+.project-palette__divider:focus-visible .project-palette__divider-circle,
+.project-palette__images--drag.is-dragging .project-palette__divider-circle {
+  fill: var(--color-gray-300);
+}
+
+/* En hover, la píldora se ensancha para volver a contener las flechas
+   que regresan a su posición original (más alejadas del círculo). */
 .project-palette__divider:hover .project-palette__divider-icon,
 .project-palette__divider:focus-visible .project-palette__divider-icon,
 .project-palette__images--drag.is-dragging .project-palette__divider-icon {
-  transform: translate(-50%, -50%) scale(0.66);
+  width: clamp(75px, 88px, 105px);
 }
 
 .project-palette__divider-svg {
@@ -1983,15 +2224,51 @@ html.is-entering-home.is-entering-home-active .main-nav {
   display: block;
 }
 
-/* Contorno del círculo: negro. El interior usa fill=currentColor (gray-100). */
+/* Contorno y relleno del círculo: negro (base).
+   transform-box: fill-box + transform-origin: center hace que el scale
+   gire alrededor del centro del propio path (no del viewBox completo).
+   Así achicamos solo el círculo sin tocar las flechas ni el SVG.
+   El fill cambia a gray-100 durante el hover del divider (regla abajo). */
 .project-palette__divider-circle {
   stroke: var(--color-black);
+  fill: var(--color-gray-500);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0.85);
+  transition: fill 0.75s ease-out;
 }
 
-/* Flechas < y >: trazo negro, un poco más grueso que el círculo. */
+/* Flechas < y >: trazo negro, un poco más grueso que el círculo.
+   Estado base: cada chevron se acerca al círculo con translateX.
+   Estado hover: vuelven a translateX(0) (su posición "original" en
+   el SVG, más alejadas del círculo). */
 .project-palette__divider-chevron {
   stroke: var(--color-black);
   stroke-width: 3;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.5s ease-out;
+}
+
+/* Selectores específicos: chevron izquierdo se corre hacia la derecha,
+   chevron derecho hacia la izquierda. Uso nth-of-type sobre los paths
+   con la clase divider-chevron. */
+.project-palette__divider-svg .project-palette__divider-chevron:first-of-type {
+  transform: translateX(3px);
+}
+
+.project-palette__divider-svg .project-palette__divider-chevron:last-of-type {
+  transform: translateX(-3px);
+}
+
+/* En hover/focus/drag, las flechas vuelven a su posición original. */
+.project-palette__divider:hover .project-palette__divider-chevron:first-of-type,
+.project-palette__divider:focus-visible .project-palette__divider-chevron:first-of-type,
+.project-palette__images--drag.is-dragging .project-palette__divider-chevron:first-of-type,
+.project-palette__divider:hover .project-palette__divider-chevron:last-of-type,
+.project-palette__divider:focus-visible .project-palette__divider-chevron:last-of-type,
+.project-palette__images--drag.is-dragging .project-palette__divider-chevron:last-of-type {
+  transform: translateX(0);
 }
 
 .project-palette__images--drag.is-dragging {
@@ -3272,7 +3549,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .sust-hero {
   min-height: 100vh;
-  padding: clamp(4rem, 8vw, 7rem) 0 clamp(5rem, 9vw, 8rem);
+  padding: clamp(4rem, 8vw, 7rem) 0 clamp(2rem, 4vw, 5rem);
   background-color: var(--color-gray-100);
   color: var(--color-black);
 }
@@ -3382,7 +3659,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .sust-process {
   min-height: 100vh;
-  padding: clamp(4rem, 8vw, 7rem) 0 clamp(5rem, 9vw, 8rem);
+  padding: clamp(2rem, 4vw, 5rem) 0 clamp(2rem, 4vw, 5rem);
   background-color: var(--color-gray-100);
   color: var(--color-black);
 }
@@ -3554,6 +3831,13 @@ html.is-entering-home.is-entering-home-active .main-nav {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  padding-bottom: clamp(0.7rem, 1vw, 0.9rem);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.outdoor-climate__panel:last-of-type {
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .outdoor-climate__panel-head {
@@ -3615,8 +3899,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   align-items: baseline;
   gap: 0.25rem 1rem;
   min-height: 1.4em;
-  padding: 0.5rem 0.25rem 0.75rem;
-  border-bottom: 1px solid var(--color-gray-200);
+  padding: 0.5rem 0.25rem 0;
   font-size: 0.6875rem;
   letter-spacing: 0.04em;
   color: var(--color-gray-400);
@@ -3624,8 +3907,23 @@ html.is-entering-home.is-entering-home-active .main-nav {
   transition: color 180ms ease;
 }
 
-.outdoor-climate__panel:last-of-type .outdoor-climate__readout {
-  border-bottom: none;
+.outdoor-climate__panel-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.outdoor-climate__panel-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.45rem 1rem;
+  max-width: min(100%, 28rem);
+  margin-left: auto;
+  padding: 0 0.25rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.03em;
+  color: var(--color-gray-400);
 }
 
 .outdoor-climate__readout.is-active {
@@ -3671,17 +3969,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
   cursor: crosshair;
 }
 
-.outdoor-climate__legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem 1.1rem;
-  padding-top: clamp(0.5rem, 1vw, 0.85rem);
-  border-top: 1px solid var(--color-gray-200);
-  font-size: 0.6875rem;
-  letter-spacing: 0.03em;
-  color: var(--color-gray-400);
-}
-
 .outdoor-climate__legend-item {
   display: inline-flex;
   align-items: center;
@@ -3723,9 +4010,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
     font-size: 0.55rem;
     letter-spacing: 0.04em;
   }
-  .outdoor-climate__legend {
+  .outdoor-climate__panel-legend {
     font-size: 0.625rem;
     gap: 0.4rem 0.8rem;
+    max-width: 100%;
   }
 }
 
@@ -3771,6 +4059,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   aspect-ratio: 1.25 / 1;
   border-radius: 14px;
   overflow: hidden;
+  background-color: var(--color-bg-light);
   justify-self: end;
 }
 
@@ -3782,6 +4071,17 @@ html.is-entering-home.is-entering-home-active .main-nav {
   object-fit: cover;
   object-position: center;
   border-radius: inherit;
+  display: block;
+}
+
+.sust-climate__media-wrap.anim-reveal-right .sust-climate__image {
+  clip-path: inset(0 0 0 40% round 14px);
+  transition: clip-path 4s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: clip-path;
+}
+
+.sust-climate__media-wrap.anim-reveal-right.is-visible .sust-climate__image {
+  clip-path: inset(0 0 0 0 round 14px);
 }
 
 .sust-climate__title {
@@ -3975,7 +4275,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   --sust-strategies-detail-gap: clamp(1.4rem, 2.6vw, 2.6rem);
   --sust-strategies-gutter-outset: max(0px, calc((100vw - var(--max-width)) / 2));
   --sust-strategies-reserved-width: max(0px, calc(var(--sust-strategies-detail-width) + var(--sust-strategies-detail-gap) - var(--sust-strategies-gutter-outset)));
-  padding: clamp(5rem, 10vw, 9rem) 0;
+  padding: clamp(2rem, 4vw, 6rem) 0;
   overflow-x: clip;
   background-color: var(--color-gray-100);
 }
@@ -4043,26 +4343,51 @@ html.is-entering-home.is-entering-home-active .main-nav {
   transform-origin: left center;
 }
 
+.sust-strategies__detail-media {
+  --sust-strategies-detail-media-width: clamp(6rem, 8vw, 10rem);
+  --sust-strategies-detail-label-width: min(100%, 10rem);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.7rem, 1vw, 0.95rem);
+  width: var(--sust-strategies-detail-media-width);
+  align-self: flex-start;
+}
+
 .sust-strategies__detail-icon-frame {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 5.5rem;
-  height: 5.5rem;
-  border-radius: 0.9rem;
-  background-color: var(--color-gray-200);
+  width: var(--sust-strategies-detail-media-width);
+  height: auto;
+  border-radius: 1.2rem;
+  background-color: var(--color-gray-100);
 }
 
 .sust-strategies__detail-icon {
-  width: 7rem;
+  width: 10rem;
   height: auto;
   object-fit: contain;
+}
+
+.sust-strategies__detail-label {
+  width: var(--sust-strategies-detail-label-width);
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.sust-strategies__detail-media[data-strategy="ventilacion"] .sust-strategies__detail-label {
+  align-self: flex-start;
+  width: clamp(11rem, 13vw, 12rem);
+  max-width: none;
 }
 
 .sust-strategies__detail-close {
   position: absolute;
   top: 1rem;
   right: 1rem;
+  z-index: 2;
   width: 2rem;
   height: 2rem;
   padding: 0;
@@ -4084,18 +4409,20 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .sust-strategies__detail-title {
   margin: 0 2rem 0 0;
-  font-size: clamp(1.2rem, 1.8vw, 1.7rem);
-  font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: -0.025em;
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  font-weight: var(--fw-regular);
+  line-height: 1.35;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   color: var(--color-black);
 }
 
 .sust-strategies__detail-text {
   margin: 0;
-  font-size: clamp(0.95rem, 1.18vw, 1.05rem);
-  line-height: 1.5;
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  font-weight: var(--fw-regular);
+  line-height: 1.35;
+  letter-spacing: 0.03em;
   color: rgba(29, 29, 27, 0.78);
 }
 
@@ -4253,6 +4580,11 @@ html.is-entering-home.is-entering-home-active .main-nav {
     max-width: 100%;
   }
 
+  .sust-strategies__detail-title,
+  .sust-strategies__detail-text {
+    font-size: 1.2rem;
+  }
+
   .sust-strategies__diagram-svg text[font-size="14"] {
     font-size: 12px;
   }
@@ -4297,7 +4629,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   --sust-pilares-detail-gap: clamp(1.4rem, 2.6vw, 2.6rem);
   --sust-pilares-gutter-outset: max(0px, calc((100vw - var(--max-width)) / 2));
   --sust-pilares-reserved-width: max(0px, calc(var(--sust-pilares-detail-width) + var(--sust-pilares-detail-gap) - var(--sust-pilares-gutter-outset)));
-  padding: clamp(5rem, 10vw, 9rem) 0 clamp(2rem, 4vw, 6rem);
+  padding: clamp(2rem, 4vw, 6rem) 0 clamp(2rem, 4vw, 6rem);
   overflow-x: clip;
   background-color: var(--color-gray-100);
 }
@@ -4631,11 +4963,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 /* --- Strategies grid --- */
 
-.sust-strategies {
-  padding: var(--space-4xl) 0;
-  border-top: 1px solid var(--color-gray-200);
-}
-
 .sust-strategies__header {
   margin-bottom: var(--space-3xl);
 }
@@ -4859,7 +5186,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
    ========================= */
 
 .sust-emissions {
-  padding: clamp(5rem, 10vw, 9rem) 0;
+  padding: clamp(2rem, 4vw, 6rem) 0;
   background-color: var(--color-gray-100);
 }
 
@@ -5046,6 +5373,9 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .page--about-light .floating-logo,
+.page--projects-light .floating-logo,
+.page--services-light .floating-logo,
+.page--sust-light .floating-logo,
 .page--contact-image .floating-logo {
   opacity: 0;
   filter: blur(24px);
@@ -5055,6 +5385,9 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .page--about-light .floating-logo--visible,
+.page--projects-light .floating-logo--visible,
+.page--services-light .floating-logo--visible,
+.page--sust-light .floating-logo--visible,
 .page--contact-image .floating-logo--visible {
   pointer-events: auto;
   animation: about-floating-logo-entry 2200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -5185,6 +5518,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
 @media (prefers-reduced-motion: reduce) {
   .page--about-light .floating-logo,
   .page--about-light .floating-logo--visible,
+  .page--projects-light .floating-logo,
+  .page--projects-light .floating-logo--visible,
+  .page--services-light .floating-logo,
+  .page--services-light .floating-logo--visible,
+  .page--sust-light .floating-logo,
+  .page--sust-light .floating-logo--visible,
   .page--contact-image .floating-logo,
   .page--contact-image .floating-logo--visible {
     animation: none;
@@ -6250,10 +6589,16 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .contact-image__item {
+  position: relative;
+  z-index: 0;
   display: grid;
   align-items: center;
   grid-template-columns: 45px minmax(0, 1fr);
   column-gap: clamp(0.9rem, 1.2vw, 1.25rem);
+}
+
+.contact-image__item--phone-menu-open {
+  z-index: 8;
 }
 
 .contact-image__icon {
@@ -6264,7 +6609,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .contact-image__link,
-.contact-image__phones {
+.contact-image__phones,
+.contact-image__phone-trigger {
   font-size: clamp(1.15rem, 1.1vw, 1.75rem);
   font-weight: var(--fw-regular);
   line-height: 1.15;
@@ -6282,7 +6628,121 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .contact-image__phones {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   gap: 0.2rem 0.45rem;
+}
+
+.contact-image__phone-option {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.contact-image__phone-option.is-open {
+  z-index: 3;
+}
+
+.contact-image__phone-trigger {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: opacity var(--transition-base);
+}
+
+.contact-image__phone-trigger:hover,
+.contact-image__phone-option.is-open .contact-image__phone-trigger {
+  opacity: 0.68;
+}
+
+.contact-image__phone-trigger::after {
+  content: '';
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-left: 0.45rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-0.12rem) rotate(45deg);
+  transition: transform var(--transition-base);
+}
+
+.contact-image__phone-option.is-open .contact-image__phone-trigger::after {
+  transform: translateY(0.05rem) rotate(-135deg);
+}
+
+.contact-image__phone-trigger:focus-visible,
+.contact-image__phone-action:focus-visible {
+  outline: 2px solid rgba(29, 29, 27, 0.55);
+  outline-offset: 4px;
+}
+
+.contact-image__phone-actions {
+  position: absolute;
+  top: calc(100% + 0.7rem);
+  left: 0;
+  display: none;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2rem;
+  min-width: 11.5rem;
+  padding: 0.45rem;
+  border: 1px solid rgba(29, 29, 27, 0.14);
+  border-radius: 1rem;
+  background: rgba(255, 245, 228, 0.96);
+  box-shadow: 0 20px 40px rgba(29, 29, 27, 0.12);
+  backdrop-filter: blur(10px);
+  transform-origin: top left;
+  will-change: transform, opacity, filter;
+}
+
+.contact-image__phone-option.is-open .contact-image__phone-actions {
+  display: flex;
+  animation: contact-image-phone-menu-enter 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.contact-image__phone-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0.72rem 0.9rem;
+  border: 0;
+  border-radius: 0.72rem;
+  background: transparent;
+  font-size: 0.92rem;
+  line-height: 1.1;
+  color: var(--color-text-primary);
+  transition:
+    background-color var(--transition-base),
+    opacity var(--transition-base);
+  white-space: nowrap;
+}
+
+.contact-image__phone-action:hover {
+  opacity: 1;
+  background: rgba(29, 29, 27, 0.06);
+}
+
+@keyframes contact-image-phone-menu-enter {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -16px, 0) scale(0.985);
+    filter: blur(12px);
+  }
+
+  62% {
+    opacity: 1;
+    transform: translate3d(0, 4px, 0) scale(1);
+    filter: blur(2px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
 }
 
 .contact-image__separator {
@@ -6345,15 +6805,36 @@ html.is-entering-home.is-entering-home-active .main-nav {
   }
 
   .contact-image__link,
-  .contact-image__phones {
+  .contact-image__phones,
+  .contact-image__phone-trigger {
     font-size: clamp(1.05rem, 4.8vw, 1.35rem);
     line-height: 1.22;
   }
 
   .contact-image__phones {
-    gap: 0.15rem 0.35rem;
+    flex-direction: column;
+    gap: 0.7rem;
   }
 
+  .contact-image__phone-actions {
+    top: calc(100% + 0.5rem);
+    min-width: 10.8rem;
+  }
+
+  .contact-image__phone-action {
+    padding: 0.68rem 0.82rem;
+  }
+
+  .contact-image__separator {
+    display: none;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-image__phone-option.is-open .contact-image__phone-actions {
+    animation: none;
+  }
 }
 
 
@@ -6370,7 +6851,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   /* --- Variables globales (compartidas por toda la galería) --- */
   --gallery-bg:              var(--color-gray-100);
   --gallery-padding-top:     clamp(12rem, 15vw, 22rem);
-  --gallery-padding-bottom:  var(--space-2xl);
+  --gallery-padding-bottom:  clamp(10rem, 12vw, 16rem);
   --gallery-side-padding-right:    var(--margin-b);
   --gallery-side-padding-left:    calc(var(--margin-c) );
   --gallery-max-width:       1600px;
@@ -6456,12 +6937,15 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .projects-gallery__row--1 > .projects-gallery__item:nth-child(2) {
   grid-column: 3 / span 2;
+  /* Empujamos Tobar Lodge 30px hacia la derecha. */
+  padding-left: 30px;
 }
 
 .projects-gallery__row--1 > .projects-gallery__item:first-child:hover + .projects-gallery__item .projects-gallery__item-frame,
 .projects-gallery__row--1 > .projects-gallery__item:first-child:focus-visible + .projects-gallery__item .projects-gallery__item-frame,
 .projects-gallery__row--1 > .projects-gallery__item:first-child:focus-within + .projects-gallery__item .projects-gallery__item-frame {
-  transform: translate3d(var(--gallery-hover-card-push), 0, 0);
+  /* Desplazamiento original del push menos 20px (pedido del usuario). */
+  transform: translate3d(calc(var(--gallery-hover-card-push) - 20px), 0, 0);
   transition-delay: var(--gallery-hover-card-shift-delay);
 }
 
@@ -6482,14 +6966,16 @@ html.is-entering-home.is-entering-home-active .main-nav {
    pero con A más ancha y B manteniendo su cuadrado 1:1. */
 .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media-pair {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
+  /* Las columnas se ajustan al ancho real de cada imagen (A ya tiene -40px),
+     así B queda pegada a A sin hueco extra. */
+  grid-template-columns: auto auto;
   gap: var(--row-pair-gap);
   height: var(--row-media-height);
-  width: var(--row-pair-width);
+  width: calc(var(--row-pair-width) - 40px);
 }
 
 .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__visual {
-  width: var(--row-pair-width);
+  width: calc(var(--row-pair-width) - 40px);
   max-width: none;
 }
 
@@ -6501,10 +6987,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media--square:first-child {
   aspect-ratio: var(--row-lead-ratio);
+  /* Reducimos levemente el ancho de la imagen A (sin tocar su alto). */
+  width: calc(var(--row-media-height) * 3 / 2 - 40px);
 }
 
 .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__caption {
-  width: var(--row-pair-width);
+  width: calc(var(--row-pair-width) - 40px);
 }
 
 /* --- FILA 2 (Tobar par + Suindá) -------------------------
@@ -6522,6 +7010,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   --row-pair-width:     calc(((var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height)) * 2) + var(--row-pair-gap));
   --row-height:         320px;   /* alto TOTAL de la fila (img + gap + caption) */
   --row-caption-height: var(--gallery-caption-height); /* alto reservado para el caption */
+  --suinda-shift-x:     -100px;  /* desplazamiento horizontal de la posición inicial de Suindá */
 
   grid-template-columns: 1fr 1fr;
   column-gap: var(--row-gap-x);
@@ -6549,6 +7038,9 @@ html.is-entering-home.is-entering-home-active .main-nav {
    derecho de su contenedor. */
 .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) {
   align-items: flex-end;
+  /* Desplazamiento horizontal. Usamos `translate` (no `transform`)
+     para no pisar la animación de entrada `anim-fade-up`. */
+  translate: var(--suinda-shift-x) 0;
 }
 
 /* Imagen alargada de Suindá: alto fijo, ancho derivado del aspect-ratio
@@ -6586,11 +7078,13 @@ html.is-entering-home.is-entering-home-active .main-nav {
   --row-gap-x:            1.5rem;
   --row-pair-gap:         1rem;
   --row-square-ratio:     1 / 1;
+  --row-lead-ratio:       3 / 2;    /* imagen A: 50% más ancha que la cuadrada (igual que Tobar en fila 1) */
   --row-img-ratio:        16 / 9;  /* aspect-ratio de la imagen alargada (Cardano) */
-  --row-pair-width:       calc(((var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height)) * 2) + var(--row-pair-gap));
+  --row-media-height:     calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
+  --row-pair-width:       calc((var(--row-media-height) * 2.5) + var(--row-pair-gap));
   --row-height:           320px;
   --row-caption-height:   var(--gallery-caption-height);
-  --haras-shift-x:        -100px;  /* desplazamiento horizontal de la posición inicial de Haras SP */
+  --haras-shift-x:        -30px;   /* desplazamiento horizontal de la posición inicial de Haras SP */
 
   grid-template-columns: 1fr 1fr;
   column-gap: var(--row-gap-x);
@@ -6600,6 +7094,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
 /* Item wide (Cardano): se queda a la izquierda — alineación por defecto */
 .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) {
   align-items: flex-start;
+  /* Empujamos Cardano Clubhouse 60px hacia la derecha. */
+  padding-left: 60px;
 }
 
 .projects-gallery__row--3 .projects-gallery__media--wide {
@@ -6614,21 +7110,26 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 /* Par de imágenes (Haras SP Private Estate, contenedor der).
-   Adentro: 2 sub-contenedores 50/50 que llenan el alto disponible.
-   Mismo enfoque que la fila 2: width derivado del aspect-ratio. */
+   Mismo patrón que Tobar en fila 1: foto A más ancha (3/2) y foto B cuadrada (1/1).
+   Las columnas usan 1.5fr 1fr para acompañar los aspect-ratios. */
 .projects-gallery__row--3 .projects-gallery__media-pair {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr;
   gap: var(--row-pair-gap);
-  height: calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
+  height: var(--row-media-height);
   width: var(--row-pair-width);
 }
 
-/* Cada imagen del par: alto fijo, ancho calculado por aspect-ratio (1:1) */
+/* Cada imagen del par: alto fijo, ancho calculado por aspect-ratio */
 .projects-gallery__row--3 .projects-gallery__media--square {
   height: 100%;
   width: auto;
   aspect-ratio: var(--row-square-ratio);
+}
+
+/* Foto A (primera del par): más ancha que la cuadrada */
+.projects-gallery__row--3 .projects-gallery__media--square:first-child {
+  aspect-ratio: var(--row-lead-ratio);
 }
 
 /* Haras SP: el item entero (par + caption) se alinea al borde
@@ -6650,6 +7151,35 @@ html.is-entering-home.is-entering-home-active .main-nav {
 /* Haras SP: el caption cierra exactamente con el ancho del par de imágenes. */
 .projects-gallery__row--3 > .projects-gallery__item--pair .projects-gallery__caption {
   width: var(--row-pair-width);
+}
+
+/* Espejo del shift de la fila 4: cuando se hace hover sobre el
+   segundo item (Haras SP, hover-card a la izquierda), el primer
+   item (Cardano Clubhouse) se desplaza hacia la izquierda para
+   dejar espacio al hover-card.
+   Como los items de la fila 3 NO tienen .projects-gallery__item-frame,
+   aplicamos el transform sobre .projects-gallery__visual Y sobre
+   .projects-gallery__caption para que la imagen y su tagline se muevan
+   juntos (igual que en la fila 4, donde el shift está sobre el frame
+   que contiene a ambos). La transición se declara en la regla siguiente. */
+.projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+.projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
+  transform: translate3d(0, 0, 0);
+  transition: transform var(--gallery-hover-card-shift-duration) var(--gallery-hover-card-shift-easing);
+  will-change: transform;
+}
+
+.projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__media:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__media:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__name:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__name:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-visible) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-visible) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-within) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-within) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
+  /* 44% del push estándar: misma duración → velocidad menor. */
+  transform: translate3d(calc(var(--gallery-hover-card-push) * -0.44), 0, 0);
+  transition-delay: var(--gallery-hover-card-shift-delay);
 }
 
 /* --- FILA 4 (Chacras de Murray + Club de Mar) -------------

@@ -3,6 +3,62 @@
 ## Qué es
 Sitio web estático para Timbó, estudio de arquitectura bioclimática argentino (Gerónimo Vigil y Mía Morrone). Vanilla HTML/CSS/JS, sin frameworks ni bundlers. Hosteado en Netlify.
 
+## ⚠️ REGLA CRÍTICA: Mobile vs Desktop
+
+**El sitio es desktop-first.** El CSS base (fuera de cualquier `@media`) define la versión desktop. Los estilos mobile viven dentro de `@media (max-width: ...)`.
+
+Cuando se trabaja en **mobile**:
+- TODA modificación debe ir dentro de un bloque `@media (max-width: ...)` apropiado (ver "Breakpoints estándar" abajo).
+- NUNCA modificar las reglas CSS de afuera de los `@media` queries — esas son las de desktop y deben quedar intactas.
+- Si hace falta cambiar un valor que está en `:root` o en una custom property, verificar antes si ese valor también afecta desktop. Si afecta a ambos, NO cambiarlo: en su lugar, sobreescribir la propiedad sólo dentro del `@media` mobile.
+- Antes de tocar cualquier selector, chequear si ya existe una regla para ese selector en desktop. Si existe, la versión mobile debe estar en `@media`, no reemplazar la de desktop.
+- Si una modificación de HTML o JS podría afectar desktop (ej. agregar/sacar un elemento, cambiar estructura), avisar antes y proponer cómo aislarla (clases condicionales, `matchMedia`, etc.).
+
+Cuando se trabaja en **desktop**: aplica la regla inversa — no tocar lo que está dentro de los `@media (max-width: ...)`.
+
+Si una modificación impacta ambos, hay que decirlo explícitamente antes de aplicarla.
+
+## Breakpoints estándar
+
+El sitio usa **dos modos** (mobile y desktop) con un solo breakpoint principal en **1024px**.
+
+| Modo | Ancho | Breakpoint CSS | Cubre |
+|---|---|---|---|
+| Celular chico (opcional) | ≤480px | `@media (max-width: 480px)` | iPhone SE y similares cuando hace falta ajuste fino |
+| Mobile + tablet vertical | ≤1023.98px | `@media (max-width: 1023.98px)` | Celulares y tablets en orientación vertical |
+| Desktop + tablet horizontal | ≥1024px | (default, sin `@media`) | Tablets horizontales, laptops, monitores |
+
+**Reglas:**
+- El breakpoint principal para mobile nuevo es **1024px** (`max-width: 1023.98px`).
+- Sólo se usa `480px` cuando un ajuste específico no se ve bien en celulares chicos.
+- NO se agregan breakpoints nuevos (`640`, `700`, `768`, `900`, `980`, `1100`, etc.) sin discutirlo primero.
+- **Importante:** el archivo `styles.css` actual tiene muchos `@media` viejos con breakpoints variados (`480`, `640`, `700`, `768`, `900`, `980`, `1080`, `1100`, `1366`, `1535`). Esto es legacy.
+
+### Migración oportunista
+
+NO se migra el `styles.css` viejo de golpe (riesgo alto, poca recompensa). En su lugar:
+- Cuando volvamos a tocar una sección por otra razón (ajuste, bugfix, feature nuevo), **aprovechamos y migramos sus `@media` viejos al estándar de 1024px**.
+- Si un `@media` viejo está en `768px` y no estamos por entrar a esa sección, se queda como está.
+- Si se modifica una regla dentro de un `@media` viejo, considerar primero si la sección entera está lista para migrarse, o si conviene dejarla en el breakpoint viejo hasta más adelante.
+
+### Formato para `@media` mobile nuevos
+
+Cada `@media` mobile nuevo va **al final de su sección** (antes del próximo header `/* ===== ... ===== */`), con este formato:
+
+```css
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* reglas mobile de esta sección */
+}
+
+/* --- MOBILE CHICO (opcional) --- */
+@media (max-width: 480px) {
+  /* sólo si hace falta ajuste extra para celulares chicos */
+}
+```
+
+Así cada sección queda autocontenida: desktop arriba, mobile pegado abajo.
+
 ## Repo
 `https://github.com/Mariano-cell/timbo-arquitectura`
 

@@ -32,6 +32,20 @@
       <li><a href="sobre-nosotros.html" class="nav__link">About Us</a></li>
       <li><a href="contacto.html" class="nav__link">Contact</a></li>
     </ul>
+
+    <!-- Floating logo y botón hamburguesa SÓLO mobile (ocultos en desktop por CSS).
+         Aparecen al scrollear más de 500px. Agrupados en un contenedor para
+         controlar el gap entre logo y hamburguesa de forma explícita. -->
+    <div class="nav-floating-mobile">
+      <a href="index.html" class="floating-logo-mobile" aria-label="Ir al inicio">
+        <img src="assets/images/logo/timbo-negro.svg" alt="Timbó">
+      </a>
+      <button type="button" class="nav-toggle-mobile" aria-label="Abrir menú" aria-expanded="false">
+        <span class="nav-toggle-mobile__bar"></span>
+        <span class="nav-toggle-mobile__bar"></span>
+        <span class="nav-toggle-mobile__bar"></span>
+      </button>
+    </div>
   </nav>
 
 
@@ -76,10 +90,10 @@
           </p>
         </div>
         <div class="intro__photos">
-          <figure class="intro__photo intro__photo--wide anim-fade-up" data-anim-delay="220">
+          <figure class="intro__photo intro__photo--wide anim-reveal-down" data-anim-delay="0">
             <img src="assets/images/intro-section/DSC01984.jpg" alt="Timbó — naturaleza" loading="lazy">
           </figure>
-          <figure class="intro__photo intro__photo--narrow anim-fade-up" data-anim-delay="320">
+          <figure class="intro__photo intro__photo--narrow anim-reveal-down" data-anim-delay="400">
             <img src="assets/images/intro-section/DSC02312.jpg" alt="Timbó — arquitectura" loading="lazy">
           </figure>
         </div>
@@ -151,7 +165,9 @@
     <section class="nature-dialogue" id="nature-dialogue" data-nav-theme="dark">
       <div class="nature-dialogue__image">
         <img src="assets/images/hero/hero_005.jpg" alt="Arquitectura en diálogo con la naturaleza" loading="lazy">
-        <p class="nature-dialogue__text">La arquitectura establece un diálogo duradero entre sus ocupantes y el mundo natural.</p>
+        <div class="nature-dialogue__text-mask">
+          <p class="nature-dialogue__text">La arquitectura establece un diálogo duradero entre sus ocupantes y el mundo natural.</p>
+        </div>
       </div>
       <div class="nature-dialogue__info">
         <div class="container">

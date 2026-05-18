@@ -1397,7 +1397,7 @@ const TimboCharts = {
         }));
         const lbl = this.el('text', {
           x: 8, y: y + 4, 'text-anchor': 'start',
-          'font-size': '10', fill: this.COLOR_AXIS, 'font-family': 'inherit',
+          'font-size': '12', fill: this.COLOR_AXIS, 'font-family': 'inherit',
         });
         lbl.textContent = t + '°';
         svg.appendChild(lbl);
@@ -1408,7 +1408,7 @@ const TimboCharts = {
         const y = this.yMap(h, this.HUM_MIN, this.HUM_MAX, padTop, plotH);
         const lbl = this.el('text', {
           x: vbW - 8, y: y + 4, 'text-anchor': 'end',
-          'font-size': '10', fill: this.COLOR_AXIS, 'font-family': 'inherit',
+          'font-size': '12', fill: this.COLOR_AXIS, 'font-family': 'inherit',
         });
         lbl.textContent = h + '%';
         svg.appendChild(lbl);
@@ -1544,7 +1544,7 @@ const TimboCharts = {
         const y = this.yMap(v, 0, this.RAD_MAX, padTop, plotH);
         const lbl = this.el('text', {
           x: 8, y: y + 4, 'text-anchor': 'start',
-          'font-size': '10', fill: this.COLOR_AXIS, 'font-family': 'inherit',
+          'font-size': '12', fill: this.COLOR_AXIS, 'font-family': 'inherit',
         });
         lbl.textContent = v;
         svg.appendChild(lbl);
@@ -1555,7 +1555,7 @@ const TimboCharts = {
         const y = this.yMap(v, 0, this.RAIN_MAX, padTop, plotH);
         const lbl = this.el('text', {
           x: vbW - 8, y: y + 4, 'text-anchor': 'end',
-          'font-size': '10', fill: this.COLOR_AXIS, 'font-family': 'inherit',
+          'font-size': '12', fill: this.COLOR_AXIS, 'font-family': 'inherit',
         });
         lbl.textContent = v;
         svg.appendChild(lbl);
@@ -1676,7 +1676,7 @@ const TimboCharts = {
         const y = this.yMap(v, this.WIND_MIN, this.WIND_MAX, padTop, plotH);
         const lbl = this.el('text', {
           x: 8, y: y + 4, 'text-anchor': 'start',
-          'font-size': '10', fill: this.COLOR_AXIS, 'font-family': 'inherit',
+          'font-size': '12', fill: this.COLOR_AXIS, 'font-family': 'inherit',
         });
         lbl.textContent = v;
         svg.appendChild(lbl);

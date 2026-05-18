@@ -40,9 +40,53 @@
           <li class="contact-image__item anim-fade-up" data-anim-delay="240">
             <img class="contact-image__icon" src="assets/images/contact/icono-telefono.svg" alt="" aria-hidden="true" loading="lazy" decoding="async">
             <div class="contact-image__phones">
-              <a class="contact-image__link" href="tel:+5491140252792">+54 9 11 40252792 (Mia)</a>
+              <div class="contact-image__phone-option" data-contact-phone>
+                <button
+                  class="contact-image__phone-trigger"
+                  type="button"
+                  data-contact-phone-trigger
+                  aria-expanded="false"
+                  aria-controls="contact-phone-actions-mia"
+                  aria-haspopup="menu"
+                >
+                  +54 9 11 40252792 (Mia)
+                </button>
+                <div
+                  class="contact-image__phone-actions"
+                  id="contact-phone-actions-mia"
+                  data-contact-phone-actions
+                  aria-label="Elegir cómo contactar a Mia"
+                  role="menu"
+                  hidden
+                >
+                  <a class="contact-image__phone-action" href="tel:+5491140252792" role="menuitem">Llamar</a>
+                  <a class="contact-image__phone-action" href="https://wa.me/5491140252792" target="_blank" rel="noreferrer" role="menuitem">WhatsApp</a>
+                </div>
+              </div>
               <span class="contact-image__separator" aria-hidden="true">/</span>
-              <a class="contact-image__link" href="tel:+5491140252792">+54 9 11 40252792 (Gero)</a>
+              <div class="contact-image__phone-option" data-contact-phone>
+                <button
+                  class="contact-image__phone-trigger"
+                  type="button"
+                  data-contact-phone-trigger
+                  aria-expanded="false"
+                  aria-controls="contact-phone-actions-gero"
+                  aria-haspopup="menu"
+                >
+                  +54 9 11 40252792 (Gero)
+                </button>
+                <div
+                  class="contact-image__phone-actions"
+                  id="contact-phone-actions-gero"
+                  data-contact-phone-actions
+                  aria-label="Elegir cómo contactar a Gero"
+                  role="menu"
+                  hidden
+                >
+                  <a class="contact-image__phone-action" href="tel:+5491140252792" role="menuitem">Llamar</a>
+                  <a class="contact-image__phone-action" href="https://wa.me/5491140252792" target="_blank" rel="noreferrer" role="menuitem">WhatsApp</a>
+                </div>
+              </div>
             </div>
           </li>
           <li class="contact-image__item anim-fade-up" data-anim-delay="320">
