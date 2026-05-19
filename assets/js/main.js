@@ -243,22 +243,30 @@ const Timbo = {
       const isSustPage = Boolean(document.querySelector('.sust-hero'));
 
       // Sustentabilidad en desktop: queremos que main-nav--scrolled solo aparezca
-      // cuando el nav esté efectivamente visible (al subir desde abajo).
-      // Si está oculto (main-nav--hidden, gestionado por navHide al scrollear hacia
-      // abajo), no se agrega, así no se ve el nav con fondo entrando y saliendo
-      // a la vez. Cuando navHide vuelve a mostrarlo (scroll hacia arriba), el
-      // siguiente evento de scroll lo agrega normalmente.
+      // cuando el usuario scrollea HACIA ARRIBA (re-mostrando el nav después de
+      // haberlo ocultado). Al scrollear hacia abajo no se debe agregar nunca, así
+      // el nav transparente se va limpio sin "pintarse" de blanco en el medio
+      // de la animación de --hidden.
       const desktopMQ = window.matchMedia('(min-width: 1024px)');
-      const skipWhenHidden = isSustPage && desktopMQ.matches;
+      const sustDesktop = isSustPage && desktopMQ.matches;
 
       let threshold = this.SCROLL_THRESHOLD;
       if (isAboutPage) threshold = this.ABOUT_SCROLL_THRESHOLD;
       else if (isSustPage) threshold = this.SUST_SCROLL_THRESHOLD;
 
+      let lastY = window.scrollY;
       window.addEventListener('scroll', () => {
-        if (window.scrollY >= threshold) {
-          if (skipWhenHidden && nav.classList.contains('main-nav--hidden')) return;
-          nav.classList.add('main-nav--scrolled');
+        const currentY = window.scrollY;
+        const goingUp = currentY < lastY;
+        lastY = currentY;
+
+        if (currentY >= threshold) {
+          if (sustDesktop) {
+            // Solo agregar cuando se viene scrolleando hacia arriba.
+            if (goingUp) nav.classList.add('main-nav--scrolled');
+          } else {
+            nav.classList.add('main-nav--scrolled');
+          }
         } else {
           nav.classList.remove('main-nav--scrolled');
         }
@@ -445,8 +453,9 @@ const Timbo = {
      - En el tope absoluto (scrollY === 0) siempre visible.
      ============================================================ */
   navHide: {
-    HIDE_AFTER_PX: 600,    // desde qué scroll puede empezar a esconderse
-    UP_THRESHOLD_PX: 8,    // cuánto hay que subir para re-mostrarlo
+    HIDE_AFTER_PX: 600,         // default: desde qué scroll puede empezar a esconderse
+    SUST_HIDE_AFTER_PX: 80,     // sustentabilidad: que el nav transparente se vaya apenas pasa el hero
+    UP_THRESHOLD_PX: 8,         // cuánto hay que subir para re-mostrarlo
 
     init() {
       const nav = document.querySelector('.main-nav');
@@ -462,6 +471,12 @@ const Timbo = {
       // el nav se oculta apenas hay scroll y solo reaparece al volver al top exacto.
       // Aplica a proyectos.
       const isProjectsPage = document.body.classList.contains('page--projects-light');
+      const isSustPage = document.body.classList.contains('page--sust-light');
+
+      // Umbral para esconder: en sustentabilidad usamos 80px en lugar del default 600px,
+      // así el nav transparente se va apenas el usuario pasa el hero (en lugar de
+      // mostrarse la versión con fondo, que justamente queremos evitar al bajar).
+      const hideAfter = isSustPage ? this.SUST_HIDE_AFTER_PX : this.HIDE_AFTER_PX;
 
       if (isProjectsPage) {
         let tickingStrict = false;
@@ -497,7 +512,7 @@ const Timbo = {
         } else if (delta > 0) {
           // Scroll hacia abajo: esconder una vez pasado el umbral mínimo.
           accumulatedUp = 0;
-          if (currentY > this.HIDE_AFTER_PX) {
+          if (currentY > hideAfter) {
             nav.classList.add('main-nav--hidden');
           }
         } else if (delta < 0) {
@@ -1141,26 +1156,15 @@ const Timbo = {
     },
 
     applyTitle(progress) {
-      if (!this.titleEl) return;
-      const clampedProgress = this.clamp(progress);
-      const translateY = this.TITLE_START_Y + ((this.FINAL_OFFSET_Y - this.TITLE_START_Y) * clampedProgress);
-      this.titleEl.style.opacity = clampedProgress.toFixed(3);
-      this.titleEl.style.transform = `translateY(${translateY.toFixed(1)}px)`;
+      // Animación de entrada del título migrada a sustProcessTitleReveal (mismo
+      // efecto que .sust-process__title). Se deja el método vacío para no
+      // romper llamadas existentes desde update().
     },
 
     applyText(progress) {
-      if (!this.textEl) return;
-      const clampedProgress = this.clamp(progress);
-      const translateY = this.TEXT_START_Y + ((this.FINAL_OFFSET_Y - this.TEXT_START_Y) * clampedProgress);
-      const revealEdge = (1 - clampedProgress) * 100;
-      const fadeStart = Math.max(0, revealEdge - this.TEXT_MASK_FADE_PCT);
-      const maskImage = clampedProgress <= 0
-        ? 'linear-gradient(to bottom, transparent 0%, transparent 100%)'
-        : `linear-gradient(to bottom, transparent 0%, transparent ${fadeStart.toFixed(3)}%, rgba(0, 0, 0, 1) ${revealEdge.toFixed(3)}%, rgba(0, 0, 0, 1) 100%)`;
-      this.textEl.style.opacity = clampedProgress.toFixed(3);
-      this.textEl.style.transform = `translateY(${translateY.toFixed(1)}px)`;
-      this.textEl.style.maskImage = maskImage;
-      this.textEl.style.webkitMaskImage = maskImage;
+      // Animación de entrada del texto migrada a .anim-fade-up (mismo efecto
+      // que .sust-process__text). Se deja el método vacío para no romper
+      // llamadas existentes desde update().
     },
 
     update() {
@@ -1934,6 +1938,9 @@ const Timbo = {
       const detail = section?.querySelector('.sust-pilares__detail');
       const detailStack = detail?.querySelector('.sust-pilares__detail-stack');
       const closeButton = detail?.querySelector('.sust-pilares__detail-close');
+      const detailMedia = detail?.querySelector('.sust-pilares__detail-media');
+      const detailIcon = detail?.querySelector('.sust-pilares__detail-icon');
+      const detailLabel = detail?.querySelector('.sust-pilares__detail-label');
       const detailTitle = detail?.querySelector('.sust-pilares__detail-title');
       const detailText = detail?.querySelector('.sust-pilares__detail-text');
       const labelItems = section
@@ -1948,26 +1955,38 @@ const Timbo = {
         temperatura: {
           title: 'TEMPERATURA',
           description: 'Variable clave del confort interior. Diseñamos para mantenerla estable a lo largo del año, evitando picos extremos y reduciendo la dependencia de sistemas mecánicos.',
+          icon: 'assets/images/sustainability/sust-pilars/temperatura.svg',
+          labelSvg: 'assets/images/sustainability/sust-pilars/temperatura-texto.svg',
         },
         radiacion: {
           title: 'RADIACIÓN',
           description: 'Estudiamos la radiación solar incidente en cada orientación para captarla cuando aporta calor útil y bloquearla cuando se vuelve carga térmica indeseada.',
+          icon: 'assets/images/sustainability/sust-pilars/radioacion.svg',
+          labelSvg: 'assets/images/sustainability/sust-pilars/radiacion-texto.svg',
         },
         luz: {
           title: 'LUZ',
           description: 'Maximizamos la luz natural y controlamos el deslumbramiento. La iluminación de calidad mejora el bienestar y reduce el consumo energético del edificio.',
+          icon: 'assets/images/sustainability/sust-pilars/luz.svg',
+          labelSvg: 'assets/images/sustainability/sust-pilars/luz-texto.svg',
         },
         flujo_aire: {
           title: 'FLUJO DE AIRE',
           description: 'Aprovechamos los vientos dominantes y las diferencias de presión para generar ventilación cruzada y nocturna que enfríe los ambientes de forma pasiva.',
+          icon: 'assets/images/sustainability/sust-pilars/flujo-de-aire.svg',
+          labelSvg: 'assets/images/sustainability/sust-pilars/flujo-de-aire-texto.svg',
         },
         calidad_aire: {
           title: 'CALIDAD DE AIRE',
           description: 'Garantizamos aire interior saludable a través de renovación constante, materiales no contaminantes y una ventilación pensada desde el inicio del proyecto.',
+          icon: 'assets/images/sustainability/sust-pilars/calidad-de-aire.svg',
+          labelSvg: 'assets/images/sustainability/sust-pilars/calidad-de-aire-texto.svg',
         },
         emisiones: {
           title: 'EMISIONES DE CARBONO',
           description: 'Cuantificamos el carbono incorporado en materiales y el operacional a lo largo de la vida útil, eligiendo soluciones que minimicen la huella del edificio.',
+          icon: 'assets/images/sustainability/sust-pilars/emision-de-carbono.svg',
+          labelSvg: 'assets/images/sustainability/sust-pilars/emisiones-de-carbono-texto.svg',
         },
       };
 
@@ -1979,6 +1998,36 @@ const Timbo = {
       };
 
       const setDetailContent = (pilar) => {
+        if (detailMedia) {
+          detailMedia.dataset.pilar = pilar ? activeKey : '';
+        }
+
+        if (detailIcon) {
+          if (pilar?.icon) {
+            detailIcon.src = pilar.icon;
+            detailIcon.alt = `Icono de ${pilar.title}`;
+            detailIcon.hidden = false;
+          } else {
+            detailIcon.removeAttribute('src');
+            detailIcon.alt = '';
+            detailIcon.hidden = true;
+          }
+        }
+
+        if (detailLabel) {
+          if (pilar?.labelSvg) {
+            detailLabel.src = pilar.labelSvg;
+            detailLabel.alt = '';
+            detailLabel.hidden = false;
+            detailTitle.classList.add('visually-hidden');
+          } else {
+            detailLabel.removeAttribute('src');
+            detailLabel.alt = '';
+            detailLabel.hidden = true;
+            detailTitle.classList.remove('visually-hidden');
+          }
+        }
+
         detailTitle.textContent = pilar ? pilar.title : '';
         detailText.textContent = pilar ? pilar.description : '';
       };
@@ -2656,25 +2705,38 @@ const Timbo = {
 
 
   /* ============================================================
-     IMAGE EXPAND (scroll-linked)
+     NATURE DIALOGUE IMAGE FADE (scroll-linked)
+     La imagen va de opacity 0 (contenedor negro visible) a 1 según scrollY,
+     usando como referencia la posición del elemento en viewport.
+     Mismo patrón que heroVideoScrollFade pero invertido.
      ============================================================ */
-  imageExpand: {
-    init() {
-      const el = document.querySelector('.nature-dialogue__image');
-      if (!el) return;
+  natureDialogueImageFade: {
+    // Cuando el top del elemento todavía está esta distancia debajo del fold,
+    // arranca el fade (opacity 0).
+    START_OFFSET_PX: 0,
+    // Distancia de scroll sobre la que se completa el fade hasta opacity 1.
+    FADE_DISTANCE_PX: 520,
 
-      // Respect prefers-reduced-motion
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    init() {
+      const container = document.querySelector('.nature-dialogue__image');
+      if (!container) return;
+
+      const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
       const update = () => {
-        const rect = el.getBoundingClientRect();
-        const start = window.innerHeight; // element top enters viewport
-        const end = start - el.offsetHeight * 1.2; // necesita más scroll para llegar al 100%
-        const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
-        el.style.setProperty('--expand-progress', progress);
+        const rect = container.getBoundingClientRect();
+        // Empieza cuando el top del elemento entra al viewport (rect.top === window.innerHeight → progress 0)
+        // y termina cuando ya scrolleó FADE_DISTANCE_PX adicionales.
+        const start = window.innerHeight + this.START_OFFSET_PX;
+        const traveled = start - rect.top;
+        const progressRaw = clamp(traveled / this.FADE_DISTANCE_PX, 0, 1);
+        // Misma curva suave que heroVideoScrollFade.
+        const opacity = Math.pow(progressRaw, 1.2);
+        container.style.setProperty('--nature-dialogue-image-opacity', opacity.toFixed(3));
       };
 
       window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
       update();
     },
   },
@@ -2989,13 +3051,25 @@ const Timbo = {
   },
 
   projectHighlightTitleReveal: {
+    // Multiplicador del viewport para el trigger del reveal.
+    // Valor entre 0 y 1: mas bajo = el texto tiene que entrar mas
+    // adentro del viewport para revelarse (hay que scrollear mas).
+    TRIGGER_RATIO: 0.6,
+
     init() {
       const title = document.querySelector('.project-highlight__title');
       if (!title) return;
 
+      const rebuildLines = () => {
+        Timbo.splitTextIntoVisualLines(title, {
+          lineClass: 'project-highlight__title-line',
+          innerClass: 'project-highlight__title-line-inner',
+        });
+      };
+
       const update = () => {
         const rect = title.getBoundingClientRect();
-        const trigger = window.innerHeight / 2;
+        const trigger = window.innerHeight * this.TRIGGER_RATIO;
 
         if (rect.top <= trigger) {
           title.classList.add('is-revealed');
@@ -3004,9 +3078,26 @@ const Timbo = {
         }
       };
 
+      let resizeRaf = 0;
+      const refresh = () => {
+        rebuildLines();
+        update();
+      };
+
+      const onResize = () => {
+        cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(refresh);
+      };
+
       window.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update);
-      update();
+      window.addEventListener('resize', onResize);
+      window.addEventListener('load', refresh, { once: true });
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(refresh).catch(() => {});
+      }
+
+      refresh();
     },
   },
 
@@ -3034,15 +3125,30 @@ const Timbo = {
 
   sustProcessTitleReveal: {
     init() {
-      const titles = Array.from(document.querySelectorAll('.sust-process__title'));
-      if (!titles.length) return;
+      const targets = [
+        {
+          selector: '.sust-process__title',
+          lineClass: 'sust-process__title-line',
+          innerClass: 'sust-process__title-line-inner',
+        },
+        {
+          selector: '.sust-breathe__title',
+          lineClass: 'sust-breathe__title-line',
+          innerClass: 'sust-breathe__title-line-inner',
+        },
+      ];
+
+      const titleEntries = targets.flatMap(({ selector, lineClass, innerClass }) =>
+        Array.from(document.querySelectorAll(selector)).map((el) => ({ el, lineClass, innerClass }))
+      );
+
+      if (!titleEntries.length) return;
+
+      const titles = titleEntries.map((entry) => entry.el);
 
       const rebuildLines = () => {
-        titles.forEach((title) => {
-          Timbo.splitTextIntoVisualLines(title, {
-            lineClass: 'sust-process__title-line',
-            innerClass: 'sust-process__title-line-inner',
-          });
+        titleEntries.forEach(({ el, lineClass, innerClass }) => {
+          Timbo.splitTextIntoVisualLines(el, { lineClass, innerClass });
         });
       };
 
@@ -4676,13 +4782,12 @@ const Timbo = {
     this.heroVideoScrollFade.init();
     this.projectHeroIntro.init();
     this.harasHeroTitleScroll.init();
-    this.imageExpand.init();
+    this.natureDialogueImageFade.init();
     this.aboutFinalZoom.init();
     this.projectMap.init();
     this.projectOverviewSlider.init();
     this.projectFactsParallax.init();
     this.projectFrameCopyParallax.init();
-    this.projectFrameScrollMask.init();
     this.projectPaletteTextParallax.init();
     this.projectPaletteScrollWidth.init();
     this.projectPaletteDrag.init();
@@ -5518,87 +5623,6 @@ const Timbo = {
       }
       const offset = Math.min(entered * this.RATE, this.MAX_OFFSET) - this.START_OFFSET;
       this.el.style.transform = `translate3d(0, ${offset}px, 0)`;
-    },
-  },
-
-  projectFrameScrollMask: {
-    START_SCROLL_Y: 2500,
-    END_SCROLL_Y: 3000,
-    MASK_PERCENT: 20,
-    items: [],
-    ticking: false,
-
-    clamp(value, min, max) {
-      return Math.min(max, Math.max(min, value));
-    },
-
-    parseNumber(value, fallback) {
-      const parsed = Number(value);
-      return Number.isFinite(parsed) ? parsed : fallback;
-    },
-
-    resolveConfig(el) {
-      const start = this.parseNumber(
-        el.dataset.scrollMaskLeftStart,
-        this.START_SCROLL_Y
-      );
-      const end = this.parseNumber(
-        el.dataset.scrollMaskLeftEnd,
-        this.END_SCROLL_Y
-      );
-      const percent = this.parseNumber(
-        el.dataset.scrollMaskLeftPercent,
-        this.MASK_PERCENT
-      );
-
-      if (end <= start) {
-        return {
-          start: this.START_SCROLL_Y,
-          end: this.END_SCROLL_Y,
-          percent: this.MASK_PERCENT,
-        };
-      }
-
-      return {
-        start,
-        end,
-        percent: Math.max(0, percent),
-      };
-    },
-
-    setMask(el, percent) {
-      el.style.setProperty('--project-frame-scroll-mask-left', `${percent}%`);
-    },
-
-    update(scrollYOverride = null) {
-      const scrollY = scrollYOverride === null ? window.scrollY : scrollYOverride;
-
-      this.items.forEach(({ el, start, end, percent }) => {
-        const progress = this.clamp((scrollY - start) / (end - start), 0, 1);
-        this.setMask(el, percent * progress);
-      });
-    },
-
-    onScroll() {
-      if (this.ticking) return;
-      this.ticking = true;
-      requestAnimationFrame(() => {
-        this.update();
-        this.ticking = false;
-      });
-    },
-
-    init() {
-      const els = document.querySelectorAll('.project-frame__media[data-scroll-mask-left-start]');
-      if (!els.length) return;
-
-      this.items = Array.from(els).map((el) => ({
-        el,
-        ...this.resolveConfig(el),
-      }));
-
-      this.update();
-      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
     },
   },
 
@@ -6885,24 +6909,3 @@ const Timbo = {
 document.addEventListener('DOMContentLoaded', () => {
   Timbo.init();
 });
-
-
-/* ============================================================
-   DEBUG SCROLL Y — temporal, borrar cuando termines de tunear
-   ============================================================ */
-   (function debugScrollY() {
-    const box = document.createElement('div');
-    box.style.cssText = `
-      position: fixed; top: 12px; right: 12px; z-index: 9999;
-      background: rgba(0, 0, 0, 0.75); color: #fff;
-      font: 14px/1.2 monospace; padding: 8px 12px; border-radius: 6px;
-      pointer-events: none; user-select: none;
-    `;
-    document.body.appendChild(box);
-  
-    const update = () => {
-      box.textContent = 'scrollY: ' + Math.round(window.scrollY);
-    };
-    update();
-    window.addEventListener('scroll', update, { passive: true });
-  })();

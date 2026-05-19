@@ -680,25 +680,6 @@
   display: block;
 }
 
-/* Misma animación de entrada que .project-refuge__image:
-   la imagen "crece" desde arriba hacia abajo (clip-path inset). */
-.intro__photo.anim-reveal-down {
-  --anim-delay: 0ms;
-  opacity: 1;
-  transform: none;
-  transition: none;
-}
-
-.intro__photo.anim-reveal-down img {
-  clip-path: inset(0 0 40% 0 round 12px);
-  transition: clip-path 4s cubic-bezier(0.22, 1, 0.36, 1) var(--anim-delay);
-  will-change: clip-path;
-}
-
-.intro__photo.anim-reveal-down.is-visible img {
-  clip-path: inset(0 0 0 0 round 12px);
-}
-
 .intro__photo--wide {
   position: relative;
   z-index: 2;
@@ -739,6 +720,7 @@
   position: relative;
   width: 100%;
   overflow: hidden;
+  background-color: #000;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -754,9 +736,9 @@
   display: block;
   position: relative;
   left: 50%;
-  transform: translateX(-50%) scale(calc(1 + var(--expand-progress, 0) * 0.12));
+  transform: translateX(-50%);
   transform-origin: center center;
-  will-change: transform;
+  opacity: var(--nature-dialogue-image-opacity, 0);
 }
 
 .nature-dialogue__text-mask {
@@ -1673,25 +1655,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
   transform-origin: center center;
 }
 
-/* Animación de entrada: la imagen "crece" desde arriba hacia abajo.
-   Estado inicial: la franja inferior está recortada (40% oculto).
-   Estado final (.is-visible): el recorte se reduce a 0 y se ve la imagen completa.
-   Misma duración y curva que .project-frame__media.anim-reveal-right. */
-.project-refuge__image.anim-reveal-down {
-  --anim-delay: 0ms;
-  overflow: hidden;
-}
-
-.project-refuge__image.anim-reveal-down img {
-  clip-path: inset(0 0 40% 0 round 12px);
-  transition: clip-path 4s cubic-bezier(0.22, 1, 0.36, 1) var(--anim-delay);
-  will-change: clip-path;
-}
-
-.project-refuge__image.anim-reveal-down.is-visible img {
-  clip-path: inset(0 0 0 0 round 12px);
-}
-
 .project-frame {
   padding: var(--space-2xl) 0;
   background-color: var(--color-bg-light);
@@ -1710,7 +1673,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .project-frame__media {
-  --project-frame-scroll-mask-left: 0%;
   width: 100%;
   height: auto;
   aspect-ratio: 16 / 9;
@@ -1721,8 +1683,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
   overflow: hidden;
   border-radius: 12px;
   background-color: var(--color-bg-light);
-  clip-path: inset(0 0 0 var(--project-frame-scroll-mask-left, 0%) round 12px);
-  will-change: clip-path;
 }
 
 .project-frame__media img {
@@ -1732,19 +1692,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
   display: block;
   position: relative;
   z-index: 6;
-}
-
-/* Animación de entrada: la imagen "crece" desde la izquierda hacia la derecha.
-   Estado inicial: la franja derecha está recortada (40% oculto).
-   Estado final (.is-visible): el recorte se reduce a 0 y se ve la imagen completa. */
-.project-frame__media.anim-reveal-right img {
-  clip-path: inset(0 40% 0 0 round 12px);
-  transition: clip-path 4s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: clip-path;
-}
-
-.project-frame__media.anim-reveal-right.is-visible img {
-  clip-path: inset(0 0 0 0 round 12px);
 }
 
 .project-frame__copy {
@@ -1779,7 +1726,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   gap: clamp(3rem, 6vw, 8rem);
   align-items: center;
   max-width: none;
-  margin: 6rem var(--margin-c) 0 calc(var(--margin-c) + var(--margin-c));
+  margin: 6rem var(--margin-b) 0 var(--margin-c);
   padding: 0;
 }
 
@@ -1852,8 +1799,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
    line-height, máscara y animación de entrada por scroll). */
 .project-highlight__title {
   position: absolute;
-  top: clamp(2rem, 4vw, 5rem);
-  right: clamp(1.5rem, 3vw, 3rem);
+  top: clamp(5rem, 7vw, 11rem);
+  right: var(--margin-c);
   z-index: 7;
   margin: 0;
   max-width: 22rem;
@@ -2438,7 +2385,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 /* Reveal de la franja derecha: la imagen arranca con su 40% derecho
    recortado (invisible) y al entrar al viewport se "abre" hacia la derecha.
-   Replica exacta del comportamiento de .project-frame__media.anim-reveal-right.
    Compatible con --pan: clip-path y animation/object-position son propiedades
    independientes, no se pisan. */
 .project-phrase__image.anim-reveal-right img {
@@ -4213,9 +4159,27 @@ html.is-entering-home.is-entering-home-active .main-nav {
   letter-spacing: 0.04em;
   text-wrap: balance;
   color: var(--color-black);
-  opacity: 0;
-  transform: translateY(-200px);
-  will-change: transform, opacity;
+}
+
+.sust-breathe__title-line {
+  display: block;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+}
+
+.sust-breathe__title-line-inner {
+  display: block;
+  transform: translateY(100%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sust-breathe__title.is-revealed .sust-breathe__title-line-inner {
+  transform: translateY(0);
 }
 
 .sust-breathe__text {
@@ -4227,19 +4191,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
   letter-spacing: 0.03em;
   color: var(--color-black);
   text-wrap: balance;
-  opacity: 0;
-  transform: translateY(2.75rem);
-  will-change: mask-image, -webkit-mask-image, transform, opacity;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sust-breathe__title,
-  .sust-breathe__text {
-    opacity: 1;
-    mask-image: none;
-    -webkit-mask-image: none;
-    transform: translateY(-20px);
-    will-change: auto;
+  .sust-breathe__title-line-inner {
+    transform: translateY(0);
+    transition: none;
   }
 }
 
@@ -4697,6 +4654,62 @@ html.is-entering-home.is-entering-home-active .main-nav {
   transform-origin: left center;
 }
 
+.sust-pilares__detail-media {
+  --sust-pilares-detail-media-width: clamp(6rem, 8vw, 10rem);
+  --sust-pilares-detail-label-width: min(100%, 10rem);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.7rem, 1vw, 0.95rem);
+  width: var(--sust-pilares-detail-media-width);
+  align-self: flex-start;
+}
+
+.sust-pilares__detail-icon-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sust-pilares-detail-media-width);
+  height: auto;
+  border-radius: 1.2rem;
+  background-color: var(--color-gray-100);
+}
+
+.sust-pilares__detail-icon {
+  width: 10rem;
+  height: auto;
+  object-fit: contain;
+}
+
+.sust-pilares__detail-label {
+  width: var(--sust-pilares-detail-label-width);
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.sust-pilares__detail-media[data-pilar="luz"] .sust-pilares__detail-label {
+  width: clamp(3rem, 4vw, 4.5rem);
+  max-width: none;
+  transform: translateX(-30px);
+}
+
+.sust-pilares__detail-media[data-pilar="emisiones"] .sust-pilares__detail-label {
+  width: clamp(12rem, 16vw, 15rem);
+  max-width: none;
+  align-self: flex-start;
+}
+
+.sust-pilares__detail-media[data-pilar="calidad_aire"] .sust-pilares__detail-icon {
+  width: 11rem;
+}
+
+.sust-pilares__detail-media[data-pilar="calidad_aire"] .sust-pilares__detail-label {
+  width: clamp(10rem, 12vw, 11rem);
+  max-width: none;
+  align-self: flex-start;
+}
+
 .sust-pilares__detail-close {
   position: absolute;
   top: 1rem;
@@ -4733,8 +4746,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .sust-pilares__detail-text {
   margin: 0;
-  font-size: clamp(0.95rem, 1.18vw, 1.05rem);
-  line-height: 1.5;
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  font-weight: var(--fw-regular);
+  line-height: 1.35;
+  letter-spacing: 0.03em;
   color: rgba(29, 29, 27, 0.78);
 }
 
@@ -5186,7 +5201,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
    ========================= */
 
 .sust-emissions {
-  padding: clamp(2rem, 4vw, 6rem) 0;
+  padding: clamp(4rem, 7vw, 8rem) 0 clamp(2rem, 4vw, 4rem) 0;
   background-color: var(--color-gray-100);
 }
 
@@ -5729,6 +5744,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   font-size: clamp(1.9rem, 2.2vw, 2.6rem);
   font-weight: var(--fw-regular);
   line-height: 1.15;
+  /* letter-spacing: 0.03em; */
   color: rgba(255, 255, 255, 0.55);
   margin-bottom: 1.4em;
 }
@@ -5780,10 +5796,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .about-approach__text {
   margin: 0;
-  font-size: clamp(1.2rem, 1.7vw, 1.9rem);
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
   font-weight: var(--fw-regular);
-  line-height: 1.16;
-  letter-spacing: -0.035em;
+  line-height: 1.35;
+  letter-spacing: 0.03em;
   color: rgba(255, 255, 255, 0.96);
   padding-top: 6rem;
 }
@@ -5867,7 +5883,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   gap: clamp(3rem, 7vw, 6rem);
   height: 100%;
   padding-top: calc(var(--nav-height) + clamp(1rem, 2vw, 1.5rem));
-  padding-bottom: clamp(1rem, 2vw, 1.5rem);
+  padding-bottom: clamp(2rem, 4vw, 6rem);
 }
 
 .about-founders__portrait {
@@ -5895,10 +5911,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .about-founders__text {
   margin: 0;
-  font-size: clamp(1.1rem, 1.45vw, 1.35rem);
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
   font-weight: var(--fw-regular);
-  line-height: 1.55;
-  letter-spacing: -0.02em;
+  line-height: 1.35;
+  letter-spacing: 0.03em;
   color: rgba(255, 255, 255, 0.94);
 }
 
@@ -6443,8 +6459,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .services-directory {
   min-height: 100vh;
   background-color: var(--color-gray-100);
-  padding-top: calc(var(--nav-height) + clamp(2.5rem, 4.5vw, 4rem));
-  padding-bottom: clamp(1.5rem, 3vw, 3rem);
+  padding-top: calc(var(--nav-height) + clamp(0.75rem, 1.5vw, 1.25rem));
+  padding-bottom: clamp(0.5rem, 1vw, 1rem);
 }
 
 .services-directory__inner {
@@ -6461,13 +6477,13 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .services-directory__item {
   border-bottom: 1px solid rgba(29, 29, 27, 0.18);
-  padding: clamp(0.9rem, 1.3vw, 1.35rem) 0;
+  padding: clamp(0.3rem, 0.5vw, 0.55rem) 0;
 }
 
 .services-directory__title {
   max-width: 22ch;
   margin: 0;
-  font-size: clamp(1.55rem, 3vw, 3.15rem);
+  font-size: clamp(1.8rem, 3.6vw, 3.7rem);
   font-weight: var(--fw-regular);
   line-height: 0.98;
   letter-spacing: 0.03em;
@@ -6863,7 +6879,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
   --gallery-caption-reveal-offset: 12px; /* origen del texto, unos px más arriba */
   --gallery-caption-reveal-delay:  1000ms;
   --gallery-caption-reveal-duration: 1450ms;
-  --gallery-hover-card-delay: 1000ms;
+  --gallery-hover-card-delay: 650ms;
+  --gallery-blur-activation-delay: var(--gallery-hover-card-delay);
   --gallery-hover-card-enter-duration: 320ms;
   --gallery-inactive-blur: 3px;
   --gallery-inactive-blur-delay: calc(var(--gallery-hover-card-delay) + var(--gallery-hover-card-enter-duration));
@@ -6921,7 +6938,13 @@ html.is-entering-home.is-entering-home-active .main-nav {
   --row-lead-ratio:     3 / 2;    /* imagen A: 50% más ancha que la cuadrada */
   --row-square-ratio:   1 / 1;    /* aspect-ratio de las imágenes cuadradas */
   --row-media-height:   calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
-  --row-pair-width:     calc((var(--row-media-height) * 2.5) + var(--row-pair-gap));
+  /* Anchos explícitos del par (calculados desde el alto, sin depender de aspect-ratio):
+       A (lead 3/2) = media-height * 3/2 − 40px (ajuste manual de A)
+       B (square 1/1) = media-height
+       Total = A + gap + B */
+  --row-lead-width:     calc(var(--row-media-height) * 3 / 2 - 40px);
+  --row-square-width:   var(--row-media-height);
+  --row-pair-width:     calc(var(--row-lead-width) + var(--row-pair-gap) + var(--row-square-width));
   --row-height:         320px;    /* alto TOTAL de la fila (img + gap + caption) */
   --row-caption-height: var(--gallery-caption-height); /* alto reservado para el caption */
 
@@ -6963,36 +6986,34 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 /* Tobar en fila 1: mismo patrón pair que Praderas,
-   pero con A más ancha y B manteniendo su cuadrado 1:1. */
+   pero con A más ancha (3/2) y B cuadrada (1/1).
+   Para que Safari y Chrome calculen lo mismo, definimos los anchos de
+   ambas imágenes EXPLÍCITAMENTE (no derivados de aspect-ratio). */
 .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media-pair {
   display: grid;
-  /* Las columnas se ajustan al ancho real de cada imagen (A ya tiene -40px),
-     así B queda pegada a A sin hueco extra. */
-  grid-template-columns: auto auto;
+  grid-template-columns: var(--row-lead-width) var(--row-square-width);
   gap: var(--row-pair-gap);
   height: var(--row-media-height);
-  width: calc(var(--row-pair-width) - 40px);
+  width: var(--row-pair-width);
 }
 
 .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__visual {
-  width: calc(var(--row-pair-width) - 40px);
+  width: var(--row-pair-width);
   max-width: none;
 }
 
 .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media--square {
   height: 100%;
-  width: auto;
+  width: 100%;
   aspect-ratio: var(--row-square-ratio);
 }
 
 .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media--square:first-child {
   aspect-ratio: var(--row-lead-ratio);
-  /* Reducimos levemente el ancho de la imagen A (sin tocar su alto). */
-  width: calc(var(--row-media-height) * 3 / 2 - 40px);
 }
 
 .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__caption {
-  width: calc(var(--row-pair-width) - 40px);
+  width: var(--row-pair-width);
 }
 
 /* --- FILA 2 (Tobar par + Suindá) -------------------------
@@ -7078,10 +7099,17 @@ html.is-entering-home.is-entering-home-active .main-nav {
   --row-gap-x:            1.5rem;
   --row-pair-gap:         1rem;
   --row-square-ratio:     1 / 1;
-  --row-lead-ratio:       3 / 2;    /* imagen A: 50% más ancha que la cuadrada (igual que Tobar en fila 1) */
+  --row-lead-ratio:       3 / 2;    /* foto A: más ancha que la cuadrada (igual que Tobar en fila 1) */
   --row-img-ratio:        16 / 9;  /* aspect-ratio de la imagen alargada (Cardano) */
   --row-media-height:     calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
-  --row-pair-width:       calc((var(--row-media-height) * 2.5) + var(--row-pair-gap));
+  /* Anchos explícitos del par (mismo cálculo que Tobar fila 1, para que A
+     de Haras tenga el MISMO ancho que A de Tobar):
+       A (lead 3/2) = media-height * 3/2 − 40px
+       B (square 1/1) = media-height
+       Total = A + gap + B */
+  --row-lead-width:       calc(var(--row-media-height) * 3 / 2 - 40px);
+  --row-square-width:     var(--row-media-height);
+  --row-pair-width:       calc(var(--row-lead-width) + var(--row-pair-gap) + var(--row-square-width));
   --row-height:           320px;
   --row-caption-height:   var(--gallery-caption-height);
   --haras-shift-x:        -30px;   /* desplazamiento horizontal de la posición inicial de Haras SP */
@@ -7110,24 +7138,25 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 /* Par de imágenes (Haras SP Private Estate, contenedor der).
-   Mismo patrón que Tobar en fila 1: foto A más ancha (3/2) y foto B cuadrada (1/1).
-   Las columnas usan 1.5fr 1fr para acompañar los aspect-ratios. */
+   Mismo patrón que Tobar en fila 1: foto A más ancha (3/2 con -40px) y foto B cuadrada (1/1).
+   Anchos explícitos (no fracciones) para que coincidan exactamente con Tobar. */
 .projects-gallery__row--3 .projects-gallery__media-pair {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-columns: var(--row-lead-width) var(--row-square-width);
   gap: var(--row-pair-gap);
   height: var(--row-media-height);
   width: var(--row-pair-width);
 }
 
-/* Cada imagen del par: alto fijo, ancho calculado por aspect-ratio */
+/* Cada imagen del par: ocupa la celda del grid (anchos definidos en --row-lead-width
+   y --row-square-width). Mismo patrón que Tobar en fila 1. */
 .projects-gallery__row--3 .projects-gallery__media--square {
   height: 100%;
-  width: auto;
+  width: 100%;
   aspect-ratio: var(--row-square-ratio);
 }
 
-/* Foto A (primera del par): más ancha que la cuadrada */
+/* Foto A (primera del par): aspect-ratio lead (la celda ya define el ancho) */
 .projects-gallery__row--3 .projects-gallery__media--square:first-child {
   aspect-ratio: var(--row-lead-ratio);
 }
@@ -7240,7 +7269,17 @@ html.is-entering-home.is-entering-home-active .main-nav {
    ----------------------------------------------------------- */
 .projects-gallery__row--5 {
   --row-gap-x:          1.5rem;
+  --row-pair-gap:       1rem;     /* gap entre las 2 imágenes del item par */
   --row-img-ratio:      16 / 9;
+  --row-lead-ratio:     3 / 2;    /* foto A: 50% más ancha que la cuadrada */
+  --row-square-ratio:   1 / 1;    /* foto B: cuadrada */
+  --row-media-height:   calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
+  /* Mismos anchos que Tobar Lodge en fila 1:
+       A (lead 3/2) = media-height * 3/2 − 40px
+       B (square 1/1) = media-height */
+  --row-lead-width:     calc(var(--row-media-height) * 3 / 2 - 40px);
+  --row-square-width:   var(--row-media-height);
+  --row-pair-width:     calc(var(--row-lead-width) + var(--row-pair-gap) + var(--row-square-width));
   --row-height:         320px;
   --row-caption-height: var(--gallery-caption-height);
 
@@ -7257,6 +7296,36 @@ html.is-entering-home.is-entering-home-active .main-nav {
   height: calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
   width: auto;
   aspect-ratio: var(--row-img-ratio);
+}
+
+/* Cherokee Residence: par de imágenes con mismos anchos que Tobar Lodge (fila 1).
+   Anchos explícitos (no fracciones) para que coincidan exactamente con Tobar. */
+.projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media-pair {
+  display: grid;
+  grid-template-columns: var(--row-lead-width) var(--row-square-width);
+  gap: var(--row-pair-gap);
+  height: var(--row-media-height);
+  width: var(--row-pair-width);
+}
+
+.projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__visual {
+  width: var(--row-pair-width);
+  max-width: none;
+}
+
+.projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media--square {
+  height: 100%;
+  width: 100%;
+  aspect-ratio: var(--row-square-ratio);
+}
+
+.projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media--square:first-child {
+  aspect-ratio: var(--row-lead-ratio);
+}
+
+/* Caption del par cierra exactamente con el ancho de las imágenes */
+.projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__caption {
+  width: var(--row-pair-width);
 }
 
 .projects-gallery__row--5 .projects-gallery__caption {

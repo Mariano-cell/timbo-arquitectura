@@ -1,0 +1,409 @@
+LISTADO FOTOS: Si aparece más de una foto, se ponen en orden de izquierda a derecha. Es decir, imagen-01 es la de más a la izquierda, e imagen-02 es la de la derecha. Les voy a aclarar si la foto tiene que ser horizontal o vertical. Déjenme escrito el nombre del archivo. Yo todavía tengo todas las fotos con sus nombres originales así que las puedo ubicar en la carpeta.
+
+
+==========================================
+HARAS SAN PABLO
+==========================================
+
+SECCIÓN A
+PORTADA
+(1 foto horizontal)
+imagen-sa-01 ->
+
+SECCIÓN B
+OVERVIEW
+(2 fotos horizontales)
+imagen-sb-01 ->
+imagen-sb-02 ->
+
+
+SECCIÓN C - TEXTO-01 (2 fotos verticales)
+imagen-sc-01 ->
+imagen-sc-02 ->
+
+
+SECCIÓN D - TEXTO-02 (1 foto horizontal)
+imagen-sd-01 ->
+
+
+SECCIÓN E
+TEXTO-03
+(2 fotos verticales) (una de las dos puede ser horizontal)
+imagen-se-01 ->
+imagen-se-02 ->
+
+
+SECCIÓN F
+TEXTO-04
+(1 foto horizontal)
+imagen-sf-01 ->
+
+
+SECCIÓN G
+TEXTO-05
+(2 fotos horizontales) (la disposición parece vertical, pero son fotos horizontales)
+imagen-sg-01 ->
+imagen-sg-02 ->
+
+
+SECCIÓN H
+FINAL
+(1 foto horizontal)
+imagen-sh-01 ->
+
+
+==========================================
+TOBAR LODGE
+==========================================
+
+SECCIÓN A
+PORTADA
+(1 foto horizontal)
+imagen-sa-01 ->
+
+SECCIÓN B
+OVERVIEW
+(2 fotos horizontales)
+imagen-sb-01 ->
+imagen-sb-02 ->
+
+
+SECCIÓN C - TEXTO-01 (2 fotos verticales)
+imagen-sc-01 ->
+imagen-sc-02 ->
+
+
+SECCIÓN D - TEXTO-02 (1 foto horizontal)
+imagen-sd-01 ->
+
+
+SECCIÓN E
+TEXTO-03
+(2 fotos verticales) (una de las dos puede ser horizontal)
+imagen-se-01 ->
+imagen-se-02 ->
+
+
+SECCIÓN F
+TEXTO-04
+(1 foto horizontal)
+imagen-sf-01 ->
+
+
+SECCIÓN G
+TEXTO-05
+(2 fotos horizontales) (la disposición parece vertical, pero son fotos horizontales)
+imagen-sg-01 ->
+imagen-sg-02 ->
+
+
+SECCIÓN H
+FINAL
+(1 foto horizontal)
+imagen-sh-01 ->
+
+
+==========================================
+SUINDÁ LODGE
+==========================================
+
+SECCIÓN A
+PORTADA
+(1 foto horizontal)
+imagen-sa-01 ->
+
+SECCIÓN B
+OVERVIEW
+(2 fotos horizontales)
+imagen-sb-01 ->
+imagen-sb-02 ->
+
+
+SECCIÓN C - TEXTO-01 (2 fotos verticales)
+imagen-sc-01 ->
+imagen-sc-02 ->
+
+
+SECCIÓN D - TEXTO-02 (1 foto horizontal)
+imagen-sd-01 ->
+
+
+SECCIÓN E
+TEXTO-03
+(2 fotos verticales) (una de las dos puede ser horizontal)
+imagen-se-01 ->
+imagen-se-02 ->
+
+
+SECCIÓN F
+TEXTO-04
+(1 foto horizontal)
+imagen-sf-01 ->
+
+
+SECCIÓN G
+TEXTO-05
+(2 fotos horizontales) (la disposición parece vertical, pero son fotos horizontales)
+imagen-sg-01 ->
+imagen-sg-02 ->
+
+
+SECCIÓN H
+FINAL
+(1 foto horizontal)
+imagen-sh-01 ->
+
+
+==========================================
+CHEROKEE AVE
+==========================================
+
+SECCIÓN A
+PORTADA
+(1 foto horizontal)
+imagen-sa-01 ->
+
+SECCIÓN B
+OVERVIEW
+(2 fotos horizontales)
+imagen-sb-01 ->
+imagen-sb-02 ->
+
+
+SECCIÓN C - TEXTO-01 (2 fotos verticales)
+imagen-sc-01 ->
+imagen-sc-02 ->
+
+
+SECCIÓN D - TEXTO-02 (1 foto horizontal)
+imagen-sd-01 ->
+
+
+SECCIÓN E
+TEXTO-03
+(2 fotos verticales) (una de las dos puede ser horizontal)
+imagen-se-01 ->
+imagen-se-02 ->
+
+
+SECCIÓN F
+TEXTO-04
+(1 foto horizontal)
+imagen-sf-01 ->
+
+
+SECCIÓN G
+TEXTO-05
+(2 fotos horizontales) (la disposición parece vertical, pero son fotos horizontales)
+imagen-sg-01 ->
+imagen-sg-02 ->
+
+
+SECCIÓN H
+FINAL
+(1 foto horizontal)
+imagen-sh-01 ->
+
+
+==========================================
+PROYECTO 5 (renombrar)
+==========================================
+
+SECCIÓN A
+PORTADA
+(1 foto horizontal)
+imagen-sa-01 ->
+
+SECCIÓN B
+OVERVIEW
+(2 fotos horizontales)
+imagen-sb-01 ->
+imagen-sb-02 ->
+
+
+SECCIÓN C - TEXTO-01 (2 fotos verticales)
+imagen-sc-01 ->
+imagen-sc-02 ->
+
+
+SECCIÓN D - TEXTO-02 (1 foto horizontal)
+imagen-sd-01 ->
+
+
+SECCIÓN E
+TEXTO-03
+(2 fotos verticales) (una de las dos puede ser horizontal)
+imagen-se-01 ->
+imagen-se-02 ->
+
+
+SECCIÓN F
+TEXTO-04
+(1 foto horizontal)
+imagen-sf-01 ->
+
+
+SECCIÓN G
+TEXTO-05
+(2 fotos horizontales) (la disposición parece vertical, pero son fotos horizontales)
+imagen-sg-01 ->
+imagen-sg-02 ->
+
+
+SECCIÓN H
+FINAL
+(1 foto horizontal)
+imagen-sh-01 ->
+
+
+==========================================
+PROYECTO 6 (renombrar)
+==========================================
+
+SECCIÓN A
+PORTADA
+(1 foto horizontal)
+imagen-sa-01 ->
+
+SECCIÓN B
+OVERVIEW
+(2 fotos horizontales)
+imagen-sb-01 ->
+imagen-sb-02 ->
+
+
+SECCIÓN C - TEXTO-01 (2 fotos verticales)
+imagen-sc-01 ->
+imagen-sc-02 ->
+
+
+SECCIÓN D - TEXTO-02 (1 foto horizontal)
+imagen-sd-01 ->
+
+
+SECCIÓN E
+TEXTO-03
+(2 fotos verticales) (una de las dos puede ser horizontal)
+imagen-se-01 ->
+imagen-se-02 ->
+
+
+SECCIÓN F
+TEXTO-04
+(1 foto horizontal)
+imagen-sf-01 ->
+
+
+SECCIÓN G
+TEXTO-05
+(2 fotos horizontales) (la disposición parece vertical, pero son fotos horizontales)
+imagen-sg-01 ->
+imagen-sg-02 ->
+
+
+SECCIÓN H
+FINAL
+(1 foto horizontal)
+imagen-sh-01 ->
+
+
+==========================================
+PROYECTO 7 (renombrar)
+==========================================
+
+SECCIÓN A
+PORTADA
+(1 foto horizontal)
+imagen-sa-01 ->
+
+SECCIÓN B
+OVERVIEW
+(2 fotos horizontales)
+imagen-sb-01 ->
+imagen-sb-02 ->
+
+
+SECCIÓN C - TEXTO-01 (2 fotos verticales)
+imagen-sc-01 ->
+imagen-sc-02 ->
+
+
+SECCIÓN D - TEXTO-02 (1 foto horizontal)
+imagen-sd-01 ->
+
+
+SECCIÓN E
+TEXTO-03
+(2 fotos verticales) (una de las dos puede ser horizontal)
+imagen-se-01 ->
+imagen-se-02 ->
+
+
+SECCIÓN F
+TEXTO-04
+(1 foto horizontal)
+imagen-sf-01 ->
+
+
+SECCIÓN G
+TEXTO-05
+(2 fotos horizontales) (la disposición parece vertical, pero son fotos horizontales)
+imagen-sg-01 ->
+imagen-sg-02 ->
+
+
+SECCIÓN H
+FINAL
+(1 foto horizontal)
+imagen-sh-01 ->
+
+
+==========================================
+PROYECTO 8 (renombrar)
+==========================================
+
+SECCIÓN A
+PORTADA
+(1 foto horizontal)
+imagen-sa-01 ->
+
+SECCIÓN B
+OVERVIEW
+(2 fotos horizontales)
+imagen-sb-01 ->
+imagen-sb-02 ->
+
+
+SECCIÓN C - TEXTO-01 (2 fotos verticales)
+imagen-sc-01 ->
+imagen-sc-02 ->
+
+
+SECCIÓN D - TEXTO-02 (1 foto horizontal)
+imagen-sd-01 ->
+
+
+SECCIÓN E
+TEXTO-03
+(2 fotos verticales) (una de las dos puede ser horizontal)
+imagen-se-01 ->
+imagen-se-02 ->
+
+
+SECCIÓN F
+TEXTO-04
+(1 foto horizontal)
+imagen-sf-01 ->
+
+
+SECCIÓN G
+TEXTO-05
+(2 fotos horizontales) (la disposición parece vertical, pero son fotos horizontales)
+imagen-sg-01 ->
+imagen-sg-02 ->
+
+
+SECCIÓN H
+FINAL
+(1 foto horizontal)
+imagen-sh-01 ->
