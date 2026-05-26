@@ -1376,10 +1376,16 @@ const TimboCharts = {
       const xAt = (j) => this.PAD_X + (j + 0.5) * (plotW / N);
 
       // Mes/semana a partir del índice j
+      // Desktop muestra "Ene · sem 2"; mobile sólo "Ene" (el CSS oculta una u otra).
       const weekLabel = (j) => {
         const monthIdx = Math.floor(j / SUB);
         const week     = (j % SUB) + 1;
-        return months[monthIdx] + ' · sem ' + week;
+        const full     = months[monthIdx] + ' · sem ' + week;
+        const short    = months[monthIdx];
+        return (
+          '<span class="outdoor-climate__readout-when outdoor-climate__readout-when--desktop">' + full  + '</span>' +
+          '<span class="outdoor-climate__readout-when outdoor-climate__readout-when--mobile">'  + short + '</span>'
+        );
       };
 
       // Series interpoladas (Catmull-Rom cíclico)

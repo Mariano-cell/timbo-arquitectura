@@ -71,12 +71,14 @@
                 aria-label="Temperatura y humedad mensual"></svg>
               <div class="outdoor-climate__panel-footer">
                 <div class="outdoor-climate__readout" id="outdoor-climate-temp-readout" aria-live="polite">
-                  <span class="outdoor-climate__readout-default">Pasá el cursor sobre el gráfico para ver los valores mes a mes</span>
+                  <span class="outdoor-climate__readout-default outdoor-climate__readout-default--desktop">Pasá el cursor sobre el gráfico para ver los valores mes a mes</span>
+                  <span class="outdoor-climate__readout-default outdoor-climate__readout-default--mobile">Mantené pulsado el gráfico para ver los valores mes a mes</span>
                 </div>
                 <div class="outdoor-climate__panel-legend">
                   <span class="outdoor-climate__legend-item">
                     <span class="outdoor-climate__swatch outdoor-climate__swatch--temp"></span>
-                    Temperatura media
+                    <span class="outdoor-climate__legend-label outdoor-climate__legend-label--desktop">Temperatura media</span>
+                    <span class="outdoor-climate__legend-label outdoor-climate__legend-label--mobile">Temp. media</span>
                   </span>
                   <span class="outdoor-climate__legend-item">
                     <span class="outdoor-climate__swatch outdoor-climate__swatch--range"></span>
@@ -216,10 +218,9 @@
 
                 <g class="sust-pilares__orbit-label-item" data-pilar="flujo_aire" transform="translate(552 664)">
                   <g class="sust-pilares__orbit-label-content">
-                    <text x="0" text-anchor="middle" dominant-baseline="middle" font-size="16" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                    <text x="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
                       font-family="'Neue Haas Grotesk Display Pro', sans-serif">
-                      <tspan x="0" y="-10">FLUJO</tspan>
-                      <tspan x="0" y="10">DE AIRE</tspan>
+                      <tspan x="0" y="-10">FLUJO DE AIRE</tspan>
                     </text>
                   </g>
                 </g>
@@ -244,9 +245,8 @@
             </svg>
           </div>
 
-          <aside class="sust-pilares__detail" id="sust-pilares-detail" aria-live="polite" aria-hidden="true">
+          <aside class="sust-pilares__detail" id="sust-pilares-detail" aria-live="polite" aria-hidden="false">
             <div class="sust-pilares__detail-card">
-              <button class="sust-pilares__detail-close" type="button" aria-label="Cerrar detalle">×</button>
               <div class="sust-pilares__detail-stack">
                 <div class="sust-pilares__detail-media">
                   <div class="sust-pilares__detail-icon-frame">
@@ -310,28 +310,28 @@
             <ul class="emissions-chart__legend">
               <li class="emissions-chart__legend-item" data-slice="other">
                 <span class="emissions-chart__swatch"></span>
-                <p class="emissions-chart__legend-value">9,0%</p>
+                <p class="emissions-chart__legend-value">9%</p>
                 <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelOther">Otros</p>
               </li>
               <li class="emissions-chart__legend-item" data-slice="ops">
                 <span class="emissions-chart__swatch"></span>
-                <p class="emissions-chart__legend-value">28,0%</p>
-                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelOps">Operaciones de construcción</p>
+                <p class="emissions-chart__legend-value">30%</p>
+                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelOps">Industria</p>
               </li>
               <li class="emissions-chart__legend-item" data-slice="transport">
                 <span class="emissions-chart__swatch"></span>
-                <p class="emissions-chart__legend-value">22,0%</p>
+                <p class="emissions-chart__legend-value">22%</p>
                 <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelTransport">Transporte</p>
               </li>
               <li class="emissions-chart__legend-item" data-slice="materials">
                 <span class="emissions-chart__swatch"></span>
-                <p class="emissions-chart__legend-value">11,0%</p>
+                <p class="emissions-chart__legend-value">11%</p>
                 <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelMaterials">Materiales de construcción</p>
               </li>
               <li class="emissions-chart__legend-item" data-slice="industry">
                 <span class="emissions-chart__swatch"></span>
-                <p class="emissions-chart__legend-value">30,0%</p>
-                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelIndustry">Industria</p>
+                <p class="emissions-chart__legend-value">28%</p>
+                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelIndustry">Consumo energético en edificios</p>
               </li>
             </ul>
           </figure>
@@ -339,7 +339,7 @@
         <div class="sust-emissions__right sust-process__copy anim-fade-up" data-anim-delay="180">
           <h2 class="sust-process__title">Cuantificamos el carbono incorporado y el operacional</h2>
           <p class="sust-process__text">Evaluamos materiales y demanda energética a lo largo del ciclo de vida del
-            edificio. <br>Maximizamos la luz natural y la ventilación mientras controlamos las ganancias térmicas, logrando
+            edificio. <br class="br-desktop">Maximizamos la luz natural y la ventilación mientras controlamos las ganancias térmicas, logrando
             condiciones estables a lo largo de las estaciones.<br><br>Este enfoque nos permite evitar soluciones
             "verdes" genéricas y desarrollar estrategias climáticas específicas para cada proyecto: simples, efectivas
             y duraderas.</p>
@@ -486,9 +486,8 @@
             </svg>
           </div>
 
-          <aside class="sust-strategies__detail" id="sust-strategies-detail" aria-live="polite" aria-hidden="true">
+          <aside class="sust-strategies__detail" id="sust-strategies-detail" aria-live="polite" aria-hidden="false">
             <div class="sust-strategies__detail-card">
-              <button class="sust-strategies__detail-close" type="button" aria-label="Cerrar detalle">×</button>
               <div class="sust-strategies__detail-stack">
                 <div class="sust-strategies__detail-media">
                   <div class="sust-strategies__detail-icon-frame">
@@ -511,11 +510,11 @@
       </div>
 
       <div class="container sust-breathe__content">
-        <h2 class="sust-breathe__title">Un proyecto timbó<br>no es
-          hermético:<br>respira.</h2>
+        <h2 class="sust-breathe__title">Un proyecto timbó<br>no es hermético:<br>respira.</h2>
 
         <p class="sust-breathe__text anim-fade-up" data-anim-delay="180">Se vincula con su entorno y evoluciona <br>con
-          quienes lo habitan.<br><br>Nuestra arquitectura se adapta a la vida <br>y a sus cambios.</p>
+          quienes lo habitan.<br>Nuestra arquitectura se adapta a la vida <br>y a sus cambios.</p>
+        <p class="sust-breathe__text anim-fade-up" data-anim-delay="220">Nuestra arquitectura se adapta a la vida <br>y a sus cambios.</p>
       </div>
     </section>
 

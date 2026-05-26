@@ -9,50 +9,6 @@
   <link rel="icon" type="image/png" href="../assets/images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
   <link rel="stylesheet" href="../assets/css/variables.css">
   <link rel="stylesheet" href="../assets/css/styles.css">
-  <style>
-    /* ====================================================================
-       LABELS A/B/C de revisión — TEMPORAL.
-       ==================================================================== */
-    .page-content > section[data-review-section] {
-      position: relative;
-    }
-
-    .page-content > section[data-review-section] > .project-review-section-label {
-      position: absolute;
-      top: 50%;
-      right: clamp(0.35rem, 0.8vw, 0.75rem);
-      transform: translateY(-50%);
-      display: grid;
-      place-items: center;
-      min-width: clamp(2rem, 3vw, 2.75rem);
-      height: clamp(2rem, 3vw, 2.75rem);
-      padding: 0 0.35rem;
-      border: 1px solid rgba(0, 0, 0, 0.12);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.82);
-      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.12);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      color: rgba(0, 0, 0, 0.82);
-      font-size: clamp(0.85rem, 1.1vw, 1rem);
-      font-weight: var(--fw-medium);
-      line-height: 1;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 120;
-    }
-
-    @media (max-width: 900px) {
-      .page-content > section[data-review-section] > .project-review-section-label {
-        right: 0.35rem;
-        min-width: 1.75rem;
-        height: 1.75rem;
-        font-size: 0.78rem;
-      }
-    }
-  </style>
 </head>
 
 <body class="page--haras-light">
@@ -68,10 +24,6 @@
   </nav>
 
   <main class="page-content">
-
-    <!-- ====== HERO ======
-         NOTA: las imágenes de Club de Mar tienen nombres descriptivos largos
-         del estudio TMAST. Se respetan los paths existentes. -->
     <section class="project-hero project-hero--club-de-mar" id="hero" data-nav-theme="light">
       <div class="project-hero__media" aria-hidden="true">
         <img id="project-cover"
@@ -86,37 +38,40 @@
       </div>
     </section>
 
-    <!-- ====== OVERVIEW ====== -->
     <section class="project-overview" data-nav-theme="light">
       <div class="container project-overview__container">
         <h2 class="project-overview__title">
-          <span class="project-overview__title-line"><span class="project-overview__title-line-inner">Entre las dunas</span></span>
-          <span class="project-overview__title-line"><span class="project-overview__title-line-inner">y el océano</span></span>
+          <span class="project-overview__title-line"><span class="project-overview__title-line-inner">Entre las dunas
+            </span></span>
+          <span class="project-overview__title-line"><span class="project-overview__title-line-inner">y
+              el océano</span></span>
         </h2>
 
         <div class="project-overview__content">
           <div class="project-overview__sidebar">
             <div class="project-overview__facts">
-
               <div class="project-overview__fact anim-fade-up" data-anim-delay="180">
                 <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/clima.svg" alt=""
                   aria-hidden="true" decoding="async">
                 <p class="project-overview__fact-label">CLIMA /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Atlántico</span></p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Atlántico</span>
+                </p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="240">
                 <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/bioma.svg" alt=""
                   aria-hidden="true" decoding="async">
                 <p class="project-overview__fact-label">BIOMA /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Pastizal litoral</span></p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Pastizal
+                    litoral</span></p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="300">
                 <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/terreno.svg" alt=""
                   aria-hidden="true" decoding="async">
                 <p class="project-overview__fact-label">TERRENO /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">2.500 m²</span></p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">2.500 m²</span>
+                </p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="360">
@@ -130,7 +85,8 @@
                 <img class="project-overview__fact-icon project-overview__fact-icon--location"
                   src="../assets/images/projects/project-icons/ubicacion.svg" alt="" aria-hidden="true" decoding="async">
                 <p class="project-overview__fact-label">UBICACIÓN /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">José Ignacio,<br>Uruguay</span></p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">José Ignacio,
+                    <br>Uruguay</span></p>
               </div>
 
               <div class="project-overview__map anim-fade-in" data-anim-delay="420">
@@ -143,7 +99,8 @@
 
           <div class="project-overview__media anim-fade-in" data-anim-delay="160">
             <div class="project-overview__dots">
-              <button class="project-overview__dot is-active" data-project-overview-slide="0" aria-label="Foto 1"></button>
+              <button class="project-overview__dot is-active" data-project-overview-slide="0"
+                aria-label="Foto 1"></button>
               <button class="project-overview__dot" data-project-overview-slide="1" aria-label="Foto 2"></button>
             </div>
 
@@ -160,7 +117,6 @@
       </div>
     </section>
 
-    <!-- ====== REFUGE ====== -->
     <section class="project-refuge" data-nav-theme="light">
       <div class="container project-refuge__container">
         <div class="project-refuge__copy">
@@ -177,23 +133,25 @@
         </div>
 
         <div class="project-refuge__gallery">
-          <figure class="project-refuge__image anim-fade-in" data-anim-delay="0">
-            <img src="../assets/images/projects/club-de-mar/jose ignacio - house-luxury-architecture-high-end-exterior - beach house - tmastarquitectos.jpeg"
+          <figure class="project-refuge__image project-refuge__image--slide-a">
+            <img
+              src="../assets/images/projects/club-de-mar/jose ignacio - house-luxury-architecture-high-end-exterior - beach house - tmastarquitectos.jpeg"
               alt="Club de Mar" loading="lazy" decoding="async">
           </figure>
-          <figure class="project-refuge__image anim-fade-in" data-anim-delay="400">
-            <img src="../assets/images/projects/club-de-mar/jose ignacio - house-luxury-architecture-high-end-exterior pool - beach house - tmastarquitectos.jpeg"
+          <figure class="project-refuge__image project-refuge__image--slide-x">
+            <img
+              src="../assets/images/projects/club-de-mar/jose ignacio - house-luxury-architecture-high-end-exterior pool - beach house - tmastarquitectos.jpeg"
               alt="Club de Mar" loading="lazy" decoding="async">
           </figure>
         </div>
       </div>
     </section>
 
-    <!-- ====== FRAME ====== -->
     <section class="project-frame project-frame--split" data-project-slug="club-de-mar" data-nav-theme="light">
       <div class="container project-frame__container">
         <figure class="project-frame__media anim-fade-in">
-          <img src="../assets/images/projects/club-de-mar/jose ignacio - house-luxury-architecture-high-end-luxury exterior - tmastarquitectos.jpeg"
+          <img
+            src="../assets/images/projects/club-de-mar/jose ignacio - house-luxury-architecture-high-end-luxury exterior - tmastarquitectos.jpeg"
             alt="Club de Mar" loading="lazy" decoding="async">
         </figure>
 
@@ -204,96 +162,50 @@
             sino también como parte de su funcionamiento ambiental: aportan sombra, reducen la radiación sobre las
             superficies más expuestas y colaboran en la regulación térmica del conjunto.
           </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ====== PHRASE ======
-         NUEVA sección. TODO cliente: texto + imágenes phrase-01.jpg y phrase-02.jpg. -->
-    <section class="project-phrase" data-nav-theme="light">
-      <div class="project-phrase__container">
-        <div class="project-phrase__copy">
-          <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0">
+          <p class="project-frame__text anim-fade-up" data-anim-delay="200">
             Cada decisión proyectual fue evaluada mediante simulaciones, pruebas e iteraciones, buscando una
             intervención precisa que mejore el desempeño energético y el confort.
           </p>
-        </div>
 
-        <div class="project-phrase__images">
-          <figure class="project-phrase__image project-phrase__image--zoom anim-fade-in" data-anim-delay="120">
-            <img src="../assets/images/fondo-transitorio.png" alt="Club de Mar" loading="lazy" decoding="async">
-          </figure>
+          <p class="project-frame__text anim-fade-up" data-anim-delay="120">
 
-          <figure class="project-phrase__image project-phrase__image--pan anim-fade-in anim-reveal-right" data-anim-delay="220">
-            <img src="../assets/images/fondo-transitorio.png" alt="Club de Mar" loading="lazy" decoding="async">
-          </figure>
+          </p>
         </div>
       </div>
     </section>
 
-    <!-- ====== HIGHLIGHT ======
-         NUEVA sección. TODO cliente: imagen highlight-01.jpg + dos líneas de título. -->
-    <section class="project-highlight project-highlight--split" data-project-slug="club-de-mar" data-nav-theme="light">
-      <div class="container project-highlight__container">
-        <figure class="project-highlight__media anim-zoom-in">
-          <img src="../assets/images/fondo-transitorio.png" alt="Club de Mar" loading="lazy" decoding="async">
-
-          <h2 class="project-highlight__title project-highlight__title--light">
-            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">El paisajismo aporta una estrategia de control solar, reduciendo la radiación sobre las superficies más expuestas.</span></span>
-          </h2>
-        </figure>
-      </div>
-    </section>
-
-    <!-- ====== PALETTE ====== -->
-    <section class="project-palette" data-nav-theme="light" data-palette-mode="drag">
+    <section class="project-palette" data-nav-theme="light" data-scroll-width-points="2500,3000,3500,4000,4500"
+      data-photo-a-width-points="60,70,100,130,140" data-photo-b-width-points="140,130,100,70,60">
       <div class="project-palette__container">
-        <div class="project-palette__copy anim-fade-up" data-anim-delay="0">
-          <p class="project-palette__intro">La casa se reorganiza en torno a los ritmos
+        <div class="project-palette__copy">
+          <p class="project-palette__intro anim-fade-up" data-anim-delay="0">La casa se reorganiza en torno a los ritmos
             cotidianos de quienes la habitan: la luz de la mañana y de la tarde, la ventilación natural, y una
-            materialidad simple y serena que construye una atmósfera de calma.</p>
+            materialidad simple y serena que construye una atmósfera de calma.
+          </p>
           <p class="project-palette__text">Más que una renovación, se trata de una recalibración: una casa existente,
             repensada desde su uso, su clima y su relación con el entorno.</p>
         </div>
 
-        <div class="project-palette__images project-palette__images--drag">
-          <figure class="project-palette__image project-palette__image--a anim-fade-in" data-anim-delay="120">
-            <img src="../assets/images/projects/club-de-mar/jose ignacio - house-luxury-architecture-high-end-beach house - tmastarquitectos.jpeg"
+        <div class="project-palette__images">
+          <figure class="project-palette__image anim-fade-in" data-anim-delay="120">
+            <img
+              src="../assets/images/projects/club-de-mar/jose ignacio - house-luxury-architecture-high-end-beach house - tmastarquitectos.jpeg"
               alt="Club de Mar" loading="lazy" decoding="async">
           </figure>
 
-          <button type="button" class="project-palette__divider" aria-label="Arrastrar para redimensionar">
-            <span class="project-palette__divider-icon" aria-hidden="true">
-              <svg class="project-palette__divider-svg" viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                <path class="project-palette__divider-chevron" d="M 23.4 11.6
-                         C 21.8 13.9, 17.9 17.3, 14.7 19.8
-                         C 17.8 22.6, 21.5 26.1, 23.2 28.6" fill="none" />
-                <path class="project-palette__divider-circle" d="M 50.4 6.2
-                         C 57.1 6.5, 63.2 11.8, 63.6 19.4
-                         C 64.1 26.9, 58.5 33.1, 51.2 33.8
-                         C 43.6 34.5, 37.1 28.9, 36.5 21.3
-                         C 35.9 13.9, 41.7 7.0, 49.6 6.2
-                         C 52.3 5.9, 54.5 6.6, 56.1 7.4" fill="currentColor" />
-                <path class="project-palette__divider-chevron" d="M 76.7 11.4
-                         C 78.4 13.7, 82.1 17.2, 85.4 19.9
-                         C 82.2 22.7, 78.6 26.0, 76.9 28.7" fill="none" />
-              </svg>
-            </span>
-          </button>
-
-          <figure class="project-palette__image project-palette__image--b anim-fade-in" data-anim-delay="220">
-            <img src="../assets/images/projects/club-de-mar/jose ignacio - house-luxury-architecture-high-end-exterior pool - beach house - tmastarquitectos.jpeg"
+          <figure class="project-palette__image anim-fade-in" data-anim-delay="220">
+            <img
+              src="../assets/images/projects/club-de-mar/jose ignacio - house-luxury-architecture-high-end-exterior pool - beach house - tmastarquitectos.jpeg"
               alt="Club de Mar" loading="lazy" decoding="async">
           </figure>
         </div>
       </div>
     </section>
 
-    <!-- ====== FINAL ====== -->
     <section class="project-final" data-nav-theme="dark">
       <div class="project-final__media anim-fade-in" data-anim-delay="0" aria-hidden="true">
-        <img src="../assets/images/projects/club-de-mar/jose ignacio - house-luxury-architecture-high-end-beach house - tmastarquitectos.jpeg"
+        <img
+          src="../assets/images/projects/club-de-mar/jose ignacio - house-luxury-architecture-high-end-beach house - tmastarquitectos.jpeg"
           alt="" loading="lazy" decoding="async">
       </div>
 
@@ -303,38 +215,10 @@
         </div>
       </div>
     </section>
-
   </main>
 
   <script src="../assets/js/data.js"></script>
   <script src="../assets/js/main.js"></script>
-
-  <script>
-    (() => {
-      const sections = document.querySelectorAll('.page-content > section');
-      const getSectionLabel = (index) => {
-        let label = '';
-        let current = index;
-        do {
-          label = String.fromCharCode(65 + (current % 26)) + label;
-          current = Math.floor(current / 26) - 1;
-        } while (current >= 0);
-        return label;
-      };
-      sections.forEach((section, index) => {
-        const label = getSectionLabel(index);
-        let marker = section.querySelector('.project-review-section-label');
-        section.dataset.reviewSection = label;
-        if (!marker) {
-          marker = document.createElement('span');
-          marker.className = 'project-review-section-label';
-          marker.setAttribute('aria-hidden', 'true');
-          section.appendChild(marker);
-        }
-        marker.textContent = label;
-      });
-    })();
-  </script>
 </body>
 
 </html>

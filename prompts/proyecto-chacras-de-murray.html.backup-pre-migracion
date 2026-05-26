@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Timbó — Chacras de Murray">
+  <title>Timbó — Chacras de Murray</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
+  <link rel="stylesheet" href="../assets/css/variables.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+
+<body class="page--haras-light">
+  <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
+    <ul class="nav__links">
+      <li><a href="../index.html" class="nav__link">Home</a></li>
+      <li><a href="../proyectos.html" class="nav__link nav__link--active">Projects</a></li>
+      <li><a href="../sustentabilidad.html" class="nav__link">Sustainability</a></li>
+      <li><a href="../servicios.html" class="nav__link">Services</a></li>
+      <li><a href="../sobre-nosotros.html" class="nav__link">About Us</a></li>
+      <li><a href="../contacto.html" class="nav__link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main class="page-content">
+    <section class="project-hero project-hero--chacras" id="hero" data-nav-theme="dark">
+      <div class="project-hero__media" aria-hidden="true">
+        <img id="project-cover" src="../assets/images/projects/chacras-de-murray/hero.jpg" alt="Chacras de Murray"
+          loading="eager" decoding="async">
+      </div>
+
+      <div class="container project-hero__content">
+        <div class="project-hero__title-mask">
+          <h1 class="project-hero__title">Chacras de Murray</h1>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-overview" data-nav-theme="light">
+      <div class="container project-overview__container">
+        <h2 class="project-overview__title">
+          <span class="project-overview__title-line"><span class="project-overview__title-line-inner">Lugar de retiro
+              familiar
+            </span></span>
+          <span class="project-overview__title-line"><span class="project-overview__title-line-inner">para disfrutar del
+              paisaje y el polo</span></span>
+        </h2>
+
+        <div class="project-overview__content">
+          <div class="project-overview__sidebar">
+            <div class="project-overview__facts">
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="180">
+                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/clima.svg" alt=""
+                  aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">CLIMA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Templado
+                    Subtropical</span></p>
+              </div>
+
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="240">
+                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/bioma.svg" alt=""
+                  aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">BIOMA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Pampa</span></p>
+              </div>
+
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="300">
+                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/terreno.svg" alt=""
+                  aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">TERRENO /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">3.000 m²</span>
+                </p>
+              </div>
+
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="360">
+                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/area cubierta.svg"
+                  alt="" aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">ÁREA CUBIERTA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">400 m²</span></p>
+              </div>
+
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="120">
+                <img class="project-overview__fact-icon project-overview__fact-icon--location"
+                  src="../assets/images/projects/project-icons/ubicacion.svg" alt="" aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">UBICACIÓN /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Buenos
+                    Aires,<br>Argentina</span></p>
+              </div>
+
+              <div class="project-overview__map anim-fade-in" data-anim-delay="420">
+                <div class="project-map" data-map-sequence data-map-theme="grayscale">
+                  <div class="project-map__canvas" id="project-map-canvas"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-overview__media anim-fade-in" data-anim-delay="160">
+            <div class="project-overview__dots">
+              <button class="project-overview__dot is-active" data-project-overview-slide="0"
+                aria-label="Foto 1"></button>
+              <button class="project-overview__dot" data-project-overview-slide="1" aria-label="Foto 2"></button>
+            </div>
+
+            <figure class="project-overview__photo">
+              <img class="project-overview__img is-active"
+                src="../assets/images/projects/chacras-de-murray/overview-01.jpg" alt="Chacras de Murray" loading="lazy"
+                decoding="async">
+              <img class="project-overview__img" src="../assets/images/projects/chacras-de-murray/overview-02.jpg"
+                alt="Chacras de Murray" loading="lazy" decoding="async">
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-refuge" data-nav-theme="light">
+      <div class="container project-refuge__container">
+        <div class="project-refuge__copy">
+          <p class="project-refuge__text anim-fade-up" data-anim-delay="0">Este proyecto es una reinterpretación
+            contemporánea de la tipología rural tradicional. A partir de una estructura clara tipo galpón, con cubierta
+            a dos aguas, recupera la lógica constructiva y la sobriedad de la tradición argentina.
+          </p>
+          <p class="project-refuge__text anim-fade-up" data-anim-delay="120">La vivienda se organiza en dos alas en
+            forma de L, cuidadosamente orientadas según el programa y su uso a lo largo del año. Esta disposición
+            permite que ciertos espacios reciben mayor radiación solar en invierno, mientras que otros permanecen más
+            protegidos, optimizando el confort térmico de manera pasiva.
+          </p>
+          <p class="project-refuge__text anim-fade-up" data-anim-delay="240">Todos los ambientes cuentan con doble
+            orientación, asegurando ventilación cruzada y una relación constante con el exterior. Así, la casa se
+            percibe siempre rodeada de paisaje, que pasa a formar parte del interior.
+          </p>
+        </div>
+
+        <div class="project-refuge__gallery">
+          <figure class="project-refuge__image project-refuge__image--slide-a">
+            <img src="../assets/images/projects/chacras-de-murray/refuge-01.jpg" alt="Chacras de Murray" loading="lazy"
+              decoding="async">
+          </figure>
+          <figure class="project-refuge__image project-refuge__image--slide-x">
+            <img src="../assets/images/projects/chacras-de-murray/refuge-02.jpg" alt="Chacras de Murray" loading="lazy"
+              decoding="async">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-frame project-frame--split" data-project-slug="chacras-de-murray" data-nav-theme="light">
+      <div class="container project-frame__container">
+        <figure class="project-frame__media anim-fade-in">
+          <img src="../assets/images/projects/chacras-de-murray/frame-01.jpg" alt="Chacras de Murray" loading="lazy"
+            decoding="async">
+        </figure>
+
+        <div class="project-frame__copy">
+          <p class="project-frame__text anim-fade-up" data-anim-delay="0">
+            El conjunto contiene el jardín, generando un microclima reparado del viento, donde la vegetación puede
+            desarrollarse en condiciones favorables. El área de la pileta se ubica en un sector más sombreado,
+            garantizando confort durante los meses más calurosos.
+          </p>
+          <p class="project-frame__text anim-fade-up" data-anim-delay="120">
+            Una galería continua y profunda recorre todo el perímetro, funcionando como espacio intermedio entre el
+            afuera y el adentro. Su dimensión permite proteger del sol alto en verano y habilitar su ingreso en
+            invierno, mejorando el comportamiento térmico del conjunto.
+          </p>
+          <p class="project-frame__text anim-fade-up" data-anim-delay="400">
+            La doble altura de los espacios principales contribuye a mantener temperaturas más frescas, reduciendo la
+            necesidad de sistemas mecánicos de climatización.
+          </p>
+
+          <p class="project-frame__text anim-fade-up" data-anim-delay="120">
+
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-palette" data-nav-theme="light" data-scroll-width-points="2500,3000,3500,4000,4500"
+      data-photo-a-width-points="60,70,100,130,140" data-photo-b-width-points="140,130,100,70,60">
+      <div class="project-palette__container">
+        <div class="project-palette__copy">
+          <p class="project-palette__intro anim-fade-up" data-anim-delay="0">La materialidad responde tanto a una
+            búsqueda estética como a criterios de durabilidad y eficiencia. Madera, piedra y superficies claras se
+            combinan en una lógica constructiva sencilla, pensada para un bajo mantenimiento y un buen desempeño en el
+            tiempo.</p>
+          <p class="project-palette__text">Una casa con todo lo necesario para vivir bien, sin excesos, pensada para
+            durar.</p>
+        </div>
+
+        <div class="project-palette__images">
+          <figure class="project-palette__image anim-fade-in" data-anim-delay="120">
+            <img src="../assets/images/projects/chacras-de-murray/palette-01.jpg" alt="Chacras de Murray" loading="lazy"
+              decoding="async">
+          </figure>
+
+          <figure class="project-palette__image anim-fade-in" data-anim-delay="220">
+            <img src="../assets/images/projects/chacras-de-murray/palette-02.jpg" alt="Chacras de Murray" loading="lazy"
+              decoding="async">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-final" data-nav-theme="dark">
+      <div class="project-final__media anim-fade-in" data-anim-delay="0" aria-hidden="true">
+        <img src="../assets/images/projects/chacras-de-murray/final-01.jpg" alt="" loading="lazy" decoding="async">
+      </div>
+
+      <div class="project-final__content">
+        <div class="project-final__logo-mask">
+          <img class="project-final__logo" src="../assets/images/logo/logo-nuevo-blanco-15.svg" alt="Timbó">
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/js/data.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+
+</html>

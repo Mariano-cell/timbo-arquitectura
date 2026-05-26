@@ -230,9 +230,10 @@ const Timbo = {
      más de SCROLL_THRESHOLD píxeles.
      ============================================================ */
   navScroll: {
-    SCROLL_THRESHOLD: 900,  // ← Cambiá este número para ajustar cuándo aparece el fondo
+    SCROLL_THRESHOLD: 900,  // ← Cambiá este número para ajustar cuándo aparece el fondo (desktop default)
     ABOUT_SCROLL_THRESHOLD: 300,
     SUST_SCROLL_THRESHOLD: 80,  // sustentabilidad: que aparezca casi de inmediato
+    MOBILE_SCROLL_THRESHOLD: 500,  // mobile: que el fondo blanco ya esté listo cuando el nav reaparece al subir
 
     init() {
       const nav = document.querySelector('.main-nav');
@@ -249,9 +250,13 @@ const Timbo = {
       // de la animación de --hidden.
       const desktopMQ = window.matchMedia('(min-width: 1024px)');
       const sustDesktop = isSustPage && desktopMQ.matches;
+      const isMobile = !desktopMQ.matches;
 
+      // Threshold: en mobile usamos 500px para que coincida con navHide
+      // (cuando el nav reaparece al subir, ya está scrolled = fondo blanco).
       let threshold = this.SCROLL_THRESHOLD;
-      if (isAboutPage) threshold = this.ABOUT_SCROLL_THRESHOLD;
+      if (isMobile) threshold = this.MOBILE_SCROLL_THRESHOLD;
+      else if (isAboutPage) threshold = this.ABOUT_SCROLL_THRESHOLD;
       else if (isSustPage) threshold = this.SUST_SCROLL_THRESHOLD;
 
       let lastY = window.scrollY;
@@ -323,6 +328,101 @@ const Timbo = {
         if (e.matches) enable();
         else disable();
       });
+
+      // ====== TOGGLE DEL MENÚ HAMBURGUESA ======
+      // Click en .nav-toggle-mobile abre/cierra el menú agregando
+      // body.nav-mobile-open. El CSS hace el resto (overlay gris,
+      // bloqueo de scroll, navlinks visibles, animación X).
+      // Click en el overlay (target = body con la clase) cierra.
+      const toggleBtn = document.querySelector('.nav-toggle-mobile');
+      if (toggleBtn) {
+        // Duración de la animación de las barras (debe coincidir con el CSS:
+        // .nav-toggle-mobile__bar { transition: transform 600ms ... }).
+        const CLOSE_ANIM_MS = 600;
+        let closingTimeoutId = null;
+
+        const openMenu = () => {
+          // Si veníamos cerrando, cancelamos el cierre y abrimos directo.
+          if (closingTimeoutId) {
+            clearTimeout(closingTimeoutId);
+            closingTimeoutId = null;
+            document.body.classList.remove('nav-mobile-closing');
+          }
+          document.body.classList.add('nav-mobile-open');
+          toggleBtn.setAttribute('aria-expanded', 'true');
+          toggleBtn.setAttribute('aria-label', 'Cerrar menú');
+        };
+
+        const closeMenu = () => {
+          // Si ya estamos cerrando, no hacer nada.
+          if (closingTimeoutId) return;
+          // Si no estamos abiertos, tampoco hay nada que cerrar.
+          if (!document.body.classList.contains('nav-mobile-open')) return;
+
+          // Fase de cierre: agregamos .nav-mobile-closing PERO mantenemos
+          // .nav-mobile-open. La combinación de ambas clases hace que el
+          // selector "body.nav-mobile-closing .bar" gane sobre el de "open"
+          // gracias al orden en el CSS (closing aparece después), llevando
+          // las barras a rotate(±360deg).
+          document.body.classList.add('nav-mobile-closing');
+          toggleBtn.setAttribute('aria-expanded', 'false');
+          toggleBtn.setAttribute('aria-label', 'Abrir menú');
+
+          closingTimeoutId = setTimeout(() => {
+            // Al terminar la animación, salimos limpio de ambos estados.
+            // Desactivamos transiciones un instante para que el cambio
+            // de rotate(180deg) → rotate(0deg) sea instantáneo y no se
+            // vea un segundo giro. Forzamos reflow y reactivamos.
+            document.body.classList.add('nav-mobile-no-transition');
+            document.body.classList.remove('nav-mobile-open');
+            document.body.classList.remove('nav-mobile-closing');
+            // Forzar reflow: leer una propiedad de layout fuerza al
+            // navegador a aplicar el estado actual antes de seguir.
+            void document.body.offsetHeight;
+            document.body.classList.remove('nav-mobile-no-transition');
+            closingTimeoutId = null;
+          }, CLOSE_ANIM_MS);
+        };
+
+        const toggleMenu = () => {
+          if (document.body.classList.contains('nav-mobile-open') && !closingTimeoutId) {
+            closeMenu();
+          } else if (!document.body.classList.contains('nav-mobile-open')) {
+            openMenu();
+          }
+          // Si estamos en medio de cerrando, no hacemos nada: que termine.
+        };
+
+        toggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleMenu();
+        });
+
+        // Click en cualquier parte del overlay (el body) cierra,
+        // pero ignoramos clicks dentro del nav o del floating mobile
+        // para no cerrar al tocar un link.
+        document.addEventListener('click', (e) => {
+          if (!document.body.classList.contains('nav-mobile-open')) return;
+          const insideNav = e.target.closest('.main-nav, .nav-floating-mobile');
+          if (insideNav) return;
+          closeMenu();
+        });
+
+        // Click en un navlink cierra el menú (después navega).
+        document.querySelectorAll('.nav__link').forEach((link) => {
+          link.addEventListener('click', () => {
+            if (document.body.classList.contains('nav-mobile-open')) {
+              closeMenu();
+            }
+          });
+        });
+
+        // Si pasamos a desktop con el menú abierto, lo cerramos
+        // para no dejar el overflow:hidden ni la clase colgada.
+        mediaQuery.addEventListener('change', (e) => {
+          if (!e.matches) closeMenu();
+        });
+      }
     },
   },
 
@@ -453,32 +553,40 @@ const Timbo = {
      - En el tope absoluto (scrollY === 0) siempre visible.
      ============================================================ */
   navHide: {
-    HIDE_AFTER_PX: 600,         // default: desde qué scroll puede empezar a esconderse
+    HIDE_AFTER_PX: 600,         // default desktop: desde qué scroll puede empezar a esconderse
     SUST_HIDE_AFTER_PX: 80,     // sustentabilidad: que el nav transparente se vaya apenas pasa el hero
+    MOBILE_HIDE_AFTER_PX: 500,  // mobile: coincide con SHOW_FLOATING_AT para que el "relevo"
+                                // entre floating y nav-scrolled ocurra al mismo umbral
     UP_THRESHOLD_PX: 8,         // cuánto hay que subir para re-mostrarlo
 
     init() {
       const nav = document.querySelector('.main-nav');
       if (!nav) return;
 
-      // En mobile (<1024px) este comportamiento se desactiva: el .main-nav
-      // contiene el floating logo y la hamburguesa, y no queremos que se
-      // oculten al scrollear hacia abajo. La nav mobile la maneja Timbo.navMobile.
+      // Detectamos mobile para usar otro umbral. Antes este módulo se desactivaba
+      // en mobile porque el .main-nav contenía el floating logo y la hamburguesa
+      // y al esconderlo se iban con él. Ahora esos elementos tienen position: fixed
+      // propia, así que el hide-on-scroll también funciona en mobile.
       const desktopMQ = window.matchMedia('(min-width: 1024px)');
-      if (!desktopMQ.matches) return;
+      const isMobile = !desktopMQ.matches;
 
-      // Páginas con comportamiento estricto (solo desktop, el guard de arriba ya lo asegura):
+      // Páginas con comportamiento estricto (solo desktop):
       // el nav se oculta apenas hay scroll y solo reaparece al volver al top exacto.
       // Aplica a proyectos.
       const isProjectsPage = document.body.classList.contains('page--projects-light');
       const isSustPage = document.body.classList.contains('page--sust-light');
 
-      // Umbral para esconder: en sustentabilidad usamos 80px en lugar del default 600px,
-      // así el nav transparente se va apenas el usuario pasa el hero (en lugar de
-      // mostrarse la versión con fondo, que justamente queremos evitar al bajar).
-      const hideAfter = isSustPage ? this.SUST_HIDE_AFTER_PX : this.HIDE_AFTER_PX;
+      // Umbral para esconder.
+      // - Mobile: 500px (coincide con SHOW_FLOATING_AT).
+      // - Desktop sust: 80px (apenas pasa el hero).
+      // - Desktop default: 600px.
+      let hideAfter = this.HIDE_AFTER_PX;
+      if (isMobile) hideAfter = this.MOBILE_HIDE_AFTER_PX;
+      else if (isSustPage) hideAfter = this.SUST_HIDE_AFTER_PX;
 
-      if (isProjectsPage) {
+      // Modo estricto (solo desktop, página proyectos): el nav se oculta apenas
+      // hay scroll y solo reaparece al volver al top exacto. En mobile no aplica.
+      if (isProjectsPage && !isMobile) {
         let tickingStrict = false;
         const updateStrict = () => {
           if (window.scrollY <= 0) {
@@ -504,6 +612,15 @@ const Timbo = {
       const update = () => {
         const currentY = window.scrollY;
         const delta = currentY - lastY;
+
+        // Si el menú mobile está abierto, el nav debe quedarse visible y
+        // no reaccionar al scroll (aunque el scroll esté bloqueado, por las
+        // dudas de que algún gesto residual dispare el handler).
+        if (document.body.classList.contains('nav-mobile-open')) {
+          lastY = currentY;
+          ticking = false;
+          return;
+        }
 
         // En el tope: siempre visible y se resetea el acumulador.
         if (currentY <= 0) {
@@ -1367,12 +1484,25 @@ const Timbo = {
         return delta;
       };
 
+      // En desktop el detail aparece a la derecha, así que el item activo se
+      // lleva al este (ángulo 0°). En mobile el detail aparece debajo de la
+      // rueda, así que el item debe ir al sur (ángulo 90° en coordenadas SVG,
+      // donde Y positivo es abajo).
+      const isMobileViewport = () =>
+        window.matchMedia('(max-width: 1023.98px)').matches;
+
       module.api = {
         focusKey(key) {
           const orbit = labelOrbitMap.get(key);
           if (!orbit) return;
 
-          const baseTargetAngle = -(orbit.baseAngle * 180) / Math.PI;
+          // Posición destino del item: 0° = este (desktop), 90° = sur (mobile).
+          const desiredFinalAngleDeg = isMobileViewport() ? 90 : 0;
+
+          // Rotación que hay que aplicar al SVG para que el ángulo base del
+          // item termine apuntando al desiredFinalAngleDeg.
+          const baseTargetAngle =
+            desiredFinalAngleDeg - (orbit.baseAngle * 180) / Math.PI;
           const shortestDelta = normalizeAngleDeg(baseTargetAngle - state.currentAngle);
 
           state.detailOpen = true;
@@ -1444,7 +1574,6 @@ const Timbo = {
       const section = document.querySelector('.sust-strategies');
       const detail = section?.querySelector('.sust-strategies__detail');
       const detailStack = detail?.querySelector('.sust-strategies__detail-stack');
-      const closeButton = detail?.querySelector('.sust-strategies__detail-close');
       const detailIcon = detail?.querySelector('.sust-strategies__detail-icon');
       const detailLabel = detail?.querySelector('.sust-strategies__detail-label');
       const detailTitle = detail?.querySelector('.sust-strategies__detail-title');
@@ -1457,7 +1586,7 @@ const Timbo = {
 
       const detailMedia = detail?.querySelector('.sust-strategies__detail-media');
 
-      if (!section || !detail || !detailMedia || !detailStack || !closeButton || !detailIcon || !detailLabel || !detailTitle || !detailText || !labelItems.length) return;
+      if (!section || !detail || !detailMedia || !detailStack || !detailIcon || !detailLabel || !detailTitle || !detailText || !labelItems.length) return;
 
       const strategies = {
         ventilacion: {
@@ -1601,16 +1730,20 @@ const Timbo = {
       };
 
       const setActive = (key = '') => {
+        // El aside está siempre abierto: ignoramos llamadas sin key
+        // (que antes cerraban el detalle).
+        if (!key || !strategies[key]) return;
+
         swapToken += 1;
         const token = swapToken;
         const previousKey = activeKey;
-        const strategy = key ? strategies[key] : null;
-        activeKey = strategy ? key : '';
+        const strategy = strategies[key];
+        activeKey = key;
         const wasDetailOpen = section.classList.contains('is-detail-open');
 
-        section.classList.toggle('is-detail-open', Boolean(strategy));
-        detail.setAttribute('aria-hidden', strategy ? 'false' : 'true');
-        orbitApi?.setDetailOpen(Boolean(strategy));
+        section.classList.add('is-detail-open');
+        detail.setAttribute('aria-hidden', 'false');
+        orbitApi?.setDetailOpen(true);
 
         labelItems.forEach((item) => {
           const isActive = item.dataset.strategy === activeKey;
@@ -1655,32 +1788,15 @@ const Timbo = {
         item.setAttribute('aria-label', strategy.title);
 
         item.addEventListener('click', () => {
-          if (activeKey === key) {
-            setActive('');
-            orbitApi?.clearReferenceSelection();
-            return;
-          }
-
+          if (activeKey === key) return;
           openStrategy(key);
         });
 
         item.addEventListener('keydown', (event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-
-            if (activeKey === key) {
-              setActive('');
-              orbitApi?.clearReferenceSelection();
-              return;
-            }
-
+            if (activeKey === key) return;
             openStrategy(key);
-          }
-
-          if (event.key === 'Escape' && activeKey) {
-            event.preventDefault();
-            setActive('');
-            orbitApi?.clearReferenceSelection();
           }
         });
       });
@@ -1690,10 +1806,12 @@ const Timbo = {
         setActive(key);
       });
 
-      closeButton.addEventListener('click', () => {
-        setActive('');
-        orbitApi?.clearReferenceSelection();
-      });
+      // Estrategia inicial: en desktop arranca con la que queda a la derecha
+      // (transmitancia, en (710, 400)); en mobile arranca con la que queda
+      // al sur (proporcion, en (400, 698)).
+      const isMobileViewport = window.matchMedia?.('(max-width: 1023.98px)').matches;
+      const initialKey = isMobileViewport ? 'proporcion' : 'transmitancia';
+      openStrategy(initialKey);
     },
   },
 
@@ -1859,12 +1977,25 @@ const Timbo = {
         return delta;
       };
 
+      // En desktop el detail aparece a la derecha, así que el item activo se
+      // lleva al este (ángulo 0°). En mobile el detail aparece debajo de la
+      // rueda, así que el item debe ir al sur (ángulo 90° en coordenadas SVG,
+      // donde Y positivo es abajo).
+      const isMobileViewport = () =>
+        window.matchMedia('(max-width: 1023.98px)').matches;
+
       module.api = {
         focusKey(key) {
           const orbit = labelOrbitMap.get(key);
           if (!orbit) return;
 
-          const baseTargetAngle = -(orbit.baseAngle * 180) / Math.PI;
+          // Posición destino del item: 0° = este (desktop), 90° = sur (mobile).
+          const desiredFinalAngleDeg = isMobileViewport() ? 90 : 0;
+
+          // Rotación que hay que aplicar al SVG para que el ángulo base del
+          // item termine apuntando al desiredFinalAngleDeg.
+          const baseTargetAngle =
+            desiredFinalAngleDeg - (orbit.baseAngle * 180) / Math.PI;
           const shortestDelta = normalizeAngleDeg(baseTargetAngle - state.currentAngle);
 
           state.detailOpen = true;
@@ -1928,7 +2059,17 @@ const Timbo = {
         queueRender();
       }, { passive: false });
 
-      applyTransforms(0);
+      // Ángulo inicial de la rueda:
+      // - Desktop: 0° (los puntos quedan donde el SVG los dibuja).
+      // - Mobile: rotación leve horaria para que "flujo de aire" quede
+      //   exactamente en el sur (centro del eje X, abajo del todo).
+      //   flujo_aire está en (510, 590); con centro (400, 400) eso da
+      //   un baseAngle de ~60° desde el este. Para llevarlo a 90° (sur)
+      //   hace falta rotar +30°.
+      const initialAngle = isMobileViewport() ? 30 : 0;
+      state.currentAngle = initialAngle;
+      state.targetAngle = initialAngle;
+      applyTransforms(initialAngle);
     },
   },
 
@@ -1937,7 +2078,6 @@ const Timbo = {
       const section = document.querySelector('.sust-pilares');
       const detail = section?.querySelector('.sust-pilares__detail');
       const detailStack = detail?.querySelector('.sust-pilares__detail-stack');
-      const closeButton = detail?.querySelector('.sust-pilares__detail-close');
       const detailMedia = detail?.querySelector('.sust-pilares__detail-media');
       const detailIcon = detail?.querySelector('.sust-pilares__detail-icon');
       const detailLabel = detail?.querySelector('.sust-pilares__detail-label');
@@ -1949,7 +2089,7 @@ const Timbo = {
       const orbitApi = Timbo.sustPilaresOrbit.api;
       const reduceMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
 
-      if (!section || !detail || !detailStack || !closeButton || !detailTitle || !detailText || !labelItems.length) return;
+      if (!section || !detail || !detailStack || !detailTitle || !detailText || !labelItems.length) return;
 
       const pilares = {
         temperatura: {
@@ -2087,16 +2227,20 @@ const Timbo = {
       };
 
       const setActive = (key = '') => {
+        // El aside está siempre abierto: ignoramos llamadas sin key
+        // (que antes cerraban el detalle).
+        if (!key || !pilares[key]) return;
+
         swapToken += 1;
         const token = swapToken;
         const previousKey = activeKey;
-        const pilar = key ? pilares[key] : null;
-        activeKey = pilar ? key : '';
+        const pilar = pilares[key];
+        activeKey = key;
         const wasDetailOpen = section.classList.contains('is-detail-open');
 
-        section.classList.toggle('is-detail-open', Boolean(pilar));
-        detail.setAttribute('aria-hidden', pilar ? 'false' : 'true');
-        orbitApi?.setDetailOpen(Boolean(pilar));
+        section.classList.add('is-detail-open');
+        detail.setAttribute('aria-hidden', 'false');
+        orbitApi?.setDetailOpen(true);
 
         labelItems.forEach((item) => {
           const isActive = item.dataset.pilar === activeKey;
@@ -2141,32 +2285,15 @@ const Timbo = {
         item.setAttribute('aria-label', pilar.title);
 
         item.addEventListener('click', () => {
-          if (activeKey === key) {
-            setActive('');
-            orbitApi?.clearReferenceSelection();
-            return;
-          }
-
+          if (activeKey === key) return;
           openPilar(key);
         });
 
         item.addEventListener('keydown', (event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-
-            if (activeKey === key) {
-              setActive('');
-              orbitApi?.clearReferenceSelection();
-              return;
-            }
-
+            if (activeKey === key) return;
             openPilar(key);
-          }
-
-          if (event.key === 'Escape' && activeKey) {
-            event.preventDefault();
-            setActive('');
-            orbitApi?.clearReferenceSelection();
           }
         });
       });
@@ -2176,10 +2303,12 @@ const Timbo = {
         setActive(key);
       });
 
-      closeButton.addEventListener('click', () => {
-        setActive('');
-        orbitApi?.clearReferenceSelection();
-      });
+      // Pilar inicial: en desktop arranca con el que queda a la derecha (luz);
+      // en mobile arranca con el que queda al sur (flujo_aire), respetando la
+      // rotación inicial de 30° que aplica sustPilaresOrbit.
+      const isMobileViewport = window.matchMedia?.('(max-width: 1023.98px)').matches;
+      const initialKey = isMobileViewport ? 'flujo_aire' : 'luz';
+      openPilar(initialKey);
     },
   },
 
@@ -3033,6 +3162,22 @@ const Timbo = {
       const title = document.querySelector('.project-overview__title');
       if (!title) return;
 
+      const desktopSource =
+        title.dataset.lineRevealSourceDesktop ||
+        Timbo.extractLineRevealSource(title);
+      const mobileQuery = window.matchMedia('(max-width: 1023.98px)');
+
+      const rebuildLines = () => {
+        const mobileSource = title.dataset.lineRevealSourceMobile;
+        const source = mobileQuery.matches && mobileSource ? mobileSource : desktopSource;
+
+        title.dataset.lineRevealSource = source;
+        Timbo.splitTextIntoVisualLines(title, {
+          lineClass: 'project-overview__title-line',
+          innerClass: 'project-overview__title-line-inner',
+        });
+      };
+
       const update = () => {
         const rect = title.getBoundingClientRect();
         const trigger = window.innerHeight / 2;
@@ -3044,9 +3189,26 @@ const Timbo = {
         }
       };
 
+      let resizeRaf = 0;
+      const refresh = () => {
+        rebuildLines();
+        update();
+      };
+
+      const onResize = () => {
+        cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(refresh);
+      };
+
       window.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update);
-      update();
+      window.addEventListener('resize', onResize);
+      window.addEventListener('load', refresh, { once: true });
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(refresh).catch(() => {});
+      }
+
+      refresh();
     },
   },
 
@@ -3164,55 +3326,6 @@ const Timbo = {
             title.classList.remove('is-revealed');
           }
         });
-      };
-
-      let resizeRaf = 0;
-      const refresh = () => {
-        rebuildLines();
-        update();
-      };
-
-      const onResize = () => {
-        cancelAnimationFrame(resizeRaf);
-        resizeRaf = requestAnimationFrame(refresh);
-      };
-
-      window.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', onResize);
-      window.addEventListener('load', refresh, { once: true });
-
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(refresh).catch(() => {});
-      }
-
-      refresh();
-    },
-  },
-
-  projectPaletteTextReveal: {
-    init() {
-      const text = document.querySelector('.project-palette__text');
-      if (!text) return;
-
-      const rebuildLines = () => {
-        Timbo.splitTextIntoVisualLines(text, {
-          lineClass: 'project-palette__text-line',
-          innerClass: 'project-palette__text-line-inner',
-        });
-      };
-
-      const update = () => {
-        const rect = text.getBoundingClientRect();
-        // Antes era window.innerHeight / 2 (mitad del viewport).
-        // Lo subimos a 0.85 para que el reveal se dispare antes,
-        // apenas el texto entra bien al viewport.
-        const trigger = window.innerHeight * 0.85;
-
-        if (rect.top <= trigger) {
-          text.classList.add('is-revealed');
-        } else {
-          text.classList.remove('is-revealed');
-        }
       };
 
       let resizeRaf = 0;
@@ -3599,7 +3712,7 @@ const Timbo = {
           { center: [-76.44, 24.17], zoom: 12, speed: 1.0 },
         ],
         marker: [-76.44, 24.17],
-        label: { name: 'Exuma Lodge', detail: 'Staniel Cay, Exumas — Bahamas' },
+        label: { name: 'Exuma Lodge', detail: 'Bahamas' },
         polygon: [
           [-76.43952, 24.17401], [-76.43917, 24.17413], [-76.43758, 24.17173],
           [-76.43709, 24.16841], [-76.43679, 24.16843], [-76.43633, 24.16778],
@@ -4767,7 +4880,6 @@ const Timbo = {
     this.sustClimateTitleReveal.init();
     this.projectOverviewTitleReveal.init();
     this.projectHighlightTitleReveal.init();
-    this.projectPaletteTextReveal.init();
     this.projectPhraseTextReveal.init();
     this.projectPhrasePan.init();
     this.sustBreatheTextReveal.init();
@@ -5540,11 +5652,13 @@ const Timbo = {
     el: null,
     section: null,
     ticking: false,
+    mobileQuery: null,
 
     init() {
       this.el = document.querySelector('.project-overview__facts');
       if (!this.el) return;
       this.section = this.el.closest('.project-overview') || this.el.parentElement;
+      this.mobileQuery = window.matchMedia('(max-width: 1023.98px)');
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduceMotion) return;
@@ -5565,6 +5679,11 @@ const Timbo = {
 
     update() {
       if (!this.el || !this.section) return;
+      if (this.mobileQuery && this.mobileQuery.matches) {
+        this.el.style.transform = '';
+        return;
+      }
+
       const rect = this.section.getBoundingClientRect();
       // Empieza el efecto cuando la sección entra en viewport
       const entered = window.innerHeight - rect.top;
@@ -5629,9 +5748,7 @@ const Timbo = {
   /* ============================================================
      PROJECT PALETTE TEXT PARALLAX
      Mismo efecto que projectFrameCopyParallax. Aplica un translateY
-     al wrapper .project-palette__text. La animacion de mascara
-     usa transform en .project-palette__text-line-inner (hijo),
-     asi que no se pisa con este parallax.
+     al wrapper .project-palette__text.
      ============================================================ */
   projectPaletteTextParallax: {
     RATE: 0.09,

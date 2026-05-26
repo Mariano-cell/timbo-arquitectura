@@ -5,6 +5,31 @@
    ============================================================ */
 
 /* =========================
+   UTILITIES GLOBALES
+   =========================
+   Clases reutilizables en toda la web. No pertenecen a una
+   sección o componente puntual.
+   Mantener este bloque corto: si una utility crece o gana
+   variantes, considerar moverla a su propio bloque temático.
+   ========================= */
+
+/* --- BR responsive ---
+   Permite mostrar/ocultar un <br> según viewport.
+   Uso (ver CLAUDE.md → "Saltos de línea responsive"):
+     <br class="br-desktop">  visible ≥1024px, oculto en mobile
+     <br class="br-mobile">   oculto en desktop, visible en mobile
+     <br>                     visible en ambos (default legacy)
+   Migración manual y caso por caso: NO cambiar <br> existentes
+   sin pedido explícito. */
+.br-desktop { display: inline; }
+.br-mobile  { display: none; }
+
+@media (max-width: 1023.98px) {
+  .br-desktop { display: none; }
+  .br-mobile  { display: inline; }
+}
+
+/* =========================
    NAVEGACIÓN
    ========================= */
 
@@ -162,12 +187,12 @@
      vertical que respeta el alto que ocupa la lista de items. */
   .main-nav {
     height: auto;
-    padding: var(--space-xl) var(--space-lg);
+    padding: var(--margin-a) var(--margin-a);
   }
 
   .nav__links {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: flex-start;
     gap: 4px;
     height: auto;
@@ -175,12 +200,13 @@
     transition: opacity 300ms ease;
   }
 
-  /* Cada item queda alineado a la izquierda, sin la máscara de fade
+  /* Cada item queda alineado a la derecha, sin la máscara de fade
      (no hace falta en una lista vertical) y con line-height ajustado
      para que los links queden pegados entre sí. */
   .nav__links li {
     padding: 0;
     line-height: 1;
+    text-align: right;
     -webkit-mask-image: none;
     mask-image: none;
   }
@@ -188,6 +214,7 @@
   .nav__link {
     font-size: var(--text-xs);
     line-height: 1.4;
+    text-align: right;
   }
 
   /* En mobile no hay hover real: ocultamos el underline animado
@@ -207,27 +234,34 @@
   }
 
   /* Contenedor del floating logo + hamburguesa.
-     Maneja la posición fija arriba-izquierda y el gap entre ambos. */
+     Maneja la posición fija arriba-derecha y el gap entre ambos. */
   .nav-floating-mobile {
     position: fixed;
-    top: var(--space-xl);
-    left: var(--space-lg);
+    top: var(--margin-a);
+    right: calc(var(--margin-a) - 3px);
     z-index: 101;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;  /* ← Cambia este número para acercar/alejar la hamburguesa del logo */
+    align-items: flex-end;
+    gap: var(--margin-a);  /* ← Cambia este número para acercar/alejar la hamburguesa del logo */
     opacity: 0;
     pointer-events: none;
     transition: opacity 300ms ease;
   }
 
-  /* Floating logo mobile: árbol negro. Sin posición propia: vive dentro
-     del contenedor .nav-floating-mobile. */
+  /* Floating logo mobile: wordmark "timbó" negro.
+     Aunque en el HTML vive dentro de .nav-floating-mobile (que está
+     anclado a la derecha junto a la hamburguesa), acá lo sacamos del
+     flujo del flex con position: fixed propia para anclarlo a la
+     izquierda. Así el logo queda a la izquierda y la hamburguesa
+     queda sola a la derecha. */
   .floating-logo-mobile {
     display: block;
     width: 100px;
     height: auto;
+    position: fixed;
+    top: var(--margin-a);
+    left: var(--margin-a);
   }
 
   .floating-logo-mobile img {
@@ -237,11 +271,13 @@
   }
 
   /* Botón hamburguesa: sin posición propia, vive dentro del contenedor.
-     Desplazado 6px hacia la derecha respecto al borde izquierdo del contenedor. */
+     Desplazado 6px hacia la izquierda respecto al borde derecho del contenedor,
+     y 6px hacia abajo para alinearlo visualmente con el logo de la izquierda. */
   .nav-toggle-mobile {
-    width: 26px;
-    height: 20px;
-    margin-left: 6px;
+    width: 22px;
+    height: 16px;
+    margin-right: 6px;
+    margin-top: 6px;
     padding: 0;
     background: transparent;
     border: none;
@@ -254,7 +290,7 @@
   .nav-toggle-mobile__bar {
     display: block;
     width: 100%;
-    height: 2px;
+    height: 1px;
     background-color: var(--color-black);
     border-radius: 1px;
   }
@@ -270,6 +306,210 @@
   body.nav-mobile-show-floating .nav-floating-mobile {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  /* Cuando el nav está scrolled en mobile, se comporta como en desktop:
+     barra fija de alto var(--nav-height) con fondo blanco + border-bottom.
+     El fondo lo aporta el pseudoelemento ::before del bloque desktop
+     (que sí queremos que funcione en mobile también). Sólo ajustamos
+     altura/padding para que sea una barra y no el bloque alto que
+     ocupa la lista vertical desplegada arriba.
+     El JS oculta el nav (.main-nav--hidden) al scrollear hacia abajo
+     y lo muestra al scrollear hacia arriba (igual que desktop). */
+  .main-nav--scrolled {
+    height: var(--nav-height);
+    padding: 0 var(--margin-a);
+  }
+
+  /* Floating mobile vs nav scrolled: relevo.
+     Estructura DOM: tanto .floating-logo-mobile como .nav-floating-mobile
+     viven DENTRO de .main-nav (son hijos/descendientes), y ambos tienen
+     position: fixed propia anclada al viewport. Así que el "relevo"
+     entre estado floating y estado nav-scrolled es solo cuestión de
+     reposicionarlos cuando el nav está scrolled+visible.
+
+     Cuando el nav scrolled está VISIBLE (no --hidden):
+       - El logo timbó se centra verticalmente dentro de la barra y
+         se achica un poco para entrar (60px de alto).
+       - La hamburguesa también se centra verticalmente y se anula el
+         margin-top: 6px que tenía en estado floating.
+     Cuando el nav scrolled está --hidden:
+       - Logo y hamburguesa vuelven a su posición floating original
+         (regida por las reglas de arriba en este mismo @media). */
+  /* Importante: como los elementos tienen position: fixed (respecto al
+     viewport, no respecto al nav), necesitamos anclarlos a la altura
+     real de la barra (var(--nav-height) = 60px). Usamos el centro de
+     la barra como referencia con:
+       top: calc(var(--nav-height) / 2);
+       transform: translateY(-50%);
+     Así el centro del elemento queda exactamente sobre el centro
+     vertical de la barra del nav. */
+  .main-nav--scrolled:not(.main-nav--hidden) .floating-logo-mobile {
+    top: calc(var(--nav-height) / 2);
+    left: var(--margin-a);
+    transform: translateY(-50%);
+    width: 100px;
+    /* Forzamos visible por si el usuario sube y cruza el threshold de
+       500px hacia arriba mientras el nav ya está scrolled (en ese
+       momento body.nav-mobile-show-floating podría no estar activa). */
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .main-nav--scrolled:not(.main-nav--hidden) .nav-floating-mobile {
+    /* IMPORTANTE: no usar `transform` acá. Si el contenedor tiene transform,
+       se convierte en containing block para sus descendientes position:fixed
+       (incluido .floating-logo-mobile), y el logo queda anclado al contenedor
+       —arriba a la derecha— en vez de al viewport (izquierda). Por eso
+       centramos verticalmente usando `top: 0; height: var(--nav-height)`
+       con `justify-content: center`, en lugar de translateY(-50%). */
+    top: 0;
+    right: var(--margin-a);
+    height: var(--nav-height);
+    justify-content: center;
+    transform: none;
+    /* Adentro del contenedor sólo queda la hamburguesa (el logo salió
+       con su propio fixed), así que limpiamos gap. */
+    gap: 0;
+    /* Idem nota anterior: aseguramos visible. */
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .main-nav--scrolled:not(.main-nav--hidden) .nav-toggle-mobile {
+    margin-top: 0;
+    margin-right: 0;
+  }
+
+  /* ===== MENÚ MOBILE ABIERTO =====
+     Cuando el usuario toca la hamburguesa, JS agrega body.nav-mobile-open.
+     Estado abierto:
+       - Overlay gris semi-transparente cubre toda la pantalla.
+       - Scroll del body bloqueado.
+       - Los navlinks vuelven a verse en columna (sobreescribe nav-mobile-hide-list).
+       - Las 3 barras de la hamburguesa se transforman en una X. */
+
+  /* Overlay gris. Existe siempre en mobile (sobre body::before), pero
+     invisible por defecto. Las clases nav-mobile-open / nav-mobile-closing
+     lo llevan a opacity 1 / 0. Así el fade funciona en ambas direcciones
+     (al abrir y al cerrar) — si lo creáramos sólo con .nav-mobile-open,
+     desaparecería de golpe al quitarse la clase. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-color: var(--color-gray-300);
+    z-index: 99;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 550ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  body.nav-mobile-open::before {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body.nav-mobile-closing::before {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Bloquear scroll cuando el menú está abierto */
+  body.nav-mobile-open {
+    overflow: hidden;
+  }
+
+  /* Cuando el menú está abierto, reposicionamos los navlinks
+     justo debajo del floating mobile (logo + X) para conseguir el
+     orden vertical: logo → X → menú.
+     El floating vive en top: var(--space-xl), right: var(--space-lg).
+     Su alto aproximado es: logo 100px + gap 8px + hamburguesa 16px = 124px.
+     Sumamos un pequeño margen extra para separar la X del menú. */
+  body.nav-mobile-open .nav__links {
+    opacity: 1;
+    pointer-events: auto;
+    position: fixed;
+    top: calc(var(--margin-c) + var(--margin-a));
+    right: var(--margin-a);
+    z-index: 102;
+  }
+
+  /* Durante el cierre, los navlinks mantienen su posición fixed (igual
+     que en open) pero se desvanecen con opacity. Si no hiciéramos esto,
+     al quitar .nav-mobile-open la lista volvería de golpe a su posición
+     original en el flujo del nav, generando un "salto" visible antes
+     de que la animación de cierre termine. */
+  body.nav-mobile-closing .nav__links {
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    top: calc(var(--margin-c) + var(--margin-a));
+    right: var(--margin-a);
+    z-index: 102;
+    transition: opacity 400ms ease;
+  }
+
+  /* El nav y los navlinks deben quedar POR ENCIMA del overlay (z-index > 99). */
+  body.nav-mobile-open .main-nav {
+    z-index: 102;
+  }
+
+  /* Hamburguesa → X y vuelta.
+     Las 3 barras de .nav-toggle-mobile son hermanos directos.
+
+     Animación de IDA (abrir):
+       Barra 1 baja 7px y rota +45°.
+       Barra 2 desaparece.
+       Barra 3 sube 7px y rota -45°.
+
+     Animación de VUELTA (cerrar) — no es reversa:
+       JS agrega body.nav-mobile-closing por la duración de la transición.
+       En ese estado, la barra 1 sigue rotando hacia +360° (no vuelve a 0°
+       atravesando 45°, sino que completa la vuelta). La barra 3 hacia -360°.
+       Cuando termina la transición, JS quita tanto .nav-mobile-open como
+       .nav-mobile-closing, quedando las barras en su estado base (sin
+       transform). Visualmente 360° y 0° son iguales, así que no hay salto. */
+  .nav-toggle-mobile__bar {
+    transition: transform 600ms ease, opacity 500ms ease;
+    transform-origin: center;
+  }
+
+  body.nav-mobile-open .nav-toggle-mobile__bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  body.nav-mobile-open .nav-toggle-mobile__bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  body.nav-mobile-open .nav-toggle-mobile__bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* Estado "cerrando": las barras siguen en el mismo sentido (medio giro,
+     180°). Quedan horizontales otra vez, pero pasando por arriba en lugar
+     de retroceder a 0°. Visualmente 180° es igual que 0° para una línea
+     horizontal, así que cuando JS quita las clases no hay salto. */
+  body.nav-mobile-closing .nav-toggle-mobile__bar:nth-child(1) {
+    transform: translateY(0) rotate(180deg);
+  }
+
+  body.nav-mobile-closing .nav-toggle-mobile__bar:nth-child(2) {
+    opacity: 1;
+  }
+
+  body.nav-mobile-closing .nav-toggle-mobile__bar:nth-child(3) {
+    transform: translateY(0) rotate(-180deg);
+  }
+
+  /* Cuando se quitan las clases de open/closing, hace falta desactivar
+     la transición por un frame para que las barras "snappeen" del 180°
+     al 0° (estado base) sin interpolar — si no, se ven dos giros
+     consecutivos al cerrar. JS pone esta clase, espera un frame y la
+     quita; en ese intervalo el cambio de 180° → 0° es instantáneo. */
+  body.nav-mobile-no-transition .nav-toggle-mobile__bar {
+    transition: none;
   }
 }
 
@@ -690,17 +930,46 @@
   z-index: 1;
 }
 
-@media (max-width: 768px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
   .intro__container {
     grid-template-columns: 1fr;
+    margin: var(--margin-a) var(--margin-a) var(--margin-b) var(--margin-a);
+    row-gap: var(--space-4xl);
   }
 
   .intro__photos {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-columns: 1fr;
     width: 100%;
-    max-height: 400px;
+    max-height: none;
   }
 
+  /* Ocultamos la segunda foto (la angosta de la derecha) en mobile:
+     la primera (wide) ocupa todo el ancho y crece manteniendo proporción. */
+  .intro__photo--narrow {
+    display: none;
+  }
+
+  .intro__body {
+    padding-bottom: 6rem;
+    gap: var(--space-md); /* mitad del gap desktop (32px → 16px) */
+  }
+
+  .intro__text {
+    /* Estándar mobile — Fluid: 16px @ 375px → 23px @ 1023px */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
+  }
+
+  .intro__label {
+    /* Fluid: 10px @ 375px → 14px @ 1023px */
+    font-size: clamp(0.625rem, 0.62vw + 0.39rem, 0.875rem);
+  }
+
+  .intro__claim {
+    /* Fluid: 28px @ 375px → 40px @ 1023px */
+    font-size: clamp(1.75rem, 1.85vw + 1.06rem, 2.5rem);
+  }
 }
 
 
@@ -789,6 +1058,48 @@
   color: var(--color-text-light);
 }
 
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* Altura de la sección reducida: en desktop la imagen es 120vh,
+     en mobile la bajamos a 75vh. Recorta más la foto pero la sección
+     queda más compacta. Ajustar este valor si querés más/menos alto. */
+  .nature-dialogue__image img {
+    height: 75vh;
+  }
+
+  /* En mobile el texto pasa al mismo tamaño que .philosophy__text
+     y se ancla en la parte inferior derecha de la imagen.
+     El contenedor .nature-dialogue__text-mask sigue siendo absolute;
+     cambiamos su anclaje horizontal de left a right y reducimos el
+     margen lateral derecho para que el texto se acerque más al borde.
+     El bottom se baja respecto a desktop para que el texto quede más
+     pegado al borde inferior de la imagen. */
+  .nature-dialogue__text-mask {
+    left: auto;
+    right: var(--space-lg);
+    bottom: clamp(24px, 5vh, 56px);
+    max-width: min(
+      980px,
+      calc(100vw - var(--space-lg) - var(--space-xl))
+    );
+    text-align: right;
+  }
+
+  .nature-dialogue__text {
+    /* Estándar mobile (igual a .intro__claim):
+       Fluid: 28px @ 375px → 40px @ 1023px */
+    font-size: clamp(1.2rem, 1.2vw + 0.8rem, 1.8rem);
+    font-weight: var(--fw-medium);
+    line-height: 1.05;
+    text-align: right;
+    color: white;
+  }
+}
+
+/* --- MOBILE CHICO (opcional) --- */
+@media (max-width: 480px) {
+  /* sólo si hace falta ajuste extra para celulares chicos */
+}
 
 /* =========================
    SECCIÓN 4: FILOSOFÍA / VALORES
@@ -816,10 +1127,11 @@
 }
 
 .philosophy__statement {
-  font-size: clamp(1.8rem, 2.8vw, 2.7rem);
-  font-weight: var(--fw-medium);
+  /* estandar-desktop para titulo */
+  font-size: clamp(1.875rem, 1.7vw + 0.85rem, 2.75rem);
+  letter-spacing: 0.04em;
   line-height: 1.05;
-  letter-spacing: -0.02em;
+  font-weight: var(--fw-medium);
   margin: 0;
 }
 
@@ -849,9 +1161,11 @@
 
 .philosophy__text {
   margin: 0;
-  font-size: clamp(1.1rem, 1.4vw, 1.6rem);
-  font-weight: var(--fw-regular);
+  /* estandar-desktop para parrafo */
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  letter-spacing: 0.03em;
   line-height: 1.35;
+  font-weight: var(--fw-regular);
   color: var(--color-text-primary);
   max-width: 60rem;
 }
@@ -958,6 +1272,80 @@ html[lang='es'] .philosophy__signal-label {
     opacity: 1;
     will-change: auto;
   }
+}
+
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* Pasamos de grid 2 columnas a 1 sola columna.
+     El orden del HTML define el apilado: arriba .philosophy__content
+     (título + párrafo + botón), abajo .philosophy__signals (íconos). */
+  .philosophy__container {
+    grid-template-columns: 1fr;
+    gap: clamp(3rem, 8vw, 5rem);
+    margin: var(--margin-a) var(--margin-a);
+    padding: 0 0;
+  }
+
+  /* Estrategia simple: el grid ocupa todo el ancho del container
+     (width: 100%, nunca desborda) y las columnas se acomodan pegadas
+     a la derecha dentro del grid (justify-content: end). Así, sobre o
+     entre breakpoints, las columnas siempre quedan contra el borde
+     derecho y el espacio sobrante queda a la izquierda.
+     El cambio 3→2 columnas vive en un @media propio más abajo
+     (max-width: 600px), por pedido del diseño. */
+  .philosophy__signals {
+    width: 100%;
+    justify-content: end;
+    column-gap: clamp(0.5rem, 4vw, 2rem);
+  }
+
+  /* Estándar tipográfico mobile (ver CLAUDE.md):
+     título y párrafo escalan de 375px → 1023px. */
+  .philosophy__statement {
+    /* Fluid: 28px @ 375px → 40px @ 1023px */
+    font-size: clamp(1.75rem, 1.85vw + 1.06rem, 2.5rem);
+  }
+
+  .philosophy__text {
+    /* Estándar mobile (estandar-a-mobile / párrafo) — Fluid: 16px @ 375px → 23px @ 1023px */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
+  }
+
+  .philosophy__content {
+    gap: var(--space-md);
+    padding-bottom: clamp(5rem, 8vh, 10rem);
+  }
+
+  .philosophy__cta {
+    /* Fluid: 18px @ 375px → 24px @ 1023px */
+    font-size: clamp(1.125rem, 0.93vw + 0.78rem, 1.5rem);
+  }
+}
+
+/* --- SIGNALS: 3 → 2 columnas (breakpoint propio del grid interno) ---
+   Sólo afecta la grilla interna de .philosophy__signals. El resto del
+   layout mobile (apilado, gap del container, etc.) sigue cambiando a
+   1023.98px en el @media de arriba. */
+@media (max-width: 600px) {
+  /* Columnas fijas (9rem c/u, un poco más chicas que las 11rem de
+     desktop, para que entren cómodas en 375px). justify-content: end
+     del bloque base las pega a la derecha; el espacio sobrante queda
+     a la izquierda. */
+  .philosophy__signals {
+    grid-template-columns: repeat(2, 9rem);
+  }
+
+  /* En desktop el signal tiene width: 11rem; lo bajamos a 9rem para
+     que coincida con el ancho de la columna a este breakpoint. */
+  .philosophy__signal {
+    width: 9rem;
+  }
+}
+
+/* --- MOBILE CHICO (opcional) --- */
+@media (max-width: 480px) {
+  /* sólo si hace falta ajuste extra para celulares chicos */
 }
 
 /* =========================
@@ -1243,9 +1631,9 @@ html.is-entering-home.is-entering-home-active .main-nav {
   transform: scale(1);
 }
 
-.project-hero--praderas .project-hero__media img {
-  object-position: 58% 58%;
-}
+/* `.project-hero--praderas .project-hero__media img { object-position: 58% 58%; }`
+   movido al <style> inline de proyecto-praderas-cabin.html — ajuste de
+   encuadre específico de esa foto, no del sistema. */
 
 .project-hero--praderas .project-hero__title {
   color: var(--color-black);
@@ -1814,6 +2202,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
   will-change: transform;
 }
 
+.project-highlight__title--light {
+  color: var(--color-white);
+}
+
 .project-highlight__title-line {
   display: block;
   overflow: hidden;
@@ -1877,55 +2269,33 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .project-palette__text {
-  margin-top: clamp(1rem, 2vw, 2rem);
+  /* margin-top: base (1-2rem) + 100px de aire para separar la frase clave
+     de las imágenes. Estándar para todos los proyectos. */
+  margin-top: calc(clamp(1rem, 2vw, 2rem) + 100px);
   font-weight: var(--fw-bold);
   max-width: 22rem;
   will-change: transform;
 }
 
-.project-palette--praderas .project-palette__text {
-  margin-top: calc(clamp(1rem, 2vw, 2rem) + 100px);
-}
-
-/* Praderas: invertir orden visual manteniendo el ancho de cada componente.
-   El grid del container es 3fr 7fr (copy angosto, images ancho).
+/* Invertir orden visual manteniendo el ancho de cada componente.
+   El grid base del container es 3fr 7fr (copy angosto, images ancho).
    Cambiamos las columnas a 7fr 3fr y reasignamos cada hijo a su columna.
-   Solo en desktop: en mobile el container colapsa a 1fr y el orden
-   queda en el flujo natural del HTML (copy arriba, images abajo). */
+   Sólo en desktop: en mobile el container colapsa a 1fr y el orden
+   queda en el flujo natural del HTML (copy arriba, images abajo).
+   Estándar para todos los proyectos. */
 @media (min-width: 901px) {
-  .project-palette--praderas .project-palette__container {
+  .project-palette__container {
     grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
   }
 
-  .project-palette--praderas .project-palette__copy {
+  .project-palette__copy {
     grid-column: 2;
   }
 
-  .project-palette--praderas .project-palette__images {
+  .project-palette__images {
     grid-column: 1;
     grid-row: 1;
   }
-}
-
-.project-palette__text-line {
-  display: block;
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
-  -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
-  -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
-}
-
-.project-palette__text-line-inner {
-  display: block;
-  transform: translateY(100%);
-  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.project-palette__text.is-revealed .project-palette__text-line-inner {
-  transform: translateY(0);
 }
 
 .project-palette__images {
@@ -1991,7 +2361,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   object-fit: cover;
 }
 
-/* ========================= PROJECT PALETTE — DRAG MODE (praderas) ========================= */
+/* ========================= PROJECT PALETTE — DRAG MODE ========================= */
 /* Wrapper flex con dos figuras redimensionables por un divisor arrastrable.
    Solo se aplica cuando el wrapper tiene la clase --drag. */
 .project-palette__images--drag {
@@ -2270,14 +2640,18 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .project-phrase__text {
-  margin-top: clamp(1rem, 2vw, 2rem);
+  /* margin-top: base (1-2rem) + 100px de aire para separar la frase clave
+     de las imágenes. Estándar para todos los proyectos (igual que palette). */
+  margin-top: calc(clamp(1rem, 2vw, 2rem) + 100px);
   font-weight: var(--fw-bold);
   max-width: 22rem;
   will-change: transform;
 }
 
-.project-phrase--praderas .project-phrase__text {
-  margin-top: calc(clamp(1rem, 2vw, 2rem) + 100px);
+.project-phrase__text--body {
+  margin-top: 0;
+  font-weight: var(--fw-regular);
+  max-width: clamp(23.8rem, 30.6vw, 35.7rem);
 }
 
 .project-phrase__text-line {
@@ -2798,46 +3172,84 @@ html.is-entering-home.is-entering-home-active .main-nav {
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1023.98px) {
   .project-hero {
-    min-height: 78vh;
+    min-height: 100vh;
   }
 
   .project-hero__content {
-    min-height: 78vh;
-    padding-top: calc(var(--nav-height) + 2.75rem);
+    min-height: 100vh;
+    padding-top: calc(var(--nav-height) + 7.25rem);
   }
 
   .project-hero__title {
     max-width: 8ch;
-    font-size: clamp(2.5rem, 10vw, 4.1rem);
+    font-size: clamp(2.3rem, 9vw, 3.8rem);
   }
 
   .project-overview__content {
     grid-template-columns: 1fr;
   }
 
+  .project-overview__media {
+    order: 1;
+  }
+
+  .project-overview__dots {
+    display: none;
+  }
+
+  .project-overview__img {
+    aspect-ratio: 3.2 / 2;
+  }
+
+  .project-overview__sidebar {
+    order: 2;
+  }
+
   .project-overview__facts {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem 1.5rem;
+    gap: 0.5rem var(--margin-a);
     padding-top: 0;
+    top: 0;
+    transform: none;
+    will-change: auto;
   }
 
   .project-overview__map {
-    grid-column: 1 / -1;
-    justify-self: start;
+    grid-column: 2;
+    grid-row: 1 / span 5;
+    align-self: end;
+    justify-self: end;
   }
 
   .project-overview__fact {
+    grid-column: 1;
     max-width: none;
+  }
+
+  .project-overview__fact-value {
+    font-size: clamp(0.875rem, 0.31vw + 0.803rem, 1rem);
   }
 
   .project-refuge__container {
     grid-template-columns: 1fr;
     align-items: start;
+    margin-inline: var(--margin-a);
+    margin-block: var(--margin-b);
   }
 
+  .project-refuge__gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .project-refuge__image:nth-child(2) {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
   .project-frame__container {
     grid-template-columns: 1fr;
     align-items: start;
@@ -2905,11 +3317,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 @media (max-width: 640px) {
   .project-overview__title {
     max-width: none;
-    font-size: clamp(2.35rem, 9vw, 3.35rem);
-  }
-
-  .project-overview__facts {
-    grid-template-columns: 1fr;
+    font-size: clamp(2rem, 7vw, 2.8rem);
   }
 
   .project-overview__map {
@@ -2919,10 +3327,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .project-refuge__text {
     font-size: clamp(1.02rem, 4.1vw, 1.22rem);
     line-height: 1.5;
-  }
-
-  .project-refuge__gallery {
-    grid-template-columns: 1fr;
   }
 
   .project-palette__intro,
@@ -2947,15 +3351,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
     width: clamp(7rem, 30vw, 10rem);
   }
 
-  .project-overview__dots {
-    top: -0.7rem;
-    right: 0.55rem;
-  }
-
-  .project-overview__dot {
-    width: 0.62rem;
-    height: 0.62rem;
-  }
 }
 
 @media (max-width: 900px) {
@@ -3577,25 +3972,60 @@ html.is-entering-home.is-entering-home-active .main-nav {
   height: auto;
 }
 
-@media (max-width: 1100px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* Hero mobile: copy primero (centrado vertical, ~1 vista),
+     visual SVG después (~0.5–1 vista). Total ~1.5–2 vistas. */
+  .sust-hero {
+    min-height: auto;
+    padding: 0;
+  }
+
+  /* 1 columna, sin gap entre sub-bloques (cada uno controla su altura). */
   .sust-hero__container {
     grid-template-columns: 1fr;
-    gap: 4rem;
+    gap: 0;
+    padding-left: 0;
+    padding-right: 0;
   }
 
+  /* COPY: ocupa una vista completa, contenido un poco por debajo del centro (≈65/35). */
   .sust-hero__copy {
-    max-width: 32rem;
+    min-height: 95vh;
+    max-width: 100%;
+    margin: 0;
+    padding: var(--space-2xl) var(--margin-a);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Empuja el contenido hacia abajo: 65% arriba / 35% abajo */
+    padding-top: calc(95vh * 0.30);
+    padding-bottom: calc(95vh * 0.20);
   }
-}
 
-@media (max-width: 768px) {
   .sust-hero__title {
-    font-size: clamp(2.5rem, 10vw, 3.6rem);
+    /* Estándar mobile (estandar-a-mobile / título) — Fluid: 28px @ 375px → 40px @ 1023px */
+    font-size: clamp(1.75rem, 1.85vw + 1.06rem, 2.5rem);
+    max-width: 18ch;
   }
 
   .sust-hero__text,
   .sust-hero__text--lead {
-    font-size: 1.2rem;
+    /* Estándar mobile (estandar-a-mobile / párrafo) — Fluid: 16px @ 375px → 23px @ 1023px */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
+  }
+
+  /* VISUAL: media vista, SVG centrado. */
+  .sust-hero__visual {
+    min-height: 60vh;
+    padding: 0 var(--margin-a) var(--space-2xl);
+  }
+
+  .sust-hero__visual-img {
+    width: 100%;
+    max-width: 22rem;
+    margin: 0 auto;
   }
 }
 
@@ -3681,24 +4111,53 @@ html.is-entering-home.is-entering-home-active .main-nav {
   max-width: 50ch;
 }
 
-@media (max-width: 1100px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* Process mobile: el orden del HTML ya es media -> copy,
+     así que naturalmente queda: gráfico (vista 1) -> texto (vista 2). */
+  .sust-process {
+    min-height: auto;
+    padding: 0;
+  }
+
   .sust-process__container {
     grid-template-columns: 1fr;
-    gap: 4rem;
+    gap: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* GRÁFICO: una vista completa, centrado vertical y con márgenes. */
+  .sust-process__media-wrap {
+    min-height: 100vh;
+    padding: var(--space-2xl) var(--margin-a);
+    justify-content: center;
   }
 
   .sust-process__media {
-    max-width: 640px;
+    max-width: 100%;
   }
-}
 
-@media (max-width: 768px) {
+  /* COPY: otra vista completa, centrado vertical (espacio arriba y abajo). */
+  .sust-process__copy {
+    min-height: 50vh;
+    padding: var(--space-2xl) var(--margin-a) var(--space-4xl);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 100%;
+  }
+
   .sust-process__title {
-    font-size: clamp(2.5rem, 10vw, 3.6rem);
+    /* Estándar mobile (estandar-a-mobile / título) — Fluid: 28px @ 375px → 40px @ 1023px */
+    font-size: clamp(1.75rem, 1.85vw + 1.06rem, 2.5rem);
+    max-width: 18ch;
   }
 
   .sust-process__text {
-    font-size: 1.2rem;
+    /* Estándar mobile (estandar-a-mobile / párrafo) — Fluid: 16px @ 375px → 23px @ 1023px */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
   }
 }
 
@@ -3844,8 +4303,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.25rem 1rem;
-  min-height: 1.4em;
-  padding: 0.5rem 0.25rem 0;
+  min-height: 0.1em;
+  padding: 0rem 0.25rem 0;
   font-size: 0.6875rem;
   letter-spacing: 0.04em;
   color: var(--color-gray-400);
@@ -3865,8 +4324,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
   justify-content: flex-end;
   gap: 0.45rem 1rem;
   max-width: min(100%, 28rem);
-  margin-left: auto;
-  padding: 0 0.25rem;
+  margin-left: 0;
+  padding: 0 1rem;
   font-size: 0.6875rem;
   letter-spacing: 0.03em;
   color: var(--color-gray-400);
@@ -3921,6 +4380,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
   gap: 0.4rem;
 }
 
+/* Etiquetas con versión desktop / mobile (la mobile se oculta por defecto). */
+.outdoor-climate__legend-label--mobile,
+.outdoor-climate__readout-when--mobile {
+  display: none;
+}
+
 .outdoor-climate__swatch {
   display: inline-block;
   width: 14px;
@@ -3942,14 +4407,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .outdoor-climate__swatch--rain     { background-color: #BCD8ED; height: 8px; }
 .outdoor-climate__swatch--wind     { background-color: #575756; height: 2px; }
 
-@media (max-width: 1100px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* La tarjeta usa todo el ancho disponible dentro del contenedor mobile
+     (que ya tiene márgenes laterales en .sust-process__media-wrap). */
   .outdoor-climate {
-    max-width: 640px;
-  }
-}
-
-@media (max-width: 640px) {
-  .outdoor-climate {
+    max-width: 100%;
     padding: 1rem;
   }
   .outdoor-climate__months {
@@ -3957,9 +4420,51 @@ html.is-entering-home.is-entering-home-active .main-nav {
     letter-spacing: 0.04em;
   }
   .outdoor-climate__panel-legend {
-    font-size: 0.625rem;
-    gap: 0.4rem 0.8rem;
+    font-size: 0.5625rem; /* 9px — más chico para que entren los 3 en 1 línea */
+    gap: 0.3rem 1rem;  /* gap horizontal más apretado */
     max-width: 100%;
+    flex-wrap: nowrap;     /* fuerza una sola línea */
+    white-space: nowrap;   /* evita que un item se parta */
+    justify-content: flex-start;
+  }
+  /* El swatch también achicado para acompañar el font-size más chico. */
+  .outdoor-climate__panel-legend .outdoor-climate__swatch {
+    width: 10px;
+  }
+  .outdoor-climate__legend-item {
+    gap: 0.25rem; /* separación más chica entre swatch y label */
+  }
+  /* Mensaje "pasá el mouse..." no aplica en mobile (no hay hover). */
+  .outdoor-climate__readout-default {
+    display: none;
+  }
+  /* Swap de etiquetas: en mobile usamos la versión abreviada. */
+  .outdoor-climate__legend-label--desktop,
+  .outdoor-climate__readout-when--desktop {
+    display: none;
+  }
+  .outdoor-climate__legend-label--mobile,
+  .outdoor-climate__readout-when--mobile {
+    display: inline;
+  }
+  /* Readout: apretar gap y bajar font-size para que entre todo en un renglón. */
+  .outdoor-climate__readout {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: 0.2rem 0.4rem;
+    font-size: 0.5625rem; /* 9px */
+    letter-spacing: 0.02em;
+    padding: 0;
+    padding-left: 1rem;
+  }
+  .outdoor-climate__readout-metric em {
+    margin-right: 0.15rem;
+    letter-spacing: 0.03em;
+  }
+
+  .outdoor-climate__panel-footer {
+
+    gap: 0.2rem;
   }
 }
 
@@ -4075,32 +4580,47 @@ html.is-entering-home.is-entering-home-active .main-nav {
   max-width: 50ch;
 }
 
-@media (max-width: 1100px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* Climate mobile: texto primero, imagen después, todo en UNA sola vista.
+     El orden del HTML ya es copy -> media. */
   .sust-climate {
-    --sust-climate-media-width: clamp(22rem, 78vw, 36rem);
+    --sust-climate-media-width: 100%;
+    min-height: 100vh;
+    padding: var(--space-2xl) 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .sust-climate__container {
+    width: 100%;
     grid-template-columns: 1fr;
+    gap: var(--space-2xl);
+    margin: 0;
+    padding: 0 var(--margin-a);
   }
 
   .sust-climate__copy {
-    min-height: auto;
+    margin-left: 0;
   }
 
-  .sust-climate__media-wrap {
-    width: min(100%, var(--sust-climate-media-width));
-  }
-}
-
-@media (max-width: 768px) {
   .sust-climate__title {
-    font-size: clamp(2.5rem, 11vw, 4rem);
-    max-width: none;
+    /* Estándar mobile (estandar-a-mobile / título) — Fluid: 28px @ 375px → 40px @ 1023px */
+    font-size: clamp(1.75rem, 1.85vw + 1.06rem, 2.5rem);
+    max-width: 18ch;
   }
 
   .sust-climate__text {
-    font-size: 1.15rem;
+    /* Estándar mobile (estandar-a-mobile / párrafo) — Fluid: 16px @ 375px → 23px @ 1023px */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
+  }
+
+  .sust-climate__media-wrap {
+    width: 100%;
+    justify-self: stretch;
+    aspect-ratio: 4 / 3;
   }
 }
 
@@ -4145,7 +4665,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   /* justify-content: space-between; */
   align-items: flex-start;
   gap: clamp(1rem, 3vw, 4rem);
-  padding-top: clamp(8rem, 10vw, 12rem);
+  padding-top: clamp(2rem, 4vw, 6rem);
   padding-bottom: clamp(4rem, 6vw, 5.5rem);
   color: #000000;
 }
@@ -4200,7 +4720,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
   }
 }
 
-@media (max-width: 900px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* Breathe mobile: dejamos la estructura/altura/padding como estaban,
+     solo ajustamos tamaños de texto (instrucción explícita) y el
+     object-position de la imagen para que el encuadre se vea bien en
+     formato vertical de celular. */
   .sust-breathe {
     min-height: 82vh;
   }
@@ -4209,18 +4734,26 @@ html.is-entering-home.is-entering-home-active .main-nav {
     flex-direction: column;
     align-items: flex-start;
     min-height: 82vh;
-    padding-top: calc(var(--nav-height) + 2.5rem);
+    padding-top: calc(2.5rem);
     padding-bottom: 3rem;
   }
 
+  /* IMAGEN: ajustamos object-position para que el encuadre vertical de
+     mobile no recorte la zona principal. */
+  .sust-breathe__media img {
+    object-position: center;
+  }
+
+  /* TEXTO: tamaños ajustados para mobile, resto de parámetros sin tocar. */
   .sust-breathe__title {
-    max-width: 9ch;
-    font-size: clamp(1.8rem, 6.1vw, 2.85rem);
+    max-width: 20ch;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
   }
 
   .sust-breathe__text {
-    max-width: 20ch;
-    font-size: clamp(1.2rem, 4.1vw, 1.9rem);
+    /* Estándar mobile (estandar-a-mobile / párrafo) — Fluid: 16px @ 375px → 23px @ 1023px */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
     line-height: 1.5;
   }
 }
@@ -4295,7 +4828,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
   flex-direction: column;
   align-items: flex-start;
   gap: clamp(1.1rem, 1.8vw, 1.55rem);
-  padding-top: 0.35rem;
+  padding-block: 0.35rem;
+  margin-inline: var(--margin-a);
   will-change: opacity, transform, filter;
   transform-origin: left center;
 }
@@ -4340,30 +4874,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
   max-width: none;
 }
 
-.sust-strategies__detail-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 2;
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  font: inherit;
-  font-size: 1.45rem;
-  line-height: 1;
-  color: rgba(29, 29, 27, 0.62);
-  cursor: pointer;
-  transition: color 180ms ease, opacity 180ms ease;
-}
-
-.sust-strategies__detail-close:hover,
-.sust-strategies__detail-close:focus-visible {
-  color: var(--color-black);
-  opacity: 1;
-}
-
 .sust-strategies__detail-title {
   margin: 0 2rem 0 0;
   font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
@@ -4403,7 +4913,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .sust-strategies.is-detail-open .sust-strategies__diagram-shell {
-  max-width: clamp(31.5rem, 48vw, 39rem);
+  /* Tamaño +10% respecto del original (31.5/48vw/39 → 34.65/52.8vw/42.9).
+     Como el aside ahora está siempre abierto, este es el tamaño fijo
+     de la rueda en desktop. */
+  max-width: clamp(34.65rem, 52.8vw, 42.9rem);
   transform: translateX(-0.75rem);
 }
 
@@ -4495,7 +5008,24 @@ html.is-entering-home.is-entering-home-active .main-nav {
   }
 }
 
-@media (max-width: 900px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* Mismo tratamiento que .sust-pilares: la rueda crece al máximo posible,
+     el detail aparece debajo en lugar de a la derecha, y el SVG se escala
+     ligeramente para ganar tamaño visual. */
+
+  /* Padding lateral en 0 para que la rueda toque los bordes del viewport. */
+  .sust-strategies {
+    padding: clamp(2rem, 6vw, 4rem) 0;
+  }
+
+  /* El .container interno también tiene padding lateral por defecto;
+     lo anulamos sólo dentro de strategies para ganar ancho. */
+  .sust-strategies .container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   .sust-strategies__layout,
   .sust-strategies.is-detail-open .sust-strategies__layout {
     padding-right: 0;
@@ -4507,12 +5037,25 @@ html.is-entering-home.is-entering-home-active .main-nav {
     transform: none;
   }
 
+  .sust-strategies__diagram-svg {
+    max-width: 100%;
+    /* Scale más conservador que pilares (que está en 1.12) porque strategies
+       tiene 8 etiquetas en lugar de 6 y necesita un poco más de aire.
+       overflow: visible permite que los elementos cercanos al borde no se
+       recorten. */
+    transform: scale(1.05);
+    transform-origin: center center;
+  }
+
+  /* Detail: estático debajo de la rueda. Cerrado = altura 0. */
   .sust-strategies__detail,
   .sust-strategies.is-detail-open .sust-strategies__detail {
     position: static;
     width: 100%;
     height: auto;
     margin-top: 1.5rem;
+    padding-left: 0;
+    border-left: none;
     max-height: 0;
     opacity: 1;
     transform: none;
@@ -4522,7 +5065,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   }
 
   .sust-strategies.is-detail-open .sust-strategies__detail {
-    max-height: 24rem;
+    max-height: 40rem;
     pointer-events: auto;
   }
 
@@ -4530,24 +5073,29 @@ html.is-entering-home.is-entering-home-active .main-nav {
     width: 100%;
     min-height: 0;
   }
-}
 
-@media (max-width: 768px) {
-  .sust-strategies__diagram-svg {
-    max-width: 100%;
+  .sust-strategies__detail-stack {
+    padding-bottom: 2rem;
   }
 
-  .sust-strategies__detail-title,
+  .sust-strategies__detail-title {
+    font-size: 1.1rem;
+  }
+
   .sust-strategies__detail-text {
-    font-size: 1.2rem;
+    /* Estándar mobile (estandar-a-mobile / párrafo) — Fluid: 16px @ 375px → 23px @ 1023px */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
   }
 
+  /* Tipografía de las etiquetas SVG: mantenemos el tamaño original (14px)
+     ahora que la rueda crece, así todo escala junto y queda legible. */
   .sust-strategies__diagram-svg text[font-size="14"] {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .sust-strategies__diagram-svg text[font-size="11"] {
-    font-size: 9px;
+    font-size: 11px;
   }
 }
 
@@ -4555,8 +5103,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .sust-strategies__layout,
   .sust-strategies__diagram-shell,
   .sust-strategies__detail,
-  .sust-strategies__orbit-label-item text,
-  .sust-strategies__detail-close {
+  .sust-strategies__orbit-label-item text {
     transition: none;
   }
 
@@ -4650,13 +5197,18 @@ html.is-entering-home.is-entering-home-active .main-nav {
   align-items: flex-start;
   gap: clamp(1.1rem, 1.8vw, 1.55rem);
   padding-top: 0.35rem;
+  padding-inline: var(--margin-a);
   will-change: opacity, transform, filter;
   transform-origin: left center;
 }
 
 .sust-pilares__detail-media {
   --sust-pilares-detail-media-width: clamp(6rem, 8vw, 10rem);
-  --sust-pilares-detail-label-width: min(100%, 10rem);
+  /* Altura tipográfica común para todos los SVGs de texto.
+     Se controla por height (no width) para que el tamaño visual
+     de las letras sea idéntico entre items, independientemente
+     del viewBox de cada SVG. */
+  --sust-pilares-detail-label-height: clamp(1.2rem, 1.55vw, 1.7rem);
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -4682,21 +5234,24 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .sust-pilares__detail-label {
-  width: var(--sust-pilares-detail-label-width);
-  max-width: 100%;
-  height: auto;
+  /* Controlado por height para mantener tamaño tipográfico
+     consistente entre items. El width se calcula automáticamente
+     según el viewBox de cada SVG. */
+  height: var(--sust-pilares-detail-label-height);
+  width: auto;
+  max-width: none;
   object-fit: contain;
 }
 
+/* Pequeño ajuste de posición histórico para "luz" (texto muy corto). */
 .sust-pilares__detail-media[data-pilar="luz"] .sust-pilares__detail-label {
-  width: clamp(3rem, 4vw, 4.5rem);
-  max-width: none;
   transform: translateX(-30px);
 }
 
-.sust-pilares__detail-media[data-pilar="emisiones"] .sust-pilares__detail-label {
-  width: clamp(12rem, 16vw, 15rem);
-  max-width: none;
+/* Items con texto largo se alinean a la izquierda en vez de centrarse. */
+.sust-pilares__detail-media[data-pilar="emisiones"] .sust-pilares__detail-label,
+.sust-pilares__detail-media[data-pilar="calidad_aire"] .sust-pilares__detail-label,
+.sust-pilares__detail-media[data-pilar="flujo_aire"] .sust-pilares__detail-label {
   align-self: flex-start;
 }
 
@@ -4704,35 +5259,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
   width: 11rem;
 }
 
-.sust-pilares__detail-media[data-pilar="calidad_aire"] .sust-pilares__detail-label {
-  width: clamp(10rem, 12vw, 11rem);
-  max-width: none;
-  align-self: flex-start;
-}
-
-.sust-pilares__detail-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 2;
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  font: inherit;
-  font-size: 1.45rem;
-  line-height: 1;
-  color: rgba(29, 29, 27, 0.62);
-  cursor: pointer;
-  transition: color 180ms ease, opacity 180ms ease;
-}
-
-.sust-pilares__detail-close:hover,
-.sust-pilares__detail-close:focus-visible {
-  color: var(--color-black);
-  opacity: 1;
-}
 
 .sust-pilares__detail-title {
   margin: 0 2rem 0 0;
@@ -4773,7 +5299,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .sust-pilares.is-detail-open .sust-pilares__diagram-shell {
-  max-width: clamp(31.5rem, 48vw, 39rem);
+  /* Tamaño +10% respecto del original (31.5/48vw/39 → 34.65/52.8vw/42.9).
+     Como el aside ahora está siempre abierto, este es el tamaño fijo
+     de la rueda en desktop. */
+  max-width: clamp(34.65rem, 52.8vw, 42.9rem);
   transform: translateX(-4rem);
 }
 
@@ -4824,24 +5353,60 @@ html.is-entering-home.is-entering-home-active .main-nav {
   100% { stroke-dashoffset: 0; }
 }
 
-@media (max-width: 900px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* Idéntico a .sust-strategies: la rueda ocupa todo el ancho disponible
+     (respetando márgenes) y el detail aparece debajo al clickear, en
+     lugar de a la derecha. */
+
+  /* Padding lateral en 0 para que la rueda crezca al máximo posible y
+     toque los bordes del viewport. Las etiquetas SVG quedan dentro del
+     viewBox de 800×800, así que no se cortan. */
+  .sust-pilares {
+    padding: clamp(2rem, 6vw, 4rem) 0;
+  }
+
+  /* El .container interno también tiene padding lateral por defecto
+     (--page-side-padding). Lo anulamos solo dentro de pilares para que
+     la rueda use el 100% del ancho del viewport. */
+  .sust-pilares .container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   .sust-pilares__layout,
   .sust-pilares.is-detail-open .sust-pilares__layout {
     padding-right: 0;
   }
 
+  /* La rueda usa el 100% del ancho disponible. Al sacar el max-width
+     anterior y dejar el container más al borde, todo el SVG (anillo,
+     glow, etiquetas, puntos) escala de forma proporcional. */
   .sust-pilares__diagram-shell,
   .sust-pilares.is-detail-open .sust-pilares__diagram-shell {
     max-width: 100%;
     transform: none;
   }
 
+  .sust-pilares__diagram-svg {
+    max-width: 100%;
+    /* Scale: la rueda ya ocupa el 100% del ancho del viewport (sin
+       padding lateral). Para hacerla aún más grande la escalamos vía
+       transform. overflow visible permite que las etiquetas que quedan
+       fuera del viewBox al escalar no se corten. */
+    transform: scale(1.12);
+    transform-origin: center center;
+  }
+
+  /* Detail: estático debajo de la rueda. Cerrado = altura 0. */
   .sust-pilares__detail,
   .sust-pilares.is-detail-open .sust-pilares__detail {
     position: static;
     width: 100%;
     height: auto;
     margin-top: 1.5rem;
+    padding-left: 0;
+    border-left: none;
     max-height: 0;
     opacity: 1;
     transform: none;
@@ -4851,7 +5416,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   }
 
   .sust-pilares.is-detail-open .sust-pilares__detail {
-    max-height: 24rem;
+    max-height: 40rem;
     pointer-events: auto;
   }
 
@@ -4859,15 +5424,21 @@ html.is-entering-home.is-entering-home-active .main-nav {
     width: 100%;
     min-height: 0;
   }
-}
 
-@media (max-width: 768px) {
-  .sust-pilares__diagram-svg {
-    max-width: 100%;
+  .sust-pilares__detail-title {
+    font-size: 1.1rem;
   }
 
+  .sust-pilares__detail-text {
+    /* Estándar mobile (estandar-a-mobile / párrafo) — Fluid: 16px @ 375px → 23px @ 1023px */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
+  }
+
+  /* Tipografía de las etiquetas SVG: mantenemos el tamaño original (14px)
+     ahora que la rueda crece, así todo escala junto y queda legible. */
   .sust-pilares__diagram-svg text[font-size="14"] {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 
@@ -4875,8 +5446,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .sust-pilares__layout,
   .sust-pilares__diagram-shell,
   .sust-pilares__detail,
-  .sust-pilares__orbit-label-item text,
-  .sust-pilares__detail-close {
+  .sust-pilares__orbit-label-item text {
     transition: none;
   }
 
@@ -5217,10 +5787,47 @@ html.is-entering-home.is-entering-home-active .main-nav {
   min-width: 0;
 }
 
-@media (max-width: 1100px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* Emissions mobile: gráfico (vista 1) -> textos (vista 2). El orden
+     del HTML ya es left (chart) -> right (copy). */
+  .sust-emissions {
+    padding: 0;
+  }
+
   .sust-emissions__container {
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .sust-emissions__left {
+    min-height: 100vh;
+    padding: var(--space-2xl) var(--margin-a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sust-emissions__right {
+    min-height: 100vh;
+    padding: var(--space-2xl) var(--margin-a);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .sust-emissions__right .sust-process__title {
+    /* Estándar mobile (estandar-a-mobile / título) — Fluid: 28px @ 375px → 40px @ 1023px */
+    font-size: clamp(1.75rem, 1.85vw + 1.06rem, 2.5rem);
+    max-width: 18ch;
+  }
+
+  .sust-emissions__right .sust-process__text {
+    /* Estándar mobile (estandar-a-mobile / párrafo) — Fluid: 16px @ 375px → 23px @ 1023px */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
   }
 }
 
@@ -5320,9 +5927,39 @@ html.is-entering-home.is-entering-home-active .main-nav {
   color: var(--color-text-primary);
 }
 
-@media (max-width: 700px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  /* Leyenda del pie chart: una sola fila con los 5 items repartidos.
+     Cambiamos de grid a flex para que cada item se ajuste a su contenido
+     y compartan el ancho total disponible. */
   .emissions-chart__legend {
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .emissions-chart__legend-item {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  /* Tamaños un toque más chicos para que los 5 items quepan en 375px
+     de ancho sin desbordarse. */
+  .emissions-chart__legend-value {
+    font-size: 0.9rem;
+  }
+
+  .emissions-chart__legend-label {
+    font-size: 0.7rem;
+    line-height: 1.15;
+  }
+
+  /* Pie un poco más chico para dejar espacio a título y leyenda dentro
+     de la vista de 100vh. */
+  .emissions-chart__pie {
+    width: clamp(220px, 65vw, 320px);
   }
 }
 
@@ -5753,14 +6390,36 @@ html.is-entering-home.is-entering-home-active .main-nav {
   margin-bottom: 0;
 }
 
-@media (max-width: 768px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  .about-hero {
+    min-height: auto;
+  }
+
   .about-hero__container {
-    padding-top: calc(var(--nav-height) + var(--space-2xl));
-    padding-bottom: var(--space-2xl);
+    min-height: 100vh;
+    margin-left: 0;
+    padding: calc(var(--nav-height) + clamp(4rem, 12vh, 8rem)) var(--margin-a) clamp(3rem, 10vh, 5rem);
+    justify-content: center;
+  }
+
+  .about-hero__title {
+    margin-bottom: clamp(1.5rem, 5vw, 2.5rem);
+    font-size: clamp(2.5rem, 3.24vw + 1.74rem, 3.8125rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
   }
 
   .about-hero__copy {
-    max-width: none;
+    width: 100%;
+    max-width: clamp(16rem, 80vw, 30rem);
+  }
+
+  .about-hero__text {
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    line-height: 1.28;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.15em;
   }
 }
 
@@ -5824,43 +6483,49 @@ html.is-entering-home.is-entering-home-active .main-nav {
   border-radius: 0;
 }
 
-@media (max-width: 980px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
   .about-approach {
     grid-template-columns: 1fr;
     height: auto;
   }
 
   .about-approach__copy {
+    order: 2;
+  }
+
+  .about-approach__media {
+    order: 1;
+  }
+
+  .about-approach__copy {
     height: auto;
-    padding-bottom: var(--space-3xl);
+    justify-content: flex-start;
+    gap: clamp(2rem, 6vw, 3rem);
+    padding: var(--space-4xl) var(--margin-a) var(--space-3xl);
   }
 
   .about-approach__text-block {
-    max-width: none;
-  }
-
-  .about-approach__media {
-    min-height: clamp(32rem, 90vw, 48rem);
-    height: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .about-approach__copy {
-    padding: calc(var(--nav-height) + var(--space-xl)) var(--space-md) var(--space-2xl);
+    width: 100%;
+    max-width: clamp(16rem, 80vw, 30rem);
+    margin-left: 0;
+    gap: var(--space-md);
   }
 
   .about-approach__text {
-    font-size: clamp(1.35rem, 6.2vw, 1.9rem);
-    line-height: 1.12;
+    padding-top: 0;
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    line-height: 1.45;
+    letter-spacing: 0.02em;
   }
 
   .about-approach__mark {
-    width: 6.5rem;
+    width: clamp(5rem, 18vw, 6.5rem);
   }
 
   .about-approach__media {
-    min-height: 70vh;
+    min-height: clamp(24rem, 90vw, 36rem);
+    height: auto;
   }
 }
 
@@ -5918,37 +6583,34 @@ html.is-entering-home.is-entering-home-active .main-nav {
   color: rgba(255, 255, 255, 0.94);
 }
 
-@media (max-width: 980px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
   .about-founders {
     height: auto;
   }
 
   .about-founders__container {
     grid-template-columns: 1fr;
-    gap: var(--space-2xl);
-    padding-top: calc(var(--nav-height) + var(--space-xl));
-    padding-bottom: var(--space-3xl);
+    gap: clamp(1.75rem, 7vw, 3rem);
+    padding: var(--space-4xl) var(--margin-a) var(--margin-b);
   }
 
   .about-founders__portrait {
-    max-width: 26rem;
+    width: min(100%, 28rem);
+    max-width: none;
     justify-self: center;
   }
 
   .about-founders__copy {
-    max-width: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .about-founders__container {
-    padding-right: var(--space-md);
-    padding-left: var(--space-md);
+    width: 100%;
+    max-width: clamp(16rem, 80vw, 30rem);
+    gap: var(--space-md);
   }
 
   .about-founders__text {
-    font-size: clamp(1rem, 4.8vw, 1.25rem);
-    line-height: 1.5;
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    line-height: 1.45;
+    letter-spacing: 0.02em;
   }
 }
 
@@ -6028,15 +6690,15 @@ html.is-entering-home.is-entering-home-active .main-nav {
   color: rgba(0, 0, 0, 0.94);
 }
 
-@media (max-width: 768px) {
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
   .about-final {
-    min-height: 70vh;
+    min-height: 100vh;
   }
 
   .about-final__content {
-    min-height: 70vh;
-    padding-right: var(--space-md);
-    padding-left: var(--space-md);
+    min-height: 100vh;
+    padding: var(--space-2xl) var(--margin-a);
   }
 
   .about-final__logo {
@@ -6459,7 +7121,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .services-directory {
   min-height: 100vh;
   background-color: var(--color-gray-100);
-  padding-top: calc(var(--nav-height) + clamp(0.75rem, 1.5vw, 1.25rem));
+  padding-top: calc(var(--nav-height) + clamp(2rem, 4vw, 6rem));
   padding-bottom: clamp(0.5rem, 1vw, 1rem);
 }
 
@@ -6483,7 +7145,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .services-directory__title {
   max-width: 22ch;
   margin: 0;
-  font-size: clamp(1.8rem, 3.6vw, 3.7rem);
+  font-size: clamp(1.44rem, 2.88vw, 2.96rem);
   font-weight: var(--fw-regular);
   line-height: 0.98;
   letter-spacing: 0.03em;
@@ -7785,28 +8447,55 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 /* =========================
+   Saltos de línea sólo-mobile dentro de captions de la galería.
+   En desktop quedan invisibles para no alterar el layout actual.
+   Scope acotado al caption de la galería de proyectos.
+   ========================= */
+.projects-gallery__caption br.only-mobile {
+  display: none;
+}
+
+/* =========================
    RESPONSIVE
    ========================= */
-@media (max-width: 768px) {
+/* --- MOBILE --- */
+/* =========================================================
+   PÁGINA: PROYECTOS — MOBILE (≤ 1023.98px)
+   ---------------------------------------------------------
+   Reemplaza el @media (max-width: 768px) legacy.
+   Las 9 filas se apilan en una sola columna.
+   Todos los items tienen la MISMA altura visual gracias al
+   aspect-ratio 4/3 aplicado al contenedor de imagen
+   (.projects-gallery__media--wide y __media-pair).
+   ========================================================= */
+@media (max-width: 1023.98px) {
+
+  /* Contenedor: paddings y gap entre filas para mobile.
+     --gallery-padding-top: alto para que el primer proyecto no se pise
+     con el navbar desplegado. Es un override que solo afecta mobile. */
   .projects-gallery {
-    --gallery-side-padding: var(--space-lg);
-    --gallery-row-gap-y:    3rem;
+    --gallery-padding-top:           clamp(14rem, 40vw, 20rem);
+    --gallery-padding-bottom:        clamp(4rem, 12vw, 6rem);
+    --gallery-side-padding-right:    var(--space-lg);
+    --gallery-side-padding-left:     var(--space-lg);
+    --gallery-row-gap-y:             2.5rem;
   }
 
-  .projects-gallery__hover-card {
-    display: none;
-  }
-
+  /* Filas: una sola columna, alto automático, sin column-gap */
   .projects-gallery__row--1,
   .projects-gallery__row--2,
   .projects-gallery__row--3,
   .projects-gallery__row--4,
   .projects-gallery__row--5 {
     grid-template-columns: 1fr;
-    row-gap: 3rem;
+    height: auto;
+    column-gap: 0;
+    row-gap: 2.5rem;
   }
 
-  /* En mobile, los items vuelven a ocupar 1 columna */
+  /* Items con posicionamiento desktop → reset a flujo normal.
+     Neutraliza: grid-column específicos, padding-left (+30 Tobar,
+     +60 Cardano), translate (-100 Suindá, -30 Haras), align-items. */
   .projects-gallery__row--1 > .projects-gallery__item:nth-child(1),
   .projects-gallery__row--1 > .projects-gallery__item:nth-child(2),
   .projects-gallery__row--2 > .projects-gallery__item--pair,
@@ -7817,6 +8506,139 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .projects-gallery__row--4 > .projects-gallery__item:nth-child(2),
   .projects-gallery__row--5 > .projects-gallery__item:nth-child(1) {
     grid-column: auto;
+    padding-left: 0;
+    align-items: stretch;
+    translate: 0 0;
+  }
+
+  /* Plumbing del contenedor de imagen — necesario para que items con
+     __item-frame (Exuma, Chacras, Club de Mar, Cherokee) y __visual
+     (todos) se estiren al ancho completo. En desktop son fit-content. */
+  .projects-gallery__item-frame {
+    width: 100%;
+    max-width: none;
+  }
+
+  .projects-gallery__visual {
+    width: 100%;
+    max-width: none;
+    display: block;
+  }
+
+  /* El __media-pair en desktop es display: flex (línea ~7787). En mobile
+     pasa a grid de 2 columnas iguales para que las 2 fotos del par queden
+     50/50 dentro del contenedor con aspect-ratio 4/3. */
+  .projects-gallery__media-pair {
+    display: grid;
+  }
+
+  /* Zona de imagen WIDE (5 items: Exuma, Suindá, Cardano, Chacras, Club de Mar)
+     → ancho completo + aspect-ratio 4/3 = altura uniforme */
+  .projects-gallery__row--1 .projects-gallery__media--wide,
+  .projects-gallery__row--2 .projects-gallery__media--wide,
+  .projects-gallery__row--3 .projects-gallery__media--wide,
+  .projects-gallery__row--4 .projects-gallery__media--wide,
+  .projects-gallery__row--5 .projects-gallery__media--wide {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  /* Zona de imagen PAR (4 items: Tobar, Praderas, Haras, Cherokee)
+     → ancho completo + aspect-ratio 4/3, dos fotos 70/30 adentro */
+  .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media-pair,
+  .projects-gallery__row--2 .projects-gallery__media-pair,
+  .projects-gallery__row--3 .projects-gallery__media-pair,
+  .projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media-pair {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    grid-template-columns: 7fr 3fr;
+    gap: 0.5rem;
+  }
+
+  /* Excepción: TOBAR LODGE (par de la fila 1) invierte el ratio → 30/70 */
+  .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media-pair {
+    grid-template-columns: 3fr 7fr;
+  }
+
+  /* Excepción de texto: EXUMA, TOBAR (fila 1), PRADERAS, SUINDÁ (fila 2),
+     CARDANO y HARAS (fila 3) fuerzan nombre y/o ubicación a quedar
+     en un solo renglón. */
+  .projects-gallery__row--1 .projects-gallery__name,
+  .projects-gallery__row--1 .projects-gallery__location,
+  .projects-gallery__row--2 > .projects-gallery__item--pair .projects-gallery__name,
+  .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__location,
+  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__name,
+  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__location,
+  .projects-gallery__row--3 > .projects-gallery__item--pair .projects-gallery__location {
+    white-space: nowrap;
+  }
+
+  /* Saltos de línea sólo-mobile dentro de captions: en mobile sí rompen.
+     Aplica a HARAS SAN PABLO (nombre y categoría en 2 líneas cada uno). */
+  .projects-gallery__caption br.only-mobile {
+    display: inline;
+  }
+
+  /* Fotos dentro del par: llenan su celda del grid.
+     El aspect-ratio del contenedor padre define la altura;
+     cada foto queda en 2:3 vertical agradable.
+     Importante: anula los aspect-ratio: 3/2 de la primera foto
+     del par en filas 1, 3 y 5. */
+  .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media--square,
+  .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media--square:first-child,
+  .projects-gallery__row--2 .projects-gallery__media--square,
+  .projects-gallery__row--3 .projects-gallery__media--square,
+  .projects-gallery__row--3 .projects-gallery__media--square:first-child,
+  .projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media--square,
+  .projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media--square:first-child {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+  }
+
+  /* Visual y caption del par o de items con ancho calculado:
+     fuerzan ancho completo (anula los var(--row-pair-width) y los
+     anchos derivados de (--row-height...) * 16/9). */
+  .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__visual,
+  .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__caption,
+  .projects-gallery__row--2 > .projects-gallery__item--pair .projects-gallery__caption,
+  .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--3 > .projects-gallery__item--pair .projects-gallery__caption,
+  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__visual,
+  .projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__caption {
+    width: 100%;
+    max-width: none;
+  }
+
+  /* Captions: altura automática (anula los height fijos por fila) */
+  .projects-gallery__row--1 .projects-gallery__caption,
+  .projects-gallery__row--2 .projects-gallery__caption,
+  .projects-gallery__row--3 .projects-gallery__caption,
+  .projects-gallery__row--4 .projects-gallery__caption,
+  .projects-gallery__row--5 .projects-gallery__caption {
+    height: auto;
+  }
+
+  /* Hover-cards: no aplican en mobile */
+  .projects-gallery__hover-card {
+    display: none;
+  }
+
+  /* Shifts de hover (filas 1, 3 y 4): neutralizados por prolijidad.
+     En mobile no hay hover, pero limpiamos los transforms residuales. */
+  .projects-gallery__row--1 > .projects-gallery__item:first-child:hover + .projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--1 > .projects-gallery__item:first-child:focus-visible + .projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--1 > .projects-gallery__item:first-child:focus-within + .projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__media:hover) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__name:hover) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-visible) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-within) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame {
+    transform: none;
   }
 }
 

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Timbó — Tobar Lodge">
+  <title>Timbó — Tobar Lodge</title>
+  <link rel="icon" type="image/png" href="../assets/images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
+  <link rel="stylesheet" href="../assets/css/variables.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+
+<body class="page--haras-light">
+  <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
+    <ul class="nav__links">
+      <li><a href="../index.html" class="nav__link">Home</a></li>
+      <li><a href="../proyectos.html" class="nav__link nav__link--active">Projects</a></li>
+      <li><a href="../sustentabilidad.html" class="nav__link">Sustainability</a></li>
+      <li><a href="../servicios.html" class="nav__link">Services</a></li>
+      <li><a href="../sobre-nosotros.html" class="nav__link">About Us</a></li>
+      <li><a href="../contacto.html" class="nav__link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main class="page-content">
+    <section class="project-hero" id="hero" data-nav-theme="light">
+      <div class="project-hero__media" aria-hidden="true">
+        <img id="project-cover" src="../assets/images/projects/tobar-lodge/hero.jpg" alt="Tobar Lodge"
+          loading="eager" decoding="async">
+      </div>
+
+      <div class="container project-hero__content">
+        <div class="project-hero__title-mask">
+          <h1 class="project-hero__title">Tobar Lodge</h1>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-overview" data-nav-theme="light">
+      <div class="container project-overview__container">
+        <h2 class="project-overview__title">
+          <span class="project-overview__title-line"><span class="project-overview__title-line-inner">Refugio en el
+              norte argentino</span></span>
+          <!-- <span class="project-overview__title-line"><span class="project-overview__title-line-inner">se encuentra con
+              la naturaleza</span></span> -->
+        </h2>
+
+        <div class="project-overview__content">
+          <div class="project-overview__sidebar">
+            <div class="project-overview__facts">
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="180">
+                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/clima.svg" alt=""
+                  aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">CLIMA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Subtropical seco</span></p>
+              </div>
+
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="240">
+                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/bioma.svg" alt=""
+                  aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">BIOMA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Bosque Chaqueño</span></p>
+              </div>
+
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="300">
+                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/terreno.svg" alt=""
+                  aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">TERRENO /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">60.000 m²</span>
+                </p>
+              </div>
+
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="360">
+                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/area cubierta.svg"
+                  alt="" aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">ÁREA CUBIERTA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">420 m²</span></p>
+              </div>
+
+              <div class="project-overview__fact anim-fade-up" data-anim-delay="120">
+                <img class="project-overview__fact-icon project-overview__fact-icon--location"
+                  src="../assets/images/projects/project-icons/ubicacion.svg" alt="" aria-hidden="true" decoding="async">
+                <p class="project-overview__fact-label">UBICACIÓN /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Tucumán,<br>Argentina</span></p>
+              </div>
+
+              <div class="project-overview__map anim-fade-in" data-anim-delay="420">
+                <div class="project-map" data-map-sequence data-map-theme="grayscale">
+                  <div class="project-map__canvas" id="project-map-canvas"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-overview__media anim-fade-in" data-anim-delay="160">
+            <div class="project-overview__dots">
+              <button class="project-overview__dot is-active" data-project-overview-slide="0"
+                aria-label="Foto 1"></button>
+              <button class="project-overview__dot" data-project-overview-slide="1" aria-label="Foto 2"></button>
+            </div>
+
+            <figure class="project-overview__photo">
+              <img class="project-overview__img is-active" src="../assets/images/projects/tobar-lodge/overview-01.jpg"
+                alt="Tobar Lodge" loading="lazy" decoding="async">
+              <img class="project-overview__img" src="../assets/images/projects/tobar-lodge/overview-02.jpg"
+                alt="Tobar Lodge" loading="lazy" decoding="async">
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-refuge" data-nav-theme="light">
+      <div class="container project-refuge__container">
+        <div class="project-refuge__copy">
+
+          <p class="project-refuge__text anim-fade-up" data-anim-delay="0">El proyecto se desarrolla en lo profundo del
+            monte. El humedal al frente y la vegetación densa del bosque chaqueño al contrafrente funcionan que aseguran
+            la mayor privacidad al tiempo que permiten la inmersión en dos entornos distintos y complementarios.
+          </p>
+
+          <p class="project-refuge__text anim-fade-up" data-anim-delay="120">Su
+            disposición elevada permite la protección ante las fuertes lluvias estacionales y, al mismo tiempo, implica
+            una mínima huella en el suelo. De este modo, el edificio no se impone: se adapta al paisaje.
+          </p>
+        </div>
+
+        <div class="project-refuge__gallery">
+          <figure class="project-refuge__image project-refuge__image--slide-a">
+            <img src="../assets/images/projects/tobar-lodge/refuge-01.jpg" alt="Tobar Lodge" loading="lazy"
+              decoding="async">
+          </figure>
+          <figure class="project-refuge__image project-refuge__image--slide-x">
+            <img src="../assets/images/projects/tobar-lodge/refuge-02.jpg" alt="Tobar Lodge" loading="lazy"
+              decoding="async">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-frame project-frame--split" data-project-slug="tobar-lodge" data-nav-theme="light">
+      <div class="container project-frame__container">
+        <figure class="project-frame__media anim-fade-in">
+          <img src="../assets/images/projects/tobar-lodge/frame-01.jpg" alt="Tobar Lodge" loading="lazy"
+            decoding="async">
+        </figure>
+
+        <div class="project-frame__copy">
+          <p class="project-frame__text anim-fade-up" data-anim-delay="0">
+            La entrada se abre hacia el horizonte. Al atravesar las puertas, la naturaleza se revela: los amplios
+            ventanales enmarcan el paisaje y la austeridad de los interiores dirige la atención hacia la riqueza del
+            exterior. Las habitaciones se distinguen por su orientación: cada una se abre hacia un punto cardinal
+            distinto, capturando las vistas más representativas del entorno: la arboleda, la laguna y la precordillera.
+          </p>
+
+          <p class="project-frame__text anim-fade-up" data-anim-delay="120">
+
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-palette" data-nav-theme="light" data-scroll-width-points="2500,3000,3500,4000,4500"
+      data-photo-a-width-points="60,70,100,130,140" data-photo-b-width-points="140,130,100,70,60">
+      <div class="project-palette__container">
+        <div class="project-palette__copy">
+          <p class="project-palette__intro anim-fade-up" data-anim-delay="0">El lodge está diseñado para ser habitado en
+            dos estaciones opuestas: un verano húmedo, lluvioso y cálido, y un invierno frío y seco. La estructura
+            cuenta con alta masa térmica para regular la temperatura interior, ventilación cruzada mediante ventanas
+            orientadas según la dirección predominante del viento y muros opacos bien aislados en la fachada más
+            expuesta a la radiación solar.
+          </p>
+          <p class="project-palette__text">Así, lo que se percibe como sencillo y austero es, al mismo tiempo, funcional y eficiente.
+          </p>
+        </div>
+
+        <div class="project-palette__images">
+          <figure class="project-palette__image anim-fade-in" data-anim-delay="120">
+            <img src="../assets/images/projects/tobar-lodge/palette-01.jpg" alt="Tobar Lodge" loading="lazy"
+              decoding="async">
+          </figure>
+
+          <figure class="project-palette__image anim-fade-in" data-anim-delay="220">
+            <img src="../assets/images/projects/tobar-lodge/palette-02.jpg" alt="Tobar Lodge" loading="lazy"
+              decoding="async">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-final" data-nav-theme="dark">
+      <div class="project-final__media anim-fade-in" data-anim-delay="0" aria-hidden="true">
+        <img src="../assets/images/projects/tobar-lodge/final-01.jpg" alt="" loading="lazy" decoding="async">
+      </div>
+
+      <div class="project-final__content">
+        <div class="project-final__logo-mask">
+          <img class="project-final__logo" src="../assets/images/logo/logo-nuevo-blanco-15.svg" alt="Timbó">
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/js/data.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+
+</html>

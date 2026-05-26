@@ -34,6 +34,17 @@ El sitio usa **dos modos** (mobile y desktop) con un solo breakpoint principal e
 - NO se agregan breakpoints nuevos (`640`, `700`, `768`, `900`, `980`, `1100`, etc.) sin discutirlo primero.
 - **Importante:** el archivo `styles.css` actual tiene muchos `@media` viejos con breakpoints variados (`480`, `640`, `700`, `768`, `900`, `980`, `1080`, `1100`, `1366`, `1535`). Esto es legacy.
 
+### Pantalla de referencia de diseño (mobile)
+
+La diseñadora trabaja los mockups mobile sobre un viewport de **375 × 667 px** (referencia tipo iPhone SE / 6 / 7 / 8). Esta es la **pantalla base** sobre la que se implementa la versión mobile.
+
+**Flujo de trabajo mobile:**
+1. Implementar primero los estilos para que coincidan **exactamente** con el diseño a 375 × 667 px.
+2. Una vez que esa pantalla está fiel al mockup, **adaptar** los estilos para que escalen bien en otros tamaños de mobile (anchos mayores hasta 1023.98px, y eventualmente ajustes finos en ≤480px).
+3. Las medidas, proporciones y tamaños tipográficos del mockup están pensadas para 375px de ancho — al adaptar a otros tamaños, mantener la proporción visual, no copiar valores absolutos sin criterio.
+
+Esto NO cambia los breakpoints CSS (siguen siendo 1023.98px y 480px); 375 × 667 es la **resolución de referencia para diseño**, no un breakpoint nuevo.
+
 ### Migración oportunista
 
 NO se migra el `styles.css` viejo de golpe (riesgo alto, poca recompensa). En su lugar:
@@ -58,6 +69,187 @@ Cada `@media` mobile nuevo va **al final de su sección** (antes del próximo he
 ```
 
 Así cada sección queda autocontenida: desktop arriba, mobile pegado abajo.
+
+## ⭐ Estándar oficial para títulos y párrafos — versión mobile (`estandar-a-mobile`)
+
+Este es el **estándar de comportamiento tipográfico mobile** del sitio. Se aplica dentro de `@media (max-width: 1023.98px)` a títulos, etiquetas (kickers/labels) y párrafos de las secciones que usen este patrón.
+
+**Nombre corto:** `estandar-a-mobile`. El usuario puede pedir aplicarlo refiriéndose a él por este nombre, y aclarará si se refiere al **estándar para título** (`.selector__claim`), al **estándar para párrafo** (`.selector__text`) o al **estándar para label/kicker** (`.selector__label`). Si dice "estandar-a-mobile" sin aclarar, se aplica el bloque entero (label + claim + text + body gap).
+
+**No se aplica automáticamente a todas las secciones** — sólo a las que indique el usuario. Pero cuando se aplica, se usan estos valores tal cual (o se adaptan proporcionalmente si el diseño lo pide).
+
+### Reglas de oro
+
+1. **Sólo afecta mobile.** Todas estas reglas van DENTRO de `@media (max-width: 1023.98px)`. El CSS desktop (fuera del `@media`) NO se toca jamás al aplicar este estándar.
+2. **Antes de aplicar, leer el desktop.** Si la sección destino tiene tamaños desktop muy distintos a los de `.intro`, los `clamp()` mobile pueden necesitar ajuste proporcional (no copiar y pegar a ciegas).
+3. **Escalado fluido entre 375px y 1023px.** Los `clamp()` están calculados para que arranquen en el valor de 375px (mockup base) y crezcan suavemente hasta 1023px. No se pisan con desktop porque a 1024px sale del `@media`.
+4. **El valor del medio del `clamp()` SIEMPRE lleva `vw`.** Si los tres valores son fijos (sin `vw`), `clamp()` no escala — siempre devuelve el del medio. Eso es un bug, no es el estándar.
+5. **El bloque contenedor (flex/grid column) usa `gap: var(--space-md)` (16px)** entre label, título y párrafo en mobile, en vez de los gaps más grandes de desktop.
+
+### Valores estándar
+
+```css
+@media (max-width: 1023.98px) {
+  /* Etiqueta / kicker (ej. "Sección 02") */
+  .selector__label {
+    /* Fluid: 10px @ 375px → 14px @ 1023px */
+    font-size: clamp(0.625rem, 0.62vw + 0.39rem, 0.875rem);
+  }
+
+  /* Título principal de la sección */
+  .selector__claim {
+    /* Fluid: 28px @ 375px → 40px @ 1023px */
+    font-size: clamp(1.75rem, 1.85vw + 1.06rem, 2.5rem);
+  }
+
+  /* Párrafo / texto del cuerpo */
+  .selector__text {
+    /* Fluid: 16px @ 375px → 23px @ 1023px */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
+  }
+
+  /* Contenedor flex en columna que agrupa label + claim + text */
+  .selector__body {
+    gap: var(--space-md); /* 16px — mitad del gap desktop típico */
+  }
+}
+```
+
+### Referencia: cómo se ven los tamaños en distintos anchos
+
+| Ancho | label | claim | text |
+|---|---|---|---|
+| 375px | 10px | 28px | 16px |
+| 500px | ~10.8px | ~30.3px | ~17.3px |
+| 700px | 12px | 34px | ~19.5px |
+| 900px | ~13.3px | ~37.7px | ~21.7px |
+| 1023px | 14px | 40px | 23px |
+
+### Origen del estándar
+
+Calibrado sobre la sección `.intro` de `index.html` (home). Si se modifican los valores del estándar, actualizarlos primero en esta sección de `CLAUDE.md` y luego propagar a las secciones donde ya esté aplicado.
+
+### Cómo aplicar a una sección nueva
+
+1. Identificar los selectores equivalentes: el label (kicker), el título y el párrafo.
+2. Identificar el contenedor flex/grid que los agrupa (equivalente a `.intro__body`).
+3. Dentro del `@media (max-width: 1023.98px)` de esa sección, agregar los cuatro bloques de arriba con los nombres reales de los selectores.
+4. Verificar que NO existan reglas desktop que se vayan a pisar, y que NO se modifiquen reglas fuera del `@media`.
+5. Probar resize entre 375px y 1023px — los tres tamaños deben crecer gradualmente.
+
+## ⭐ Estándar oficial para títulos y párrafos — versión desktop (`estandar-desktop`)
+
+Este es el **estándar de comportamiento tipográfico desktop** del sitio. Se aplica FUERA de cualquier `@media (max-width: ...)`, es decir, en el CSS base que toma efecto a partir de **1024px** de ancho.
+
+**Nombres oficiales** (el usuario los invoca por estos nombres en cualquier chat):
+
+- `estandar-desktop para parrafo` → aplica el bloque de **párrafo**.
+- `estandar-desktop para titulo` → aplica el bloque de **título**.
+- `estandar-desktop para frase-destacada` → aplica el bloque de **frase destacada**.
+
+Si el usuario dice `estandar-desktop` sin aclarar, preguntar a cuál de los tres se refiere.
+
+### Reglas de oro
+
+1. **Sólo afecta desktop.** Estos bloques van FUERA de los `@media (max-width: ...)`. Las reglas mobile (dentro de `@media`) NO se tocan jamás al aplicar este estándar. Si la sección destino ya tiene `estandar-a-mobile` aplicado, ambos conviven sin pisarse porque viven en bloques distintos.
+2. **El valor del medio del `clamp()` SIEMPRE lleva `vw`.** Si los tres valores son fijos, `clamp()` no escala. Eso es un bug, no el estándar.
+3. **Escalado fluido desde 1024px hacia arriba.** Los `clamp()` están calculados para arrancar en el valor mínimo cerca del breakpoint mobile/desktop y crecer hasta el máximo en pantallas grandes.
+4. **Antes de aplicar, leer el desktop existente.** Si la sección destino ya tiene tamaños desktop muy distintos, conviene revisar si el reemplazo total tiene sentido o si hay que adaptar proporcionalmente.
+
+### Valores estándar
+
+```css
+/* === estandar-desktop para parrafo === */
+.selector__text {
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  letter-spacing: 0.03em;
+  line-height: 1.35;
+  font-weight: var(--fw-regular);
+}
+
+/* === estandar-desktop para titulo === */
+.selector__claim {
+  font-size: clamp(1.875rem, 1.7vw + 0.85rem, 2.75rem);
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  font-weight: var(--fw-medium);
+}
+
+/* === estandar-desktop para frase-destacada === */
+.selector__highlight {
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  font-weight: var(--fw-bold);
+}
+```
+
+### Resumen rápido
+
+| Estándar | font-size (clamp) | letter-spacing | line-height | font-weight |
+|---|---|---|---|---|
+| `parrafo` | `clamp(1.125rem, 0.4vw + 1rem, 1.375rem)` | `0.03em` | `1.35` | `--fw-regular` (400) |
+| `titulo` | `clamp(1.875rem, 1.7vw + 0.85rem, 2.75rem)` | `0.04em` | `1.05` | `--fw-medium` (500) |
+| `frase-destacada` | `clamp(1.125rem, 0.4vw + 1rem, 1.375rem)` | `0.03em` | `1.5` | `--fw-bold` (700) |
+
+Notar que **`parrafo` y `frase-destacada` comparten font-size y letter-spacing**; las diferencian el `line-height` (1.35 vs 1.5) y el `font-weight` (regular vs bold).
+
+### Cómo aplicar a una sección nueva
+
+1. Identificar los selectores reales de esa sección (el título, los párrafos, las frases destacadas si las hay).
+2. Reemplazar `.selector__claim`, `.selector__text`, `.selector__highlight` por los nombres reales.
+3. Pegar el/los bloques **fuera** de cualquier `@media (max-width: ...)`.
+4. Verificar que no haya reglas desktop previas para los mismos selectores que vayan a quedar duplicadas o en conflicto — si existen, decidir si se reemplazan o se mergean.
+5. NO tocar reglas dentro de `@media (max-width: 1023.98px)` ni similares.
+
+## Saltos de línea responsive: `<br>` mobile vs desktop
+
+Muchos textos del sitio tienen `<br>` pensados para el ritmo de **desktop** (donde el ancho es grande y los saltos quedan elegantes), pero en mobile esos mismos `<br>` cortan el texto en lugares incómodos. Y al revés: a veces en mobile querés un salto en un lugar específico que en desktop no tiene sentido.
+
+No hay una regla automática para decidir esto — es **manual y caso por caso**. El usuario va a ir indicando, párrafo por párrafo, qué `<br>` desaparece en mobile o qué `<br>` se agrega sólo para mobile.
+
+### Clases utilitarias
+
+En `styles.css` (zona de utilities globales, fuera de cualquier `@media` específico de sección):
+
+```css
+/* === BR responsive === */
+.br-desktop { display: inline; }
+.br-mobile  { display: none; }
+
+@media (max-width: 1023.98px) {
+  .br-desktop { display: none; }
+  .br-mobile  { display: inline; }
+}
+```
+
+El breakpoint es **el mismo que usa el resto del sitio para mobile**: `1023.98px`. No se agrega un breakpoint propio para esto.
+
+### Cómo se usan
+
+| Caso | Clase | Resultado |
+|---|---|---|
+| `<br>` que sirve en desktop pero estorba en mobile | `<br class="br-desktop">` | Visible ≥1024px, oculto ≤1023.98px |
+| `<br>` que sirve sólo en mobile | `<br class="br-mobile">` | Oculto ≥1024px, visible ≤1023.98px |
+| `<br>` que sirve en ambos | `<br>` sin clase | Visible siempre (comportamiento default) |
+| `<br>` que no sirve en ninguno | (borrarlo) | — |
+
+### Estrategia de migración: manual y guiada por el usuario
+
+- Los `<br>` existentes **se quedan como están** (visibles en ambos viewports) hasta que el usuario indique explícitamente qué hacer con cada uno.
+- El usuario va a ir revisando los textos uno por uno y diciendo cosas como:
+  - "este `<br>` desaparece en mobile" → agregar `class="br-desktop"`.
+  - "acá agregamos un `<br>` sólo para mobile" → insertar `<br class="br-mobile">` donde corresponda.
+- **No** hacer migración masiva ni asumir comportamiento. Sólo se toca el `<br>` que el usuario menciona en ese momento.
+- Cuando se agrega un `<br class="br-mobile">` nuevo, NO altera el HTML que ve desktop (porque la clase lo oculta), así que es seguro hacerlo sin romper desktop.
+
+### Reglas
+
+1. **Nunca borrar un `<br>` existente sin que el usuario lo pida.** Pueden estar afectando el ritmo de desktop.
+2. **Nunca agregar un `<br>` "pelado" (sin clase) nuevo** si la intención es que sólo aparezca en un viewport — usar `br-desktop` o `br-mobile`.
+3. Si el usuario pide ocultar un `<br>` en mobile, agregar `class="br-desktop"` al `<br>` existente (no borrarlo, no envolverlo en nada raro).
+4. Las clases viven en `styles.css` como utilities globales, **no** dentro del CSS de una sección específica.
 
 ## Repo
 `https://github.com/Mariano-cell/timbo-arquitectura`

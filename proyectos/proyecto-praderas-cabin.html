@@ -49,6 +49,14 @@
         font-size: 0.78rem;
       }
     }
+
+    /* Encuadre específico de la foto del hero de Praderas: el punto
+       focal de la imagen no está en el centro geométrico, sino al 58%
+       horizontal y vertical. Esta regla vive acá (no en styles.css)
+       porque es ajuste de UNA foto, no del sistema. */
+    .project-hero--praderas .project-hero__media img {
+      object-position: 58% 58%;
+    }
   </style>
 </head>
 
@@ -80,7 +88,9 @@
 
     <section class="project-overview" data-nav-theme="light">
       <div class="container project-overview__container">
-        <h2 class="project-overview__title">
+        <h2 class="project-overview__title"
+          data-line-reveal-source-desktop="Casa de montaña en el&#10;extremo sur de Sudamérica"
+          data-line-reveal-source-mobile="Casa de montaña&#10;en el extremo sur&#10;de Sudamérica">
           <span class="project-overview__title-line"><span class="project-overview__title-line-inner">Casa de montaña en
               el</span></span>
           <span class="project-overview__title-line"><span class="project-overview__title-line-inner">extremo sur de
@@ -204,7 +214,7 @@
       </div>
     </section>
 
-    <section class="project-phrase project-phrase--praderas" data-nav-theme="light">
+    <section class="project-phrase" data-nav-theme="light">
       <div class="project-phrase__container">
         <div class="project-phrase__copy">
           <p class="project-frame__text anim-fade-up" data-anim-delay="0">
@@ -267,10 +277,10 @@
       </div>
     </section>
 
-    <section class="project-palette project-palette--praderas" data-nav-theme="light" data-palette-mode="drag">
+    <section class="project-palette" data-nav-theme="light" data-palette-mode="drag">
       <div class="project-palette__container">
-        <div class="project-palette__copy">
-          <!-- <p class="project-palette__intro anim-fade-up" data-anim-delay="0">La casa se organiza según una lógica clara
+        <div class="project-palette__copy anim-fade-up" data-anim-delay="0">
+          <!-- <p class="project-palette__intro">La casa se organiza según una lógica clara
             y equilibrada, definida por la simetría y el orden. Una
             estructura de carácter industrial, inspirada en tipologías de galpón, se combina con una materialidad cálida
             y natural, dando lugar a una arquitectura contemporánea, sobria y atemporal.</p> -->

@@ -1,11 +1,59 @@
+<!--
+  ==========================================================================
+  PLANTILLA CANÓNICA — PÁGINA DE PROYECTO
+  ==========================================================================
+
+  Esta NO es una página del sitio. Es la plantilla de referencia que define
+  el estándar para todas las páginas de proyecto (8 a migrar).
+
+  CÓMO USAR ESTE TEMPLATE
+  -----------------------
+  1. Copiar este archivo a `proyectos/proyecto-{slug}.html`.
+  2. Buscar y reemplazar (en orden):
+       {{NOMBRE_HUMANO}}        →  ej. "Tobar Lodge"
+       {{NOMBRE_HUMANO_LARGO}}  →  ej. "Casa de Campo Haras San Pablo" (puede llevar <br>)
+       {{SLUG}}                 →  ej. "tobar-lodge"
+       {{TITULO_LINEA_1}}       →  ej. "Refugio en el norte argentino"
+       {{TITULO_LINEA_2}}       →  ej. "se encuentra con la naturaleza" (opcional, dejar vacía si no aplica)
+       {{CLIMA}}                →  ej. "Subtropical seco"
+       {{BIOMA}}                →  ej. "Bosque Chaqueño"
+       {{TERRENO}}              →  ej. "60.000 m²"
+       {{AREA_CUBIERTA}}        →  ej. "420 m²"
+       {{UBICACION}}            →  ej. "Tucumán,<br>Argentina"
+       {{MAP_THEME}}            →  "grayscale" o "grayscale-light"
+       {{NAV_THEME_HERO}}       →  "light" o "dark" (según contraste de la foto del hero)
+       {{NAV_VARIANT}}          →  "light" o "dark" (idem, para el <nav>)
+
+  3. Ajustar los `src` de las imágenes según el inventario del proyecto.
+     Si una imagen no existe todavía, dejar el placeholder:
+       ../assets/images/fondo-transitorio.png
+
+  4. Revisar/rellenar los textos de cada sección (refuge, frame, phrase,
+     highlight, palette). Los textos van entre {{TEXTO_*}}. Si una página
+     tiene menos párrafos en refuge, borrar los sobrantes.
+
+  REGLAS DEL ESTÁNDAR (resumen)
+  -----------------------------
+  - 8 secciones obligatorias en orden: hero → overview → refuge → frame →
+    phrase → highlight → palette → final.
+  - Sin clases con nombre de proyecto (NO `--praderas`, NO `--tobar`).
+  - El `<style>` y `<script>` de labels A/B/C van en todos los proyectos
+    (temporal mientras dure el feedback con la diseñadora).
+  - Palette siempre en modo drag, con divisor SVG.
+  - Refuge usa `anim-fade-in` con delays (NO `--slide-a` / `--slide-x`).
+  - Frame usa `--split`. Highlight usa `--split`.
+
+  Para detalles, ver: prompts/ESTANDAR_PAGINAS_PROYECTO.md
+  ==========================================================================
+-->
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Timbó — Cherokee Residence">
-  <title>Timbó — Cherokee Residence</title>
+  <meta name="description" content="Timbó — {{NOMBRE_HUMANO}}">
+  <title>Timbó — {{NOMBRE_HUMANO}}</title>
   <link rel="icon" type="image/png" href="../assets/images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
   <link rel="stylesheet" href="../assets/css/variables.css">
   <link rel="stylesheet" href="../assets/css/styles.css">
@@ -58,7 +106,7 @@
 </head>
 
 <body class="page--haras-light">
-  <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
+  <nav class="main-nav main-nav--{{NAV_VARIANT}} is-visible" aria-label="Main navigation">
     <ul class="nav__links">
       <li><a href="../index.html" class="nav__link">Home</a></li>
       <li><a href="../proyectos.html" class="nav__link nav__link--active">Projects</a></li>
@@ -71,17 +119,17 @@
 
   <main class="page-content">
 
-    <!-- ====== HERO ======
-         Mantiene `project-hero--cherokee` por la regla CSS de color del título. -->
-    <section class="project-hero project-hero--cherokee" id="hero" data-nav-theme="light">
+    <!-- ====== HERO ====== -->
+    <section class="project-hero" id="hero" data-nav-theme="{{NAV_THEME_HERO}}">
       <div class="project-hero__media" aria-hidden="true">
-        <img id="project-cover" src="../assets/images/projects/cherokee-ave/hero.jpg" alt="Cherokee Residence"
-          loading="eager" decoding="async">
+        <img id="project-cover"
+          src="../assets/images/projects/{{SLUG}}/hero.jpg"
+          alt="{{NOMBRE_HUMANO}}" loading="eager" decoding="async">
       </div>
 
       <div class="container project-hero__content">
         <div class="project-hero__title-mask">
-          <h1 class="project-hero__title">Cherokee Residence</h1>
+          <h1 class="project-hero__title">{{NOMBRE_HUMANO_LARGO}}</h1>
         </div>
       </div>
     </section>
@@ -90,8 +138,10 @@
     <section class="project-overview" data-nav-theme="light">
       <div class="container project-overview__container">
         <h2 class="project-overview__title">
-          <span class="project-overview__title-line"><span class="project-overview__title-line-inner">Un volumen puro</span></span>
-          <span class="project-overview__title-line"><span class="project-overview__title-line-inner">en paisaje exuberante</span></span>
+          <span class="project-overview__title-line"><span class="project-overview__title-line-inner">{{TITULO_LINEA_1}}</span></span>
+          <!-- 2da línea OPCIONAL — descomentar y completar sólo si el título lleva dos renglones.
+          <span class="project-overview__title-line"><span class="project-overview__title-line-inner">{{TITULO_LINEA_2}}</span></span>
+          -->
         </h2>
 
         <div class="project-overview__content">
@@ -99,42 +149,57 @@
             <div class="project-overview__facts">
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="180">
-                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/clima.svg" alt=""
-                  aria-hidden="true" decoding="async">
+                <img class="project-overview__fact-icon"
+                  src="../assets/images/projects/project-icons/clima.svg"
+                  alt="" aria-hidden="true" decoding="async">
                 <p class="project-overview__fact-label">CLIMA /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Tropical monzónico</span></p>
+                <p class="project-overview__fact-value">
+                  <span class="project-overview__fact-value-inner">{{CLIMA}}</span>
+                </p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="240">
-                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/bioma.svg" alt=""
-                  aria-hidden="true" decoding="async">
+                <img class="project-overview__fact-icon"
+                  src="../assets/images/projects/project-icons/bioma.svg"
+                  alt="" aria-hidden="true" decoding="async">
                 <p class="project-overview__fact-label">BIOMA /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Bosque costero</span></p>
+                <p class="project-overview__fact-value">
+                  <span class="project-overview__fact-value-inner">{{BIOMA}}</span>
+                </p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="300">
-                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/terreno.svg" alt=""
-                  aria-hidden="true" decoding="async">
+                <img class="project-overview__fact-icon"
+                  src="../assets/images/projects/project-icons/terreno.svg"
+                  alt="" aria-hidden="true" decoding="async">
                 <p class="project-overview__fact-label">TERRENO /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">1.000 m²</span></p>
+                <p class="project-overview__fact-value">
+                  <span class="project-overview__fact-value-inner">{{TERRENO}}</span>
+                </p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="360">
-                <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/area cubierta.svg"
+                <img class="project-overview__fact-icon"
+                  src="../assets/images/projects/project-icons/area cubierta.svg"
                   alt="" aria-hidden="true" decoding="async">
                 <p class="project-overview__fact-label">ÁREA CUBIERTA /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">420 m²</span></p>
+                <p class="project-overview__fact-value">
+                  <span class="project-overview__fact-value-inner">{{AREA_CUBIERTA}}</span>
+                </p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="120">
                 <img class="project-overview__fact-icon project-overview__fact-icon--location"
-                  src="../assets/images/projects/project-icons/ubicacion.svg" alt="" aria-hidden="true" decoding="async">
+                  src="../assets/images/projects/project-icons/ubicacion.svg"
+                  alt="" aria-hidden="true" decoding="async">
                 <p class="project-overview__fact-label">UBICACIÓN /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Miami,<br>Estados Unidos</span></p>
+                <p class="project-overview__fact-value">
+                  <span class="project-overview__fact-value-inner">{{UBICACION}}</span>
+                </p>
               </div>
 
               <div class="project-overview__map anim-fade-in" data-anim-delay="420">
-                <div class="project-map" data-map-sequence data-map-theme="grayscale">
+                <div class="project-map" data-map-sequence data-map-theme="{{MAP_THEME}}">
                   <div class="project-map__canvas" id="project-map-canvas"></div>
                 </div>
               </div>
@@ -148,10 +213,12 @@
             </div>
 
             <figure class="project-overview__photo">
-              <img class="project-overview__img is-active" src="../assets/images/projects/cherokee-ave/overview-01.jpg"
-                alt="Cherokee Residence" loading="lazy" decoding="async">
-              <img class="project-overview__img" src="../assets/images/projects/cherokee-ave/overview-02.jpg"
-                alt="Cherokee Residence" loading="lazy" decoding="async">
+              <img class="project-overview__img is-active"
+                src="../assets/images/projects/{{SLUG}}/overview-01.jpg"
+                alt="{{NOMBRE_HUMANO}}" loading="lazy" decoding="async">
+              <img class="project-overview__img"
+                src="../assets/images/projects/{{SLUG}}/overview-02.jpg"
+                alt="{{NOMBRE_HUMANO}}" loading="lazy" decoding="async">
             </figure>
           </div>
         </div>
@@ -162,121 +229,119 @@
     <section class="project-refuge" data-nav-theme="light">
       <div class="container project-refuge__container">
         <div class="project-refuge__copy">
-          <p class="project-refuge__text anim-fade-up" data-anim-delay="0">Este proyecto residencial se concibe como una
-            arquitectura de masa, silencio y resguardo. A través de una geometría simple y rigurosa, el conjunto
-            construye una presencia sólida y contenida, donde la forma expresa estabilidad, fuerza y privacidad.
-          </p>
-          <p class="project-refuge__text anim-fade-up" data-anim-delay="120">La vivienda se organiza en dos niveles
-            claramente diferenciados. La planta baja, abierta y permeable, está pensada como espacio social y de
-            encuentro, en relación directa con el jardín. El nivel superior, en cambio, se presenta como un volumen más
-            cerrado y protegido, reservado para la vida íntima.
-          </p>
+          <p class="project-refuge__text anim-fade-up" data-anim-delay="0">{{TEXTO_REFUGE_1}}</p>
+          <p class="project-refuge__text anim-fade-up" data-anim-delay="120">{{TEXTO_REFUGE_2}}</p>
+          <!-- Opcional: borrar si no aplica.
+          <p class="project-refuge__text anim-fade-up" data-anim-delay="240">{{TEXTO_REFUGE_3}}</p>
+          -->
         </div>
 
         <div class="project-refuge__gallery">
           <figure class="project-refuge__image anim-fade-in" data-anim-delay="0">
-            <img src="../assets/images/projects/cherokee-ave/refuge-01.jpg" alt="Cherokee Residence" loading="lazy"
-              decoding="async">
+            <img src="../assets/images/projects/{{SLUG}}/refuge-01.jpg" alt="{{NOMBRE_HUMANO}}"
+              loading="lazy" decoding="async">
           </figure>
           <figure class="project-refuge__image anim-fade-in" data-anim-delay="400">
-            <img src="../assets/images/projects/cherokee-ave/refuge-02.jpg" alt="Cherokee Residence" loading="lazy"
-              decoding="async">
+            <img src="../assets/images/projects/{{SLUG}}/refuge-02.jpg" alt="{{NOMBRE_HUMANO}}"
+              loading="lazy" decoding="async">
           </figure>
         </div>
       </div>
     </section>
 
     <!-- ====== FRAME ====== -->
-    <section class="project-frame project-frame--split" data-project-slug="cherokee-ave" data-nav-theme="light">
+    <section class="project-frame project-frame--split" data-project-slug="{{SLUG}}" data-nav-theme="light">
       <div class="container project-frame__container">
         <figure class="project-frame__media anim-fade-in">
-          <img src="../assets/images/projects/cherokee-ave/frame-01.jpg" alt="Cherokee Residence" loading="lazy"
-            decoding="async">
+          <img src="../assets/images/projects/{{SLUG}}/frame-01.jpg" alt="{{NOMBRE_HUMANO}}"
+            loading="lazy" decoding="async">
         </figure>
 
         <div class="project-frame__copy">
-          <p class="project-frame__text anim-fade-up" data-anim-delay="0">
-            El uso del hormigón define el carácter del proyecto y, al mismo tiempo, su desempeño. La masa térmica
-            permite estabilizar las condiciones interiores frente a un clima exigente, reduciendo la necesidad de
-            enfriamiento mecánico. En combinación con estrategias de ventilación cruzada, el proyecto logra disminuir
-            la demanda de refrigeración en un 40%.
-          </p>
-          <p class="project-frame__text anim-fade-up" data-anim-delay="160">
-            Los cerramientos de madera, permeables y regulables, permiten el ingreso de aire y luz sin comprometer la
-            privacidad, filtrando las visuales y suavizando la relación entre interior y exterior.
-          </p>
+          <p class="project-frame__text anim-fade-up" data-anim-delay="0">{{TEXTO_FRAME}}</p>
         </div>
       </div>
     </section>
 
     <!-- ====== PHRASE ======
-         NUEVA sección. TODO cliente: texto + imágenes phrase-01.jpg y phrase-02.jpg. -->
+         NUEVA sección respecto al estado anterior de la mayoría de proyectos.
+         TODO cliente: texto de la frase + imágenes phrase-01.jpg (efecto zoom)
+         y phrase-02.jpg (efecto pan). Mientras tanto, placeholders. -->
     <section class="project-phrase" data-nav-theme="light">
       <div class="project-phrase__container">
         <div class="project-phrase__copy">
-          <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0">
-            El jardín nativo rodea y acompaña la arquitectura, funcionando como parte activa del sistema ambiental.
-            Genera sombra, protege del asoleamiento y contribuye a la creación de un microclima más fresco y habitable.
-          </p>
+          <p class="project-frame__text anim-fade-up" data-anim-delay="0">{{TEXTO_PHRASE}}</p>
         </div>
 
         <div class="project-phrase__images">
           <figure class="project-phrase__image project-phrase__image--zoom anim-fade-in" data-anim-delay="120">
-            <img src="../assets/images/fondo-transitorio.png" alt="Cherokee Residence" loading="lazy" decoding="async">
+            <img src="../assets/images/projects/{{SLUG}}/phrase-01.jpg" alt="{{NOMBRE_HUMANO}}"
+              loading="lazy" decoding="async">
           </figure>
 
           <figure class="project-phrase__image project-phrase__image--pan anim-fade-in anim-reveal-right" data-anim-delay="220">
-            <img src="../assets/images/fondo-transitorio.png" alt="Cherokee Residence" loading="lazy" decoding="async">
+            <img src="../assets/images/projects/{{SLUG}}/phrase-02.jpg" alt="{{NOMBRE_HUMANO}}"
+              loading="lazy" decoding="async">
           </figure>
         </div>
       </div>
     </section>
 
     <!-- ====== HIGHLIGHT ======
-         NUEVA sección. TODO cliente: imagen highlight-01.jpg + dos líneas de título. -->
-    <section class="project-highlight project-highlight--split" data-project-slug="cherokee-ave" data-nav-theme="light">
+         NUEVA sección respecto al estado anterior de la mayoría de proyectos.
+         TODO cliente: imagen highlight-01.jpg + dos líneas de título superpuesto.
+         Mientras tanto, placeholder. -->
+    <section class="project-highlight project-highlight--split" data-project-slug="{{SLUG}}" data-nav-theme="light">
       <div class="container project-highlight__container">
         <figure class="project-highlight__media anim-zoom-in">
-          <img src="../assets/images/fondo-transitorio.png" alt="Cherokee Residence" loading="lazy" decoding="async">
+          <img src="../assets/images/projects/{{SLUG}}/highlight-01.jpg" alt="{{NOMBRE_HUMANO}}"
+            loading="lazy" decoding="async">
 
-          <h2 class="project-highlight__title project-highlight__title--light">
-            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">Arquitectura de permanencia y solidez.</span></span>
+          <h2 class="project-highlight__title">
+            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">{{TEXTO_HIGHLIGHT_LINEA_1}}<br><br></span></span>
+            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">{{TEXTO_HIGHLIGHT_LINEA_2}}</span></span>
           </h2>
         </figure>
       </div>
     </section>
 
-    <!-- ====== PALETTE ======
-         Reescrita con modo drag. NOTA: palette-01 tiene extensión .JPG (mayúsculas)
-         — case-sensitivity puede romper en Netlify. Registrar como deuda. -->
+    <!-- ====== PALETTE ====== -->
     <section class="project-palette" data-nav-theme="light" data-palette-mode="drag">
       <div class="project-palette__container">
-        <div class="project-palette__copy anim-fade-up" data-anim-delay="0">
-          <p class="project-palette__intro">La casa no se abre indiscriminadamente,
-            sino que controla cuidadosamente el nivel de exposición de cada plano. Así, construye un equilibrio entre
-            liviandad y robustez.</p>
-          <p class="project-palette__text">Entre masa y aire, entre robustez y liviandad.</p>
+        <div class="project-palette__copy">
+          <p class="project-palette__text">{{TEXTO_PALETTE}}</p>
         </div>
 
         <div class="project-palette__images project-palette__images--drag">
           <figure class="project-palette__image project-palette__image--a anim-fade-in" data-anim-delay="120">
-            <img src="../assets/images/projects/cherokee-ave/palette-01.JPG" alt="Cherokee Residence" loading="lazy"
-              decoding="async">
+            <img src="../assets/images/projects/{{SLUG}}/palette-01.jpg" alt="{{NOMBRE_HUMANO}}"
+              loading="lazy" decoding="async">
           </figure>
 
           <button type="button" class="project-palette__divider" aria-label="Arrastrar para redimensionar">
             <span class="project-palette__divider-icon" aria-hidden="true">
               <svg class="project-palette__divider-svg" viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <!-- Chevron izquierdo "<" — trazo humano con dos segmentos
+                     Bézier sutilmente curvados (no rectos perfectos) y puntas
+                     ligeramente desalineadas. Stroke gray-100 vía clase. -->
                 <path class="project-palette__divider-chevron" d="M 23.4 11.6
                          C 21.8 13.9, 17.9 17.3, 14.7 19.8
                          C 17.8 22.6, 21.5 26.1, 23.2 28.6" fill="none" />
+
+                <!-- Círculo trazado a mano: curvas Bézier con radios irregulares
+                     y un pequeño overshoot al final para simular un trazo humano.
+                     Centrado en (50, 20), radio ~14. Contorno negro, interior
+                     gray-100 (currentColor). -->
                 <path class="project-palette__divider-circle" d="M 50.4 6.2
                          C 57.1 6.5, 63.2 11.8, 63.6 19.4
                          C 64.1 26.9, 58.5 33.1, 51.2 33.8
                          C 43.6 34.5, 37.1 28.9, 36.5 21.3
                          C 35.9 13.9, 41.7 7.0, 49.6 6.2
                          C 52.3 5.9, 54.5 6.6, 56.1 7.4" fill="currentColor" />
+
+                <!-- Chevron derecho ">" — espejo del izquierdo, con sus propias
+                     micro-imperfecciones para que no parezcan idénticos. -->
                 <path class="project-palette__divider-chevron" d="M 76.7 11.4
                          C 78.4 13.7, 82.1 17.2, 85.4 19.9
                          C 82.2 22.7, 78.6 26.0, 76.9 28.7" fill="none" />
@@ -285,18 +350,21 @@
           </button>
 
           <figure class="project-palette__image project-palette__image--b anim-fade-in" data-anim-delay="220">
-            <img src="../assets/images/projects/cherokee-ave/palette-02.jpg" alt="Cherokee Residence" loading="lazy"
-              decoding="async">
+            <img src="../assets/images/projects/{{SLUG}}/palette-02.jpg" alt="{{NOMBRE_HUMANO}}"
+              loading="lazy" decoding="async">
           </figure>
         </div>
       </div>
     </section>
 
     <!-- ====== FINAL ======
-         NOTA: `final.jpg` no existe; se apunta a `final-02.jpg`. -->
+         OJO: el archivo canónico `final.jpg` muchas veces NO existe en la
+         carpeta del proyecto (puede llamarse final-01.jpg, final-02.jpg,
+         end-page.jpg, etc.). Verificar y ajustar el `src` proyecto por
+         proyecto. Si no hay imagen final, usar el placeholder. -->
     <section class="project-final" data-nav-theme="dark">
       <div class="project-final__media anim-fade-in" data-anim-delay="0" aria-hidden="true">
-        <img src="../assets/images/projects/cherokee-ave/final-02.jpg" alt="" loading="lazy" decoding="async">
+        <img src="../assets/images/projects/{{SLUG}}/final.jpg" alt="" loading="lazy" decoding="async">
       </div>
 
       <div class="project-final__content">
@@ -313,6 +381,7 @@
 
   <!-- ====================================================================
        Script de LABELS A/B/C de revisión — TEMPORAL.
+       Eliminar junto con el <style> del <head> cuando termine el feedback.
        ==================================================================== -->
   <script>
     (() => {
