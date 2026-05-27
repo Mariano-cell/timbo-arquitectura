@@ -257,7 +257,7 @@
      queda sola a la derecha. */
   .floating-logo-mobile {
     display: block;
-    width: 100px;
+    width: 90px;
     height: auto;
     position: fixed;
     top: var(--margin-a);
@@ -348,7 +348,7 @@
     top: calc(var(--nav-height) / 2);
     left: var(--margin-a);
     transform: translateY(-50%);
-    width: 100px;
+    width: 90px;
     /* Forzamos visible por si el usuario sube y cruza el threshold de
        500px hacia arriba mientras el nav ya está scrolled (en ese
        momento body.nav-mobile-show-floating podría no estar activa). */
@@ -761,17 +761,19 @@
      (margin-top mayor que margin-bottom la empuja hacia abajo). */
   .hero__tagline {
     margin-top: auto;
-    margin-bottom: 28vh;
+    margin-bottom: 20vh;
     font-size: 1.6rem;
     letter-spacing: 0.01em;
     line-height: 1.2;
     max-width: 100%;
   }
 
-  /* Logo al pie del hero, centrado horizontalmente. */
+  /* Logo al pie del hero, centrado horizontalmente.
+     margin-bottom lo despega del pie ~60px hacia arriba (sin mover la tagline,
+     que está anclada por su propio margin-top:auto + margin-bottom:28vh). */
   .hero__logo {
-    width: 70px;
-    margin: 0 auto;
+    width: 85px;
+    margin: 0 auto 40px;
   }
 }
 
@@ -1064,7 +1066,7 @@
      en mobile la bajamos a 75vh. Recorta más la foto pero la sección
      queda más compacta. Ajustar este valor si querés más/menos alto. */
   .nature-dialogue__image img {
-    height: 75vh;
+
   }
 
   /* En mobile el texto pasa al mismo tamaño que .philosophy__text
@@ -1086,11 +1088,13 @@
   }
 
   .nature-dialogue__text {
-    /* Estándar mobile (igual a .intro__claim):
+    /* estandar-a-mobile para título:
        Fluid: 28px @ 375px → 40px @ 1023px */
-    font-size: clamp(1.2rem, 1.2vw + 0.8rem, 1.8rem);
+    font-size: clamp(1.75rem, 1.85vw + 1.06rem, 2.5rem);
     font-weight: var(--fw-medium);
+    letter-spacing: 0.04em;
     line-height: 1.05;
+    max-width: clamp(16rem, 80vw, 30rem);
     text-align: right;
     color: white;
   }
@@ -1314,7 +1318,7 @@ html[lang='es'] .philosophy__signal-label {
 
   .philosophy__content {
     gap: var(--space-md);
-    padding-bottom: clamp(5rem, 8vh, 10rem);
+    padding-bottom: clamp(2rem, 4vh, 6rem);
   }
 
   .philosophy__cta {
@@ -3173,6 +3177,35 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 @media (max-width: 1023.98px) {
+  /* --- Padding lateral uniforme en mobile para secciones de proyecto ---
+     Se aplica a las secciones de contenido (NO al hero ni al final, que son
+     full-bleed con imagen edge-to-edge). Los __container internos que en
+     desktop tienen margin-inline propio (--margin-b/--margin-c) se resetean
+     a 0 para evitar doble indent. */
+  .project-overview,
+  .project-refuge,
+  .project-frame,
+  .project-phrase,
+  .project-highlight,
+  .project-palette {
+    padding-inline: var(--margin-a);
+  }
+
+  .project-refuge__container,
+  .project-frame__container,
+  .project-phrase__container,
+  .project-highlight__container,
+  .project-palette__container {
+    margin-inline: 0;
+  }
+
+  /* Overview: el __container usa la clase .container global, que aporta
+     padding lateral en desktop. En mobile el padding va en la <section>,
+     así que reseteamos el del container para evitar doble indent. */
+  .project-overview__container {
+    padding-inline: 0;
+  }
+
   .project-hero {
     min-height: 100vh;
   }
@@ -3236,7 +3269,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .project-refuge__container {
     grid-template-columns: 1fr;
     align-items: start;
-    margin-inline: var(--margin-a);
     margin-block: var(--margin-b);
   }
 
@@ -3247,14 +3279,32 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .project-refuge__image:nth-child(2) {
     display: none;
   }
-}
 
-@media (max-width: 900px) {
+  /* Frame: una columna, con texto arriba e imagen abajo (invertido vs desktop). */
   .project-frame__container {
     grid-template-columns: 1fr;
     align-items: start;
   }
 
+  .project-frame__copy {
+    order: 1;
+  }
+
+  .project-frame__media {
+    order: 2;
+  }
+
+  /* === estandar-a-mobile para párrafo ===
+     Aplicado a los párrafos de refuge, frame y phrase. */
+  .project-refuge__text,
+  .project-frame__text,
+  .project-phrase__text {
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
+  }
+}
+
+@media (max-width: 900px) {
   .project-highlight__container {
     grid-template-columns: 1fr;
     align-items: start;
@@ -3322,11 +3372,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .project-overview__map {
     width: 100%;
-  }
-
-  .project-refuge__text {
-    font-size: clamp(1.02rem, 4.1vw, 1.22rem);
-    line-height: 1.5;
   }
 
   .project-palette__intro,
@@ -7154,28 +7199,16 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 @media (max-width: 768px) {
-  .page--services-light .main-nav {
-    padding-right: var(--space-md);
-    padding-left: var(--space-md);
-  }
-
-  .page--services-light .nav__links {
-    justify-content: flex-start;
-    gap: 1.5rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .page--services-light .nav__links::-webkit-scrollbar {
-    display: none;
-  }
-
-  .page--services-light .nav__links li {
-    flex: 0 0 auto;
-  }
+  /* Las reglas mobile específicas del nav de servicios (.main-nav, .nav__links,
+     ::-webkit-scrollbar, li) se removieron porque pisaban el layout estándar
+     del menú desplegado mobile (que es vertical, no horizontal scrolleable).
+     El nav de servicios ahora hereda el mismo comportamiento mobile que el
+     resto del sitio. Las reglas restantes corresponden al contenido de la
+     sección y son legacy del breakpoint 768px (ver CLAUDE.md → migración
+     oportunista). */
 
   .services-directory {
-    padding-top: calc(var(--nav-height) + 3rem);
+    padding-top: calc(var(--nav-height) + 10rem);
     padding-bottom: 2rem;
   }
 
@@ -7429,25 +7462,13 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 /* --- Responsive contacto --- */
 @media (max-width: 768px) {
-  .page--contact-image .main-nav {
-    padding-right: var(--space-md);
-    padding-left: var(--space-md);
-  }
-
-  .page--contact-image .nav__links {
-    justify-content: flex-start;
-    gap: 1.5rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .page--contact-image .nav__links::-webkit-scrollbar {
-    display: none;
-  }
-
-  .page--contact-image .nav__links li {
-    flex: 0 0 auto;
-  }
+  /* Las reglas mobile específicas del nav de contacto (.main-nav, .nav__links,
+     ::-webkit-scrollbar, li) se removieron porque pisaban el layout estándar
+     del menú desplegado mobile (que es vertical, no horizontal scrolleable).
+     El nav de contacto ahora hereda el mismo comportamiento mobile que el
+     resto del sitio. Las reglas restantes corresponden al contenido de la
+     sección y son legacy del breakpoint 768px (ver CLAUDE.md → migración
+     oportunista). */
 
   .contact-image {
     padding-top: calc(var(--nav-height) + 4rem);
@@ -8476,8 +8497,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .projects-gallery {
     --gallery-padding-top:           clamp(14rem, 40vw, 20rem);
     --gallery-padding-bottom:        clamp(4rem, 12vw, 6rem);
-    --gallery-side-padding-right:    var(--space-lg);
-    --gallery-side-padding-left:     var(--space-lg);
+    --gallery-side-padding-right:    var(--margin-a);
+    --gallery-side-padding-left:     var(--margin-a);
     --gallery-row-gap-y:             2.5rem;
   }
 
@@ -8532,27 +8553,48 @@ html.is-entering-home.is-entering-home-active .main-nav {
     display: grid;
   }
 
+  /* Altura uniforme para TODAS las portadas, sin importar su ancho propio.
+     Se calcula sobre el ancho útil de la pantalla (100vw - paddings laterales)
+     con ratio 3:2 — equivale a lo que mediría una portada al 100% con
+     aspect-ratio 3/2. Así Exuma (90%), Suindá (85%) y las pares (100%)
+     comparten exactamente la misma altura visual. */
+  .projects-gallery {
+    --gallery-cover-height: calc((100vw - 2 * var(--margin-a)) * 2 / 3);
+  }
+
   /* Zona de imagen WIDE (5 items: Exuma, Suindá, Cardano, Chacras, Club de Mar)
-     → ancho completo + aspect-ratio 4/3 = altura uniforme */
+     → ancho 90% (alineado a la izquierda, espacio sobrante a la derecha)
+     + altura uniforme via --gallery-cover-height */
   .projects-gallery__row--1 .projects-gallery__media--wide,
   .projects-gallery__row--2 .projects-gallery__media--wide,
   .projects-gallery__row--3 .projects-gallery__media--wide,
   .projects-gallery__row--4 .projects-gallery__media--wide,
   .projects-gallery__row--5 .projects-gallery__media--wide {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 3;
+    width: 90%;
+    height: var(--gallery-cover-height);
+    aspect-ratio: auto;
+    margin-right: auto;
+    margin-left: 0;
+  }
+
+  /* Excepciones WIDE → 85% de ancho (en vez del 90% general):
+     - Suindá Lodge (fila 2, item NO-pair)
+     - Club de Mar Beach House (fila 4, segundo item) */
+  .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__media--wide,
+  .projects-gallery__row--4 > .projects-gallery__item:nth-child(2) .projects-gallery__media--wide {
+    width: 85%;
   }
 
   /* Zona de imagen PAR (4 items: Tobar, Praderas, Haras, Cherokee)
-     → ancho completo + aspect-ratio 4/3, dos fotos 70/30 adentro */
+     → ancho completo + altura uniforme via --gallery-cover-height,
+     dos fotos 70/30 adentro */
   .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media-pair,
   .projects-gallery__row--2 .projects-gallery__media-pair,
   .projects-gallery__row--3 .projects-gallery__media-pair,
   .projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media-pair {
     width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 3;
+    height: var(--gallery-cover-height);
+    aspect-ratio: auto;
     grid-template-columns: 7fr 3fr;
     gap: 0.5rem;
   }
@@ -8563,15 +8605,17 @@ html.is-entering-home.is-entering-home-active .main-nav {
   }
 
   /* Excepción de texto: EXUMA, TOBAR (fila 1), PRADERAS, SUINDÁ (fila 2),
-     CARDANO y HARAS (fila 3) fuerzan nombre y/o ubicación a quedar
-     en un solo renglón. */
+     CARDANO y HARAS (fila 3), CHACRAS DE MURRAY y CLUB DE MAR (fila 4)
+     fuerzan nombre y/o ubicación a quedar en un solo renglón. */
   .projects-gallery__row--1 .projects-gallery__name,
   .projects-gallery__row--1 .projects-gallery__location,
   .projects-gallery__row--2 > .projects-gallery__item--pair .projects-gallery__name,
   .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__location,
   .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__name,
   .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__location,
-  .projects-gallery__row--3 > .projects-gallery__item--pair .projects-gallery__location {
+  .projects-gallery__row--3 > .projects-gallery__item--pair .projects-gallery__location,
+  .projects-gallery__row--4 > .projects-gallery__item:nth-child(1) .projects-gallery__location,
+  .projects-gallery__row--4 > .projects-gallery__item:nth-child(2) .projects-gallery__location {
     white-space: nowrap;
   }
 
@@ -8622,6 +8666,30 @@ html.is-entering-home.is-entering-home-active .main-nav {
     height: auto;
   }
 
+  /* Captions de items WIDE → igualan el ancho de su portada.
+     IMPORTANTE: este bloque tiene que ir DESPUÉS del bloque de
+     "Visual y caption del par o de items con ancho calculado"
+     (que pone width: 100% sobre los caption de Suindá y Cardano).
+     Si se mueve más arriba, la cascada lo pisa.
+     Por defecto 90% (Exuma, Cardano, Chacras), alineados a la izquierda. */
+  .projects-gallery__row--1 > .projects-gallery__item:nth-child(1) .projects-gallery__caption,
+  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--4 > .projects-gallery__item:nth-child(1) .projects-gallery__caption {
+    width: 90%;
+    max-width: none;
+    margin-right: auto;
+    margin-left: 0;
+  }
+
+  /* Captions de Suindá y Club de Mar → 85% para acompañar la portada acortada. */
+  .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--4 > .projects-gallery__item:nth-child(2) .projects-gallery__caption {
+    width: 85%;
+    max-width: none;
+    margin-right: auto;
+    margin-left: 0;
+  }
+
   /* Hover-cards: no aplican en mobile */
   .projects-gallery__hover-card {
     display: none;
@@ -8669,4 +8737,27 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .projects-gallery__hover-card {
     transition: none;
   }
+}
+
+/* ========================= SCROLL INDICATOR (DEBUG) =========================
+   Widget chico abajo a la derecha que muestra scrollY.
+   Inyectado por Timbo.scrollIndicator en main.js.
+   Quitar el .init() correspondiente para ocultarlo.
+   =========================================================================== */
+.scroll-indicator {
+  position: fixed;
+  bottom: 8px;
+  right: 8px;
+  z-index: 9999;
+  padding: 3px 6px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  line-height: 1;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  font-variant-numeric: tabular-nums;
 }

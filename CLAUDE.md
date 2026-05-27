@@ -462,3 +462,102 @@ Mapeo de pesos:
 - Prompts para Claude Code / Codex se guardan en `prompts/`
 - El archivo `data.js` centraliza todo el contenido bilingüe — cualquier texto nuevo debe ir ahí
 - Las animaciones usan `is-visible` class toggleada por IntersectionObserver
+
+## ⭐ Migración a sistema bilingüe (ES/EN) — proceso en curso
+
+### Contexto
+
+El sitio tiene un sistema bilingüe (`data-i18n` en el HTML + `SITE_DATA` en `assets/js/data.js` + módulo `Timbo.i18n` en `main.js`), pero **sólo está aplicado parcialmente**: `index.html` y partes de `sustentabilidad.html` usan el sistema; el resto de las páginas (proyectos individuales, `proyectos.html`, `sobre-nosotros.html`, `contacto.html`) tienen el texto **hardcodeado en español** dentro del HTML, sin contrapartida bilingüe.
+
+**Decisión de proceso (mayo 2026):** primero se termina el diseño de todas las páginas en español hardcodeado (más rápido y menos fricción para iterar diseño). Después se migra cada página al sistema `data-i18n` agregando las claves en `data.js` con ES y EN. La traducción al inglés la provee el usuario (Mariano), no se autogenera.
+
+### Orden acordado de migración
+
+1. **Home** (`index.html`) + componentes generales (header/nav, footer).
+2. **Proyectos**: `proyectos.html` (listado) y las páginas individuales de cada proyecto (`proyectos/proyecto-*.html`).
+3. **Sustentabilidad** (`sustentabilidad.html`).
+4. **Sobre Nosotros, Contacto, y limpieza final** — fase posterior.
+
+### Fase 0 — Pre-requisito técnico (una sola vez)
+
+Antes de migrar la primera página, hay que **parchar el `resolve()` de `Timbo.i18n`** en `main.js` para que soporte claves anidadas profundas (más de dos niveles, ej: `projectPages.projects.exuma-lodge.refugeParagraph1`).
+
+Implementación recomendada del patch:
+
+```js
+// En main.js, dentro de Timbo.i18n.resolve():
+resolve(key, lang) {
+  const parts = key.split('.');
+  const section = parts.shift();
+  let node = SITE_DATA[section]?.[lang];
+  for (const part of parts) {
+    if (node == null) return key;
+    node = node[part];
+  }
+  return node ?? key;
+}
+```
+
+Después del patch, verificar que una clave existente (ej: `home.heroTagline`) sigue funcionando antes de seguir.
+
+### Flujo de trabajo por página (ciclo repetible)
+
+Para cada página, el ciclo es:
+
+1. **Inventario.** Claude lee el HTML y devuelve una lista numerada de todos los textos a migrar, en español, en orden de aparición, marcando cuáles **ya existen** en `data.js` y cuáles **no existen** todavía.
+2. **Pedidos de traducción al usuario.** Claude pregunta uno por uno (o en tandas chicas de 2-3) los textos que necesita en inglés.
+   - Si el texto **no existe** en `data.js`: Claude muestra el español y pide el inglés.
+   - Si el texto **ya existe** en `data.js` con su versión en inglés: Claude muestra la versión actual y pregunta si la dejamos o la actualizamos.
+3. **Aplicación atómica.** Una vez que Claude tiene el bloque (ES + EN) de la sección:
+   - Agrega la clave a `data.js` en `es` y `en` (ambas con la **misma estructura y mismas claves** exactas).
+   - Agrega `data-i18n="ruta.completa"` al elemento del HTML.
+   - Agrega `data-i18n-html="true"` si el texto contiene HTML inline (`<strong>`, `<br>`, `<br class="br-desktop">`, etc.).
+   - **Deja el texto en español como fallback** dentro del elemento (no lo vacía).
+4. **Confirmación visual.** Claude avisa qué cambió y le pide al usuario que mire la página con `?lang=es` (debería verse igual que antes) y `?lang=en` (debería cambiar al inglés).
+5. **Cierre de página.** Cuando todos los textos de la página están migrados y verificados, se anota la página como completada y se pasa a la siguiente. **Una página a la vez, completa, antes de pasar a la siguiente.**
+
+### Convenciones técnicas para la migración
+
+- **Nombres de claves:** en inglés, `camelCase`. Ej: `refugeParagraph1`, `factClimate`, `overviewTitle`. NO usar `parrafo_refugio_1` ni `refuge-paragraph-1`.
+- **Agrupación de claves:**
+  - Textos **únicos de una página** van en su propio bloque (ej: `projectPages.projects.exuma-lodge.refugeParagraph1`).
+  - Textos **compartidos entre páginas similares** se agrupan arriba para evitar duplicación. Ej: las labels "CLIMA /", "BIOMA /", "TERRENO /" se repiten en todas las páginas de proyecto → van en `projectPages.factLabels.climate`, no en cada proyecto.
+- **HTML inline dentro de los valores de `data.js`:**
+  - Los `<br>`, `<strong>`, `<span>`, `<br class="br-desktop">`, `<br class="br-mobile">`, etc. **van dentro del valor del string en `data.js`**, no en el HTML.
+  - El elemento HTML lleva `data-i18n="..."` + `data-i18n-html="true"`.
+  - Ejemplo:
+    ```js
+    refugeParagraph1: 'Ubicado en el extremo de la península<br class="br-desktop">de Exuma.'
+    ```
+    ```html
+    <p data-i18n="projectPages.projects.exuma-lodge.refugeParagraph1"
+       data-i18n-html="true">
+      Ubicado en el extremo de la península de Exuma.
+    </p>
+    ```
+- **Fallback:** el texto en español queda dentro del elemento como respaldo por si JS falla o tarda en cargar. No se vacía.
+- **Consistencia `es` / `en`:** las claves deben ser **idénticas** en ambos bloques. Si en `es` se llama `refugeParagraph1`, en `en` también. Estrategia segura: copiar y pegar el bloque entero y editar sólo los valores.
+- **Limpieza al final:** cuando una página se migra y se reemplazan claves viejas (ej: `description1` y `description2` genéricas de `projectPages.projects.exuma-lodge`), las claves viejas no usadas se borran de `data.js` para evitar deuda. Esto se hace en la fase de limpieza final, no a medida.
+
+### Trampas comunes que pueden aparecer
+
+- **Olvidarse `data-i18n-html="true"`** cuando el texto tiene HTML inline → se muestra el HTML como texto plano (ej: `<strong>palabra</strong>`).
+- **Claves desalineadas entre `es` y `en`** → el inglés nunca se muestra para ese texto (cae al fallback en español).
+- **Espacios o saltos de línea sobrantes** al copiar del HTML a `data.js` → se cuelan en la versión renderizada.
+- **Tocar el HTML y olvidarse del fallback** → si el español en `data.js` cambia, el fallback queda viejo. Mantenerlos sincronizados.
+- **`<br>` responsive en distintos lugares por idioma:** el largo del inglés vs español puede hacer que un `<br class="br-desktop">` caiga mal. Si pasa, se resuelve definiendo dos valores distintos en `data.js` (uno para cada idioma) — no se duplica HTML.
+
+### Estado de migración (actualizar a medida que se avanza)
+
+- [x] Fase 0 — Patch a `Timbo.i18n.resolve()` para claves anidadas profundas.
+- [ ] Home (`index.html`) + nav + footer.
+- [ ] `proyectos.html` (listado).
+- [ ] `proyectos/proyecto-exuma-lodge.html`.
+- [ ] `proyectos/proyecto-haras-san-pablo.html`.
+- [ ] `proyectos/proyecto-tobar-lodge.html`.
+- [ ] `proyectos/proyecto-cabana-suinda.html`.
+- [ ] `proyectos/proyecto-cherokee-ave.html`.
+- [ ] `sustentabilidad.html` (completar — ya tiene 6 textos migrados).
+- [ ] `sobre-nosotros.html`.
+- [ ] `contacto.html`.
+- [ ] Limpieza final de `data.js` (borrar claves no usadas, ordenar).

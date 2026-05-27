@@ -38,6 +38,7 @@ const SITE_DATA = {
     es: {
       heroTagline:      '<strong>Arquitectura</strong> en armonía<br>con el <strong>clima</strong> y la <strong>naturaleza</strong>.',
       claim:            '<span class="intro__claim-line"><span class="intro__claim-line-inner">Entre lo salvaje y</span></span><span class="intro__claim-line"><span class="intro__claim-line-inner">las personas.</span></span>',
+      introText:        'Timbó es un estudio de arquitectura, diseño, consultoría e investigación con origen en Buenos Aires. Comprometido con contribuir a un futuro bajo en carbono, permite a las personas experimentar la naturaleza en su máxima expresión.',
       sustainabilityStatement: '<span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">Diseño resiliente y</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">adaptado</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">a las condiciones</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">ambientales</span></span>',
       philosophyText:   'Mediante el análisis de datos climáticos, los proyectos se adaptan a las condiciones específicas de cada lugar, asegurando una baja demanda energética y una alta calidad ambiental tanto en espacios interiores como exteriores.',
       philosophyCta:    'VER MÁS',
@@ -50,9 +51,10 @@ const SITE_DATA = {
       philosophySkyCoverage: 'Cobertura<br>del cielo',
     },
     en: {
-      heroTagline:      '<strong>Architecture</strong> in harmony<br>with <strong>climate</strong> and <strong>nature</strong>.',
-      claim:            '<span class="intro__claim-line"><span class="intro__claim-line-inner">Between the wild and</span></span><span class="intro__claim-line"><span class="intro__claim-line-inner">the people.</span></span>',
-      sustainabilityStatement: '<span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">Resilient design</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">adapted</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">to environmental</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">conditions</span></span>',
+      heroTagline:      '<strong>Architecture</strong> shaped by<br><strong>climate</strong> and <strong>place</strong>.',
+      claim:            '<span class="intro__claim-line"><span class="intro__claim-line-inner">Between the wild</span></span><span class="intro__claim-line"><span class="intro__claim-line-inner">and the people</span></span>',
+      introText:        'Timbó is a Buenos Aires–based architecture, design, and research consultancy. We are committed to a low-carbon future and design spaces that respond directly to their natural environment.',
+      sustainabilityStatement: '<span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">Resilient design,</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">grounded in climate</span></span><span class="philosophy__statement-line"><span class="philosophy__statement-line-inner">and place.</span></span>',
       philosophyText:   'Through the analysis of climate data, projects are adapted to the specific conditions of each location, ensuring low energy demand and high environmental quality in both indoor and outdoor spaces.',
       philosophyCta:    'SEE MORE',
       philosophyClimateZone: 'Climate<br>zone',

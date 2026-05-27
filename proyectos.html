@@ -21,6 +21,19 @@
       <li><a href="sobre-nosotros.html" class="nav__link">About Us</a></li>
       <li><a href="contacto.html" class="nav__link">Contact</a></li>
     </ul>
+
+    <!-- Floating logo y botón hamburguesa SÓLO mobile (ocultos en desktop por CSS).
+         Aparecen al scrollear más de 600px. -->
+    <div class="nav-floating-mobile">
+      <a href="index.html" class="floating-logo-mobile" aria-label="Ir al inicio">
+        <img src="assets/images/logo/timbo-negro.svg" alt="Timbó">
+      </a>
+      <button type="button" class="nav-toggle-mobile" aria-label="Abrir menú" aria-expanded="false">
+        <span class="nav-toggle-mobile__bar"></span>
+        <span class="nav-toggle-mobile__bar"></span>
+        <span class="nav-toggle-mobile__bar"></span>
+      </button>
+    </div>
   </nav>
 
 
@@ -168,7 +181,7 @@
           </div>
           <div class="projects-gallery__caption">
             <span class="projects-gallery__name">PRADERAS CABIN</span>
-            <span class="projects-gallery__location">Cerro Perito Moreno, Río Negro, Argentina</span>
+            <span class="projects-gallery__location">Río Negro, Argentina</span>
             <span class="projects-gallery__category">Cabin / Retreat</span>
           </div>
         </a>
@@ -311,7 +324,7 @@
               </aside>
             </div>
             <div class="projects-gallery__caption">
-              <span class="projects-gallery__name">CHACRAS DE MURRAY PRIVATE ESTATE</span>
+              <span class="projects-gallery__name">CHACRAS DE MURRAY<br class="only-mobile"> PRIVATE ESTATE</span>
               <span class="projects-gallery__location">Buenos Aires, Argentina</span>
               <span class="projects-gallery__category">Residential</span>
             </div>
@@ -345,7 +358,7 @@
               </aside>
             </div>
             <div class="projects-gallery__caption">
-              <span class="projects-gallery__name">CLUB DE MAR BEACH HOUSE</span>
+              <span class="projects-gallery__name">CLUB DE MAR<br class="only-mobile"> BEACH HOUSE</span>
               <span class="projects-gallery__location">José Ignacio, Uruguay</span>
               <span class="projects-gallery__category">Hospitality</span>
             </div>

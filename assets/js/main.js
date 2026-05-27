@@ -195,19 +195,25 @@ const Timbo = {
     },
 
     /**
-     * Resuelve una clave tipo "home.heroTagline" buscando en SITE_DATA.
+     * Resuelve una clave de cualquier profundidad buscando en SITE_DATA.
+     * Ej: "home.heroTagline" → SITE_DATA.home[lang].heroTagline
+     * Ej: "projectPages.projects.exuma-lodge.refugeParagraph1"
+     *     → SITE_DATA.projectPages[lang].projects['exuma-lodge'].refugeParagraph1
+     * El primer segmento es la sección, después se inserta [lang], y desde ahí
+     * se baja por el resto del path. Devuelve undefined si no encuentra el valor.
      */
     resolve(key, lang) {
       const parts = key.split('.');
       if (parts.length < 2) return undefined;
 
-      const section = parts[0];
-      const field = parts[1];
+      const section = parts.shift();
+      let node = SITE_DATA[section] && SITE_DATA[section][lang];
 
-      if (SITE_DATA[section] && SITE_DATA[section][lang]) {
-        return SITE_DATA[section][lang][field];
+      for (const part of parts) {
+        if (node == null) return undefined;
+        node = node[part];
       }
-      return undefined;
+      return node;
     },
 
     /**
@@ -233,7 +239,18 @@ const Timbo = {
     SCROLL_THRESHOLD: 900,  // ← Cambiá este número para ajustar cuándo aparece el fondo (desktop default)
     ABOUT_SCROLL_THRESHOLD: 300,
     SUST_SCROLL_THRESHOLD: 80,  // sustentabilidad: que aparezca casi de inmediato
-    MOBILE_SCROLL_THRESHOLD: 500,  // mobile: que el fondo blanco ya esté listo cuando el nav reaparece al subir
+    // Mobile: el header scrolled aparece cuando el usuario sube y cruza este
+    // umbral. Coordina con navHide.MOBILE_HIDE_AFTER_PX (que quita --hidden
+    // en el mismo punto). El umbral para QUITAR --scrolled en mobile es más
+    // bajo (MOBILE_REMOVE_SCROLLED_BELOW) para que entre ese valor y
+    // MOBILE_SCROLL_THRESHOLD el nav esté oculto (--hidden todavía activo)
+    // mientras cambia su altura de barra (60px) a bloque desplegado, sin
+    // que el usuario lo perciba.
+    MOBILE_SCROLL_THRESHOLD: 600,
+    MOBILE_REMOVE_SCROLLED_BELOW: 200,  // mobile: --scrolled se quita en 200 (no en 600) para que el cambio
+                                        // de altura ocurra mientras el nav está oculto vía --hidden (entre 100 y 600).
+                                        // Cuanto más cerca de 100 esté este valor, más tiempo tiene la transición
+                                        // --hidden de completarse antes de que cambie la altura — clave en scrolls rápidos.
 
     init() {
       const nav = document.querySelector('.main-nav');
@@ -243,21 +260,26 @@ const Timbo = {
         && Boolean(document.querySelector('.about-hero'));
       const isSustPage = Boolean(document.querySelector('.sust-hero'));
 
-      // Sustentabilidad en desktop: queremos que main-nav--scrolled solo aparezca
-      // cuando el usuario scrollea HACIA ARRIBA (re-mostrando el nav después de
-      // haberlo ocultado). Al scrollear hacia abajo no se debe agregar nunca, así
-      // el nav transparente se va limpio sin "pintarse" de blanco en el medio
-      // de la animación de --hidden.
+      // Casos en los que main-nav--scrolled sólo debe aparecer cuando el usuario
+      // scrollea HACIA ARRIBA. Aplica a sustentabilidad desktop (nav transparente
+      // que no debe pintarse al bajar). En mobile no aplica: el scrolled debe
+      // mostrarse también al bajar pasando MOBILE_SCROLL_THRESHOLD.
       const desktopMQ = window.matchMedia('(min-width: 1024px)');
-      const sustDesktop = isSustPage && desktopMQ.matches;
       const isMobile = !desktopMQ.matches;
+      const sustDesktop = isSustPage && desktopMQ.matches;
+      const onlyOnScrollUp = sustDesktop;
 
-      // Threshold: en mobile usamos 500px para que coincida con navHide
-      // (cuando el nav reaparece al subir, ya está scrolled = fondo blanco).
+      // Threshold para AGREGAR --scrolled.
       let threshold = this.SCROLL_THRESHOLD;
       if (isMobile) threshold = this.MOBILE_SCROLL_THRESHOLD;
       else if (isAboutPage) threshold = this.ABOUT_SCROLL_THRESHOLD;
       else if (isSustPage) threshold = this.SUST_SCROLL_THRESHOLD;
+
+      // Threshold para QUITAR --scrolled. En general es el mismo que para
+      // agregar (comportamiento simétrico). En mobile usamos uno más bajo
+      // para que entre ambos umbrales el nav esté oculto (--hidden activo)
+      // mientras cambia su altura de barra a bloque desplegado.
+      const removeThreshold = isMobile ? this.MOBILE_REMOVE_SCROLLED_BELOW : threshold;
 
       let lastY = window.scrollY;
       window.addEventListener('scroll', () => {
@@ -266,15 +288,17 @@ const Timbo = {
         lastY = currentY;
 
         if (currentY >= threshold) {
-          if (sustDesktop) {
+          if (onlyOnScrollUp) {
             // Solo agregar cuando se viene scrolleando hacia arriba.
             if (goingUp) nav.classList.add('main-nav--scrolled');
           } else {
             nav.classList.add('main-nav--scrolled');
           }
-        } else {
+        } else if (currentY < removeThreshold) {
           nav.classList.remove('main-nav--scrolled');
         }
+        // Zona intermedia (mobile, entre removeThreshold y threshold):
+        // mantenemos --scrolled como estaba. El nav está oculto vía --hidden.
       }, { passive: true });
     },
   },
@@ -555,8 +579,11 @@ const Timbo = {
   navHide: {
     HIDE_AFTER_PX: 600,         // default desktop: desde qué scroll puede empezar a esconderse
     SUST_HIDE_AFTER_PX: 80,     // sustentabilidad: que el nav transparente se vaya apenas pasa el hero
-    MOBILE_HIDE_AFTER_PX: 500,  // mobile: coincide con SHOW_FLOATING_AT para que el "relevo"
-                                // entre floating y nav-scrolled ocurra al mismo umbral
+    MOBILE_HIDE_AFTER_PX: 600,  // mobile: umbral del scrolled. Por encima de esto vive el header
+                                // scrolled (visible). Por debajo (hasta MOBILE_REVEAL_BELOW_PX) el
+                                // nav queda oculto: ahí ocurre el cambio de altura sin que se vea.
+    MOBILE_REVEAL_BELOW_PX: 100, // mobile: por debajo de este scrollY reaparece el header desplegado
+                                 // del hero (la primera fase, sin fondo blanco).
     UP_THRESHOLD_PX: 8,         // cuánto hay que subir para re-mostrarlo
 
     init() {
@@ -577,7 +604,7 @@ const Timbo = {
       const isSustPage = document.body.classList.contains('page--sust-light');
 
       // Umbral para esconder.
-      // - Mobile: 500px (coincide con SHOW_FLOATING_AT).
+      // - Mobile: 600px (coincide con navScroll.MOBILE_SCROLL_THRESHOLD).
       // - Desktop sust: 80px (apenas pasa el hero).
       // - Desktop default: 600px.
       let hideAfter = this.HIDE_AFTER_PX;
@@ -622,6 +649,34 @@ const Timbo = {
           return;
         }
 
+        if (isMobile) {
+          // Mobile: lógica por zonas, independiente de la dirección del scroll.
+          //   [0, REVEAL_BELOW]          → visible (header desplegado del hero).
+          //   (REVEAL_BELOW, HIDE_AFTER) → oculto (franja invisible donde el nav
+          //                                cambia su altura sin que se perciba).
+          //   [HIDE_AFTER, ∞]            → visible (header scrolled).
+          // Regla simple: arriba de HIDE_AFTER hay header, debajo no, salvo en
+          // la zona del desplegado. El cambio de clase --scrolled lo hace
+          // navScroll en MOBILE_REMOVE_SCROLLED_BELOW (200), dentro de la franja
+          // invisible, así no se percibe el cambio de altura.
+          const revealBelow = this.MOBILE_REVEAL_BELOW_PX;
+
+          if (currentY <= revealBelow) {
+            nav.classList.remove('main-nav--hidden');
+          } else if (currentY < hideAfter) {
+            nav.classList.add('main-nav--hidden');
+          } else {
+            nav.classList.remove('main-nav--hidden');
+          }
+
+          // Reset por compatibilidad con desktop si el viewport se reescala.
+          accumulatedUp = 0;
+          lastY = currentY;
+          ticking = false;
+          return;
+        }
+
+        // Desktop (lógica direccional original).
         // En el tope: siempre visible y se resetea el acumulador.
         if (currentY <= 0) {
           nav.classList.remove('main-nav--hidden');
@@ -4912,6 +4967,7 @@ const Timbo = {
     // El módulo queda disponible por si se reactiva: this.projectsGalleryHoverBlur.init();
     this.galleryCoverCycle.init();
     this.galleryCoverCyclePairs.init();
+    this.scrollIndicator.init();
 
     // 3. Detectar idioma y aplicar
     const lang = this.i18n.detect();
@@ -7018,6 +7074,32 @@ const Timbo = {
     },
   },
 
+  /* ============================================================
+     scrollIndicator — debug widget (esquina inferior derecha)
+     Muestra el scrollY actual. Útil para coordinar ajustes con
+     el asistente. Quitar el .init() en Timbo.init() para ocultar.
+     ============================================================ */
+  scrollIndicator: {
+    el: null,
+    init() {
+      // Evitar duplicados si init() corre dos veces
+      if (document.querySelector('.scroll-indicator')) return;
+
+      const el = document.createElement('div');
+      el.className = 'scroll-indicator';
+      el.textContent = '0';
+      document.body.appendChild(el);
+      this.el = el;
+
+      const update = () => {
+        this.el.textContent = Math.round(window.scrollY);
+      };
+
+      update();
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+    },
+  },
 
 };
 
