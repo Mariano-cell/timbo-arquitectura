@@ -60,12 +60,12 @@
 <body class="page--haras-light">
   <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
     <ul class="nav__links">
-      <li><a href="../index.html" class="nav__link">Home</a></li>
-      <li><a href="../proyectos.html" class="nav__link nav__link--active">Projects</a></li>
-      <li><a href="../sustentabilidad.html" class="nav__link">Sustainability</a></li>
-      <li><a href="../servicios.html" class="nav__link">Services</a></li>
-      <li><a href="../sobre-nosotros.html" class="nav__link">About Us</a></li>
-      <li><a href="../contacto.html" class="nav__link">Contact</a></li>
+      <li><a href="../index.html" class="nav__link" data-i18n="nav.home">Inicio</a></li>
+      <li><a href="../proyectos.html" class="nav__link nav__link--active" data-i18n="nav.projects">Proyectos</a></li>
+      <li><a href="../sustentabilidad.html" class="nav__link" data-i18n="nav.sustainability">Sustentabilidad</a></li>
+      <li><a href="../servicios.html" class="nav__link" data-i18n="nav.services">Servicios</a></li>
+      <li><a href="../sobre-nosotros.html" class="nav__link" data-i18n="nav.about">Sobre Nosotros</a></li>
+      <li><a href="../contacto.html" class="nav__link" data-i18n="nav.contact">Contacto</a></li>
     </ul>
 
     <!-- Floating logo y botón hamburguesa SÓLO mobile (ocultos en desktop por CSS).
@@ -217,8 +217,12 @@
 
     <!-- ====== PHRASE ======
          Texto cargado.
-         Imágenes con placeholder hasta que se suban `phrase-01.jpg` y `phrase-02.jpg`. -->
-    <section class="project-phrase" data-nav-theme="light">
+         Imágenes con placeholder hasta que se suban `phrase-01.jpg` y `phrase-02.jpg`.
+
+         data-phrase-reveal="off": desactiva el reveal por máscara (estandar-b) del
+         módulo Timbo.projectPhraseTextReveal en esta página. El <p> usa estandar-a
+         (anim-fade-up) en su lugar. -->
+    <section class="project-phrase" data-nav-theme="light" data-phrase-reveal="off">
       <div class="project-phrase__container">
         <div class="project-phrase__copy">
           <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0">
@@ -247,10 +251,7 @@
           <img src="../assets/images/fondo-transitorio.png" alt="Chacras de Murray" loading="lazy" decoding="async">
 
           <h2 class="project-highlight__title project-highlight__title--light">
-            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">La arquitectura se desarrolla por debajo</span></span>
-            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">del nivel natural del terreno,</span></span>
-            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">modificando la percepción del paisaje</span></span>
-            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">y generando una experiencia de privacidad.</span></span>
+            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">La arquitectura se desarrolla por debajo del nivel natural del terreno, modificando la percepción del paisaje y generando una experiencia de privacidad.</span></span>
           </h2>
         </figure>
       </div>

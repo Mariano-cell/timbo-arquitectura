@@ -29,6 +29,22 @@
   .br-mobile  { display: inline; }
 }
 
+/* --- BILINGÜE-TEMPORAL: assets duplicados ES/EN ---
+   Cuando un asset visual (ej. un SVG con texto incrustado) tiene versión
+   distinta por idioma y NO se puede traducir via data-i18n (porque cambia
+   un atributo como data-svg-src, no el textContent), se duplica el
+   elemento en el HTML con clases --es / --en, y se muestra/oculta acá
+   según el `lang` del <html>. El módulo Timbo.i18n ya pone lang="es" o
+   lang="en" en <html> al cargar y al cambiar de idioma.
+
+   TODO (fase de optimización del sitio): reemplazar este patrón por una
+   solución que cargue UN solo SVG según idioma activo (ej. extender el
+   loader de data-svg-src para que acepte data-svg-src-en, o extender
+   Timbo.i18n para que soporte atributos). Cuando se haga, borrar esta
+   regla y los pares de <div>...--es / <div>...--en del HTML. */
+html[lang="en"] .sust-hero__visual-img--es { display: none; }
+html[lang="es"] .sust-hero__visual-img--en { display: none; }
+
 /* =========================
    NAVEGACIÓN
    ========================= */
@@ -1022,23 +1038,42 @@
 
 .nature-dialogue__text {
   margin: 0;
-  color: var(--color-white);
-  font-size: 3.25rem;
-  font-weight: var(--fw-regular);
-  letter-spacing: 0.04em;
-  line-height: 1.05;
+  color: var(--color-text-light);
+  /* estandar-desktop para frase-destacada (mismo patrón tipográfico que
+     .project-palette__text en las páginas de proyecto). */
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  font-weight: var(--fw-bold);
+  max-width: 40rem;
 }
 
-.nature-dialogue__info {
-  padding: var(--space-3xl) 0;
-  display: none;
+/* === estandar-b para .nature-dialogue__text ===
+   Reveal por máscara renglón a renglón. Clon del patrón de
+   .project-palette__text. El JS (Timbo.natureDialogueTextReveal)
+   envuelve cada línea visual en .nature-dialogue__text-line +
+   .nature-dialogue__text-line-inner, y agrega .is-revealed cuando la
+   sección .nature-dialogue está visible al 90% (le falta entrar el 10%
+   inferior). */
+.nature-dialogue__text-line {
+  display: block;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
 }
 
-.nature-dialogue__description {
-  font-size: var(--text-lg);
-  line-height: 1.35;
-  max-width: 700px;
-  margin-bottom: var(--space-xl);
+.nature-dialogue__text-line-inner {
+  display: block;
+  transform: translateY(100%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nature-dialogue__text.is-revealed .nature-dialogue__text-line-inner {
+  transform: translateY(0);
 }
 
 .btn {
@@ -1088,15 +1123,12 @@
   }
 
   .nature-dialogue__text {
-    /* estandar-a-mobile para título:
-       Fluid: 28px @ 375px → 40px @ 1023px */
-    font-size: clamp(1.75rem, 1.85vw + 1.06rem, 2.5rem);
-    font-weight: var(--fw-medium);
-    letter-spacing: 0.04em;
-    line-height: 1.05;
+    /* Sin override de tipografía: hereda el estandar-desktop para
+       frase-destacada (mismo patrón que .project-highlight__title).
+       Sólo se ajustan layout/alineación específicos de mobile. */
     max-width: clamp(16rem, 80vw, 30rem);
     text-align: right;
-    color: white;
+    padding-bottom: clamp(2rem, 3vh, 4rem);
   }
 }
 
@@ -1117,7 +1149,7 @@
 
 .philosophy__container {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr);
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.5fr);
   gap: clamp(6rem, 12vw, 14rem);
   align-items: start;
   margin-left: var(--margin-c);
@@ -1197,7 +1229,7 @@
 
 .philosophy__signals {
   display: grid;
-  grid-template-columns: repeat(3, 11rem);
+  grid-template-columns: repeat(3, 12vw);
   row-gap: clamp(1.75rem, 2.8vw, 3rem);
   column-gap: clamp(0.5rem, 1vw, 1rem);
   justify-items: center;
@@ -1211,7 +1243,7 @@
   align-items: center;
   gap: 1.25rem;
   text-align: center;
-  width: 11rem;
+  width: clamp(7rem, 8vw, 14rem);
   opacity: var(--philosophy-signal-opacity, 0);
   will-change: opacity;
 }
@@ -1260,6 +1292,46 @@ html[lang='es'] .philosophy__signal-label-svg {
 }
 
 html[lang='es'] .philosophy__signal-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* === Títulos SVG en inglés (mismo patrón que los de español) === */
+.philosophy__signal-label-svg-en {
+  display: none;
+  width: auto;
+  height: clamp(1.4rem, 1.85vw, 1.8rem);
+  object-fit: contain;
+}
+
+.philosophy__signal-label-svg-en--humidity {
+  height: clamp(1.02rem, 1.32vw, 1.24rem);
+  transform: translateY(8px);
+}
+
+.philosophy__signal-label-svg-en--precipitation {
+  height: clamp(1.4rem, 1.85vw, 1.8rem);
+}
+
+.philosophy__signal-label-svg-en--wind {
+  /* Wind patterns tiene viewBox ~8:1 (164.79 x 20.54); el ancho de la
+     columna lo recorta, así que controlamos por width, no por height. */
+  width: clamp(8rem, 9vw, 11rem);
+  height: auto;
+}
+
+html[lang='en'] .philosophy__signal-label-svg-en {
+  display: block;
+}
+
+html[lang='en'] .philosophy__signal-label {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -2270,15 +2342,43 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .project-palette__intro {
   max-width: clamp(25rem, 32vw, 38rem);
+  margin-top: clamp(1rem, 2vh, 4rem);
 }
 
 .project-palette__text {
   /* margin-top: base (1-2rem) + 100px de aire para separar la frase clave
      de las imágenes. Estándar para todos los proyectos. */
-  margin-top: calc(clamp(1rem, 2vw, 2rem) + 100px);
+  margin-top: clamp(1rem, 2vw, 2rem);
   font-weight: var(--fw-bold);
   max-width: 22rem;
   will-change: transform;
+}
+
+/* === estandar-b para .project-palette__text ===
+   Reveal por máscara renglón a renglón. El JS (Timbo.projectPaletteTextReveal)
+   envuelve cada línea visual en .project-palette__text-line +
+   .project-palette__text-line-inner, y agrega .is-revealed cuando el texto
+   cruza el TRIGGER_RATIO del viewport. Convive con projectPaletteTextParallax
+   porque el parallax mueve el <p> exterior y la máscara opera en sus hijos. */
+.project-palette__text-line {
+  display: block;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+}
+
+.project-palette__text-line-inner {
+  display: block;
+  transform: translateY(100%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-palette__text.is-revealed .project-palette__text-line-inner {
+  transform: translateY(0);
 }
 
 /* Invertir orden visual manteniendo el ancho de cada componente.
@@ -2523,16 +2623,32 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 /* En hover del divider (que cubre todo el hitbox extendido del ::before),
    el interior del círculo pasa de negro a gray-100. */
-.project-palette__divider:hover .project-palette__divider-circle,
-.project-palette__divider:focus-visible .project-palette__divider-circle,
+/* Hover/focus restringido a dispositivos con puntero fino para evitar
+   "hover pegado" en touch (ver nota más abajo). */
+@media (hover: hover) and (pointer: fine) {
+  .project-palette__divider:hover .project-palette__divider-circle,
+  .project-palette__divider:focus-visible .project-palette__divider-circle {
+    fill: var(--color-gray-300);
+  }
+}
+
 .project-palette__images--drag.is-dragging .project-palette__divider-circle {
   fill: var(--color-gray-300);
 }
 
 /* En hover, la píldora se ensancha para volver a contener las flechas
-   que regresan a su posición original (más alejadas del círculo). */
-.project-palette__divider:hover .project-palette__divider-icon,
-.project-palette__divider:focus-visible .project-palette__divider-icon,
+   que regresan a su posición original (más alejadas del círculo).
+   La expansión por :hover y :focus-visible queda restringida a dispositivos
+   con puntero fino (mouse). En touch, el "hover pegado" post-tap dejaba la
+   píldora expandida después del click-to-center. La expansión sigue
+   funcionando durante el drag activo (.is-dragging) en cualquier device. */
+@media (hover: hover) and (pointer: fine) {
+  .project-palette__divider:hover .project-palette__divider-icon,
+  .project-palette__divider:focus-visible .project-palette__divider-icon {
+    width: clamp(75px, 88px, 105px);
+  }
+}
+
 .project-palette__images--drag.is-dragging .project-palette__divider-icon {
   width: clamp(75px, 88px, 105px);
 }
@@ -2552,7 +2668,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
    El fill cambia a gray-100 durante el hover del divider (regla abajo). */
 .project-palette__divider-circle {
   stroke: var(--color-black);
-  fill: var(--color-gray-500);
+  fill: #ffffff;
   transform-box: fill-box;
   transform-origin: center;
   transform: scale(0.85);
@@ -2582,12 +2698,18 @@ html.is-entering-home.is-entering-home-active .main-nav {
   transform: translateX(-3px);
 }
 
-/* En hover/focus/drag, las flechas vuelven a su posición original. */
-.project-palette__divider:hover .project-palette__divider-chevron:first-of-type,
-.project-palette__divider:focus-visible .project-palette__divider-chevron:first-of-type,
+/* En hover/focus/drag, las flechas vuelven a su posición original.
+   Hover/focus restringido a punteros finos para evitar "hover pegado" en touch. */
+@media (hover: hover) and (pointer: fine) {
+  .project-palette__divider:hover .project-palette__divider-chevron:first-of-type,
+  .project-palette__divider:focus-visible .project-palette__divider-chevron:first-of-type,
+  .project-palette__divider:hover .project-palette__divider-chevron:last-of-type,
+  .project-palette__divider:focus-visible .project-palette__divider-chevron:last-of-type {
+    transform: translateX(0);
+  }
+}
+
 .project-palette__images--drag.is-dragging .project-palette__divider-chevron:first-of-type,
-.project-palette__divider:hover .project-palette__divider-chevron:last-of-type,
-.project-palette__divider:focus-visible .project-palette__divider-chevron:last-of-type,
 .project-palette__images--drag.is-dragging .project-palette__divider-chevron:last-of-type {
   transform: translateX(0);
 }
@@ -2656,6 +2778,55 @@ html.is-entering-home.is-entering-home-active .main-nav {
   margin-top: 0;
   font-weight: var(--fw-regular);
   max-width: clamp(23.8rem, 30.6vw, 35.7rem);
+}
+
+/* === estandar-desktop para frase-destacada — scope: Tobar Lodge ===
+   Aplica sólo a la página de Tobar Lodge (clase .page--tobar-lodge en <body>).
+   Pisa el font-weight regular de .project-phrase__text--body para hacerlo bold,
+   y aplica el font-size/letter-spacing/line-height oficiales del estándar.
+   El comportamiento mobile queda intacto (se definirá el estándar mobile aparte). */
+.page--tobar-lodge .project-phrase__text {
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  font-weight: var(--fw-bold);
+}
+
+/* Centrado vertical de la frase destacada en su columna del grid.
+   El __container ya tiene align-items: center; sobrescribimos el
+   align-self: start del base y anulamos el padding-top que tenía
+   sentido sólo cuando estaba alineado arriba. */
+.page--tobar-lodge .project-phrase__copy {
+  align-self: center;
+  padding-top: 0;
+}
+
+/* === estandar-desktop para parrafo — scope: Haras San Pablo ===
+   Aplica sólo a la página de Haras San Pablo (clase .page--haras-san-pablo en
+   <body>). Tipa el texto de .project-phrase como párrafo estándar (regular,
+   line-height 1.35). El comportamiento mobile queda intacto. */
+.page--haras-san-pablo .project-phrase__text {
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  letter-spacing: 0.03em;
+  line-height: 1.35;
+  font-weight: var(--fw-regular);
+}
+
+/* === Palette drag — scope: Haras San Pablo ===
+   Las fotos originales del modo drag se quedan cortas cuando el usuario arrastra
+   al extremo: queda un espacio en blanco a un lado. Escalamos la <img> un 7%
+   manteniendo proporciones para que cubra. El transform-origin coincide con el
+   borde al que ya está anclada cada imagen (A izquierda, B derecha), así el
+   crecimiento ocurre hacia el centro del marco y no rompe el anclaje. El overflow
+   hidden de la <figure> recorta lo que sobresale por arriba/abajo. */
+.page--haras-san-pablo .project-palette__images--drag .project-palette__image--a img {
+  transform: scale(1.07);
+  transform-origin: left center;
+}
+
+.page--haras-san-pablo .project-palette__images--drag .project-palette__image--b img {
+  transform: scale(1.07);
+  transform-origin: right center;
 }
 
 .project-phrase__text-line {
@@ -3189,6 +3360,14 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .project-highlight,
   .project-palette {
     padding-inline: var(--margin-a);
+    padding-block: var(--margin-b);
+  }
+
+  .project-phrase{
+    padding-bottom: 0;
+  }
+  .project-highlight{
+    padding-top: 8px;
   }
 
   .project-refuge__container,
@@ -3302,12 +3481,26 @@ html.is-entering-home.is-entering-home-active .main-nav {
     font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
     max-width: clamp(16rem, 80vw, 30rem);
   }
+
+  /* Palette divider: más chico en mobile.
+     - Hitbox (::before): círculo de ~30px (vs ~42px desktop).
+     - Icon (la "píldora" oliva visible): clamp 50/60/70px (vs 70/82/98 desktop).
+     El scale(0.6) base se mantiene, así el ancho visible queda ~36px. */
+  .project-palette__divider::before {
+    width: clamp(26px, 30px, 36px);
+    height: clamp(26px, 30px, 36px);
+  }
+
+  .project-palette__divider-icon {
+    width: clamp(50px, 60px, 70px);
+  }
 }
 
 @media (max-width: 900px) {
   .project-highlight__container {
     grid-template-columns: 1fr;
     align-items: start;
+    margin-top: 0;
   }
 
   .project-palette {
@@ -3319,6 +3512,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
     max-width: var(--max-width);
     min-height: 0;
     grid-template-columns: 1fr;
+    margin-top: 0;
+    gap: 0;
   }
 
   .project-palette__copy {
@@ -3328,6 +3523,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .project-palette__intro,
   .project-palette__text {
     max-width: none;
+    margin-top: 1rem;
   }
 
   .project-phrase {
@@ -3956,7 +4152,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .sust-hero__copy {
   max-width: 42rem;
-  margin-left: 10rem;
+  margin-left: clamp(6rem, 8vw, 10rem);
   padding-top: 8rem;
   align-self: start;
 }
@@ -3999,7 +4195,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   display: block;
   width: 66%;
   height: auto;
-  max-width: 30rem;
+  max-width: clamp(25rem, 30vw, 40rem);
   margin-top: 2.5rem;
   margin-right: 4rem;
   /* Oculto hasta que JS termine de inyectar el SVG y configurar la máscara,
@@ -4221,6 +4417,17 @@ html.is-entering-home.is-entering-home-active .main-nav {
   display: flex;
   flex-direction: column;
   gap: clamp(0.3rem, 0.4vw, 0.5rem);
+  position: relative;
+  z-index: 10;
+}
+
+/* El .sust-process__media-wrap es .anim-fade-up, que aplica transform → crea
+   un stacking context. Sin z-index propio, ese contexto entero queda detrás
+   del .floating-logo (z-index: 5) por más z-index que tenga .outdoor-climate.
+   Lo elevamos por encima del logo. */
+.page--sust-light .sust-process__media-wrap {
+  position: relative;
+  z-index: 10;
 }
 
 .outdoor-climate__header {
@@ -4385,6 +4592,11 @@ html.is-entering-home.is-entering-home-active .main-nav {
   font-style: italic;
 }
 
+/* En desktop ocultamos la variante mobile del mensaje (sólo aparece en touch). */
+.outdoor-climate__readout-default--mobile {
+  display: none;
+}
+
 .outdoor-climate__readout-month {
   font-weight: var(--fw-medium);
   text-transform: uppercase;
@@ -4479,9 +4691,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .outdoor-climate__legend-item {
     gap: 0.25rem; /* separación más chica entre swatch y label */
   }
-  /* Mensaje "pasá el mouse..." no aplica en mobile (no hay hover). */
+  /* Swap del mensaje default: en mobile mostramos la versión touch. */
   .outdoor-climate__readout-default {
     display: none;
+  }
+  .outdoor-climate__readout-default--mobile {
+    display: inline;
   }
   /* Swap de etiquetas: en mobile usamos la versión abreviada. */
   .outdoor-climate__legend-label--desktop,
@@ -4849,13 +5064,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   align-items: center;
   padding-left: clamp(1.7rem, 2.4vw, 2.35rem);
   border-left: 1px solid rgba(29, 29, 27, 0.18);
-  opacity: 0;
   overflow: visible;
-  transform: translate3d(calc(100% + 1.5rem), 0, 0);
-  pointer-events: none;
-  will-change: transform, opacity;
-  transition: opacity 220ms ease,
-    transform 460ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .sust-strategies__detail-card {
@@ -4953,29 +5162,23 @@ html.is-entering-home.is-entering-home-active .main-nav {
   opacity: 0.72;
 }
 
-.sust-strategies.is-detail-open .sust-strategies__layout {
+.sust-strategies__layout {
   padding-right: var(--sust-strategies-reserved-width);
 }
 
-.sust-strategies.is-detail-open .sust-strategies__diagram-shell {
+.sust-strategies__diagram-shell {
   /* Tamaño +10% respecto del original (31.5/48vw/39 → 34.65/52.8vw/42.9).
-     Como el aside ahora está siempre abierto, este es el tamaño fijo
-     de la rueda en desktop. */
+     Como el aside está siempre abierto, este es el tamaño fijo de la rueda
+     en desktop. */
   max-width: clamp(34.65rem, 52.8vw, 42.9rem);
   transform: translateX(-0.75rem);
 }
 
-.sust-strategies.is-detail-open .sust-strategies__detail {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  pointer-events: auto;
-}
-
-.sust-strategies.is-detail-open .sust-strategies__orbit-label-item text {
+.sust-strategies__orbit-label-item text {
   opacity: 0.36;
 }
 
-.sust-strategies.is-detail-open .sust-strategies__orbit-label-item.is-active text {
+.sust-strategies__orbit-label-item.is-active text {
   opacity: 1;
   fill: var(--color-black);
 }
@@ -5071,13 +5274,11 @@ html.is-entering-home.is-entering-home-active .main-nav {
     padding-right: 0;
   }
 
-  .sust-strategies__layout,
-  .sust-strategies.is-detail-open .sust-strategies__layout {
+  .sust-strategies__layout {
     padding-right: 0;
   }
 
-  .sust-strategies__diagram-shell,
-  .sust-strategies.is-detail-open .sust-strategies__diagram-shell {
+  .sust-strategies__diagram-shell {
     max-width: 100%;
     transform: none;
   }
@@ -5092,26 +5293,15 @@ html.is-entering-home.is-entering-home-active .main-nav {
     transform-origin: center center;
   }
 
-  /* Detail: estático debajo de la rueda. Cerrado = altura 0. */
-  .sust-strategies__detail,
-  .sust-strategies.is-detail-open .sust-strategies__detail {
+  /* Detail: estático debajo de la rueda, siempre visible. */
+  .sust-strategies__detail {
     position: static;
     width: 100%;
     height: auto;
     margin-top: 1.5rem;
     padding-left: 0;
     border-left: none;
-    max-height: 0;
-    opacity: 1;
-    transform: none;
-    overflow: hidden;
-    pointer-events: none;
-    transition: max-height 320ms ease;
-  }
-
-  .sust-strategies.is-detail-open .sust-strategies__detail {
-    max-height: 40rem;
-    pointer-events: auto;
+    overflow: visible;
   }
 
   .sust-strategies__detail-card {
@@ -5215,15 +5405,9 @@ html.is-entering-home.is-entering-home-active .main-nav {
   height: 100%;
   display: flex;
   align-items: center;
-  padding-left: clamp(1.7rem, 2.4vw, 2.35rem);
+  padding-left: 0;
   border-left: 1px solid rgba(29, 29, 27, 0.18);
-  opacity: 0;
   overflow: visible;
-  transform: translate3d(calc(100% + 1.5rem), 0, 0);
-  pointer-events: none;
-  will-change: transform, opacity;
-  transition: opacity 220ms ease,
-    transform 460ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .sust-pilares__detail-card {
@@ -5300,6 +5484,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
   align-self: flex-start;
 }
 
+html[lang='en'] .sust-pilares__detail-media[data-pilar="emisiones"] .sust-pilares__detail-label {
+  height: calc(var(--sust-pilares-detail-label-height) * 1.3);
+}
+
 .sust-pilares__detail-media[data-pilar="calidad_aire"] .sust-pilares__detail-icon {
   width: 11rem;
 }
@@ -5330,6 +5518,30 @@ html.is-entering-home.is-entering-home-active .main-nav {
   pointer-events: bounding-box;
 }
 
+.sust-pilares__title--en {
+  display: none;
+}
+
+html[lang='en'] .sust-pilares__title--es {
+  display: none;
+}
+
+html[lang='en'] .sust-pilares__title--en {
+  display: inline;
+}
+
+.sust-pilares__orbit-label-text--en {
+  display: none;
+}
+
+html[lang='en'] .sust-pilares__orbit-label-text--es {
+  display: none;
+}
+
+html[lang='en'] .sust-pilares__orbit-label-text--en {
+  display: inline;
+}
+
 .sust-pilares__orbit-label-item text {
   transition: opacity 220ms ease, fill 220ms ease;
 }
@@ -5339,29 +5551,23 @@ html.is-entering-home.is-entering-home-active .main-nav {
   opacity: 0.72;
 }
 
-.sust-pilares.is-detail-open .sust-pilares__layout {
+.sust-pilares__layout {
   padding-right: var(--sust-pilares-reserved-width);
 }
 
-.sust-pilares.is-detail-open .sust-pilares__diagram-shell {
+.sust-pilares__diagram-shell {
   /* Tamaño +10% respecto del original (31.5/48vw/39 → 34.65/52.8vw/42.9).
-     Como el aside ahora está siempre abierto, este es el tamaño fijo
-     de la rueda en desktop. */
+     Como el aside está siempre abierto, este es el tamaño fijo de la rueda
+     en desktop. */
   max-width: clamp(34.65rem, 52.8vw, 42.9rem);
   transform: translateX(-4rem);
 }
 
-.sust-pilares.is-detail-open .sust-pilares__detail {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  pointer-events: auto;
-}
-
-.sust-pilares.is-detail-open .sust-pilares__orbit-label-item text {
+.sust-pilares__orbit-label-item text {
   opacity: 0.36;
 }
 
-.sust-pilares.is-detail-open .sust-pilares__orbit-label-item.is-active text {
+.sust-pilares__orbit-label-item.is-active text {
   opacity: 1;
   fill: var(--color-black);
 }
@@ -5419,16 +5625,14 @@ html.is-entering-home.is-entering-home-active .main-nav {
     padding-right: 0;
   }
 
-  .sust-pilares__layout,
-  .sust-pilares.is-detail-open .sust-pilares__layout {
+  .sust-pilares__layout {
     padding-right: 0;
   }
 
   /* La rueda usa el 100% del ancho disponible. Al sacar el max-width
      anterior y dejar el container más al borde, todo el SVG (anillo,
      glow, etiquetas, puntos) escala de forma proporcional. */
-  .sust-pilares__diagram-shell,
-  .sust-pilares.is-detail-open .sust-pilares__diagram-shell {
+  .sust-pilares__diagram-shell {
     max-width: 100%;
     transform: none;
   }
@@ -5443,26 +5647,15 @@ html.is-entering-home.is-entering-home-active .main-nav {
     transform-origin: center center;
   }
 
-  /* Detail: estático debajo de la rueda. Cerrado = altura 0. */
-  .sust-pilares__detail,
-  .sust-pilares.is-detail-open .sust-pilares__detail {
+  /* Detail: estático debajo de la rueda, siempre visible. */
+  .sust-pilares__detail {
     position: static;
     width: 100%;
     height: auto;
     margin-top: 1.5rem;
     padding-left: 0;
     border-left: none;
-    max-height: 0;
-    opacity: 1;
-    transform: none;
-    overflow: hidden;
-    pointer-events: none;
-    transition: max-height 320ms ease;
-  }
-
-  .sust-pilares.is-detail-open .sust-pilares__detail {
-    max-height: 40rem;
-    pointer-events: auto;
+    overflow: visible;
   }
 
   .sust-pilares__detail-card {
@@ -6419,7 +6612,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .about-hero__copy {
-  max-width: 800px;
+  max-width: 900px;
 }
 
 .about-hero__text {
@@ -6579,10 +6772,11 @@ html.is-entering-home.is-entering-home-active .main-nav {
    ========================= */
 
 .about-founders {
-  height: 100vh;
+  min-height: 100vh;
+  height: auto;
   background-color: var(--color-black);
   color: var(--color-text-light);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .about-founders__container {
@@ -6591,7 +6785,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   justify-content: center;
   align-items: center;
   gap: clamp(3rem, 7vw, 6rem);
-  height: 100%;
+  min-height: 100vh;
   padding-top: calc(var(--nav-height) + clamp(1rem, 2vw, 1.5rem));
   padding-bottom: clamp(2rem, 4vw, 6rem);
 }
@@ -6606,6 +6800,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .about-founders__portrait img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -6725,6 +6920,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .page--about-light .about-founders__portrait {
   background: var(--color-gray-100);
+  padding-block: 2rem;
 }
 
 .page--about-light .about-founders__text {
@@ -7714,7 +7910,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   --row-pair-width:     calc(((var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height)) * 2) + var(--row-pair-gap));
   --row-height:         320px;   /* alto TOTAL de la fila (img + gap + caption) */
   --row-caption-height: var(--gallery-caption-height); /* alto reservado para el caption */
-  --suinda-shift-x:     -100px;  /* desplazamiento horizontal de la posición inicial de Suindá */
+  --suinda-shift-x:     -65px;   /* desplazamiento horizontal de la posición inicial de Suindá (acompaña el +35px de Praderas) */
 
   grid-template-columns: 1fr 1fr;
   column-gap: var(--row-gap-x);
@@ -7769,6 +7965,13 @@ html.is-entering-home.is-entering-home-active .main-nav {
 /* Tobar: el caption debe cerrar exactamente con el ancho del par de imágenes. */
 .projects-gallery__row--2 > .projects-gallery__item--pair .projects-gallery__caption {
   width: var(--row-pair-width);
+}
+
+/* Praderas Cabin: desplazamiento horizontal hacia la derecha en todas las
+   vistas desktop. Usamos `translate` (no `transform`) para no pisar la
+   animación de entrada `anim-fade-up`. Mismo patrón que Suindá y Haras. */
+.projects-gallery__row--2 > .projects-gallery__item--pair {
+  translate: 35px 0;
 }
 
 /* --- FILA 3 (Cardano + Haras SP Private Estate) -----------
@@ -7915,6 +8118,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
 /* Posicionamiento de cada item en la fila 4 (volcado a la derecha) */
 .projects-gallery__row--4 > .projects-gallery__item:nth-child(1) {
   grid-column: 2 / span 2;
+  /* Desplazamiento horizontal hacia la izquierda. Usamos `translate`
+     (no `transform`) para no pisar la animación de shift por hover
+     (que sí usa `transform`). Mismo patrón que Suindá y Haras. */
+  translate: -90px 0;
 }
 
 .projects-gallery__row--4 > .projects-gallery__item:nth-child(2) {
@@ -8046,6 +8253,104 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .projects-gallery__row--4,
   .projects-gallery__row--5 {
     --row-height: 260px;
+    /* Achicamos el ANCHO de las portadas (no el alto) en el rango 1024–1366px.
+       Bajamos los aspect-ratios para que las imágenes salgan más angostas
+       y dejen aire entre portadas (no se peguen ni se solapen).
+       El alto se mantiene en 260px porque sigue derivándose de --row-height. */
+    --row-img-ratio:  3 / 2;   /* wide: 16/9 → 3/2 (más angosta) */
+    --row-lead-ratio: 4 / 3;   /* lead del par: 3/2 → 4/3 (más angosta) */
+  }
+
+  /* En las filas 1, 3 y 5 el ancho del par (lead + square) no se deriva de
+     --row-lead-ratio: --row-lead-width está calculado con `3 / 2` hardcoded
+     en el calc(). Para que el cambio de --row-lead-ratio se traduzca en
+     menos ancho real del par, recalculamos --row-lead-width acá con 4/3. */
+  .projects-gallery__row--1,
+  .projects-gallery__row--3,
+  .projects-gallery__row--5 {
+    --row-lead-width: calc(var(--row-media-height) * 4 / 3 - 40px);
+  }
+
+  /* Excepción fila 4 (Chacras de Murray + Club de Mar): mantienen el
+     aspect-ratio 16/9 original. No se les achica el ancho en este rango. */
+  .projects-gallery__row--4 {
+    --row-img-ratio: 16 / 9;
+  }
+
+  /* Excepción Cardano Clubhouse (fila 3, item wide): mantiene aspect-ratio
+     16/9. No se le achica el ancho en este rango. Se override sólo el item
+     wide para no afectar al par de Haras, que comparte la fila 3 pero sí
+     debe seguir achicándose. */
+  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__media--wide {
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Club de Mar (fila 4, segundo item): se alinea al borde derecho de su
+     celda del grid en lugar de la izquierda. Así respeta el padding derecho
+     del contenedor en el rango ~1024–1130px, donde la imagen 16/9 con
+     --row-height 260px es más ancha que las 2 celdas que ocupa y desbordaba. */
+  .projects-gallery__row--4 > .projects-gallery__item:nth-child(2) {
+    justify-self: end;
+  }
+
+  /* Captions de Suindá (fila 2) y Cardano (fila 3): el width está calculado
+     con `16 / 9` hardcoded para acompañar el ancho de la portada wide.
+     Como cambiamos el wide a 3/2, recalculamos el caption con 3/2 para que
+     siga alineado con la foto. */
+  .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
+    width: calc((var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height)) * 3 / 2);
+  }
+
+  /* Cardano Clubhouse (fila 3, item wide): contra el borde izquierdo del
+     contenedor padre. Anula el padding-left: 60px de desktop. */
+  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) {
+    padding-left: 0;
+  }
+
+  /* Chacras de Murray (fila 4, primer item): forzamos la ubicación en una
+     sola línea. En este rango la celda se vuelve angosta y "Buenos Aires,
+     Argentina" se parte en dos renglones. */
+  .projects-gallery__row--4 > .projects-gallery__item:nth-child(1) .projects-gallery__location {
+    white-space: nowrap;
+  }
+
+  /* Chacras de Murray (fila 4, primer item): forzamos el nombre en 2 renglones
+     ("CHACRAS DE MURRAY" / "PRIVATE ESTATE"). Mostramos el <br class="only-mobile">
+     que ya existe en el HTML, sin afectar a los otros proyectos con la misma clase. */
+  .projects-gallery__row--4 > .projects-gallery__item:nth-child(1) .projects-gallery__name br.only-mobile {
+    display: inline;
+  }
+
+  /* En este rango anulamos la hover-card (no se muestra). Como ya no hay
+     card que mostrar, tampoco tiene sentido el desplazamiento del proyecto
+     vecino que le hacía espacio.
+     Subimos la especificidad con .projects-gallery__item para ganarle a las
+     reglas .projects-gallery__item--hover-card-right/left .projects-gallery__hover-card. */
+  .projects-gallery__item .projects-gallery__hover-card {
+    display: none;
+  }
+
+  /* Anulación de los shifts de hover en las 3 filas que los tienen:
+     - Fila 1: Tobar se corre a la derecha cuando hover en Exuma.
+     - Fila 3: Cardano se corre a la izquierda cuando hover en Haras.
+     - Fila 4: Chacras se corre a la izquierda cuando hover en Club de Mar. */
+  .projects-gallery__row--1 > .projects-gallery__item:first-child:hover + .projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--1 > .projects-gallery__item:first-child:focus-visible + .projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--1 > .projects-gallery__item:first-child:focus-within + .projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__media:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__media:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__name:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__name:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-visible) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-visible) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-within) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-within) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__media:hover) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__name:hover) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-visible) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-within) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame {
+    transform: translate3d(0, 0, 0);
   }
 
   /* En pantallas chicas el ancho de cada celda del grid 1fr 1fr
@@ -8398,7 +8703,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
    ========================= */
 .projects-gallery__caption {
   display: grid;
-  grid-template-columns: 0.5fr auto;
+  grid-template-columns: 0.8fr auto;
   row-gap: var(--gallery-caption-line-gap);
   column-gap: var(--space-md);
   align-items: baseline;
@@ -8736,6 +9041,45 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .projects-gallery__hover-card {
     transition: none;
+  }
+}
+
+/* ========================= PROJECTS — LOGO FIJO MOBILE =========================
+   Logo "timbó" (sin árbol) fijo arriba-izquierda, SÓLO en proyectos.html
+   y SÓLO en mobile. Visible al inicio; se oculta cuando el scroll cruza el
+   threshold que activa el floating-logo-mobile (body.nav-mobile-show-floating).
+   Así conviven: este logo es para la zona top de la página; el otro toma
+   el relevo al scrollear.
+   ============================================================================ */
+.projects-fixed-logo {
+  display: none; /* default: oculto (incluye desktop) */
+}
+
+@media (max-width: 1023.98px) {
+  .page--projects-light .projects-fixed-logo {
+    display: block;
+    position: fixed;
+    top: var(--margin-a);
+    left: var(--margin-a);
+    width: 90px;
+    height: auto;
+    z-index: 101;
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 300ms ease;
+  }
+
+  .page--projects-light .projects-fixed-logo img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Al cruzar el threshold de scroll (≈500px) toma el relevo el
+     .floating-logo-mobile, así que ocultamos este. */
+  body.nav-mobile-show-floating.page--projects-light .projects-fixed-logo {
+    opacity: 0;
+    pointer-events: none;
   }
 }
 

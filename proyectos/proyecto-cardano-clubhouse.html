@@ -58,12 +58,12 @@
 <body class="page--haras-light">
   <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
     <ul class="nav__links">
-      <li><a href="../index.html" class="nav__link">Home</a></li>
-      <li><a href="../proyectos.html" class="nav__link nav__link--active">Projects</a></li>
-      <li><a href="../sustentabilidad.html" class="nav__link">Sustainability</a></li>
-      <li><a href="../servicios.html" class="nav__link">Services</a></li>
-      <li><a href="../sobre-nosotros.html" class="nav__link">About Us</a></li>
-      <li><a href="../contacto.html" class="nav__link">Contact</a></li>
+      <li><a href="../index.html" class="nav__link" data-i18n="nav.home">Inicio</a></li>
+      <li><a href="../proyectos.html" class="nav__link nav__link--active" data-i18n="nav.projects">Proyectos</a></li>
+      <li><a href="../sustentabilidad.html" class="nav__link" data-i18n="nav.sustainability">Sustentabilidad</a></li>
+      <li><a href="../servicios.html" class="nav__link" data-i18n="nav.services">Servicios</a></li>
+      <li><a href="../sobre-nosotros.html" class="nav__link" data-i18n="nav.about">Sobre Nosotros</a></li>
+      <li><a href="../contacto.html" class="nav__link" data-i18n="nav.contact">Contacto</a></li>
     </ul>
 
     <!-- Floating logo y botón hamburguesa SÓLO mobile (ocultos en desktop por CSS).
@@ -217,8 +217,12 @@
     </section>
 
     <!-- ====== PHRASE ======
-         NUEVA sección. TODO cliente: texto + imágenes phrase-01.jpg y phrase-02.jpg. -->
-    <section class="project-phrase" data-nav-theme="light">
+         NUEVA sección. TODO cliente: texto + imágenes phrase-01.jpg y phrase-02.jpg.
+
+         data-phrase-reveal="off": desactiva el reveal por máscara (estandar-b) del
+         módulo Timbo.projectPhraseTextReveal en esta página. El <p> usa estandar-a
+         (anim-fade-up) en su lugar. -->
+    <section class="project-phrase" data-nav-theme="light" data-phrase-reveal="off">
       <div class="project-phrase__container">
         <div class="project-phrase__copy">
           <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0">
@@ -262,8 +266,7 @@
     <section class="project-palette" data-nav-theme="light" data-palette-mode="drag">
       <div class="project-palette__container">
         <div class="project-palette__copy anim-fade-up" data-anim-delay="0">
-          <p class="project-palette__text">En contraste con la densidad habitacional del barrio, el clubhouse se
-            configura como un espacio aislado y sereno, habitable a lo largo del día y la noche.</p>
+          <p class="project-palette__text">En contraste con la densidad habitacional del barrio, el clubhouse se configura como un espacio aislado y sereno, habitable a lo largo del día y la noche.</p>
         </div>
 
         <div class="project-palette__images project-palette__images--drag">

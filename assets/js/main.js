@@ -168,6 +168,7 @@ const Timbo = {
 
       // Re-renderizar componentes dinámicos que dependen del idioma
       Timbo.projectPage.render();
+      Timbo.sustPilaresDetail.refresh?.();
     },
 
     /**
@@ -183,6 +184,17 @@ const Timbo = {
         const value = this.resolve(key, lang);
 
         if (value !== undefined) {
+          const attrTarget = el.getAttribute('data-i18n-attr');
+          if (attrTarget) {
+            el.setAttribute(attrTarget, value);
+            return;
+          }
+
+          // Algunos reveals parten el texto en lineas y cachean la fuente
+          // original en data-line-reveal-source. Si no la limpiamos al
+          // traducir, un refresh posterior puede reinstalar el idioma viejo.
+          delete el.dataset.lineRevealSource;
+
           if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             el.placeholder = value;
           } else if (el.getAttribute('data-i18n-html') === 'true') {
@@ -1390,8 +1402,6 @@ const Timbo = {
       const module = this;
       module.api = {
         focusKey() {},
-        setDetailOpen() {},
-        clearReferenceSelection() {},
         setReferenceChangeCallback() {},
       };
 
@@ -1416,7 +1426,6 @@ const Timbo = {
         currentAngle: 0,
         targetAngle: 0,
         frameId: 0,
-        detailOpen: false,
         trackReferenceSelection: false,
         lastReferenceKey: '',
         onReferenceChange: null,
@@ -1472,7 +1481,7 @@ const Timbo = {
       };
 
       const notifyReferenceChange = () => {
-        if (!state.detailOpen || !state.trackReferenceSelection || typeof state.onReferenceChange !== 'function') return;
+        if (!state.trackReferenceSelection || typeof state.onReferenceChange !== 'function') return;
 
         const nearestOrbit = getReferenceOrbit();
         if (!nearestOrbit || nearestOrbit.key === state.lastReferenceKey) return;
@@ -1560,26 +1569,11 @@ const Timbo = {
             desiredFinalAngleDeg - (orbit.baseAngle * 180) / Math.PI;
           const shortestDelta = normalizeAngleDeg(baseTargetAngle - state.currentAngle);
 
-          state.detailOpen = true;
           state.trackReferenceSelection = false;
           state.lastReferenceKey = key;
           state.motionEase = autoFocusEase;
           state.targetAngle = state.currentAngle + shortestDelta;
           queueRender();
-        },
-
-        setDetailOpen(isOpen) {
-          state.detailOpen = isOpen;
-
-          if (!isOpen) {
-            state.trackReferenceSelection = false;
-            state.lastReferenceKey = '';
-          }
-        },
-
-        clearReferenceSelection() {
-          state.trackReferenceSelection = false;
-          state.lastReferenceKey = '';
         },
 
         setReferenceChangeCallback(callback) {
@@ -1612,10 +1606,7 @@ const Timbo = {
         event.preventDefault();
         state.motionEase = wheelEase;
         state.targetAngle += delta * 0.06;
-
-        if (state.detailOpen) {
-          state.trackReferenceSelection = true;
-        }
+        state.trackReferenceSelection = true;
 
         queueRender();
       }, { passive: false });
@@ -1642,6 +1633,9 @@ const Timbo = {
       const detailMedia = detail?.querySelector('.sust-strategies__detail-media');
 
       if (!section || !detail || !detailMedia || !detailStack || !detailIcon || !detailLabel || !detailTitle || !detailText || !labelItems.length) return;
+
+      // El aside está siempre abierto: marcamos el estado una sola vez en el init.
+      section.classList.add('is-detail-open');
 
       const strategies = {
         ventilacion: {
@@ -1794,11 +1788,6 @@ const Timbo = {
         const previousKey = activeKey;
         const strategy = strategies[key];
         activeKey = key;
-        const wasDetailOpen = section.classList.contains('is-detail-open');
-
-        section.classList.add('is-detail-open');
-        detail.setAttribute('aria-hidden', 'false');
-        orbitApi?.setDetailOpen(true);
 
         labelItems.forEach((item) => {
           const isActive = item.dataset.strategy === activeKey;
@@ -1808,9 +1797,9 @@ const Timbo = {
 
         cancelDetailAnimations();
 
+        // previousKey vacío = primera invocación → no animamos el swap.
         const shouldAnimateSwap = Boolean(
           strategy
-          && wasDetailOpen
           && previousKey
           && previousKey !== activeKey
           && !reduceMotionQuery?.matches
@@ -1877,8 +1866,6 @@ const Timbo = {
       const module = this;
       module.api = {
         focusKey() {},
-        setDetailOpen() {},
-        clearReferenceSelection() {},
         setReferenceChangeCallback() {},
       };
 
@@ -1905,7 +1892,6 @@ const Timbo = {
         currentAngle: 0,
         targetAngle: 0,
         frameId: 0,
-        detailOpen: false,
         trackReferenceSelection: false,
         lastReferenceKey: '',
         onReferenceChange: null,
@@ -1965,7 +1951,7 @@ const Timbo = {
       };
 
       const notifyReferenceChange = () => {
-        if (!state.detailOpen || !state.trackReferenceSelection || typeof state.onReferenceChange !== 'function') return;
+        if (!state.trackReferenceSelection || typeof state.onReferenceChange !== 'function') return;
 
         const nearestOrbit = getReferenceOrbit();
         if (!nearestOrbit || nearestOrbit.key === state.lastReferenceKey) return;
@@ -2053,26 +2039,11 @@ const Timbo = {
             desiredFinalAngleDeg - (orbit.baseAngle * 180) / Math.PI;
           const shortestDelta = normalizeAngleDeg(baseTargetAngle - state.currentAngle);
 
-          state.detailOpen = true;
           state.trackReferenceSelection = false;
           state.lastReferenceKey = key;
           state.motionEase = autoFocusEase;
           state.targetAngle = state.currentAngle + shortestDelta;
           queueRender();
-        },
-
-        setDetailOpen(isOpen) {
-          state.detailOpen = isOpen;
-
-          if (!isOpen) {
-            state.trackReferenceSelection = false;
-            state.lastReferenceKey = '';
-          }
-        },
-
-        clearReferenceSelection() {
-          state.trackReferenceSelection = false;
-          state.lastReferenceKey = '';
         },
 
         setReferenceChangeCallback(callback) {
@@ -2106,10 +2077,7 @@ const Timbo = {
         event.preventDefault();
         state.motionEase = wheelEase;
         state.targetAngle += delta * 0.06;
-
-        if (state.detailOpen) {
-          state.trackReferenceSelection = true;
-        }
+        state.trackReferenceSelection = true;
 
         queueRender();
       }, { passive: false });
@@ -2146,43 +2114,14 @@ const Timbo = {
 
       if (!section || !detail || !detailStack || !detailTitle || !detailText || !labelItems.length) return;
 
-      const pilares = {
-        temperatura: {
-          title: 'TEMPERATURA',
-          description: 'Variable clave del confort interior. Diseñamos para mantenerla estable a lo largo del año, evitando picos extremos y reduciendo la dependencia de sistemas mecánicos.',
-          icon: 'assets/images/sustainability/sust-pilars/temperatura.svg',
-          labelSvg: 'assets/images/sustainability/sust-pilars/temperatura-texto.svg',
-        },
-        radiacion: {
-          title: 'RADIACIÓN',
-          description: 'Estudiamos la radiación solar incidente en cada orientación para captarla cuando aporta calor útil y bloquearla cuando se vuelve carga térmica indeseada.',
-          icon: 'assets/images/sustainability/sust-pilars/radioacion.svg',
-          labelSvg: 'assets/images/sustainability/sust-pilars/radiacion-texto.svg',
-        },
-        luz: {
-          title: 'LUZ',
-          description: 'Maximizamos la luz natural y controlamos el deslumbramiento. La iluminación de calidad mejora el bienestar y reduce el consumo energético del edificio.',
-          icon: 'assets/images/sustainability/sust-pilars/luz.svg',
-          labelSvg: 'assets/images/sustainability/sust-pilars/luz-texto.svg',
-        },
-        flujo_aire: {
-          title: 'FLUJO DE AIRE',
-          description: 'Aprovechamos los vientos dominantes y las diferencias de presión para generar ventilación cruzada y nocturna que enfríe los ambientes de forma pasiva.',
-          icon: 'assets/images/sustainability/sust-pilars/flujo-de-aire.svg',
-          labelSvg: 'assets/images/sustainability/sust-pilars/flujo-de-aire-texto.svg',
-        },
-        calidad_aire: {
-          title: 'CALIDAD DE AIRE',
-          description: 'Garantizamos aire interior saludable a través de renovación constante, materiales no contaminantes y una ventilación pensada desde el inicio del proyecto.',
-          icon: 'assets/images/sustainability/sust-pilars/calidad-de-aire.svg',
-          labelSvg: 'assets/images/sustainability/sust-pilars/calidad-de-aire-texto.svg',
-        },
-        emisiones: {
-          title: 'EMISIONES DE CARBONO',
-          description: 'Cuantificamos el carbono incorporado en materiales y el operacional a lo largo de la vida útil, eligiendo soluciones que minimicen la huella del edificio.',
-          icon: 'assets/images/sustainability/sust-pilars/emision-de-carbono.svg',
-          labelSvg: 'assets/images/sustainability/sust-pilars/emisiones-de-carbono-texto.svg',
-        },
+      // El aside está siempre abierto: marcamos el estado una sola vez en el init.
+      section.classList.add('is-detail-open');
+
+      const getPilares = () => {
+        const lang = Timbo.i18n.detect();
+        return SITE_DATA.sustainability?.[lang]?.pillars?.items
+          || SITE_DATA.sustainability?.es?.pillars?.items
+          || {};
       };
 
       let activeKey = '';
@@ -2200,7 +2139,9 @@ const Timbo = {
         if (detailIcon) {
           if (pilar?.icon) {
             detailIcon.src = pilar.icon;
-            detailIcon.alt = `Icono de ${pilar.title}`;
+            detailIcon.alt = Timbo.i18n.detect() === 'en'
+              ? `Icon of ${pilar.title}`
+              : `Icono de ${pilar.title}`;
             detailIcon.hidden = false;
           } else {
             detailIcon.removeAttribute('src');
@@ -2226,6 +2167,21 @@ const Timbo = {
         detailTitle.textContent = pilar ? pilar.title : '';
         detailText.textContent = pilar ? pilar.description : '';
       };
+
+      const refreshInteractiveText = () => {
+        const pilares = getPilares();
+
+        labelItems.forEach((item) => {
+          const pilar = pilares[item.dataset.pilar];
+          if (!pilar) return;
+          item.setAttribute('aria-label', pilar.title);
+        });
+
+        if (!activeKey || !pilares[activeKey]) return;
+        setDetailContent(pilares[activeKey]);
+      };
+
+      this.refresh = refreshInteractiveText;
 
       const animateDetailSwap = async (pilar, token) => {
         const exitAnimation = detailStack.animate([
@@ -2282,6 +2238,8 @@ const Timbo = {
       };
 
       const setActive = (key = '') => {
+        const pilares = getPilares();
+
         // El aside está siempre abierto: ignoramos llamadas sin key
         // (que antes cerraban el detalle).
         if (!key || !pilares[key]) return;
@@ -2291,11 +2249,6 @@ const Timbo = {
         const previousKey = activeKey;
         const pilar = pilares[key];
         activeKey = key;
-        const wasDetailOpen = section.classList.contains('is-detail-open');
-
-        section.classList.add('is-detail-open');
-        detail.setAttribute('aria-hidden', 'false');
-        orbitApi?.setDetailOpen(true);
 
         labelItems.forEach((item) => {
           const isActive = item.dataset.pilar === activeKey;
@@ -2305,9 +2258,9 @@ const Timbo = {
 
         cancelDetailAnimations();
 
+        // previousKey vacío = primera invocación → no animamos el swap.
         const shouldAnimateSwap = Boolean(
           pilar
-          && wasDetailOpen
           && previousKey
           && previousKey !== activeKey
           && !reduceMotionQuery?.matches
@@ -2322,6 +2275,7 @@ const Timbo = {
       };
 
       const openPilar = (key) => {
+        const pilares = getPilares();
         if (!pilares[key]) return;
 
         setActive(key);
@@ -2330,6 +2284,7 @@ const Timbo = {
 
       labelItems.forEach((item) => {
         const key = item.dataset.pilar;
+        const pilares = getPilares();
         const pilar = pilares[key];
         if (!pilar) return;
 
@@ -2354,6 +2309,7 @@ const Timbo = {
       });
 
       orbitApi?.setReferenceChangeCallback((key) => {
+        const pilares = getPilares();
         if (!key || !pilares[key]) return;
         setActive(key);
       });
@@ -2364,6 +2320,7 @@ const Timbo = {
       const isMobileViewport = window.matchMedia?.('(max-width: 1023.98px)').matches;
       const initialKey = isMobileViewport ? 'flujo_aire' : 'luz';
       openPilar(initialKey);
+      refreshInteractiveText();
     },
   },
 
@@ -3415,6 +3372,12 @@ const Timbo = {
     init() {
       const text = document.querySelector('.project-phrase__text');
       if (!text) return;
+
+      // Opt-out por página: si el <section class="project-phrase"> contenedor
+      // lleva data-phrase-reveal="off", esa página usa estandar-a (anim-fade-up)
+      // y no debe envolverse en máscaras ni recibir .is-revealed.
+      const section = text.closest('.project-phrase');
+      if (section && section.dataset.phraseReveal === 'off') return;
 
       const rebuildLines = () => {
         Timbo.splitTextIntoVisualLines(text, {
@@ -4706,10 +4669,15 @@ const Timbo = {
   sustHeroDrawingReveal: {
     SVG_NS: 'http://www.w3.org/2000/svg',
 
-    async init() {
-      const host = document.querySelector('.sust-hero__visual-img[data-svg-src]');
-      if (!host) return;
+    init() {
+      // Puede haber más de un host (ej. patrón BILINGÜE-TEMPORAL con un SVG
+      // por idioma). Procesamos todos los que matcheen — cada uno corre su
+      // propia carga + animación independiente, con IDs únicos.
+      const hosts = document.querySelectorAll('.sust-hero__visual-img[data-svg-src]');
+      hosts.forEach((host) => this.processHost(host));
+    },
 
+    async processHost(host) {
       const src = host.dataset.svgSrc;
       if (!src) return;
 
@@ -4956,6 +4924,8 @@ const Timbo = {
     this.projectFactsParallax.init();
     this.projectFrameCopyParallax.init();
     this.projectPaletteTextParallax.init();
+    this.projectPaletteTextReveal.init();
+    this.natureDialogueTextReveal.init();
     this.projectPaletteScrollWidth.init();
     this.projectPaletteDrag.init();
     this.projectPhraseTextParallax.init();
@@ -5802,6 +5772,65 @@ const Timbo = {
   },
 
   /* ============================================================
+     PROJECT PALETTE TEXT REVEAL
+     Equivalente a projectPhraseTextReveal pero para .project-palette__text.
+     Envuelve cada línea visual del texto en .project-palette__text-line +
+     .project-palette__text-line-inner, y togglea .is-revealed cuando el
+     elemento cruza el TRIGGER_RATIO del viewport. Es estandar-b.
+     Opt-out por página: <section class="project-palette" data-palette-reveal="off">.
+     ============================================================ */
+  projectPaletteTextReveal: {
+    TRIGGER_RATIO: 0.6,
+
+    init() {
+      const text = document.querySelector('.project-palette__text');
+      if (!text) return;
+
+      const section = text.closest('.project-palette');
+      if (section && section.dataset.paletteReveal === 'off') return;
+
+      const rebuildLines = () => {
+        Timbo.splitTextIntoVisualLines(text, {
+          lineClass: 'project-palette__text-line',
+          innerClass: 'project-palette__text-line-inner',
+        });
+      };
+
+      const update = () => {
+        const rect = text.getBoundingClientRect();
+        const trigger = window.innerHeight * this.TRIGGER_RATIO;
+
+        if (rect.top <= trigger) {
+          text.classList.add('is-revealed');
+        } else {
+          text.classList.remove('is-revealed');
+        }
+      };
+
+      let resizeRaf = 0;
+      const refresh = () => {
+        rebuildLines();
+        update();
+      };
+
+      const onResize = () => {
+        cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(refresh);
+      };
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', onResize);
+      window.addEventListener('load', refresh, { once: true });
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(refresh).catch(() => {});
+      }
+
+      refresh();
+    },
+  },
+
+  /* ============================================================
      PROJECT PALETTE TEXT PARALLAX
      Mismo efecto que projectFrameCopyParallax. Aplica un translateY
      al wrapper .project-palette__text.
@@ -5851,6 +5880,74 @@ const Timbo = {
         const offset = Math.min(entered * this.RATE, this.MAX_OFFSET) - this.START_OFFSET;
         el.style.transform = `translate3d(0, ${offset}px, 0)`;
       });
+    },
+  },
+
+  /* ============================================================
+     NATURE DIALOGUE TEXT REVEAL
+     Clon de projectPaletteTextReveal para .nature-dialogue__text (home).
+     Envuelve cada línea visual del texto en .nature-dialogue__text-line +
+     .nature-dialogue__text-line-inner, y togglea .is-revealed cuando la
+     sección .nature-dialogue está visible al VISIBLE_RATIO (90% por
+     default — falta entrar sólo el 10% inferior). Es estandar-b.
+     ============================================================ */
+  natureDialogueTextReveal: {
+    /* Ratio de recorrido vertical del borde inferior del viewport sobre
+       la altura total de la section. 0.9 = el bottom del viewport ya
+       recorrió el 90% de la section (le falta el último 10% para salir). */
+    PROGRESS_RATIO: 0.9,
+
+    init() {
+      const text = document.querySelector('.nature-dialogue__text');
+      if (!text) return;
+
+      const section = text.closest('.nature-dialogue');
+      if (!section) return;
+
+      const rebuildLines = () => {
+        Timbo.splitTextIntoVisualLines(text, {
+          lineClass: 'nature-dialogue__text-line',
+          innerClass: 'nature-dialogue__text-line-inner',
+        });
+      };
+
+      const update = () => {
+        const rect = section.getBoundingClientRect();
+        const sectionHeight = rect.height;
+        if (sectionHeight <= 0) return;
+        /* Distancia desde el top de la section al bottom del viewport.
+           Va de 0 (bottom del viewport tocando el top de la section)
+           a sectionHeight (bottom del viewport tocando el bottom de la
+           section). */
+        const progress = (window.innerHeight - rect.top) / sectionHeight;
+
+        if (progress >= this.PROGRESS_RATIO) {
+          text.classList.add('is-revealed');
+        } else {
+          text.classList.remove('is-revealed');
+        }
+      };
+
+      let resizeRaf = 0;
+      const refresh = () => {
+        rebuildLines();
+        update();
+      };
+
+      const onResize = () => {
+        cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(refresh);
+      };
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', onResize);
+      window.addEventListener('load', refresh, { once: true });
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(refresh).catch(() => {});
+      }
+
+      refresh();
     },
   },
 

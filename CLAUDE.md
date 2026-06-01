@@ -550,14 +550,126 @@ Para cada página, el ciclo es:
 ### Estado de migración (actualizar a medida que se avanza)
 
 - [x] Fase 0 — Patch a `Timbo.i18n.resolve()` para claves anidadas profundas.
-- [ ] Home (`index.html`) + nav + footer.
+- [x] Home (`index.html`) — textos del contenido principal migrados.
+- [x] Nav del header — migrado en las 16 páginas del sitio (incluida la plantilla `prompts/proyecto-_TEMPLATE.html`). Fallback uniformado a español. Clave nueva `nav.services` agregada.
 - [ ] `proyectos.html` (listado).
 - [ ] `proyectos/proyecto-exuma-lodge.html`.
 - [ ] `proyectos/proyecto-haras-san-pablo.html`.
 - [ ] `proyectos/proyecto-tobar-lodge.html`.
 - [ ] `proyectos/proyecto-cabana-suinda.html`.
 - [ ] `proyectos/proyecto-cherokee-ave.html`.
-- [ ] `sustentabilidad.html` (completar — ya tiene 6 textos migrados).
+- [ ] `sustentabilidad.html` — hero migrado (título + texto + SVG bilingüe ES/EN); pendiente: resto de las secciones (process, climate, breathe, metrics, strategies).
 - [ ] `sobre-nosotros.html`.
 - [ ] `contacto.html`.
 - [ ] Limpieza final de `data.js` (borrar claves no usadas, ordenar).
+
+### Registro de avances detallado
+
+Esta sección documenta **qué se hizo concretamente en cada hito**, para que cualquier sesión futura tenga la foto completa del estado del trabajo y pueda continuar sin pisar nada.
+
+#### Fase 0 — Patch a `Timbo.i18n.resolve()` (completado)
+
+**Archivo tocado:** `assets/js/main.js`, función `Timbo.i18n.resolve()`.
+
+**Qué cambió:** la función pasó de soportar sólo claves de dos niveles (`section.field`) a soportar claves de cualquier profundidad (ej: `projectPages.projects.exuma-lodge.refugeParagraph1`). El primer segmento sigue siendo la sección, después se inserta `[lang]`, y desde ahí baja por el resto del path con un `for`. Devuelve `undefined` si en algún nivel no encuentra el valor (mismo comportamiento que antes ante claves rotas, lo que asegura que el resto de `apply()` siga funcionando igual).
+
+**Verificación post-patch:** se confirmó que claves de dos niveles (ej: `home.heroTagline`) siguen resolviendo igual que antes.
+
+#### Home (`index.html`) — textos del contenido principal migrados
+
+**Archivos tocados:**
+- `assets/js/data.js` — agregadas claves nuevas + actualizadas traducciones EN existentes.
+- `index.html` — agregados `data-i18n` a elementos sin atributo previo; eliminado bloque obsoleto.
+- `assets/css/styles.css` — eliminadas reglas CSS huérfanas tras la limpieza del HTML.
+
+**Claves nuevas creadas en `home`:**
+- `home.introLabel` — "Lo que hacemos" / "Our practice".
+- `home.introText` — párrafo de la sección Intro (descripción del estudio).
+- `home.natureDialogueText` — manifiesto sobre la imagen de la sección "Diálogo con la naturaleza".
+
+**Claves EN modificadas (el ES quedó intacto en todas):**
+- `home.heroTagline` — EN nuevo: `<strong>Architecture</strong> shaped by<br><strong>climate</strong> and <strong>place</strong>.`
+- `home.claim` — EN nuevo (3 renglones via spans, no via `<br>`): "Between the wild" / "and the people" (sin punto final, decisión del usuario).
+- `home.sustainabilityStatement` — EN nuevo (pasó de 4 renglones a 3 spans): "Resilient design," / "grounded in climate" / "and place."
+- `home.philosophyText` — EN reescrito para reflejar mejor el tono de la marca (texto más descriptivo que el anterior).
+
+**HTML — elementos a los que se les agregó `data-i18n` en esta sesión:**
+- `<p class="intro__label">` → `data-i18n="home.introLabel"`.
+- `<p class="intro__text">` → `data-i18n="home.introText"`.
+- `<p class="nature-dialogue__text">` → `data-i18n="home.natureDialogueText"`.
+
+**Limpieza estructural realizada:**
+- Eliminado del HTML el bloque completo `<div class="nature-dialogue__info"><div class="container"><p class="nature-dialogue__description">…</p></div></div>` que estaba dentro de `<section class="nature-dialogue">`. Era un placeholder vacío con `display: none` que ya no tenía propósito.
+- Eliminadas del CSS las reglas `.nature-dialogue__info` y `.nature-dialogue__description` (estaban en `styles.css` cerca de la línea 1036). No quedó código residual.
+
+**Pendientes del Home (no resueltos en esta sesión):**
+- **Footer:** ya tiene `data-i18n="footer.rights"` y debería cambiar bien con el idioma; verificar visualmente cuando se pase por ahí.
+
+**Sin commits:** todos los cambios están en el working tree. Mariano los commitea manualmente cuando decide.
+
+#### Nav del header — migrado en todas las páginas
+
+**Archivos tocados (16):**
+- `index.html`, `proyectos.html`, `sustentabilidad.html`, `servicios.html`, `sobre-nosotros.html`, `contacto.html`.
+- `proyectos/proyecto-exuma-lodge.html`, `proyectos/proyecto-haras-san-pablo.html`, `proyectos/proyecto-tobar-lodge.html`, `proyectos/proyecto-cabana-suinda.html`, `proyectos/proyecto-cherokee-ave.html`, `proyectos/proyecto-cardano-clubhouse.html`, `proyectos/proyecto-chacras-de-murray.html`, `proyectos/proyecto-club-de-mar.html`, `proyectos/proyecto-praderas-cabin.html`.
+- `prompts/proyecto-_TEMPLATE.html` (plantilla para futuros proyectos).
+- `assets/js/data.js` (clave nueva).
+
+**Qué cambió en cada nav:**
+- A cada `<a class="nav__link">` se le agregó `data-i18n="nav.xxx"` con la clave correspondiente.
+- El texto fallback dentro del `<a>` se unificó a español (Inicio, Proyectos, Sustentabilidad, Servicios, Sobre Nosotros, Contacto). Antes algunas páginas tenían fallback en inglés (Home, Projects, etc.) y otras en español; ahora todas en español, para consistencia con el resto del sitio.
+- La clase `nav__link--active` se mantuvo exactamente donde estaba en cada página (señala la página activa).
+
+**Clave nueva en `data.js`:**
+- `nav.services` — "Servicios" (ES) / "Services" (EN). El link `Services` aparecía en el nav pero no tenía clave correspondiente.
+
+**Detalle de capitalización:**
+- Los valores en `data.js` están en sentence-case (`Inicio`, `Home`, `Sobre Nosotros`, etc.).
+- El CSS de `.nav__link` aplica `text-transform: uppercase`, así que en pantalla se ven en MAYÚSCULAS (INICIO, HOME, SOBRE NOSOTROS).
+- Convención: el contenido vive en sentence-case, la estilización (uppercase) vive en CSS. No mezclar.
+
+**Verificación visual recomendada:** abrir cualquier página con `?lang=es` (debería mostrar fallback en español) y `?lang=en` (debería cambiar a Home / Projects / Sustainability / Services / About Us / Contact). Repetir en al menos una página de proyecto para confirmar que las rutas con `../` siguen funcionando.
+
+#### Sustentabilidad (`sustentabilidad.html`) — hero migrado
+
+**Archivos tocados:**
+- `assets/js/data.js` — claves nuevas `sustainability.heroTitle` y `sustainability.heroText` agregadas en ES + EN.
+- `sustentabilidad.html` — `data-i18n` agregados al `<h1>` y al `<p>` del hero. SVG del hero duplicado con clases `--es` / `--en` (patrón bilingüe temporal, ver "Deuda técnica" abajo).
+- `assets/css/styles.css` — regla `html[lang="xx"] .sust-hero__visual-img--yy { display: none }` agregada cerca de las utilidades de `.br-desktop` / `.br-mobile`.
+
+**Claves nuevas creadas en `sustainability`:**
+- `sustainability.heroTitle` — "Sustentabilidad no es un rótulo ni una etiqueta." (ES, 3 renglones via `<br>`) / "Sustainability is not a label." (EN, 2 renglones via `<br>`).
+- `sustainability.heroText` — párrafo del hero con `<br><br>` interno para separar las dos oraciones. ES y EN tienen contenido equivalente.
+
+**Patrón nuevo introducido — SVG bilingüe:** porque el SVG del hero (`hero-drawing.svg` / `hero-drawing-english.svg`) contiene texto incrustado en el archivo, no se puede traducir con `data-i18n` (que sólo toca `textContent`/`innerHTML`, no atributos). Solución temporal: dos `<div>` con clases `--es` / `--en` y CSS que oculta uno según `html[lang]`. Ver "Deuda técnica" para el plan de migración.
+
+**Pendientes de `sustentabilidad.html`:**
+- Sección 3 (Proceso / Investigación con gráfico climático).
+- Sección 4 (Climate / señales climáticas con iconos + gráficos).
+- Sección 5 (Breathe).
+- Sección 6 (Metrics / barras animadas con contadores).
+- Sección 7 (Strategies / SVG circular de 8 estrategias bioclimáticas).
+- Verificar las claves que ya existen en `sustainability` (`title`, `variables[]`, `emissionsChartTitle`, etc.) — pueden estar consumidas por estas secciones; chequear caso por caso al migrarlas.
+
+## ⚠️ Deuda técnica pendiente — fase de optimización
+
+Decisiones que se tomaron a propósito durante el desarrollo y que conviene revisar cuando lleguemos a la fase de optimización del sitio. **No son bugs**, son trade-offs explícitos.
+
+### Assets bilingües duplicados (SVG ES/EN)
+
+**Dónde vive:**
+- Marcado en HTML como `<!-- BILINGÜE-TEMPORAL: ... -->` arriba del bloque afectado.
+- Marcado en CSS como `/* --- BILINGÜE-TEMPORAL: assets duplicados ES/EN --- */` cerca de las utilidades `.br-desktop` / `.br-mobile`.
+- Caso conocido hoy: SVG del hero de Sustentabilidad (`.sust-hero__visual-img--es` / `.sust-hero__visual-img--en`).
+
+**Qué pasa hoy:** los dos SVGs (uno por idioma) se descargan siempre. CSS oculta uno con `display: none` según `html[lang]`. Funciona perfecto visualmente, pero hace una descarga extra inútil.
+
+**Por qué se hizo así:** el sistema `data-i18n` actual no maneja atributos (sólo cambia texto interno). Cambiar la ruta de un SVG (`data-svg-src`) requeriría tocar el motor del i18n o el loader del SVG. Decisión: no tocar el motor mientras no hayan varios casos.
+
+**Cuándo migrar:** cuando aparezca el segundo o tercer asset bilingüe, o en la fase de optimización general del sitio.
+
+**Cómo migrar:** dos opciones, elegir según contexto:
+1. Extender el loader de `data-svg-src` para que acepte un segundo atributo `data-svg-src-en` y cargue según `Timbo.state.lang`. Cambio acotado al loader, no toca el motor i18n.
+2. Extender `Timbo.i18n.apply()` para que, además de `textContent` y `innerHTML`, sepa actualizar atributos arbitrarios (sintaxis tipo `data-i18n-attr="data-svg-src:sustainability.heroSvgPath"`). Más genérico pero más cambio.
+
+**Después de migrar:** borrar todas las reglas `html[lang="xx"] .xxx--yy { display: none }` del CSS y los pares `<div>...--es` / `<div>...--en` del HTML. Reemplazar por un solo elemento por caso.

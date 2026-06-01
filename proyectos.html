@@ -14,13 +14,20 @@
   <!-- ====== NAVEGACIÓN ====== -->
   <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
     <ul class="nav__links">
-      <li><a href="index.html" class="nav__link">Home</a></li>
-      <li><a href="proyectos.html" class="nav__link nav__link--active">Projects</a></li>
-      <li><a href="sustentabilidad.html" class="nav__link">Sustainability</a></li>
-      <li><a href="servicios.html" class="nav__link">Services</a></li>
-      <li><a href="sobre-nosotros.html" class="nav__link">About Us</a></li>
-      <li><a href="contacto.html" class="nav__link">Contact</a></li>
+      <li><a href="index.html" class="nav__link" data-i18n="nav.home">Inicio</a></li>
+      <li><a href="proyectos.html" class="nav__link nav__link--active" data-i18n="nav.projects">Proyectos</a></li>
+      <li><a href="sustentabilidad.html" class="nav__link" data-i18n="nav.sustainability">Sustentabilidad</a></li>
+      <li><a href="servicios.html" class="nav__link" data-i18n="nav.services">Servicios</a></li>
+      <li><a href="sobre-nosotros.html" class="nav__link" data-i18n="nav.about">Sobre Nosotros</a></li>
+      <li><a href="contacto.html" class="nav__link" data-i18n="nav.contact">Contacto</a></li>
     </ul>
+
+    <!-- Logo fijo arriba-izquierda SOLO mobile y SOLO en esta página.
+         Visible al principio; se oculta cuando body.nav-mobile-show-floating
+         está activa (scroll > 500px). En desktop está oculto por CSS. -->
+    <a href="index.html" class="projects-fixed-logo" aria-label="Ir al inicio">
+      <img src="assets/images/logo/timbo-negro.svg" alt="Timbó">
+    </a>
 
     <!-- Floating logo y botón hamburguesa SÓLO mobile (ocultos en desktop por CSS).
          Aparecen al scrollear más de 600px. -->
@@ -60,27 +67,27 @@
               </div>
               <aside class="projects-gallery__hover-card" aria-hidden="true">
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">CLIMA /</span>
-                  <span class="projects-gallery__hover-card-value">Templado Subtropical</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.climate">CLIMA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.exuma-lodge.climate">Tropical</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">BIOMA /</span>
-                  <span class="projects-gallery__hover-card-value">Pampa</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.biome">BIOMA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.exuma-lodge.biome">Bosque seco</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">TERRENO /</span>
-                  <span class="projects-gallery__hover-card-value">3200 m&sup2;</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.terrain">TERRENO /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.exuma-lodge.terrain">5.640 m&sup2;</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">ÁREA CUBIERTA /</span>
-                  <span class="projects-gallery__hover-card-value">950 m&sup2;</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.coveredArea">ÁREA CUBIERTA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.exuma-lodge.coveredArea">800 m&sup2;</span>
                 </div>
               </aside>
             </div>
             <div class="projects-gallery__caption">
-              <span class="projects-gallery__name">EXUMA LODGE</span>
-              <span class="projects-gallery__location">Bahamas</span>
-              <span class="projects-gallery__category">Hospitality Lodge</span>
+              <span class="projects-gallery__name" data-i18n="projectsGallery.items.exuma-lodge.name">Exuma Lodge</span>
+              <span class="projects-gallery__location" data-i18n="projectsGallery.items.exuma-lodge.location">Bahamas</span>
+              <span class="projects-gallery__category" data-i18n="projectsGallery.items.exuma-lodge.category">Comercial</span>
             </div>
           </div>
         </a>
@@ -109,27 +116,27 @@
               </div>
               <aside class="projects-gallery__hover-card" aria-hidden="true">
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">CLIMA /</span>
-                  <span class="projects-gallery__hover-card-value">Templado Subtropical</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.climate">CLIMA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.tobar-lodge.climate">Subtropical seco</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">BIOMA /</span>
-                  <span class="projects-gallery__hover-card-value">Pampa</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.biome">BIOMA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.tobar-lodge.biome">Bosque chaqueño</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">TERRENO /</span>
-                  <span class="projects-gallery__hover-card-value">3200 m&sup2;</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.terrain">TERRENO /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.tobar-lodge.terrain">60.000 m2</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">ÁREA CUBIERTA /</span>
-                  <span class="projects-gallery__hover-card-value">950 m&sup2;</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.coveredArea">ÁREA CUBIERTA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.tobar-lodge.coveredArea">420 m2</span>
                 </div>
               </aside>
             </div>
             <div class="projects-gallery__caption">
-              <span class="projects-gallery__name">TOBAR LODGE</span>
-              <span class="projects-gallery__location">Tucumán, Argentina</span>
-              <span class="projects-gallery__category">Hospitality / Retreat</span>
+              <span class="projects-gallery__name" data-i18n="projectsGallery.items.tobar-lodge.name">Tobar Lodge</span>
+              <span class="projects-gallery__location" data-i18n="projectsGallery.items.tobar-lodge.location">Tucumán, Argentina</span>
+              <span class="projects-gallery__category" data-i18n="projectsGallery.items.tobar-lodge.category">Comercial</span>
             </div>
           </div>
         </a>
@@ -162,27 +169,27 @@
             </div>
             <aside class="projects-gallery__hover-card" aria-hidden="true">
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">CLIMA /</span>
-                <span class="projects-gallery__hover-card-value">Templado Subtropical</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.climate">CLIMA /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.praderas-cabin.climate">Patagónico</span>
               </div>
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">BIOMA /</span>
-                <span class="projects-gallery__hover-card-value">Pampa</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.biome">BIOMA /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.praderas-cabin.biome">Bosque andino</span>
               </div>
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">TERRENO /</span>
-                <span class="projects-gallery__hover-card-value">3200 m&sup2;</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.terrain">TERRENO /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.praderas-cabin.terrain">3.000 m2</span>
               </div>
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">ÁREA CUBIERTA /</span>
-                <span class="projects-gallery__hover-card-value">950 m&sup2;</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.coveredArea">ÁREA CUBIERTA /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.praderas-cabin.coveredArea">220 m2</span>
               </div>
             </aside>
           </div>
           <div class="projects-gallery__caption">
-            <span class="projects-gallery__name">PRADERAS CABIN</span>
-            <span class="projects-gallery__location">Río Negro, Argentina</span>
-            <span class="projects-gallery__category">Cabin / Retreat</span>
+            <span class="projects-gallery__name" data-i18n="projectsGallery.items.praderas-cabin.name">Praderas Cabin</span>
+            <span class="projects-gallery__location" data-i18n="projectsGallery.items.praderas-cabin.location">Cerro Perito Moreno, Río Negro, Argentina</span>
+            <span class="projects-gallery__category" data-i18n="projectsGallery.items.praderas-cabin.category">Comercial</span>
           </div>
         </a>
 
@@ -194,27 +201,27 @@
             </div>
             <aside class="projects-gallery__hover-card" aria-hidden="true">
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">CLIMA /</span>
-                <span class="projects-gallery__hover-card-value">Templado Subtropical</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.climate">CLIMA /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.cabana-suinda.climate">Húmedo subtropical</span>
               </div>
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">BIOMA /</span>
-                <span class="projects-gallery__hover-card-value">Pampa</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.biome">BIOMA /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.cabana-suinda.biome">Humedales</span>
               </div>
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">TERRENO /</span>
-                <span class="projects-gallery__hover-card-value">3200 m&sup2;</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.terrain">TERRENO /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.cabana-suinda.terrain">7.000 m2</span>
               </div>
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">ÁREA CUBIERTA /</span>
-                <span class="projects-gallery__hover-card-value">950 m&sup2;</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.coveredArea">ÁREA CUBIERTA /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.cabana-suinda.coveredArea">120 m2</span>
               </div>
             </aside>
           </div>
           <div class="projects-gallery__caption">
-            <span class="projects-gallery__name">SUINDÁ LODGE</span>
-            <span class="projects-gallery__location">Corrientes, Argentina</span>
-            <span class="projects-gallery__category">Cabin / Retreat</span>
+            <span class="projects-gallery__name" data-i18n="projectsGallery.items.cabana-suinda.name">Suindá Lodge</span>
+            <span class="projects-gallery__location" data-i18n="projectsGallery.items.cabana-suinda.location">Corrientes, Argentina</span>
+            <span class="projects-gallery__category" data-i18n="projectsGallery.items.cabana-suinda.category">Comercial</span>
           </div>
         </a>
 
@@ -231,27 +238,27 @@
             </div>
             <aside class="projects-gallery__hover-card" aria-hidden="true">
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">CLIMA /</span>
-                <span class="projects-gallery__hover-card-value">Templado Subtropical</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.climate">CLIMA /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.cardano-clubhouse.climate">Templado subtropical</span>
               </div>
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">BIOMA /</span>
-                <span class="projects-gallery__hover-card-value">Pampa</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.biome">BIOMA /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.cardano-clubhouse.biome">Pampa</span>
               </div>
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">TERRENO /</span>
-                <span class="projects-gallery__hover-card-value">3200 m&sup2;</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.terrain">TERRENO /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.cardano-clubhouse.terrain">5.800 m2</span>
               </div>
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">ÁREA CUBIERTA /</span>
-                <span class="projects-gallery__hover-card-value">950 m&sup2;</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.coveredArea">ÁREA CUBIERTA /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.cardano-clubhouse.coveredArea">450 m2</span>
               </div>
             </aside>
           </div>
           <div class="projects-gallery__caption">
-            <span class="projects-gallery__name">CARDANO CLUBHOUSE</span>
-            <span class="projects-gallery__location">Buenos Aires, Argentina</span>
-            <span class="projects-gallery__category">Residential</span>
+            <span class="projects-gallery__name" data-i18n="projectsGallery.items.cardano-clubhouse.name">Clubhouse Barrio Cardano</span>
+            <span class="projects-gallery__location" data-i18n="projectsGallery.items.cardano-clubhouse.location">Buenos Aires, Argentina</span>
+            <span class="projects-gallery__category" data-i18n="projectsGallery.items.cardano-clubhouse.category">Comercial</span>
           </div>
         </a>
 
@@ -268,27 +275,27 @@
             </div>
             <aside class="projects-gallery__hover-card" aria-hidden="true">
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">CLIMA /</span>
-                <span class="projects-gallery__hover-card-value">Templado Subtropical</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.climate">CLIMA /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.haras-san-pablo.climate">Templado subtropical</span>
               </div>
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">BIOMA /</span>
-                <span class="projects-gallery__hover-card-value">Pampa</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.biome">BIOMA /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.haras-san-pablo.biome">Pampa</span>
               </div>
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">TERRENO /</span>
-                <span class="projects-gallery__hover-card-value">3200 m&sup2;</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.terrain">TERRENO /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.haras-san-pablo.terrain">3.200 m2</span>
               </div>
               <div class="projects-gallery__hover-card-item">
-                <span class="projects-gallery__hover-card-label">ÁREA CUBIERTA /</span>
-                <span class="projects-gallery__hover-card-value">950 m&sup2;</span>
+                <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.coveredArea">ÁREA CUBIERTA /</span>
+                <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.haras-san-pablo.coveredArea">950 m2</span>
               </div>
             </aside>
           </div>
           <div class="projects-gallery__caption">
-            <span class="projects-gallery__name">HARAS<br class="only-mobile"> SAN PABLO</span>
-            <span class="projects-gallery__location">Buenos Aires, Argentina</span>
-            <span class="projects-gallery__category">Residential<br class="only-mobile"> + Productive</span>
+            <span class="projects-gallery__name" data-i18n="projectsGallery.items.haras-san-pablo.name" data-i18n-html="true">Casa de Campo<br>Haras San Pablo</span>
+            <span class="projects-gallery__location" data-i18n="projectsGallery.items.haras-san-pablo.location">Buenos Aires, Argentina</span>
+            <span class="projects-gallery__category" data-i18n="projectsGallery.items.haras-san-pablo.category">Residencial</span>
           </div>
         </a>
 
@@ -306,27 +313,27 @@
               </div>
               <aside class="projects-gallery__hover-card" aria-hidden="true">
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">CLIMA /</span>
-                  <span class="projects-gallery__hover-card-value">Templado Subtropical</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.climate">CLIMA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.chacras-de-murray.climate">Templado subtropical</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">BIOMA /</span>
-                  <span class="projects-gallery__hover-card-value">Pampa</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.biome">BIOMA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.chacras-de-murray.biome">Pampa</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">TERRENO /</span>
-                  <span class="projects-gallery__hover-card-value">3200 m&sup2;</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.terrain">TERRENO /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.chacras-de-murray.terrain">3.000 m2</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">ÁREA CUBIERTA /</span>
-                  <span class="projects-gallery__hover-card-value">950 m&sup2;</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.coveredArea">ÁREA CUBIERTA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.chacras-de-murray.coveredArea">400 m2</span>
                 </div>
               </aside>
             </div>
             <div class="projects-gallery__caption">
-              <span class="projects-gallery__name">CHACRAS DE MURRAY<br class="only-mobile"> PRIVATE ESTATE</span>
-              <span class="projects-gallery__location">Buenos Aires, Argentina</span>
-              <span class="projects-gallery__category">Residential</span>
+              <span class="projects-gallery__name" data-i18n="projectsGallery.items.chacras-de-murray.name" data-i18n-html="true">Casa de Campo<br>Chacras de Murray</span>
+              <span class="projects-gallery__location" data-i18n="projectsGallery.items.chacras-de-murray.location">Buenos Aires, Argentina</span>
+              <span class="projects-gallery__category" data-i18n="projectsGallery.items.chacras-de-murray.category">Residencial</span>
             </div>
           </div>
         </a>
@@ -340,27 +347,27 @@
               </div>
               <aside class="projects-gallery__hover-card" aria-hidden="true">
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">CLIMA /</span>
-                  <span class="projects-gallery__hover-card-value">Templado Subtropical</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.climate">CLIMA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.club-de-mar.climate">Atlántico</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">BIOMA /</span>
-                  <span class="projects-gallery__hover-card-value">Pampa</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.biome">BIOMA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.club-de-mar.biome">Pastizal litoral</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">TERRENO /</span>
-                  <span class="projects-gallery__hover-card-value">3200 m&sup2;</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.terrain">TERRENO /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.club-de-mar.terrain">2.500 m2</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">ÁREA CUBIERTA /</span>
-                  <span class="projects-gallery__hover-card-value">950 m&sup2;</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.coveredArea">ÁREA CUBIERTA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.club-de-mar.coveredArea">120 m2</span>
                 </div>
               </aside>
             </div>
             <div class="projects-gallery__caption">
-              <span class="projects-gallery__name">CLUB DE MAR<br class="only-mobile"> BEACH HOUSE</span>
-              <span class="projects-gallery__location">José Ignacio, Uruguay</span>
-              <span class="projects-gallery__category">Hospitality</span>
+              <span class="projects-gallery__name" data-i18n="projectsGallery.items.club-de-mar.name">Casa de Playa Club de Mar</span>
+              <span class="projects-gallery__location" data-i18n="projectsGallery.items.club-de-mar.location">José Ignacio, Uruguay</span>
+              <span class="projects-gallery__category" data-i18n="projectsGallery.items.club-de-mar.category">Residencial</span>
             </div>
           </div>
         </a>
@@ -384,27 +391,27 @@
               </div>
               <aside class="projects-gallery__hover-card" aria-hidden="true">
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">CLIMA /</span>
-                  <span class="projects-gallery__hover-card-value">Templado Subtropical</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.climate">CLIMA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.cherokee-ave.climate">Tropical monzónico</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">BIOMA /</span>
-                  <span class="projects-gallery__hover-card-value">Pampa</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.biome">BIOMA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.cherokee-ave.biome">Bosque costero</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">TERRENO /</span>
-                  <span class="projects-gallery__hover-card-value">3200 m&sup2;</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.terrain">TERRENO /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.cherokee-ave.terrain">1.000 m2</span>
                 </div>
                 <div class="projects-gallery__hover-card-item">
-                  <span class="projects-gallery__hover-card-label">ÁREA CUBIERTA /</span>
-                  <span class="projects-gallery__hover-card-value">950 m&sup2;</span>
+                  <span class="projects-gallery__hover-card-label" data-i18n="projectsGallery.factLabels.coveredArea">ÁREA CUBIERTA /</span>
+                  <span class="projects-gallery__hover-card-value" data-i18n="projectsGallery.items.cherokee-ave.coveredArea">420 m2</span>
                 </div>
               </aside>
             </div>
             <div class="projects-gallery__caption">
-              <span class="projects-gallery__name">CHEROKEE RESIDENCE</span>
-              <span class="projects-gallery__location">Miami, Florida, U.S.</span>
-              <span class="projects-gallery__category">Urban Housing</span>
+              <span class="projects-gallery__name" data-i18n="projectsGallery.items.cherokee-ave.name">Casa Cherokee</span>
+              <span class="projects-gallery__location" data-i18n="projectsGallery.items.cherokee-ave.location">Miami, Estados Unidos</span>
+              <span class="projects-gallery__category" data-i18n="projectsGallery.items.cherokee-ave.category">Residencial</span>
             </div>
           </div>
         </a>

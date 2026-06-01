@@ -14,12 +14,12 @@
 <body class="page--sust-light">
   <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
     <ul class="nav__links">
-      <li><a href="index.html" class="nav__link">Inicio</a></li>
-      <li><a href="proyectos.html" class="nav__link">Proyectos</a></li>
-      <li><a href="sustentabilidad.html" class="nav__link nav__link--active">Sustentabilidad</a></li>
-      <li><a href="servicios.html" class="nav__link">Servicios</a></li>
-      <li><a href="sobre-nosotros.html" class="nav__link">Sobre nosotros</a></li>
-      <li><a href="contacto.html" class="nav__link">Contacto</a></li>
+      <li><a href="index.html" class="nav__link" data-i18n="nav.home">Inicio</a></li>
+      <li><a href="proyectos.html" class="nav__link" data-i18n="nav.projects">Proyectos</a></li>
+      <li><a href="sustentabilidad.html" class="nav__link nav__link--active" data-i18n="nav.sustainability">Sustentabilidad</a></li>
+      <li><a href="servicios.html" class="nav__link" data-i18n="nav.services">Servicios</a></li>
+      <li><a href="sobre-nosotros.html" class="nav__link" data-i18n="nav.about">Sobre Nosotros</a></li>
+      <li><a href="contacto.html" class="nav__link" data-i18n="nav.contact">Contacto</a></li>
     </ul>
 
     <!-- Floating logo y botón hamburguesa SÓLO mobile (ocultos en desktop por CSS).
@@ -42,15 +42,21 @@
     <section class="sust-hero" id="sust-hero" data-nav-theme="light">
       <div class="container sust-hero__container">
         <div class="sust-hero__copy">
-          <h1 class="sust-hero__title anim-fade-up" data-anim-delay="0">Sustentabilidad<br>no es un rótulo ni<br>una
+          <h1 class="sust-hero__title anim-fade-up" data-anim-delay="0"
+              data-i18n="sustainability.heroTitle" data-i18n-html="true">Sustentabilidad<br>no es un rótulo ni<br>una
             etiqueta.</h1>
-          <p class="sust-hero__text anim-fade-up" data-anim-delay="140">Para nosotros, significa diseñar
+          <p class="sust-hero__text anim-fade-up" data-anim-delay="140"
+             data-i18n="sustainability.heroText" data-i18n-html="true">Para nosotros, significa diseñar
             arquitectura que consuma menos energía, dure más años y profundice la relación entre las personas
             y la naturaleza. <br><br>Es la base de cómo proyectamos.</p>
         </div>
 
         <div class="sust-hero__visual" aria-hidden="true">
-          <div class="sust-hero__visual-img" data-svg-src="assets/images/sustainability/hero-drawing.svg"></div>
+          <!-- BILINGÜE-TEMPORAL: dos elementos por idioma con display: none cruzado
+               (regla en styles.css, sección "BR responsive"). Reemplazar por solución
+               unificada en la fase de optimización del sitio. -->
+          <div class="sust-hero__visual-img sust-hero__visual-img--es" data-svg-src="assets/images/sustainability/hero-drawing.svg"></div>
+          <div class="sust-hero__visual-img sust-hero__visual-img--en" data-svg-src="assets/images/sustainability/hero-drawing-english.svg"></div>
         </div>
       </div>
     </section>
@@ -60,46 +66,48 @@
       <div class="container sust-process__container">
         <div class="sust-process__media-wrap anim-fade-up" data-anim-delay="0">
           <figure class="outdoor-climate anim-fade-in" data-anim-delay="220" id="outdoor-climate"
-            aria-label="Datos climáticos anuales de Buenos Aires, Argentina">
+            aria-label="Datos climáticos anuales de Buenos Aires, Argentina"
+            data-i18n="sustainability.outdoorClimate.figureAriaLabel" data-i18n-attr="aria-label">
             <header class="outdoor-climate__header">
               <p class="outdoor-climate__location">Buenos Aires, Argentina</p>
               <p class="outdoor-climate__coords">34°33′23″S — 58°25′00″W</p>
-              <p class="outdoor-climate__koppen">Clima subtropical húmedo</p>
+              <p class="outdoor-climate__koppen" data-i18n="sustainability.outdoorClimate.koppen">Clima subtropical húmedo</p>
             </header>
 
             <div class="outdoor-climate__months" aria-hidden="true">
-              <span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span>
-              <span>May</span><span>Jun</span><span>Jul</span><span>Ago</span>
-              <span>Sep</span><span>Oct</span><span>Nov</span><span>Dic</span>
+              <span data-i18n="sustainability.outdoorClimate.months.jan">Ene</span><span data-i18n="sustainability.outdoorClimate.months.feb">Feb</span><span data-i18n="sustainability.outdoorClimate.months.mar">Mar</span><span data-i18n="sustainability.outdoorClimate.months.apr">Abr</span>
+              <span data-i18n="sustainability.outdoorClimate.months.may">May</span><span data-i18n="sustainability.outdoorClimate.months.jun">Jun</span><span data-i18n="sustainability.outdoorClimate.months.jul">Jul</span><span data-i18n="sustainability.outdoorClimate.months.aug">Ago</span>
+              <span data-i18n="sustainability.outdoorClimate.months.sep">Sep</span><span data-i18n="sustainability.outdoorClimate.months.oct">Oct</span><span data-i18n="sustainability.outdoorClimate.months.nov">Nov</span><span data-i18n="sustainability.outdoorClimate.months.dec">Dic</span>
             </div>
 
             <!-- Panel 1: Temperatura + Humedad -->
             <div class="outdoor-climate__panel" data-panel="temp">
               <div class="outdoor-climate__panel-head">
-                <span class="outdoor-climate__panel-label">Temperatura</span>
+                <span class="outdoor-climate__panel-label" data-i18n="sustainability.outdoorClimate.tempPanelLabel">Temperatura</span>
                 <span class="outdoor-climate__panel-unit">°C</span>
               </div>
               <svg id="outdoor-climate-temp" class="outdoor-climate__svg"
                 viewBox="0 0 800 220" preserveAspectRatio="xMidYMid meet" role="img"
-                aria-label="Temperatura y humedad mensual"></svg>
+                aria-label="Temperatura y humedad mensual"
+                data-i18n="sustainability.outdoorClimate.tempPanelAriaLabel" data-i18n-attr="aria-label"></svg>
               <div class="outdoor-climate__panel-footer">
                 <div class="outdoor-climate__readout" id="outdoor-climate-temp-readout" aria-live="polite">
-                  <span class="outdoor-climate__readout-default outdoor-climate__readout-default--desktop">Pasá el cursor sobre el gráfico para ver los valores mes a mes</span>
-                  <span class="outdoor-climate__readout-default outdoor-climate__readout-default--mobile">Mantené pulsado el gráfico para ver los valores mes a mes</span>
+                  <span class="outdoor-climate__readout-default outdoor-climate__readout-default--desktop" data-i18n="sustainability.outdoorClimate.tempReadoutDefaultDesktop">Pasá el cursor sobre el gráfico para ver los valores mes a mes</span>
+                  <span class="outdoor-climate__readout-default outdoor-climate__readout-default--mobile" data-i18n="sustainability.outdoorClimate.tempReadoutDefaultMobile">Mantené pulsado el gráfico para ver los valores mes a mes</span>
                 </div>
                 <div class="outdoor-climate__panel-legend">
                   <span class="outdoor-climate__legend-item">
                     <span class="outdoor-climate__swatch outdoor-climate__swatch--temp"></span>
-                    <span class="outdoor-climate__legend-label outdoor-climate__legend-label--desktop">Temperatura media</span>
-                    <span class="outdoor-climate__legend-label outdoor-climate__legend-label--mobile">Temp. media</span>
+                    <span class="outdoor-climate__legend-label outdoor-climate__legend-label--desktop" data-i18n="sustainability.outdoorClimate.tempLegendMeanDesktop">Temperatura media</span>
+                    <span class="outdoor-climate__legend-label outdoor-climate__legend-label--mobile" data-i18n="sustainability.outdoorClimate.tempLegendMeanMobile">Temp. media</span>
                   </span>
                   <span class="outdoor-climate__legend-item">
                     <span class="outdoor-climate__swatch outdoor-climate__swatch--range"></span>
-                    Rango min — máx
+                    <span data-i18n="sustainability.outdoorClimate.tempLegendRange">Rango min — máx</span>
                   </span>
                   <span class="outdoor-climate__legend-item">
                     <span class="outdoor-climate__swatch outdoor-climate__swatch--humidity"></span>
-                    Humedad relativa
+                    <span data-i18n="sustainability.outdoorClimate.tempLegendHumidity">Humedad relativa</span>
                   </span>
                 </div>
               </div>
@@ -108,7 +116,7 @@
             <!-- Panel 2: Radiación solar + Lluvia (doble eje) -->
             <div class="outdoor-climate__panel" data-panel="radiation">
               <div class="outdoor-climate__panel-head">
-                <span class="outdoor-climate__panel-label">Radiación solar + lluvia</span>
+                <span class="outdoor-climate__panel-label" data-i18n="sustainability.outdoorClimate.radiationPanelLabel">Radiación solar + lluvia</span>
                 <span class="outdoor-climate__panel-unit">
                   <span class="outdoor-climate__unit-left">Wh/m²</span>
                   <span class="outdoor-climate__unit-right">mm</span>
@@ -116,19 +124,20 @@
               </div>
               <svg id="outdoor-climate-radiation" class="outdoor-climate__svg"
                 viewBox="0 0 800 180" preserveAspectRatio="xMidYMid meet" role="img"
-                aria-label="Radiación solar y lluvia mensual"></svg>
+                aria-label="Radiación solar y lluvia mensual"
+                data-i18n="sustainability.outdoorClimate.radiationPanelAriaLabel" data-i18n-attr="aria-label"></svg>
               <div class="outdoor-climate__panel-footer">
                 <div class="outdoor-climate__readout" id="outdoor-climate-radiation-readout" aria-live="polite">
-                  <span class="outdoor-climate__readout-default">Radiación global horizontal y precipitación mensual</span>
+                  <span class="outdoor-climate__readout-default" data-i18n="sustainability.outdoorClimate.radiationReadoutDefault">Radiación global horizontal y precipitación mensual</span>
                 </div>
                 <div class="outdoor-climate__panel-legend">
                   <span class="outdoor-climate__legend-item">
                     <span class="outdoor-climate__swatch outdoor-climate__swatch--radiation"></span>
-                    Radiación global
+                    <span data-i18n="sustainability.outdoorClimate.radiationLegendGlobal">Radiación global</span>
                   </span>
                   <span class="outdoor-climate__legend-item">
                     <span class="outdoor-climate__swatch outdoor-climate__swatch--rain"></span>
-                    Lluvia
+                    <span data-i18n="sustainability.outdoorClimate.radiationLegendRain">Lluvia</span>
                   </span>
                 </div>
               </div>
@@ -137,20 +146,21 @@
             <!-- Panel 4: Viento -->
             <div class="outdoor-climate__panel" data-panel="wind">
               <div class="outdoor-climate__panel-head">
-                <span class="outdoor-climate__panel-label">Viento</span>
+                <span class="outdoor-climate__panel-label" data-i18n="sustainability.outdoorClimate.windPanelLabel">Viento</span>
                 <span class="outdoor-climate__panel-unit">m/s</span>
               </div>
               <svg id="outdoor-climate-wind" class="outdoor-climate__svg"
                 viewBox="0 0 800 100" preserveAspectRatio="xMidYMid meet" role="img"
-                aria-label="Velocidad media del viento mensual"></svg>
+                aria-label="Velocidad media del viento mensual"
+                data-i18n="sustainability.outdoorClimate.windPanelAriaLabel" data-i18n-attr="aria-label"></svg>
               <div class="outdoor-climate__panel-footer">
                 <div class="outdoor-climate__readout" id="outdoor-climate-wind-readout" aria-live="polite">
-                  <span class="outdoor-climate__readout-default">Velocidad media superficial</span>
+                  <span class="outdoor-climate__readout-default" data-i18n="sustainability.outdoorClimate.windReadoutDefault">Velocidad media superficial</span>
                 </div>
                 <div class="outdoor-climate__panel-legend">
                   <span class="outdoor-climate__legend-item">
                     <span class="outdoor-climate__swatch outdoor-climate__swatch--wind"></span>
-                    Viento
+                    <span data-i18n="sustainability.outdoorClimate.windLegend">Viento</span>
                   </span>
                 </div>
               </div>
@@ -158,8 +168,8 @@
           </figure>
         </div>
         <div class="sust-process__copy anim-fade-up" data-anim-delay="180">
-          <h2 class="sust-process__title">Nuestro proceso<br>comienza con la<br>investigación.</h2>
-          <p class="sust-process__text">A través del método científico, reducimos la dependencia de los edificios en
+          <h2 class="sust-process__title" data-i18n="sustainability.processTitle" data-i18n-html="true">Nuestro proceso<br>comienza con la<br>investigación.</h2>
+          <p class="sust-process__text" data-i18n="sustainability.processText">A través del método científico, reducimos la dependencia de los edificios en
             energía proveniente de combustibles fósiles. Mediante la orientación, la forma y la materialidad,
             maximizamos el confort y la calidad ambiental interior.</p>
         </div>
@@ -193,10 +203,14 @@
               <circle class="sust-pilares__label-orbit-guide" cx="400" cy="400" r="305" fill="none" />
 
               <!-- Label central -->
-              <text class="sust-pilares__title" x="400" y="412" text-anchor="middle" font-size="38"
+              <text class="sust-pilares__title sust-pilares__title--es" x="400" y="412" text-anchor="middle" font-size="38"
                 font-weight="400" letter-spacing="-0.02em"
                 fill="var(--color-black, #1D1D1B)"
                 font-family="'Neue Haas Grotesk Display Pro', sans-serif">PILARES</text>
+              <text class="sust-pilares__title sust-pilares__title--en" x="400" y="412" text-anchor="middle" font-size="38"
+                font-weight="400" letter-spacing="-0.02em"
+                fill="var(--color-black, #1D1D1B)"
+                font-family="'Neue Haas Grotesk Display Pro', sans-serif">PILLARS</text>
 
               <g class="sust-pilares__orbit-points">
                 <circle data-pilar="temperatura"  cx="290" cy="210" r="8" fill="#7a93a8" stroke="rgba(29,29,27,0.7)" stroke-width="2" />
@@ -210,47 +224,62 @@
               <g class="sust-pilares__orbit-labels">
                 <g class="sust-pilares__orbit-label-item" data-pilar="temperatura" transform="translate(248 136)">
                   <g class="sust-pilares__orbit-label-content">
-                    <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                    <text class="sust-pilares__orbit-label-text sust-pilares__orbit-label-text--es" x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
                       font-family="'Neue Haas Grotesk Display Pro', sans-serif">TEMPERATURA</text>
+                    <text class="sust-pilares__orbit-label-text sust-pilares__orbit-label-text--en" x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                      font-family="'Neue Haas Grotesk Display Pro', sans-serif">TEMPERATURE</text>
                   </g>
                 </g>
 
                 <g class="sust-pilares__orbit-label-item" data-pilar="radiacion" transform="translate(552 136)">
                   <g class="sust-pilares__orbit-label-content">
-                    <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                    <text class="sust-pilares__orbit-label-text sust-pilares__orbit-label-text--es" x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
                       font-family="'Neue Haas Grotesk Display Pro', sans-serif">RADIACIÓN</text>
+                    <text class="sust-pilares__orbit-label-text sust-pilares__orbit-label-text--en" x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                      font-family="'Neue Haas Grotesk Display Pro', sans-serif">RADIATION</text>
                   </g>
                 </g>
 
                 <g class="sust-pilares__orbit-label-item" data-pilar="luz" transform="translate(705 400)">
                   <g class="sust-pilares__orbit-label-content">
-                    <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                    <text class="sust-pilares__orbit-label-text sust-pilares__orbit-label-text--es" x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
                       font-family="'Neue Haas Grotesk Display Pro', sans-serif">LUZ</text>
+                    <text class="sust-pilares__orbit-label-text sust-pilares__orbit-label-text--en" x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                      font-family="'Neue Haas Grotesk Display Pro', sans-serif">DAYLIGHT</text>
                   </g>
                 </g>
 
                 <g class="sust-pilares__orbit-label-item" data-pilar="flujo_aire" transform="translate(552 664)">
                   <g class="sust-pilares__orbit-label-content">
-                    <text x="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                    <text class="sust-pilares__orbit-label-text sust-pilares__orbit-label-text--es" x="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
                       font-family="'Neue Haas Grotesk Display Pro', sans-serif">
                       <tspan x="0" y="-10">FLUJO DE AIRE</tspan>
                     </text>
+                    <text class="sust-pilares__orbit-label-text sust-pilares__orbit-label-text--en" x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                      font-family="'Neue Haas Grotesk Display Pro', sans-serif">AIRFLOW</text>
                   </g>
                 </g>
 
                 <g class="sust-pilares__orbit-label-item" data-pilar="calidad_aire" transform="translate(248 664)">
                   <g class="sust-pilares__orbit-label-content">
-                    <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                    <text class="sust-pilares__orbit-label-text sust-pilares__orbit-label-text--es" x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
                       font-family="'Neue Haas Grotesk Display Pro', sans-serif">CALIDAD DE AIRE</text>
+                    <text class="sust-pilares__orbit-label-text sust-pilares__orbit-label-text--en" x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                      font-family="'Neue Haas Grotesk Display Pro', sans-serif">AIR QUALITY</text>
                   </g>
                 </g>
 
                 <g class="sust-pilares__orbit-label-item" data-pilar="emisiones" transform="translate(95 400)">
                   <g class="sust-pilares__orbit-label-content">
-                    <text x="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                    <text class="sust-pilares__orbit-label-text sust-pilares__orbit-label-text--es" x="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
                       font-family="'Neue Haas Grotesk Display Pro', sans-serif">
                       <tspan x="0" y="-9">EMISIONES</tspan>
                       <tspan x="0" y="9">DE CARBONO</tspan>
+                    </text>
+                    <text class="sust-pilares__orbit-label-text sust-pilares__orbit-label-text--en" x="0" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="400" fill="var(--color-black, #1D1D1B)"
+                      font-family="'Neue Haas Grotesk Display Pro', sans-serif">
+                      <tspan x="0" y="-9">CARBON</tspan>
+                      <tspan x="0" y="9">EMISSIONS</tspan>
                     </text>
                   </g>
                 </g>
@@ -258,7 +287,7 @@
             </svg>
           </div>
 
-          <aside class="sust-pilares__detail" id="sust-pilares-detail" aria-live="polite" aria-hidden="false">
+          <aside class="sust-pilares__detail" id="sust-pilares-detail" aria-live="polite">
             <div class="sust-pilares__detail-card">
               <div class="sust-pilares__detail-stack">
                 <div class="sust-pilares__detail-media">
@@ -279,14 +308,14 @@
     <section class="sust-climate" id="sust-climate" data-nav-theme="light">
       <div class="container sust-climate__container">
         <div class="sust-climate__copy">
-          <h2 class="sust-climate__title">
+          <h2 class="sust-climate__title" data-i18n="sustainability.climateTitle" data-i18n-html="true">
             <span class="sust-climate__title-line"><span class="sust-climate__title-line-inner">Trabajamos</span></span>
             <span class="sust-climate__title-line"><span class="sust-climate__title-line-inner">con el sol, el viento</span></span>
             <span class="sust-climate__title-line"><span class="sust-climate__title-line-inner">y el territorio.</span></span>
           </h2>
 
           <div class="sust-climate__body anim-fade-up" data-anim-delay="0">
-            <p class="sust-climate__text">Analizamos datos climáticos locales (radiación solar, patrones de viento,
+            <p class="sust-climate__text" data-i18n="sustainability.climateText" data-i18n-html="true">Analizamos datos climáticos locales (radiación solar, patrones de viento,
               humedad y variaciones estacionales) y medimos condiciones reales en el sitio. Modelamos el desempeño
               mediante simulaciones dinámicas, donde cada decisión se prueba, se calibra y se valida.<br><br>No se
               supone: se comprueba.</p>
@@ -326,25 +355,25 @@
                 <p class="emissions-chart__legend-value">9%</p>
                 <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelOther">Otros</p>
               </li>
-              <li class="emissions-chart__legend-item" data-slice="ops">
-                <span class="emissions-chart__swatch"></span>
-                <p class="emissions-chart__legend-value">30%</p>
-                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelOps">Industria</p>
-              </li>
               <li class="emissions-chart__legend-item" data-slice="transport">
                 <span class="emissions-chart__swatch"></span>
                 <p class="emissions-chart__legend-value">22%</p>
                 <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelTransport">Transporte</p>
+              </li>
+              <li class="emissions-chart__legend-item" data-slice="industry">
+                <span class="emissions-chart__swatch"></span>
+                <p class="emissions-chart__legend-value">30%</p>
+                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelIndustry">Industria</p>
               </li>
               <li class="emissions-chart__legend-item" data-slice="materials">
                 <span class="emissions-chart__swatch"></span>
                 <p class="emissions-chart__legend-value">11%</p>
                 <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelMaterials">Materiales de construcción</p>
               </li>
-              <li class="emissions-chart__legend-item" data-slice="industry">
+              <li class="emissions-chart__legend-item" data-slice="buildings">
                 <span class="emissions-chart__swatch"></span>
-                <p class="emissions-chart__legend-value">28%</p>
-                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelIndustry">Consumo energético en edificios</p>
+                <p class="emissions-chart__legend-value">28,8%</p>
+                <p class="emissions-chart__legend-label" data-i18n="sustainability.emissionsLabelBuildings">Consumo energético en edificios</p>
               </li>
             </ul>
           </figure>
@@ -499,7 +528,7 @@
             </svg>
           </div>
 
-          <aside class="sust-strategies__detail" id="sust-strategies-detail" aria-live="polite" aria-hidden="false">
+          <aside class="sust-strategies__detail" id="sust-strategies-detail" aria-live="polite">
             <div class="sust-strategies__detail-card">
               <div class="sust-strategies__detail-stack">
                 <div class="sust-strategies__detail-media">
@@ -526,7 +555,7 @@
         <h2 class="sust-breathe__title">Un proyecto timbó<br>no es hermético:<br>respira.</h2>
 
         <p class="sust-breathe__text anim-fade-up" data-anim-delay="180">Se vincula con su entorno y evoluciona <br>con
-          quienes lo habitan.<br>Nuestra arquitectura se adapta a la vida <br>y a sus cambios.</p>
+          quienes lo habitan.<br></p>
         <p class="sust-breathe__text anim-fade-up" data-anim-delay="220">Nuestra arquitectura se adapta a la vida <br>y a sus cambios.</p>
       </div>
     </section>

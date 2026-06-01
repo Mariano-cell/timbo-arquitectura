@@ -995,11 +995,11 @@ const TimboCharts = {
     // Datos: orden = orden de dibujado, en sentido horario desde arriba (12hs).
     // Los slices se dibujan en este orden, así que el primero arranca en el "top".
     DATA: [
-      { id: 'industry',  value: 30, color: '#BCD8ED' }, // celeste
-      { id: 'materials', value: 11, color: '#74793E' }, // oliva/verde
-      { id: 'transport', value: 22, color: '#D6D6D6' }, // gris claro
-      { id: 'ops',       value: 28, color: '#A8A8A8' }, // gris medio
-      { id: 'other',     value:  9, color: '#7A7A7A' }, // gris oscuro
+      { id: 'buildings', value: 28.8, color: '#BCD8ED' }, // celeste — Consumo energético en edificios
+      { id: 'materials', value: 11,   color: '#74793E' }, // oliva/verde — Materiales de construcción
+      { id: 'industry',  value: 30,   color: '#D6D6D6' }, // gris claro — Industria
+      { id: 'transport', value: 22,   color: '#A8A8A8' }, // gris medio — Transporte
+      { id: 'other',     value:  9,   color: '#7A7A7A' }, // gris oscuro — Otros
     ],
 
     // Geometría
@@ -1243,6 +1243,49 @@ const TimboCharts = {
       return e;
     },
 
+    getLang() {
+      return document.documentElement.getAttribute('lang') === 'en' ? 'en' : 'es';
+    },
+
+    getCopy() {
+      return SITE_DATA?.sustainability?.[this.getLang()]?.outdoorClimate
+        || SITE_DATA?.sustainability?.es?.outdoorClimate
+        || null;
+    },
+
+    getMonths() {
+      const months = this.getCopy()?.months;
+      if (!months) return this.DATA.months;
+
+      return [
+        months.jan, months.feb, months.mar, months.apr,
+        months.may, months.jun, months.jul, months.aug,
+        months.sep, months.oct, months.nov, months.dec,
+      ];
+    },
+
+    getDefaultReadoutHTML(panelKey) {
+      const copy = this.getCopy();
+      if (!copy) return '';
+
+      if (panelKey === 'temp') {
+        return [
+          `<span class="outdoor-climate__readout-default outdoor-climate__readout-default--desktop">${copy.tempReadoutDefaultDesktop}</span>`,
+          `<span class="outdoor-climate__readout-default outdoor-climate__readout-default--mobile">${copy.tempReadoutDefaultMobile}</span>`,
+        ].join('');
+      }
+
+      if (panelKey === 'radiation') {
+        return `<span class="outdoor-climate__readout-default">${copy.radiationReadoutDefault}</span>`;
+      }
+
+      if (panelKey === 'wind') {
+        return `<span class="outdoor-climate__readout-default">${copy.windReadoutDefault}</span>`;
+      }
+
+      return '';
+    },
+
     randomizeCoordsChar(char) {
       if (/\d/.test(char)) {
         return String(Math.floor(Math.random() * 10));
@@ -1365,7 +1408,8 @@ const TimboCharts = {
       const padTop = 18, padBottom = 14;
       const plotH = vbH - padTop - padBottom;
 
-      const { months, tempAvg, tempMin, tempMax, humidity } = this.DATA;
+      const months = this.getMonths();
+      const { tempAvg, tempMin, tempMax, humidity } = this.DATA;
 
       // === Sub-resolución ===
       const SUB = 4;                   // sub-puntos por mes
@@ -1378,9 +1422,11 @@ const TimboCharts = {
       // Mes/semana a partir del índice j
       // Desktop muestra "Ene · sem 2"; mobile sólo "Ene" (el CSS oculta una u otra).
       const weekLabel = (j) => {
+        const copy = this.getCopy();
+        const months = this.getMonths();
         const monthIdx = Math.floor(j / SUB);
         const week     = (j % SUB) + 1;
-        const full     = months[monthIdx] + ' · sem ' + week;
+        const full     = months[monthIdx] + ' · ' + copy.readout.weekAbbr + ' ' + week;
         const short    = months[monthIdx];
         return (
           '<span class="outdoor-climate__readout-when outdoor-climate__readout-when--desktop">' + full  + '</span>' +
@@ -1510,17 +1556,19 @@ const TimboCharts = {
           dotHum.setAttribute('cx', x); dotHum.setAttribute('cy', yHum);
           [dotAvg, dotMin, dotMax, dotHum].forEach(d => d.setAttribute('opacity', '1'));
 
+          const copy = this.getCopy();
           return [
             '<span class="outdoor-climate__readout-month">' + weekLabel(j) + '</span>',
-            '<span class="outdoor-climate__readout-metric"><em>Media</em> ' + sAvg[j].toFixed(1) + '°</span>',
-            '<span class="outdoor-climate__readout-metric"><em>Mín</em> ' + sMin[j].toFixed(1) + '°</span>',
-            '<span class="outdoor-climate__readout-metric"><em>Máx</em> ' + sMax[j].toFixed(1) + '°</span>',
-            '<span class="outdoor-climate__readout-metric"><em>Humedad</em> ' + sHum[j].toFixed(0) + '%</span>',
+            '<span class="outdoor-climate__readout-metric"><em>' + copy.readout.mean + '</em> ' + sAvg[j].toFixed(1) + '°</span>',
+            '<span class="outdoor-climate__readout-metric"><em>' + copy.readout.min + '</em> ' + sMin[j].toFixed(1) + '°</span>',
+            '<span class="outdoor-climate__readout-metric"><em>' + copy.readout.max + '</em> ' + sMax[j].toFixed(1) + '°</span>',
+            '<span class="outdoor-climate__readout-metric"><em>' + copy.readout.humidity + '</em> ' + sHum[j].toFixed(0) + '%</span>',
           ].join('');
         },
         onLeave: () => {
           [dotAvg, dotMin, dotMax, dotHum].forEach(d => d.setAttribute('opacity', '0'));
         },
+        getDefaultHTML: () => this.getDefaultReadoutHTML('temp'),
       });
     },
 
@@ -1649,16 +1697,19 @@ const TimboCharts = {
         svg, panelKey: 'radiation', vbW, vbH, padTop, plotH,
         readoutId: 'outdoor-climate-radiation-readout',
         onIndex: (i) => {
+          const copy = this.getCopy();
+          const months = this.getMonths();
           radMountains.forEach((b, idx) => b.style.opacity = idx === i ? '1' : '0.3');
           return [
             '<span class="outdoor-climate__readout-month">' + months[i] + '</span>',
-            '<span class="outdoor-climate__readout-metric"><em>Radiación</em> ' + radiation[i] + ' Wh/m²</span>',
-            '<span class="outdoor-climate__readout-metric"><em>Lluvia</em> ' + rain[i] + ' mm</span>',
+            '<span class="outdoor-climate__readout-metric"><em>' + copy.readout.radiation + '</em> ' + radiation[i] + ' Wh/m²</span>',
+            '<span class="outdoor-climate__readout-metric"><em>' + copy.readout.rain + '</em> ' + rain[i] + ' mm</span>',
           ].join('');
         },
         onLeave: () => {
           radMountains.forEach(b => b.style.opacity = '1');
         },
+        getDefaultHTML: () => this.getDefaultReadoutHTML('radiation'),
       });
     },
 
@@ -1726,6 +1777,8 @@ const TimboCharts = {
         svg, panelKey: 'wind', vbW, vbH, padTop, plotH,
         readoutId: 'outdoor-climate-wind-readout',
         onIndex: (i) => {
+          const copy = this.getCopy();
+          const months = this.getMonths();
           const x = this.xFor(i, vbW);
           const y = this.yMap(wind[i], this.WIND_MIN, this.WIND_MAX, padTop, plotH);
           dotHover.setAttribute('cx', x);
@@ -1733,12 +1786,13 @@ const TimboCharts = {
           dotHover.setAttribute('opacity', '1');
           return [
             '<span class="outdoor-climate__readout-month">' + months[i] + '</span>',
-            '<span class="outdoor-climate__readout-metric"><em>Velocidad</em> ' + wind[i].toFixed(1) + ' m/s</span>',
+            '<span class="outdoor-climate__readout-metric"><em>' + copy.readout.speed + '</em> ' + wind[i].toFixed(1) + ' m/s</span>',
           ].join('');
         },
         onLeave: () => {
           dotHover.setAttribute('opacity', '0');
         },
+        getDefaultHTML: () => this.getDefaultReadoutHTML('wind'),
       });
     },
 
@@ -1746,7 +1800,7 @@ const TimboCharts = {
        `steps`     — cantidad de columnas/hitboxes (default = 12 meses).
        `xResolver` — función opcional que dado el índice devuelve la x
                      central; default usa xFor(i, vbW) (paneles mensuales). */
-    attachInteractivity({ svg, panelKey, vbW, vbH, padTop, plotH, readoutId, onIndex, onLeave, steps, xResolver }) {
+    attachInteractivity({ svg, panelKey, vbW, vbH, padTop, plotH, readoutId, onIndex, onLeave, steps, xResolver, getDefaultHTML }) {
       const n = typeof steps === 'number' ? steps : this.DATA.months.length;
       const plotW = vbW - this.PAD_X * 2;
       const colW = plotW / n;
@@ -1784,7 +1838,7 @@ const TimboCharts = {
         if (onLeave) onLeave();
         if (readout) {
           readout.classList.remove('is-active');
-          readout.innerHTML = defaultHTML;
+          readout.innerHTML = typeof getDefaultHTML === 'function' ? getDefaultHTML() : defaultHTML;
         }
       };
 

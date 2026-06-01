@@ -25,12 +25,12 @@
   <!-- ====== NAVEGACIÓN ====== -->
   <nav class="main-nav main-nav--dark" aria-label="Main navigation">
     <ul class="nav__links">
-      <li><a href="index.html" class="nav__link nav__link--active">Home</a></li>
-      <li><a href="proyectos.html" class="nav__link">Projects</a></li>
-      <li><a href="sustentabilidad.html" class="nav__link">Sustainability</a></li>
-      <li><a href="servicios.html" class="nav__link">Services</a></li>
-      <li><a href="sobre-nosotros.html" class="nav__link">About Us</a></li>
-      <li><a href="contacto.html" class="nav__link">Contact</a></li>
+      <li><a href="index.html" class="nav__link nav__link--active" data-i18n="nav.home">Inicio</a></li>
+      <li><a href="proyectos.html" class="nav__link" data-i18n="nav.projects">Proyectos</a></li>
+      <li><a href="sustentabilidad.html" class="nav__link" data-i18n="nav.sustainability">Sustentabilidad</a></li>
+      <li><a href="servicios.html" class="nav__link" data-i18n="nav.services">Servicios</a></li>
+      <li><a href="sobre-nosotros.html" class="nav__link" data-i18n="nav.about">Sobre Nosotros</a></li>
+      <li><a href="contacto.html" class="nav__link" data-i18n="nav.contact">Contacto</a></li>
     </ul>
 
     <!-- Floating logo y botón hamburguesa SÓLO mobile (ocultos en desktop por CSS).
@@ -78,7 +78,7 @@
     <section class="intro" id="intro" data-nav-theme="light">
       <div class="container intro__container">
         <div class="intro__body">
-          <p class="intro__label">Lo que hacemos</p>
+          <p class="intro__label" data-i18n="home.introLabel">Lo que hacemos</p>
           <h2 class="intro__claim" data-i18n="home.claim" data-i18n-html="true">
             <span class="intro__claim-line"><span class="intro__claim-line-inner">Entre lo salvaje y</span></span>
             <span class="intro__claim-line"><span class="intro__claim-line-inner">las personas.</span></span>
@@ -121,36 +121,43 @@
           <article class="philosophy__signal">
             <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/zona-climatica.svg" alt="" aria-hidden="true" loading="lazy">
             <img class="philosophy__signal-label-svg" src="assets/images/philosophy/iconos-nuevos/nombres/zona-climatica.svg" alt="" aria-hidden="true" loading="lazy">
+            <img class="philosophy__signal-label-svg-en" src="assets/images/philosophy/iconos-ingles/climatic-zone.svg" alt="" aria-hidden="true" loading="lazy">
             <p class="philosophy__signal-label" data-i18n="home.philosophyClimateZone" data-i18n-html="true">Zona<br>climática</p>
           </article>
           <article class="philosophy__signal">
             <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/trayectoria-solar.svg" alt="" aria-hidden="true" loading="lazy">
             <img class="philosophy__signal-label-svg" src="assets/images/philosophy/iconos-nuevos/nombres/trayectoria-solar.svg" alt="" aria-hidden="true" loading="lazy">
+            <img class="philosophy__signal-label-svg-en" src="assets/images/philosophy/iconos-ingles/solar-path.svg" alt="" aria-hidden="true" loading="lazy">
             <p class="philosophy__signal-label" data-i18n="home.philosophySunPath" data-i18n-html="true">Trayectoria<br>solar</p>
           </article>
           <article class="philosophy__signal">
             <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/temperatura-exterior.svg" alt="" aria-hidden="true" loading="lazy">
             <img class="philosophy__signal-label-svg" src="assets/images/philosophy/iconos-nuevos/nombres/temperatura-exterior.svg" alt="" aria-hidden="true" loading="lazy">
+            <img class="philosophy__signal-label-svg-en" src="assets/images/philosophy/iconos-ingles/temperature.svg" alt="" aria-hidden="true" loading="lazy">
             <p class="philosophy__signal-label" data-i18n="home.philosophyOutdoorTemperature" data-i18n-html="true">Temperatura<br>exterior</p>
           </article>
           <article class="philosophy__signal">
             <img class="philosophy__signal-icon philosophy__signal-icon--humidity" src="assets/images/philosophy/iconos-nuevos/humedad.svg" alt="" aria-hidden="true" loading="lazy">
             <img class="philosophy__signal-label-svg philosophy__signal-label-svg--humidity" src="assets/images/philosophy/iconos-nuevos/nombres/humedad.svg" alt="" aria-hidden="true" loading="lazy">
+            <img class="philosophy__signal-label-svg-en philosophy__signal-label-svg-en--humidity" src="assets/images/philosophy/iconos-ingles/humidity.svg" alt="" aria-hidden="true" loading="lazy">
             <p class="philosophy__signal-label" data-i18n="home.philosophyHumidity">Humedad</p>
           </article>
           <article class="philosophy__signal">
             <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/precipitacion.svg" alt="" aria-hidden="true" loading="lazy">
             <img class="philosophy__signal-label-svg philosophy__signal-label-svg--precipitation" src="assets/images/philosophy/iconos-nuevos/nombres/precipitacion.svg" alt="" aria-hidden="true" loading="lazy">
+            <img class="philosophy__signal-label-svg-en philosophy__signal-label-svg-en--precipitation" src="assets/images/philosophy/iconos-ingles/precipitation.svg" alt="" aria-hidden="true" loading="lazy">
             <p class="philosophy__signal-label" data-i18n="home.philosophyPrecipitation">Precipitación</p>
           </article>
           <article class="philosophy__signal">
             <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/patrones-de-viento.svg" alt="" aria-hidden="true" loading="lazy">
             <img class="philosophy__signal-label-svg" src="assets/images/philosophy/iconos-nuevos/nombres/patrones-de-viento.svg" alt="" aria-hidden="true" loading="lazy">
+            <img class="philosophy__signal-label-svg-en philosophy__signal-label-svg-en--wind" src="assets/images/philosophy/iconos-ingles/wind-patterns.svg" alt="" aria-hidden="true" loading="lazy">
             <p class="philosophy__signal-label" data-i18n="home.philosophyWindPatterns" data-i18n-html="true">Patrones<br>de viento</p>
           </article>
           <article class="philosophy__signal philosophy__signal--centered">
             <img class="philosophy__signal-icon" src="assets/images/philosophy/iconos-nuevos/cobertura-del-cielo.svg" alt="" aria-hidden="true" loading="lazy">
             <img class="philosophy__signal-label-svg" src="assets/images/philosophy/iconos-nuevos/nombres/cobertura-del-cielo.svg" alt="" aria-hidden="true" loading="lazy">
+            <img class="philosophy__signal-label-svg-en" src="assets/images/philosophy/iconos-ingles/sky-coverage.svg" alt="" aria-hidden="true" loading="lazy">
             <p class="philosophy__signal-label" data-i18n="home.philosophySkyCoverage" data-i18n-html="true">Cobertura<br>del cielo</p>
           </article>
         </div>
@@ -166,14 +173,7 @@
       <div class="nature-dialogue__image">
         <img src="assets/images/hero/hero_005.jpg" alt="Arquitectura en diálogo con la naturaleza" loading="lazy">
         <div class="nature-dialogue__text-mask">
-          <p class="nature-dialogue__text">La arquitectura establece un diálogo duradero entre sus ocupantes y el mundo natural.</p>
-        </div>
-      </div>
-      <div class="nature-dialogue__info">
-        <div class="container">
-          <p class="nature-dialogue__description">
-            <!-- Texto pendiente: se escribirá cuando se elija el proyecto -->
-          </p>
+          <p class="nature-dialogue__text" data-i18n="home.natureDialogueText">Los elementos de la naturaleza configuran el lenguaje arquitectónico de cada una de nuestras propuestas, y dan forma a espacios que establecen un diálogo duradero entre las personas y el mundo natural.</p>
         </div>
       </div>
     </section>

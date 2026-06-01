@@ -55,15 +55,15 @@
   </style>
 </head>
 
-<body class="page--haras-light">
+<body class="page--haras-light page--haras-san-pablo">
   <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
     <ul class="nav__links">
-      <li><a href="../index.html" class="nav__link">Home</a></li>
-      <li><a href="../proyectos.html" class="nav__link nav__link--active">Projects</a></li>
-      <li><a href="../sustentabilidad.html" class="nav__link">Sustainability</a></li>
-      <li><a href="../servicios.html" class="nav__link">Services</a></li>
-      <li><a href="../sobre-nosotros.html" class="nav__link">About Us</a></li>
-      <li><a href="../contacto.html" class="nav__link">Contact</a></li>
+      <li><a href="../index.html" class="nav__link" data-i18n="nav.home">Inicio</a></li>
+      <li><a href="../proyectos.html" class="nav__link nav__link--active" data-i18n="nav.projects">Proyectos</a></li>
+      <li><a href="../sustentabilidad.html" class="nav__link" data-i18n="nav.sustainability">Sustentabilidad</a></li>
+      <li><a href="../servicios.html" class="nav__link" data-i18n="nav.services">Servicios</a></li>
+      <li><a href="../sobre-nosotros.html" class="nav__link" data-i18n="nav.about">Sobre Nosotros</a></li>
+      <li><a href="../contacto.html" class="nav__link" data-i18n="nav.contact">Contacto</a></li>
     </ul>
 
     <!-- Floating logo y botón hamburguesa SÓLO mobile (ocultos en desktop por CSS).
@@ -180,10 +180,6 @@
           <p class="project-refuge__text anim-fade-up" data-anim-delay="120">La arquitectura responde a esta complejidad
             a través de una clara sectorización, que permite construir distintos niveles de privacidad y diversas formas
             de relación con el paisaje.</p>
-          <p class="project-refuge__text anim-fade-up" data-anim-delay="240">El proyecto organiza una secuencia de
-            espacios que van desde lo más abierto y colectivo hacia lo más contenido e íntimo, articulando ámbitos
-            intermedios, protegidos o expuestos. Esta gradación permite que cada usuario encuentre su propio modo de
-            habitar, al tiempo que garantiza un funcionamiento fluido, simple y dinámico del conjunto.</p>
         </div>
 
         <div class="project-refuge__gallery">
@@ -209,22 +205,29 @@
 
         <div class="project-frame__copy">
           <p class="project-frame__text anim-fade-up" data-anim-delay="0">
-            Desde el acceso, la vivienda se presenta como un volumen contenido y hermético, preservando la intimidad
-            respecto del exterior. Hacia el interior, sin embargo, la arquitectura se abre completamente, estableciendo
-            una relación directa con el entorno natural a través de grandes superficies vidriadas y amplios espacios de
-            transición.
+            El proyecto organiza una secuencia de espacios que van desde lo más abierto y colectivo hacia lo más
+            contenido e íntimo, articulando ámbitos intermedios, protegidos o expuestos. Esta gradación permite que
+            cada usuario encuentre su propio modo de habitar, al tiempo que garantiza un funcionamiento fluido, simple
+            y dinámico del conjunto.
           </p>
         </div>
       </div>
     </section>
 
     <!-- ====== PHRASE ======
-         NUEVA sección. TODO cliente: texto + imágenes phrase-01.jpg y phrase-02.jpg. -->
-    <section class="project-phrase" data-nav-theme="light">
+         NUEVA sección. TODO cliente: texto + imágenes phrase-01.jpg y phrase-02.jpg.
+
+         data-phrase-reveal="off": desactiva el reveal por máscara (estandar-b) del
+         módulo Timbo.projectPhraseTextReveal en esta página. El <p> usa estandar-a
+         (anim-fade-up) en su lugar. -->
+    <section class="project-phrase" data-nav-theme="light" data-phrase-reveal="off">
       <div class="project-phrase__container">
         <div class="project-phrase__copy">
-          <p class="project-frame__text anim-fade-up" data-anim-delay="0">
-            [TEXTO PENDIENTE — Phrase de Haras San Pablo]
+          <p class="project-phrase__text anim-fade-up" data-anim-delay="0">
+            Desde el acceso, la vivienda se presenta como un volumen contenido y hermético, preservando la intimidad
+            respecto del exterior. Hacia el interior, sin embargo, la arquitectura se abre completamente, estableciendo
+            una relación directa con el entorno natural a través de grandes superficies vidriadas y amplios espacios
+            de transición.
           </p>
         </div>
 
@@ -247,9 +250,9 @@
         <figure class="project-highlight__media anim-zoom-in">
           <img src="../assets/images/fondo-transitorio.png" alt="Casa de Campo Haras San Pablo" loading="lazy" decoding="async">
 
-          <h2 class="project-highlight__title">
-            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">[TÍTULO LÍNEA 1 — pendiente]<br><br></span></span>
-            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">[TÍTULO LÍNEA 2 — pendiente]</span></span>
+          <h2 class="project-highlight__title project-highlight__title--light">
+            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">La libertad de la naturaleza</span></span>
+            <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">se traduce en la arquitectura.</span></span>
           </h2>
         </figure>
       </div>
@@ -263,8 +266,7 @@
             y equilibrada, definida por la simetría y el orden. Una estructura de carácter industrial, inspirada en
             tipologías de galpón, se combina con una materialidad cálida y natural, dando lugar a una arquitectura
             contemporánea, sobria y atemporal.</p>
-          <p class="project-palette__text">Así, el edificio se pone al servicio de sus ocupantes: un lugar de encuentro
-            familiar, descanso y disfrute.</p>
+          <p class="project-palette__text">Así, el edificio se pone al servicio de sus ocupantes: un lugar de encuentro familiar, descanso y disfrute.</p>
         </div>
 
         <div class="project-palette__images project-palette__images--drag">

@@ -349,3 +349,14 @@ h6 {
   --color-azul: #1d4363;
   --color-celeste: #BCD8ED;
 }
+
+/* --- MOBILE: border-radius reducido ---
+   En mobile el radio se baja a 6px para mantener proporción visual.
+   Sólo afecta a los selectores que ya usan var(--border-radius);
+   los valores hardcodeados (border-radius: 12px;, etc.) no se ven
+   afectados hasta que se migren uno a uno, de forma controlada. */
+@media (max-width: 1023.98px) {
+  :root {
+    --border-radius: 6px;
+  }
+}
