@@ -53,6 +53,56 @@
       }
     }
 
+    /* ====================================================================
+       TOGGLE de ratio para .project-frame__media — TEMPORAL.
+       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
+       final. Borrar este bloque + el <script> de abajo + el <div
+       class="frame-ratio-toggle"> del HTML cuando se decida.
+       ==================================================================== */
+    .project-frame__media {
+      transition: aspect-ratio 0.5s ease;
+    }
+
+    .project-frame__media[data-frame-ratio="3/2"] {
+      aspect-ratio: 3 / 2;
+    }
+
+    .frame-ratio-toggle {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      display: flex;
+      gap: 0.25rem;
+      z-index: 7;
+    }
+
+    .frame-ratio-toggle button {
+      padding: 0.2rem 0.45rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.6rem;
+      font-weight: var(--fw-medium);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .frame-ratio-toggle button:hover {
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    .frame-ratio-toggle button.is-active {
+      background: #fff;
+      color: var(--color-black);
+      border-color: #fff;
+    }
+
     /* Encuadre excepcional solo para la imagen izquierda de refuge en esta
        página: prioriza mostrar la franja derecha y recorta desde la izquierda. */
     .project-refuge__image--focus-right img {
@@ -227,9 +277,15 @@
     <!-- ====== FRAME ====== -->
     <section class="project-frame project-frame--split" data-project-slug="club-de-mar" data-nav-theme="light">
       <div class="container project-frame__container">
-        <figure class="project-frame__media anim-fade-in">
+        <figure class="project-frame__media anim-fade-in" data-frame-ratio="16/9">
           <img src="../assets/images/projects/club-de-mar/frame-01.jpeg"
             alt="Club de Mar" loading="lazy" decoding="async">
+          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
+               de abajo cuando se elija el ratio final. -->
+          <div class="frame-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
+            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
+            <button type="button" data-ratio="3/2">3 / 2</button>
+          </div>
         </figure>
 
         <div class="project-frame__copy">
@@ -279,78 +335,6 @@
         </figure>
       </div>
     </section>
-
-    <!-- TEMPORAL: toggle de tamaño para iterar la imagen del highlight.
-         Borrar este bloque + el <script> de abajo cuando se elija el valor final.
-         El toggle se inyecta por JS dentro de .project-highlight__media (abajo-derecha),
-         mismo estilo visual que los toggles de ratio del sitio. -->
-    <style>
-      .project-highlight-scale-toggle {
-        position: absolute;
-        bottom: 0.5rem;
-        right: 0.5rem;
-        display: flex;
-        gap: 0.25rem;
-        z-index: 8;
-      }
-      .project-highlight-scale-toggle button {
-        padding: 0.2rem 0.45rem;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        border-radius: 999px;
-        background: rgba(0, 0, 0, 0.35);
-        color: #fff;
-        font-family: inherit;
-        font-size: 0.6rem;
-        font-weight: var(--fw-medium);
-        letter-spacing: 0.06em;
-        line-height: 1;
-        cursor: pointer;
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        transition: background 0.2s, color 0.2s, border-color 0.2s;
-      }
-      .project-highlight-scale-toggle button:hover {
-        background: rgba(0, 0, 0, 0.55);
-      }
-      .project-highlight-scale-toggle button.is-active {
-        background: #fff;
-        color: var(--color-black);
-        border-color: #fff;
-      }
-    </style>
-    <script>
-      (function () {
-        var section = document.querySelector('.project-highlight');
-        if (!section) return;
-        var media = section.querySelector('.project-highlight__media');
-        if (!media) return;
-        section.classList.add('project-highlight--scaled');
-        section.style.setProperty('--ph-scale', '1');
-        var scales = ['1', '0.9', '0.8'];
-        var toggle = document.createElement('div');
-        toggle.className = 'project-highlight-scale-toggle';
-        toggle.setAttribute('role', 'group');
-        toggle.setAttribute('aria-label', 'Cambiar tamaño de imagen del highlight');
-        scales.forEach(function (s, i) {
-          var btn = document.createElement('button');
-          btn.type = 'button';
-          btn.setAttribute('data-ph-scale', s);
-          btn.textContent = s;
-          if (i === 0) btn.classList.add('is-active');
-          toggle.appendChild(btn);
-        });
-        media.appendChild(toggle);
-        toggle.addEventListener('click', function (e) {
-          var btn = e.target.closest('button[data-ph-scale]');
-          if (!btn) return;
-          var scale = btn.getAttribute('data-ph-scale');
-          section.style.setProperty('--ph-scale', scale);
-          toggle.querySelectorAll('button').forEach(function (b) {
-            b.classList.toggle('is-active', b === btn);
-          });
-        });
-      })();
-    </script>
 
     <!-- ====== PALETTE ====== -->
     <section class="project-palette" data-nav-theme="light">
@@ -418,6 +402,23 @@
           section.appendChild(marker);
         }
         marker.textContent = label;
+      });
+    })();
+  </script>
+
+  <!-- TEMPORAL: lógica del toggle de ratio de frame. Borrar junto con el <style>
+       y el <div class="frame-ratio-toggle"> cuando se decida el ratio final. -->
+  <script>
+    (() => {
+      const media = document.querySelector('.project-frame__media[data-frame-ratio]');
+      if (!media) return;
+      const buttons = media.querySelectorAll('.frame-ratio-toggle button');
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const ratio = btn.dataset.ratio;
+          media.dataset.frameRatio = ratio;
+          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
+        });
       });
     })();
   </script>
