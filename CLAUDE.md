@@ -251,6 +251,171 @@ El breakpoint es **el mismo que usa el resto del sitio para mobile**: `1023.98px
 3. Si el usuario pide ocultar un `<br>` en mobile, agregar `class="br-desktop"` al `<br>` existente (no borrarlo, no envolverlo en nada raro).
 4. Las clases viven en `styles.css` como utilities globales, **no** dentro del CSS de una sección específica.
 
+## ⭐ Estándar de transformación de fotos — `cambio-dos-a-uno`
+
+Estándar para convertir una sección con **texto + dos fotos verticales** en **texto + una sola foto horizontal**. Aplica a páginas de proyecto (`proyectos/proyecto-*.html`) cuando el cliente pide simplificar la galería.
+
+**Nombre oficial:** `cambio-dos-a-uno`. El usuario lo invoca con frases como *"aplicá `cambio-dos-a-uno` a la sección `project-refuge` de exuma-lodge"*.
+
+**Caso de referencia donde se calibró:** `.project-refuge` de `proyectos/proyecto-exuma-lodge.html`.
+
+### Regla de oro
+
+**NUNCA se modifica la regla CSS base de una clase compartida entre páginas.** Si la transformación no aplica a todas las páginas, se implementa **siempre** con:
+
+1. una **clase modificadora BEM** agregada sólo al `<section>` objetivo;
+2. un **bloque CSS bajo el selector compuesto del modificador**;
+3. el HTML de la página objetivo ajustado puntualmente;
+4. **cero cambios** en las otras páginas.
+
+Ejemplo correcto:
+
+```html
+<section class="project-refuge project-refuge--single-horizontal" data-nav-theme="light">
+```
+
+```css
+.project-refuge--single-horizontal .project-refuge__gallery {
+  grid-template-columns: 1fr;
+}
+
+.project-refuge--single-horizontal .project-refuge__image {
+  aspect-ratio: 16 / 9;
+}
+```
+
+La regla base compartida (`.project-refuge__gallery`, `.project-refuge__image`, etc.) queda intacta.
+
+### Qué hace la transformación
+
+- **Texto:** queda exactamente igual.
+- **Galería:** las dos imágenes verticales se reemplazan por **una sola imagen horizontal** que ocupa el ancho total que antes ocupaban ambas juntas.
+- **Imagen sobreviviente:** se conserva la **primera** (`*-01.jpg` por convención). El path NO se cambia.
+- **Aspect-ratio horizontal por defecto:** `16 / 9`. Se puede cambiar a `3 / 2` u otro si el usuario lo pide.
+
+### Pasos para aplicar (desktop-first)
+
+1. **Releer HTML, CSS y JS actuales** de la sección destino. Nunca asumir estado.
+2. **Definir el nombre del modificador** antes de editar. Usar la convención `project-XXX--single-horizontal`.
+3. **HTML:** agregar la clase modificadora **sólo** al `<section>` objetivo.
+4. **HTML de la galería:** borrar el segundo `<figure>` completo (incluyendo `<img>` y comentarios internos). Conservar el primero sin tocar `src`, `alt`, `loading`, `decoding` ni `data-anim-*`.
+5. **CSS base:** no tocarla.
+6. **CSS modificador:** agregar, inmediatamente después del bloque base de la sección en `assets/css/styles.css`, un bloque bajo el selector compuesto del modificador. Ahí viven todas las diferencias de display:
+   - galería a `grid-template-columns: 1fr`;
+   - imagen a `aspect-ratio: 16 / 9` (o el ratio acordado).
+7. **CSS mobile:** no agregar reglas nuevas. Sólo si ya existían reglas mobile específicas de esa transformación y quedaron obsoletas, limpiarlas dentro del scope correcto.
+8. **JS:** revisar `assets/js/main.js`. Si hay módulos que apuntan a una segunda imagen, confirmar que esas clases **no estén aplicadas** en la sección que se transforma. Si sí están, avisar antes de seguir.
+
+### Reglas de oro operativas
+
+1. **Desktop-first.** Mobile se resuelve en otra pasada.
+2. **No tocar el path de la imagen sobreviviente.**
+3. **No tocar otras páginas.** La transformación es atómica y local.
+4. **Sin código residual.** Revisar que no queden selectores, comentarios o hooks que asuman dos imágenes.
+5. **Si otra sección necesita el mismo patrón**, se crea su propio modificador (`project-phrase--single-horizontal`, `project-palette--single-horizontal`, etc.) sólo cuando el usuario lo pida explícitamente.
+
+### Toggle temporal para iterar el ratio (opcional)
+
+Mientras se decide el `aspect-ratio` final, se puede agregar un **toggle in-page** con tres bloques autocontenidos dentro de esa página puntual:
+
+- `<style>` temporal para el toggle.
+- `<div class="...-ratio-toggle">` dentro de la galería, con botones `data-ratio="..."`.
+- `<script>` temporal que cambia un `data-*` en la galería y togglea la clase `is-active`.
+
+Todos los bloques se marcan con comentarios `TEMPORAL`. Cuando se define el ratio final, se borran juntos y el valor final queda fijo en `styles.css`.
+
+**Cierre obligatorio del proceso:** una vez que el cliente responde el formulario y define si el ratio final queda en `16 / 9`, `3 / 2` u otro, hay que **emprolijar la implementación**: borrar los bloques `TEMPORAL` (`<style>`, `<script>`, toggles y labels de revisión que ya no hagan falta), dejar sólo el modificador BEM + el CSS final en `assets/css/styles.css`, y **no dejar CSS embebido dentro del HTML**.
+
+### Estado de aplicaciones
+
+- [x] `proyecto-exuma-lodge.html` — sección `.project-refuge` con modificador `.project-refuge--single-horizontal`.
+- [x] `proyecto-cardano-clubhouse.html` — sección `.project-refuge` con modificador `.project-refuge--single-horizontal` y ratio `16 / 9`.
+- [x] `proyecto-haras-san-pablo.html` — sección `.project-refuge` con modificador `.project-refuge--single-horizontal` y toggle temporal `16 / 9` ↔ `3 / 2`.
+
+(A medida que se aplique a otras secciones, registrar acá página, sección, modificador y ratio final.)
+
+## ⭐ Estándar de transformación de fotos — `conversion-a-galeria`
+
+Estándar para convertir una sección con **una sola foto** en una **galería de varias fotos con dots navegables**, replicando la mecánica de `.project-overview__media`.
+
+**Nombre oficial:** `conversion-a-galeria`. El usuario lo invoca con frases como *"aplicá `conversion-a-galeria` a la sección `project-frame` de exuma-lodge"*.
+
+**Caso de referencia donde se calibró:** `.project-frame` de `proyectos/proyecto-exuma-lodge.html`.
+
+### Regla de oro
+
+**Nunca se modifica la regla base de una clase compartida para convertirla en galería.** La conversión vive siempre detrás de un modificador BEM en la sección objetivo.
+
+Ejemplo correcto:
+
+```html
+<section class="project-frame project-frame--split project-frame--gallery" data-project-slug="exuma-lodge" data-nav-theme="light">
+```
+
+```css
+.project-frame--gallery .project-frame__media { ... }
+.project-frame--gallery .project-frame__photo { ... }
+.project-frame--gallery .project-frame__img { ... }
+.project-frame--gallery .project-frame__dots { ... }
+.project-frame--gallery .project-frame__dot { ... }
+```
+
+La regla base (`.project-frame__media`, `.project-frame__media img`) se restaura o se mantiene como estaba para el resto de las páginas.
+
+### Qué hace la transformación
+
+- Conserva la posición del bloque en el layout.
+- Reemplaza la foto única por una galería con **dots arriba a la derecha**.
+- Las imágenes se apilan y cambian con **fade**.
+- La imagen activa hace **slow-zoom** (`scale(1.12)`).
+- Click en un dot: cambia slide y actualiza `is-active`.
+
+### Cantidad de fotos
+
+Por default son **2 fotos**. Si el usuario pide 3, el patrón escala igual. Antes de aplicar, confirmar cantidad de fotos y naming de assets (`-01`, `-02`, `-03`).
+
+### Pasos para aplicar (desktop-first)
+
+1. **Releer HTML, CSS y JS actuales** de la sección destino.
+2. **Definir el modificador** a usar. Convención: `project-XXX--gallery`.
+3. **HTML:** agregar la clase modificadora sólo al `<section>` objetivo.
+4. **HTML del media:** convertir la estructura original a wrapper + dots + `<figure>` interno de fotos. Las clases de animación existentes (`anim-fade-in`, `data-anim-delay`, etc.) se conservan en el wrapper.
+5. **CSS base:** no tocarla.
+6. **CSS modificador:** agregar, inmediatamente después del bloque base de la sección en `styles.css`, todas las reglas de la galería bajo el selector compuesto del modificador:
+   - `__media`;
+   - `__photo`;
+   - `__img` / `__img.is-active`;
+   - `__dots`;
+   - `__dot` / `__dot.is-active`.
+7. **Si el viejo bloque base tiene propiedades que chocan con el nuevo rol del wrapper**, neutralizarlas dentro del modificador, nunca en la regla base.
+8. **JS:** agregar o reutilizar un módulo tipo `projectXXXSlider` con guard `if (!dots.length || !imgs.length) return;`, y registrarlo en `Timbo.init()`.
+9. **Aviso al usuario:** si faltan assets (`-02`, `-03`), avisar al cerrar la tarea.
+
+### Reglas de oro operativas
+
+1. **Desktop-first.** No agregar reglas mobile nuevas en esta pasada.
+2. **No tocar el path de la primera imagen.**
+3. **Mantener el HTML y CSS de las otras páginas intactos.**
+4. **Sin código residual.** No dejar selectores viejos del tipo `.project-XXX__media img` actuando fuera del modificador.
+5. **El módulo JS debe ser seguro de invocar globalmente.** Si la galería no existe en una página, no hace nada.
+
+### Cierre del proceso
+
+Si durante la revisión se agregan helpers temporales inline dentro de una página puntual (por ejemplo labels, toggles, overrides o CSS de prueba), cuando el cliente define la versión final hay que borrarlos y consolidar el resultado permanente en `styles.css` y, si corresponde, en `main.js`. **No se deja CSS embebido en los HTML al cerrar la implementación.**
+
+### Estado de aplicaciones
+
+- [x] `proyecto-exuma-lodge.html` — sección `.project-frame` con modificador `.project-frame--gallery`.
+- [x] `proyecto-tobar-lodge.html` — sección `.project-frame` con modificador `.project-frame--gallery` y galería de `3` fotos.
+- [x] `proyecto-haras-san-pablo.html` — sección `.project-frame` con modificador `.project-frame--gallery` y galería de `2` fotos.
+- [x] `proyecto-tobar-lodge.html` — sección `.project-phrase` con modificador `.project-phrase--gallery` y galería de `3` fotos.
+- [x] `proyecto-haras-san-pablo.html` — sección `.project-phrase` con modificador `.project-phrase--gallery`, galería de `2` fotos y toggle temporal `16 / 9` ↔ `3 / 2`.
+- [x] `proyecto-tobar-lodge.html` — sección `.project-highlight` con modificador `.project-highlight--gallery` y galería de `2` fotos.
+- [x] `proyecto-tobar-lodge.html` — sección `.project-palette` con modificador `.project-palette--gallery` y galería de `2` fotos.
+- [x] `proyecto-cardano-clubhouse.html` — sección `.project-palette` con modificador `.project-palette--gallery` y galería de `2` fotos.
+
+(A medida que se aplique a otras secciones, registrar acá página, sección, modificador y cantidad de fotos.)
+
 ## Repo
 `https://github.com/Mariano-cell/timbo-arquitectura`
 
@@ -559,6 +724,7 @@ Para cada página, el ciclo es:
 - [ ] `proyectos/proyecto-cabana-suinda.html`.
 - [ ] `proyectos/proyecto-cherokee-ave.html`.
 - [ ] `sustentabilidad.html` — hero migrado (título + texto + SVG bilingüe ES/EN); pendiente: resto de las secciones (process, climate, breathe, metrics, strategies).
+- [x] `servicios.html` — listado de 6 servicios migrado (`services.items[]` en `data.js` con array de strings ES/EN).
 - [ ] `sobre-nosotros.html`.
 - [ ] `contacto.html`.
 - [ ] Limpieza final de `data.js` (borrar claves no usadas, ordenar).
@@ -650,6 +816,31 @@ Esta sección documenta **qué se hizo concretamente en cada hito**, para que cu
 - Sección 6 (Metrics / barras animadas con contadores).
 - Sección 7 (Strategies / SVG circular de 8 estrategias bioclimáticas).
 - Verificar las claves que ya existen en `sustainability` (`title`, `variables[]`, `emissionsChartTitle`, etc.) — pueden estar consumidas por estas secciones; chequear caso por caso al migrarlas.
+
+#### Servicios (`servicios.html`) — listado de servicios migrado
+
+**Archivos tocados:**
+- `assets/js/data.js` — nueva sección `services` con array `items[]` de 6 strings en ES + EN.
+- `servicios.html` — 6 `<p class="services-directory__title">` con `data-i18n="services.items.N"` y `data-i18n-html="true"` donde corresponde.
+
+**Estructura nueva en `data.js`:**
+- `services.es.items[]` y `services.en.items[]` — arrays de 6 strings, mismos índices en ambos idiomas.
+- Convención: los textos van en el mismo orden de aparición visual en la página. El índice de la clave (`services.items.0`, `services.items.1`, …) es el orden de aparición.
+
+**Detalle sobre claves con índice de array:** funciona porque `Timbo.i18n.resolve()` (patched en Fase 0) baja por el path con `node[part]`, y en JS `arr["0"]` equivale a `arr[0]`. No hizo falta modificar el motor. Sirve como patrón para otros listados.
+
+**Tabla de mapeo de ítems (orden de aparición = orden del array):**
+
+| Índice | ES | EN | Tiene `<br>`? |
+|---|---|---|---|
+| 0 | Arquitectura (Anteproyecto y proyecto) | Architecture (Concept & Project Design) | Sí |
+| 1 | Supervisión de obra | Construction Supervision | No |
+| 2 | Dirección de Obra | Construction Management | No |
+| 3 | Consultoría en sustentabilidad y performance | Building Performance & Environmental Consulting | Sí |
+| 4 | Evaluación posterior a la ocupación | Post-Occupancy Evaluation | No |
+| 5 | Interiorismo | Interior Design | No |
+
+**Capitalización en EN:** todos los ítems en Title Case, coherentes entre sí.
 
 ## ⚠️ Deuda técnica pendiente — fase de optimización
 

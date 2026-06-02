@@ -306,48 +306,17 @@
     </section>
 
     <!-- ====== PALETTE ====== -->
-    <section class="project-palette" data-nav-theme="light" data-palette-mode="drag">
+    <section class="project-palette" data-nav-theme="light">
       <div class="project-palette__container">
         <div class="project-palette__copy">
           <p class="project-palette__text">{{TEXTO_PALETTE}}</p>
         </div>
 
-        <div class="project-palette__images project-palette__images--drag">
+        <div class="project-palette__images">
           <figure class="project-palette__image project-palette__image--a anim-fade-in" data-anim-delay="120">
             <img src="../assets/images/projects/{{SLUG}}/palette-01.jpg" alt="{{NOMBRE_HUMANO}}"
               loading="lazy" decoding="async">
           </figure>
-
-          <button type="button" class="project-palette__divider" aria-label="Arrastrar para redimensionar">
-            <span class="project-palette__divider-icon" aria-hidden="true">
-              <svg class="project-palette__divider-svg" viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                <!-- Chevron izquierdo "<" — trazo humano con dos segmentos
-                     Bézier sutilmente curvados (no rectos perfectos) y puntas
-                     ligeramente desalineadas. Stroke gray-100 vía clase. -->
-                <path class="project-palette__divider-chevron" d="M 23.4 11.6
-                         C 21.8 13.9, 17.9 17.3, 14.7 19.8
-                         C 17.8 22.6, 21.5 26.1, 23.2 28.6" fill="none" />
-
-                <!-- Círculo trazado a mano: curvas Bézier con radios irregulares
-                     y un pequeño overshoot al final para simular un trazo humano.
-                     Centrado en (50, 20), radio ~14. Contorno negro, interior
-                     gray-100 (currentColor). -->
-                <path class="project-palette__divider-circle" d="M 50.4 6.2
-                         C 57.1 6.5, 63.2 11.8, 63.6 19.4
-                         C 64.1 26.9, 58.5 33.1, 51.2 33.8
-                         C 43.6 34.5, 37.1 28.9, 36.5 21.3
-                         C 35.9 13.9, 41.7 7.0, 49.6 6.2
-                         C 52.3 5.9, 54.5 6.6, 56.1 7.4" fill="currentColor" />
-
-                <!-- Chevron derecho ">" — espejo del izquierdo, con sus propias
-                     micro-imperfecciones para que no parezcan idénticos. -->
-                <path class="project-palette__divider-chevron" d="M 76.7 11.4
-                         C 78.4 13.7, 82.1 17.2, 85.4 19.9
-                         C 82.2 22.7, 78.6 26.0, 76.9 28.7" fill="none" />
-              </svg>
-            </span>
-          </button>
 
           <figure class="project-palette__image project-palette__image--b anim-fade-in" data-anim-delay="220">
             <img src="../assets/images/projects/{{SLUG}}/palette-02.jpg" alt="{{NOMBRE_HUMANO}}"

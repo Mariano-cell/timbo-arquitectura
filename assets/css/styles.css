@@ -21,12 +21,22 @@
      <br>                     visible en ambos (default legacy)
    Migración manual y caso por caso: NO cambiar <br> existentes
    sin pedido explícito. */
-.br-desktop { display: inline; }
-.br-mobile  { display: none; }
+.br-desktop {
+  display: inline;
+}
+
+.br-mobile {
+  display: none;
+}
 
 @media (max-width: 1023.98px) {
-  .br-desktop { display: none; }
-  .br-mobile  { display: inline; }
+  .br-desktop {
+    display: none;
+  }
+
+  .br-mobile {
+    display: inline;
+  }
 }
 
 /* --- BILINGÜE-TEMPORAL: assets duplicados ES/EN ---
@@ -42,8 +52,13 @@
    loader de data-svg-src para que acepte data-svg-src-en, o extender
    Timbo.i18n para que soporte atributos). Cuando se haga, borrar esta
    regla y los pares de <div>...--es / <div>...--en del HTML. */
-html[lang="en"] .sust-hero__visual-img--es { display: none; }
-html[lang="es"] .sust-hero__visual-img--en { display: none; }
+html[lang="en"] .sust-hero__visual-img--es {
+  display: none;
+}
+
+html[lang="es"] .sust-hero__visual-img--en {
+  display: none;
+}
 
 /* =========================
    NAVEGACIÓN
@@ -183,12 +198,29 @@ html[lang="es"] .sust-hero__visual-img--en { display: none; }
   transform: translate3d(0, 0, 0);
 }
 
-.main-nav.is-visible .nav__links li:nth-child(1) .nav__link { transition-delay: 80ms; }
-.main-nav.is-visible .nav__links li:nth-child(2) .nav__link { transition-delay: 170ms; }
-.main-nav.is-visible .nav__links li:nth-child(3) .nav__link { transition-delay: 260ms; }
-.main-nav.is-visible .nav__links li:nth-child(4) .nav__link { transition-delay: 350ms; }
-.main-nav.is-visible .nav__links li:nth-child(5) .nav__link { transition-delay: 440ms; }
-.main-nav.is-visible .nav__links li:nth-child(6) .nav__link { transition-delay: 530ms; }
+.main-nav.is-visible .nav__links li:nth-child(1) .nav__link {
+  transition-delay: 80ms;
+}
+
+.main-nav.is-visible .nav__links li:nth-child(2) .nav__link {
+  transition-delay: 170ms;
+}
+
+.main-nav.is-visible .nav__links li:nth-child(3) .nav__link {
+  transition-delay: 260ms;
+}
+
+.main-nav.is-visible .nav__links li:nth-child(4) .nav__link {
+  transition-delay: 350ms;
+}
+
+.main-nav.is-visible .nav__links li:nth-child(5) .nav__link {
+  transition-delay: 440ms;
+}
+
+.main-nav.is-visible .nav__links li:nth-child(6) .nav__link {
+  transition-delay: 530ms;
+}
 
 @keyframes nav-link-underline-draw {
   to {
@@ -198,6 +230,7 @@ html[lang="es"] .sust-hero__visual-img--en { display: none; }
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
+
   /* Nav mobile: lista vertical alineada arriba a la izquierda, sobre el hero.
      El nav deja de ser una barra horizontal de 60px y pasa a ser un bloque
      vertical que respeta el alto que ocupa la lista de items. */
@@ -259,7 +292,8 @@ html[lang="es"] .sust-hero__visual-img--en { display: none; }
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: var(--margin-a);  /* ← Cambia este número para acercar/alejar la hamburguesa del logo */
+    gap: var(--margin-a);
+    /* ← Cambia este número para acercar/alejar la hamburguesa del logo */
     opacity: 0;
     pointer-events: none;
     transition: opacity 300ms ease;
@@ -723,6 +757,7 @@ html[lang="es"] .sust-hero__visual-img--en { display: none; }
 
 /* Accesibilidad: si el usuario prefiere menos movimiento, sin animación */
 @media (prefers-reduced-motion: reduce) {
+
   .hero__logo,
   .hero__tagline {
     opacity: 1;
@@ -739,6 +774,7 @@ html[lang="es"] .sust-hero__visual-img--en { display: none; }
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
+
   /* En mobile: escondemos el video y usamos imagen como fondo del hero.
      Decisión: ahorrar data y evitar reproducir un video 4K en celular. */
   .hero__bg video {
@@ -884,12 +920,12 @@ html[lang="es"] .sust-hero__visual-img--en { display: none; }
 .intro__claim-line {
   display: block;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
   -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .intro__claim-line-inner {
@@ -950,10 +986,14 @@ html[lang="es"] .sust-hero__visual-img--en { display: none; }
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
+  .intro {
+    padding-bottom: var(--space-2xl);
+  }
+
   .intro__container {
     grid-template-columns: 1fr;
     margin: var(--margin-a) var(--margin-a) var(--margin-b) var(--margin-a);
-    row-gap: var(--space-4xl);
+    row-gap: 0;
   }
 
   .intro__photos {
@@ -970,7 +1010,8 @@ html[lang="es"] .sust-hero__visual-img--en { display: none; }
 
   .intro__body {
     padding-bottom: 6rem;
-    gap: var(--space-md); /* mitad del gap desktop (32px → 16px) */
+    gap: var(--space-md);
+    /* mitad del gap desktop (32px → 16px) */
   }
 
   .intro__text {
@@ -1058,12 +1099,12 @@ html[lang="es"] .sust-hero__visual-img--en { display: none; }
 .nature-dialogue__text-line {
   display: block;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
   -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .nature-dialogue__text-line-inner {
@@ -1097,12 +1138,11 @@ html[lang="es"] .sust-hero__visual-img--en { display: none; }
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
+
   /* Altura de la sección reducida: en desktop la imagen es 120vh,
      en mobile la bajamos a 75vh. Recorta más la foto pero la sección
      queda más compacta. Ajustar este valor si querés más/menos alto. */
-  .nature-dialogue__image img {
-
-  }
+  .nature-dialogue__image img {}
 
   /* En mobile el texto pasa al mismo tamaño que .philosophy__text
      y se ancla en la parte inferior derecha de la imagen.
@@ -1115,10 +1155,8 @@ html[lang="es"] .sust-hero__visual-img--en { display: none; }
     left: auto;
     right: var(--space-lg);
     bottom: clamp(24px, 5vh, 56px);
-    max-width: min(
-      980px,
-      calc(100vw - var(--space-lg) - var(--space-xl))
-    );
+    max-width: min(980px,
+        calc(100vw - var(--space-lg) - var(--space-xl)));
     text-align: right;
   }
 
@@ -1175,12 +1213,12 @@ html[lang="es"] .sust-hero__visual-img--en { display: none; }
 .philosophy__statement-line {
   display: block;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
   -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 /* El texto arranca escondido (translateY 100% = empujado totalmente hacia abajo,
@@ -1352,6 +1390,7 @@ html[lang='en'] .philosophy__signal-label {
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
+
   /* Pasamos de grid 2 columnas a 1 sola columna.
      El orden del HTML define el apilado: arriba .philosophy__content
      (título + párrafo + botón), abajo .philosophy__signals (íconos). */
@@ -1404,6 +1443,7 @@ html[lang='en'] .philosophy__signal-label {
    layout mobile (apilado, gap del container, etc.) sigue cambiando a
    1023.98px en el @media de arriba. */
 @media (max-width: 600px) {
+
   /* Columnas fijas (9rem c/u, un poco más chicas que las 11rem de
      desktop, para que entren cómodas en 375px). justify-content: end
      del bloque base las pega a la derecha; el espacio sobrante queda
@@ -1553,12 +1593,10 @@ body::after {
   z-index: 120;
   pointer-events: none;
   opacity: 0;
-  background: radial-gradient(
-    120% 80% at 50% -10%,
-    rgba(15, 31, 52, 0) 0%,
-    rgba(12, 26, 44, 0.32) 62%,
-    rgba(8, 14, 24, 0.68) 100%
-  );
+  background: radial-gradient(120% 80% at 50% -10%,
+      rgba(15, 31, 52, 0) 0%,
+      rgba(12, 26, 44, 0.32) 62%,
+      rgba(8, 14, 24, 0.68) 100%);
   transition: opacity 440ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -1724,7 +1762,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .project-hero--chacras .project-hero__title {
-  color: var(--color-black);
+  color: #fff;
 }
 
 .project-hero--cardano .project-hero__title {
@@ -1732,6 +1770,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .project-hero--club-de-mar .project-hero__title {
+  color: var(--color-black);
+}
+
+.project-hero--tobar .project-hero__title {
   color: var(--color-black);
 }
 
@@ -1806,6 +1848,11 @@ html.is-entering-home.is-entering-home-active .main-nav {
   padding: clamp(4.5rem, 7vw, 6.5rem) 0 clamp(4.5rem, 7vw, 6.5rem);
   background-color: var(--color-bg-light);
   color: var(--color-text-primary);
+  /* Permitir que el mapa (dentro de .project-overview__facts) sobresalga por
+     debajo de esta sección sin quedar tapado por la siguiente. */
+  position: relative;
+  z-index: 2;
+  overflow: visible;
 }
 
 .project-overview__container {
@@ -1826,12 +1873,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .project-overview__title-line {
   display: block;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
   -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .project-overview__title-line-inner {
@@ -1860,6 +1907,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   gap: clamp(0.7rem, 1.1vw, 0.95rem);
   padding-top: clamp(0.5rem, 1.2vw, 1.5rem);
   position: relative;
+  z-index: 2;
   top: -2rem;
   will-change: transform;
 }
@@ -1924,6 +1972,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .project-overview__fact-icon,
   .project-overview__fact.is-visible .project-overview__fact-icon {
     opacity: 1;
@@ -2048,6 +2097,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
   background-color: var(--color-bg-light);
   color: var(--color-text-primary);
   overflow-x: clip;
+  /* Queda por debajo de .project-overview para que el mapa pueda sobresalir
+     sin ser tapado por esta sección. */
+  position: relative;
+  z-index: 1;
 }
 
 .project-refuge__container {
@@ -2105,6 +2158,81 @@ html.is-entering-home.is-entering-home-active .main-nav {
   object-fit: cover;
 }
 
+/* === MODIFICADOR: project-refuge--single-horizontal ===
+   Reemplaza la galería de dos fotos verticales por una sola foto horizontal.
+   Sólo aplica a las secciones que tienen esta clase en su HTML. */
+.project-refuge--single-horizontal .project-refuge__gallery {
+  grid-template-columns: 1fr;
+}
+
+.project-refuge--single-horizontal .project-refuge__image {
+  aspect-ratio: 16 / 9;
+}
+
+/* === MODIFICADOR: project-refuge--gallery ===
+   Convierte la galería de refuge en un slider con dots navegables,
+   fade y slow-zoom, sin tocar la base compartida de la sección. */
+.project-refuge--gallery .project-refuge__gallery {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding-top: 0.3rem;
+  overflow: visible;
+  z-index: 6;
+}
+
+.project-refuge--gallery .project-refuge__photo {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: var(--color-bg-light);
+}
+
+.project-refuge--gallery .project-refuge__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scale(1);
+  transform-origin: center center;
+  transition: opacity 600ms ease, transform 8000ms ease-out;
+}
+
+.project-refuge--gallery .project-refuge__img.is-active {
+  opacity: 1;
+  position: relative;
+  transform: scale(1.12);
+}
+
+.project-refuge--gallery .project-refuge__dots {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+  padding-right: 18px;
+}
+
+.project-refuge--gallery .project-refuge__dot {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background-color: rgba(170, 162, 67, 0.24);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+}
+
+.project-refuge--gallery .project-refuge__dot.is-active {
+  background-color: #aaa243;
+}
+
 /* Hooks scroll-driven para las imágenes de .project-refuge.
    Estado base como fallback si JS no corre; los valores reales los setea Timbo.refugePhoto* inline. */
 .project-refuge__image--slide-x {
@@ -2156,6 +2284,94 @@ html.is-entering-home.is-entering-home-active .main-nav {
   display: block;
   position: relative;
   z-index: 6;
+}
+
+.project-frame[data-project-slug="cherokee-ave"] .project-frame__media {
+  aspect-ratio: 4 / 5;
+}
+
+@media (min-width: 1024px) {
+  .project-frame[data-project-slug="cherokee-ave"] .project-frame__media {
+    width: 70%;
+    justify-self: start;
+    margin-left: var(--margin-c);
+  }
+}
+
+/* === MODIFICADOR: project-frame--gallery ===
+   Convierte el media de una sola foto en una galería con dots navegables,
+   replicando la mecánica de .project-overview__media (fade + slow-zoom).
+   Sólo aplica a las secciones que tienen esta clase en su HTML. */
+.project-frame--gallery .project-frame__media {
+  aspect-ratio: auto;
+  overflow: visible;
+  border-radius: 0;
+  background-color: transparent;
+  padding-top: 0.3rem;
+}
+
+.project-frame--gallery .project-frame__media img {
+  height: auto;
+  z-index: auto;
+}
+
+.project-frame--gallery .project-frame__media {
+  position: relative;
+  margin: 0;
+  padding-top: 0.3rem;
+  z-index: 6;
+}
+
+.project-frame--gallery .project-frame__photo {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: var(--color-bg-light);
+}
+
+.project-frame--gallery .project-frame__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scale(1);
+  transform-origin: center center;
+  transition: opacity 600ms ease, transform 8000ms ease-out;
+}
+
+.project-frame--gallery .project-frame__img.is-active {
+  opacity: 1;
+  position: relative;
+  transform: scale(1.12);
+}
+
+.project-frame--gallery .project-frame__dots {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+  padding-right: 18px;
+}
+
+.project-frame--gallery .project-frame__dot {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background-color: rgba(170, 162, 67, 0.24);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+}
+
+.project-frame--gallery .project-frame__dot.is-active {
+  background-color: #aaa243;
 }
 
 .project-frame__copy {
@@ -2216,6 +2432,19 @@ html.is-entering-home.is-entering-home-active .main-nav {
   z-index: 6;
 }
 
+/* === MODIFICADOR: project-highlight--scaled ===
+   Permite achicar la imagen del highlight (default 1) y empujarla
+   contra el borde derecho del contenedor. El valor del scale se setea
+   por instancia con la custom property --ph-scale (1 / 0.9 / 0.8 / 0.7 / 0.6).
+   El __title sigue posicionado relativo al __media, así que se mueve junto
+   con la imagen. */
+.project-highlight--scaled .project-highlight__media {
+  width: calc(100% * var(--ph-scale, 1));
+  margin-left: auto;
+  margin-right: 0;
+  transition: width 0.4s ease;
+}
+
 /* Animación de entrada: la imagen hace un zoom-in lento sobre sí misma
    dentro de su marco, una sola vez al entrar al viewport.
    Estado inicial: scale(1). Estado final (.is-visible): scale(1.06). */
@@ -2234,6 +2463,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .project-highlight__media.anim-zoom-in img {
     transition: none;
   }
+
   .project-highlight__media.anim-zoom-in.is-visible img {
     transform: scale(1);
   }
@@ -2282,15 +2512,25 @@ html.is-entering-home.is-entering-home-active .main-nav {
   color: var(--color-white);
 }
 
+.project-highlight[data-project-slug="cardano"] .project-highlight__title {
+  left: var(--margin-c);
+  right: auto;
+}
+
+.project-highlight[data-project-slug="haras-san-pablo"] .project-highlight__title {
+  top: auto;
+  bottom: var(--margin-c);
+}
+
 .project-highlight__title-line {
   display: block;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
   -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .project-highlight__title-line-inner {
@@ -2301,6 +2541,86 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .project-highlight__title.is-revealed .project-highlight__title-line-inner {
   transform: translateY(0);
+}
+
+/* === MODIFICADOR: project-highlight--gallery ===
+   Convierte el media de una sola foto en una galería con dots navegables,
+   replicando la mecánica de .project-overview__media.
+   Sólo aplica a las secciones que tienen esta clase en su HTML. */
+.project-highlight--gallery .project-highlight__media {
+  aspect-ratio: auto;
+  overflow: visible;
+  border-radius: 0;
+  background-color: transparent;
+}
+
+.project-highlight--gallery .project-highlight__media img {
+  height: auto;
+  z-index: auto;
+}
+
+.project-highlight--gallery .project-highlight__photo {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: var(--color-bg-light);
+}
+
+.project-highlight--gallery .project-highlight__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.project-highlight--gallery .project-highlight__media.anim-zoom-in .project-highlight__img {
+  transform: scale(1);
+  transform-origin: center center;
+  transition: opacity 600ms ease, transform 8000ms ease-out;
+  will-change: transform;
+}
+
+.project-highlight--gallery .project-highlight__img.is-active {
+  opacity: 1;
+  position: relative;
+}
+
+.project-highlight--gallery .project-highlight__media.anim-zoom-in.is-visible .project-highlight__img {
+  transform: scale(1);
+}
+
+.project-highlight--gallery .project-highlight__media.anim-zoom-in.is-visible .project-highlight__img.is-active {
+  transform: scale(1.12);
+}
+
+.project-highlight--gallery .project-highlight__dots {
+  position: absolute;
+  top: 0.8rem;
+  right: 18px;
+  z-index: 8;
+  display: flex;
+  gap: 0.45rem;
+}
+
+.project-highlight--gallery .project-highlight__dot {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background-color: rgba(170, 162, 67, 0.24);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+}
+
+.project-highlight--gallery .project-highlight__dot.is-active {
+  background-color: #aaa243;
 }
 
 .project-palette {
@@ -2363,12 +2683,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .project-palette__text-line {
   display: block;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
   -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .project-palette__text-line-inner {
@@ -2411,25 +2731,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
   min-width: 0;
 }
 
-.project-palette__images--scroll-width-active {
-  display: block;
-}
-
-.project-palette__images--scroll-width-active .project-palette__image {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  will-change: width;
-}
-
-.project-palette__images--scroll-width-active .project-palette__image:first-child {
-  left: 0;
-}
-
-.project-palette__images--scroll-width-active .project-palette__image:last-child {
-  right: 0;
-}
-
 .project-palette__image {
   width: 100%;
   height: auto;
@@ -2465,261 +2766,76 @@ html.is-entering-home.is-entering-home-active .main-nav {
   object-fit: cover;
 }
 
-/* ========================= PROJECT PALETTE — DRAG MODE ========================= */
-/* Wrapper flex con dos figuras redimensionables por un divisor arrastrable.
-   Solo se aplica cuando el wrapper tiene la clase --drag. */
-.project-palette__images--drag {
-  display: flex;
-  align-items: stretch;
-  /* No usamos gap aquí: la separación entre imágenes se logra
-     restando 4px (mitad del gap visual de 8px) al width de cada
-     figura desde JS con calc(X% - 4px). De esta forma la frontera
-     real entre A y B coincide exactamente con el porcentaje X% del
-     wrapper, y el divider (que se posiciona en ese mismo porcentaje)
-     queda perfectamente centrado en el medio del hueco. */
-  gap: 0;
-  position: relative;
-  touch-action: pan-y;
-  user-select: none;
-  /* El JS calcula y setea --palette-drag-height en función del ancho
-     del wrapper, para que el alto sea fijo y NO dependa del ancho
-     individual de cada figura. */
-  height: var(--palette-drag-height, auto);
+/* === MODIFICADOR: project-palette--single-horizontal ===
+   Reemplaza la galería de dos fotos verticales por una sola foto horizontal.
+   Sólo aplica a las secciones que tienen esta clase en su HTML. */
+.project-palette--single-horizontal .project-palette__images {
+  grid-template-columns: 1fr;
 }
 
-.project-palette__images--drag .project-palette__image {
-  flex: 0 0 auto;
-  width: 50%;
-  height: 100%;
-  min-width: 0;
-  aspect-ratio: auto;
-  transition: none;
+.project-palette--single-horizontal .project-palette__image {
+  aspect-ratio: 16 / 9;
+}
+
+/* === MODIFICADOR: project-palette--gallery ===
+   Convierte el bloque de imágenes en una galería con dots navegables,
+   replicando la mecánica de .project-overview__media.
+   Sólo aplica a las secciones que tienen esta clase en su HTML. */
+.project-palette--gallery .project-palette__images {
+  display: block;
+  padding-top: 0.3rem;
+}
+
+.project-palette--gallery .project-palette__photo {
+  position: relative;
+  margin: 0;
   overflow: hidden;
-  position: relative;
+  border-radius: 12px;
+  background-color: var(--color-bg-light);
 }
 
-/* La imagen B lleva un margen izquierdo de 8px para crear el hueco
-   visual entre ambas (gap real). El JS resta 4px al width de cada
-   figura, de modo que la suma total siga dando 100%:
-   (X% - 4) + 8 + ((100-X)% - 4) = 100%. */
-.project-palette__images--drag .project-palette__image--b {
-  margin-left: 8px;
-}
-
-/* En modo drag las imágenes son horizontales presentadas en un marco vertical:
-   la <img> conserva su aspect ratio (alto = 100% del marco) y la <figure>
-   actúa como ventana que muestra más o menos material lateral según su ancho.
-   Por eso forzamos width: auto y un object-position por imagen. */
-.project-palette__images--drag .project-palette__image img {
-  width: auto;
-  height: 100%;
-  max-width: none;
+.project-palette--gallery .project-palette__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
+  opacity: 0;
   position: absolute;
   top: 0;
-}
-
-/* Imagen A: la <img> queda anclada al borde IZQUIERDO de la figura
-   (que coincide con el borde izquierdo del wrapper, ya que la figura A
-   está pegada ahí por el flex). Así la foto no se mueve cuando cambia
-   el ancho de la figura: el lado derecho se va revelando o tapando.
-   Mantiene el border-radius en todas las esquinas (el contenedor recorta
-   la imagen interior con overflow: hidden). */
-.project-palette__images--drag .project-palette__image--a img {
   left: 0;
-  right: auto;
-  object-position: left center;
-}
-
-/* Imagen B: la <img> queda anclada al borde DERECHO de la figura
-   (que coincide con el borde derecho del wrapper). El lado izquierdo
-   se revela o se tapa según el ancho de la figura. */
-.project-palette__images--drag .project-palette__image--b img {
-  right: 0;
-  left: auto;
-  object-position: right center;
-}
-
-.project-palette__divider {
-  /* En modo drag el divider sale del flujo flex y queda absoluto sobre
-     el wrapper, así puede moverse libremente en X (controla el width de
-     las imágenes vía JS) y en Y (sin efecto sobre las imágenes; solo
-     reposiciona el handle). */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  /* Se traslada -50% en X para que su centro coincida con el borde entre
-     las dos imágenes, y -50% en Y para centrarlo verticalmente. */
-  transform: translate(-50%, -50%);
-  width: 8px;
-  height: 48px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--color-text-primary);
-  cursor: pointer;
-  z-index: 2;
-  /* El ícono se posiciona absolute para poder ser más grande
-     que el ancho del divider sin ser recortado por él. */
-  overflow: visible;
-  touch-action: none;
-}
-
-/* Hitbox extendido: el área clickeable del divider cubre el círculo del SVG
-   sin afectar al layout. El pseudo-elemento es transparente, queda centrado
-   sobre el divider, y tiene un tamaño aproximado al del círculo en pantalla. */
-.project-palette__divider::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: clamp(36px, 42px, 50px);
-  height: clamp(36px, 42px, 50px);
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: transparent;
-  pointer-events: auto;
-}
-
-.project-palette__divider:focus-visible {
-  outline: 2px solid var(--color-text-primary);
-  outline-offset: 2px;
-}
-
-.project-palette__divider-icon {
-  /* Posicionado absoluto sobre el divider, centrado vertical y
-     horizontalmente. Así puede crecer más allá del ancho de 8px
-     del divider sin ser recortado.
-     Tamaño base 75% (scale 0.75); en hover del divider vuelve al
-     100% (scale 1). El transform combina el centrado (translate)
-     con el scale. */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  /* Estado base: tamaño reducido. Hover: +10% sobre el base. */
-  transform: translate(-50%, -50%) scale(0.6);
+  transform: scale(1);
   transform-origin: center center;
-  transition: transform 0.25s ease-out;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-gray-100);
-  line-height: 1;
-  pointer-events: none;
-  /* Ancho de la "píldora" (background-color + border-radius). Base:
-     levemente más angosta (acompaña a las flechas más cerca del círculo).
-     Hover: se expande al ancho del SVG (~88px). Transición lenta y suave. */
-  width: clamp(70px, 82px, 98px);
-  transition: width 0.5s ease-out, transform 0.5s ease-out;
-  /* Fondo verde oliva (color-olive) detrás del SVG. El círculo y las flechas
-     son opacos, así que el oliva solo se percibe en los espacios entre
-     las formas. El border-radius redondea las puntas para que el
-     rectángulo se vea como una píldora. */
-  border-radius: 9999px;
-  border: 1px solid rgba(0, 0, 0, 0.5);
-  background-color: var(--color-olive);
+  transition: opacity 600ms ease, transform 8000ms ease-out;
 }
 
-/* En hover del divider (que cubre todo el hitbox extendido del ::before),
-   el interior del círculo pasa de negro a gray-100. */
-/* Hover/focus restringido a dispositivos con puntero fino para evitar
-   "hover pegado" en touch (ver nota más abajo). */
-@media (hover: hover) and (pointer: fine) {
-  .project-palette__divider:hover .project-palette__divider-circle,
-  .project-palette__divider:focus-visible .project-palette__divider-circle {
-    fill: var(--color-gray-300);
-  }
+.project-palette--gallery .project-palette__img.is-active {
+  opacity: 1;
+  position: relative;
+  transform: scale(1.12);
 }
 
-.project-palette__images--drag.is-dragging .project-palette__divider-circle {
-  fill: var(--color-gray-300);
+.project-palette--gallery .project-palette__dots {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+  padding-right: 18px;
 }
 
-/* En hover, la píldora se ensancha para volver a contener las flechas
-   que regresan a su posición original (más alejadas del círculo).
-   La expansión por :hover y :focus-visible queda restringida a dispositivos
-   con puntero fino (mouse). En touch, el "hover pegado" post-tap dejaba la
-   píldora expandida después del click-to-center. La expansión sigue
-   funcionando durante el drag activo (.is-dragging) en cualquier device. */
-@media (hover: hover) and (pointer: fine) {
-  .project-palette__divider:hover .project-palette__divider-icon,
-  .project-palette__divider:focus-visible .project-palette__divider-icon {
-    width: clamp(75px, 88px, 105px);
-  }
-}
-
-.project-palette__images--drag.is-dragging .project-palette__divider-icon {
-  width: clamp(75px, 88px, 105px);
-}
-
-.project-palette__divider-svg {
-  /* viewBox 100x40 (2.5:1). El alto manda: 35px de alto da ~87px de ancho,
-     que cubre el círculo central y los dos chevrons laterales. */
-  height: clamp(30px, 35px, 42px);
-  width: auto;
-  display: block;
-}
-
-/* Contorno y relleno del círculo: negro (base).
-   transform-box: fill-box + transform-origin: center hace que el scale
-   gire alrededor del centro del propio path (no del viewBox completo).
-   Así achicamos solo el círculo sin tocar las flechas ni el SVG.
-   El fill cambia a gray-100 durante el hover del divider (regla abajo). */
-.project-palette__divider-circle {
-  stroke: var(--color-black);
-  fill: #ffffff;
-  transform-box: fill-box;
-  transform-origin: center;
-  transform: scale(0.85);
-  transition: fill 0.75s ease-out;
-}
-
-/* Flechas < y >: trazo negro, un poco más grueso que el círculo.
-   Estado base: cada chevron se acerca al círculo con translateX.
-   Estado hover: vuelven a translateX(0) (su posición "original" en
-   el SVG, más alejadas del círculo). */
-.project-palette__divider-chevron {
-  stroke: var(--color-black);
-  stroke-width: 3;
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: transform 0.5s ease-out;
-}
-
-/* Selectores específicos: chevron izquierdo se corre hacia la derecha,
-   chevron derecho hacia la izquierda. Uso nth-of-type sobre los paths
-   con la clase divider-chevron. */
-.project-palette__divider-svg .project-palette__divider-chevron:first-of-type {
-  transform: translateX(3px);
-}
-
-.project-palette__divider-svg .project-palette__divider-chevron:last-of-type {
-  transform: translateX(-3px);
-}
-
-/* En hover/focus/drag, las flechas vuelven a su posición original.
-   Hover/focus restringido a punteros finos para evitar "hover pegado" en touch. */
-@media (hover: hover) and (pointer: fine) {
-  .project-palette__divider:hover .project-palette__divider-chevron:first-of-type,
-  .project-palette__divider:focus-visible .project-palette__divider-chevron:first-of-type,
-  .project-palette__divider:hover .project-palette__divider-chevron:last-of-type,
-  .project-palette__divider:focus-visible .project-palette__divider-chevron:last-of-type {
-    transform: translateX(0);
-  }
-}
-
-.project-palette__images--drag.is-dragging .project-palette__divider-chevron:first-of-type,
-.project-palette__images--drag.is-dragging .project-palette__divider-chevron:last-of-type {
-  transform: translateX(0);
-}
-
-.project-palette__images--drag.is-dragging {
+.project-palette--gallery .project-palette__dot {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background-color: rgba(170, 162, 67, 0.24);
   cursor: pointer;
+  transition: background-color var(--transition-base);
 }
 
-.project-palette__images--drag.is-dragging .project-palette__image {
-  pointer-events: none;
+.project-palette--gallery .project-palette__dot.is-active {
+  background-color: #aaa243;
 }
 
 /* ========================= PROJECT PHRASE ========================= */
@@ -2812,32 +2928,15 @@ html.is-entering-home.is-entering-home-active .main-nav {
   font-weight: var(--fw-regular);
 }
 
-/* === Palette drag — scope: Haras San Pablo ===
-   Las fotos originales del modo drag se quedan cortas cuando el usuario arrastra
-   al extremo: queda un espacio en blanco a un lado. Escalamos la <img> un 7%
-   manteniendo proporciones para que cubra. El transform-origin coincide con el
-   borde al que ya está anclada cada imagen (A izquierda, B derecha), así el
-   crecimiento ocurre hacia el centro del marco y no rompe el anclaje. El overflow
-   hidden de la <figure> recorta lo que sobresale por arriba/abajo. */
-.page--haras-san-pablo .project-palette__images--drag .project-palette__image--a img {
-  transform: scale(1.07);
-  transform-origin: left center;
-}
-
-.page--haras-san-pablo .project-palette__images--drag .project-palette__image--b img {
-  transform: scale(1.07);
-  transform-origin: right center;
-}
-
 .project-phrase__text-line {
   display: block;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
   -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .project-phrase__text-line-inner {
@@ -2857,25 +2956,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
   gap: 8px;
   align-items: start;
   min-width: 0;
-}
-
-.project-phrase__images--scroll-width-active {
-  display: block;
-}
-
-.project-phrase__images--scroll-width-active .project-phrase__image {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  will-change: width;
-}
-
-.project-phrase__images--scroll-width-active .project-phrase__image:first-child {
-  left: 0;
-}
-
-.project-phrase__images--scroll-width-active .project-phrase__image:last-child {
-  right: 0;
 }
 
 .project-phrase__image {
@@ -2900,6 +2980,78 @@ html.is-entering-home.is-entering-home-active .main-nav {
   object-fit: cover;
 }
 
+/* === MODIFICADOR: project-phrase--gallery ===
+   Convierte el bloque de imágenes en una galería con dots navegables,
+   replicando la mecánica de .project-overview__media.
+   Sólo aplica a las secciones que tienen esta clase en su HTML. */
+.project-phrase--gallery .project-phrase__images {
+  display: block;
+  padding-top: 0.3rem;
+}
+
+.project-phrase--gallery .project-phrase__photo {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: var(--color-bg-light);
+}
+
+.project-phrase--gallery .project-phrase__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scale(1);
+  transform-origin: center center;
+  transition: opacity 600ms ease, transform 8000ms ease-out;
+}
+
+.project-phrase--gallery .project-phrase__img.is-active {
+  opacity: 1;
+  position: relative;
+  transform: scale(1.12);
+}
+
+.project-phrase--gallery .project-phrase__dots {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+  padding-right: 18px;
+}
+
+.project-phrase--gallery .project-phrase__dot {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background-color: rgba(170, 162, 67, 0.24);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+}
+
+.project-phrase--gallery .project-phrase__dot.is-active {
+  background-color: #aaa243;
+}
+
+/* === MODIFICADOR: project-phrase--single-horizontal ===
+   Reemplaza la galería de dos fotos verticales por una sola foto horizontal.
+   Sólo aplica a las secciones que tienen esta clase en su HTML. */
+.project-phrase--single-horizontal .project-phrase__images {
+  grid-template-columns: 1fr;
+}
+
+.project-phrase--single-horizontal .project-phrase__image {
+  aspect-ratio: 16 / 9;
+}
+
 /* Zoom-in sutil de la foto A: la imagen se acerca apenas un poco
    dentro de su propio marco. El marco no cambia de tamano. */
 .project-phrase__image--zoom img {
@@ -2913,8 +3065,13 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 @keyframes project-phrase-zoom {
-  from { transform: scale(1); }
-  to   { transform: scale(1.06); }
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.06);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2955,9 +3112,19 @@ html.is-entering-home.is-entering-home-active .main-nav {
    - 2s -> 4s: desacelera hasta detenerse (ease-out), recorre 30% restante
    El cambio de timing-function se aplica AL salir del waypoint del 50%. */
 @keyframes project-phrase-pan {
-  0%   { object-position: 0% center; animation-timing-function: linear; }
-  50%  { object-position: 5.6% center; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
-  100% { object-position: 8% center; }
+  0% {
+    object-position: 0% center;
+    animation-timing-function: linear;
+  }
+
+  50% {
+    object-position: 5.6% center;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  100% {
+    object-position: 8% center;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3012,27 +3179,23 @@ html.is-entering-home.is-entering-home-active .main-nav {
   padding-top: var(--project-final-logo-mask-gap);
   overflow: hidden;
   line-height: 0;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) 0,
-    rgba(0, 0, 0, 1) var(--project-final-logo-mask-fade-current),
-    rgba(0, 0, 0, 1) 100%
-  );
-          mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) 0,
-    rgba(0, 0, 0, 1) var(--project-final-logo-mask-fade-current),
-    rgba(0, 0, 0, 1) 100%
-  );
+  -webkit-mask-image: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0) 0,
+      rgba(0, 0, 0, 1) var(--project-final-logo-mask-fade-current),
+      rgba(0, 0, 0, 1) 100%);
+  mask-image: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0) 0,
+      rgba(0, 0, 0, 1) var(--project-final-logo-mask-fade-current),
+      rgba(0, 0, 0, 1) 100%);
   -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .project-final__logo-mask.is-settled {
   -webkit-mask-image: none;
-          mask-image: none;
+  mask-image: none;
 }
 
 .project-final__logo {
@@ -3152,7 +3315,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   color: var(--color-gray-100);
 }
 
-.project-detail__copy p + p {
+.project-detail__copy p+p {
   margin-top: var(--space-lg);
 }
 
@@ -3251,6 +3414,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
     transform: scale(0.5);
     opacity: 1;
   }
+
   100% {
     transform: scale(2.2);
     opacity: 0;
@@ -3304,9 +3468,9 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .project-overview .project-map__canvas {
   aspect-ratio: 4 / 3;
   background: linear-gradient(135deg,
-    var(--color-gray-300) 0%,
-    var(--color-gray-400) 48%,
-    var(--color-gray-500) 100%);
+      var(--color-gray-300) 0%,
+      var(--color-gray-400) 48%,
+      var(--color-gray-500) 100%);
   border: 1px solid rgba(29, 29, 27, 0.8);
 }
 
@@ -3327,6 +3491,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .project-final__media img,
   .project-final__media.anim-fade-in.is-visible img {
     transform: none;
@@ -3348,6 +3513,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 @media (max-width: 1023.98px) {
+
   /* --- Padding lateral uniforme en mobile para secciones de proyecto ---
      Se aplica a las secciones de contenido (NO al hero ni al final, que son
      full-bleed con imagen edge-to-edge). Los __container internos que en
@@ -3363,10 +3529,13 @@ html.is-entering-home.is-entering-home-active .main-nav {
     padding-block: var(--margin-b);
   }
 
-  .project-phrase{
+  .project-refuge__copy {}
+
+  .project-phrase {
     padding-bottom: 0;
   }
-  .project-highlight{
+
+  .project-highlight {
     padding-top: 8px;
   }
 
@@ -3445,12 +3614,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
     font-size: clamp(0.875rem, 0.31vw + 0.803rem, 1rem);
   }
 
-  .project-refuge__container {
-    grid-template-columns: 1fr;
-    align-items: start;
-    margin-block: var(--margin-b);
-  }
-
   .project-refuge__gallery {
     grid-template-columns: 1fr;
   }
@@ -3459,10 +3622,17 @@ html.is-entering-home.is-entering-home-active .main-nav {
     display: none;
   }
 
+  .project-refuge__container {
+    grid-template-columns: 1fr;
+    align-items: start;
+    margin-block: 0;
+  }
+
   /* Frame: una columna, con texto arriba e imagen abajo (invertido vs desktop). */
   .project-frame__container {
     grid-template-columns: 1fr;
     align-items: start;
+    margin-top: 1rem;
   }
 
   .project-frame__copy {
@@ -3482,17 +3652,11 @@ html.is-entering-home.is-entering-home-active .main-nav {
     max-width: clamp(16rem, 80vw, 30rem);
   }
 
-  /* Palette divider: más chico en mobile.
-     - Hitbox (::before): círculo de ~30px (vs ~42px desktop).
-     - Icon (la "píldora" oliva visible): clamp 50/60/70px (vs 70/82/98 desktop).
-     El scale(0.6) base se mantiene, así el ancho visible queda ~36px. */
-  .project-palette__divider::before {
-    width: clamp(26px, 30px, 36px);
-    height: clamp(26px, 30px, 36px);
-  }
-
-  .project-palette__divider-icon {
-    width: clamp(50px, 60px, 70px);
+  .project-highlight__title {
+    font-size: clamp(1rem, 0.4vw, 1.375rem);
+    top: auto;
+    bottom: 0.5rem;
+    line-height: 1.2;
   }
 }
 
@@ -3516,7 +3680,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
     gap: 0;
   }
 
+  .project-palette__images {
+    order: 1;
+  }
+
   .project-palette__copy {
+    order: 2;
     padding-right: 0;
   }
 
@@ -3535,6 +3704,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
     max-width: var(--max-width);
     min-height: 0;
     grid-template-columns: 1fr;
+    margin-top: 1rem;
   }
 
   .project-phrase__copy {
@@ -3574,6 +3744,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .project-palette__text {
     font-size: clamp(1rem, 4.2vw, 1.2rem);
     line-height: 1.5;
+    padding-block: 2rem;
   }
 
   .project-phrase__intro,
@@ -3645,7 +3816,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   color: var(--color-gray-500);
 }
 
-.project-narrative__text + .project-narrative__text {
+.project-narrative__text+.project-narrative__text {
   margin-top: var(--space-lg);
 }
 
@@ -3905,7 +4076,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   flex-shrink: 0;
 }
 
-.climate-chart + .climate-chart {
+.climate-chart+.climate-chart {
   margin-top: var(--space-3xl);
   padding-top: var(--space-3xl);
   border-top: 1px solid var(--color-gray-200);
@@ -4207,7 +4378,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   visibility: visible;
 }
 
-.sust-hero__visual-img > svg {
+.sust-hero__visual-img>svg {
   display: block;
   width: 100%;
   height: auto;
@@ -4215,6 +4386,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
+
   /* Hero mobile: copy primero (centrado vertical, ~1 vista),
      visual SVG después (~0.5–1 vista). Total ~1.5–2 vistas. */
   .sust-hero {
@@ -4324,12 +4496,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .sust-process__title-line {
   display: block;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
   -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .sust-process__title-line-inner {
@@ -4354,6 +4526,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
+
   /* Process mobile: el orden del HTML ya es media -> copy,
      así que naturalmente queda: gráfico (vista 1) -> texto (vista 2). */
   .sust-process {
@@ -4651,8 +4824,16 @@ html.is-entering-home.is-entering-home-active .main-nav {
   border-radius: 2px;
 }
 
-.outdoor-climate__swatch--temp     { background-color: #6D4D0B; height: 2px; }
-.outdoor-climate__swatch--range    { background-color: rgba(109,77,11,0.25); height: 8px; }
+.outdoor-climate__swatch--temp {
+  background-color: #6D4D0B;
+  height: 2px;
+}
+
+.outdoor-climate__swatch--range {
+  background-color: rgba(109, 77, 11, 0.25);
+  height: 8px;
+}
+
 .outdoor-climate__swatch--humidity {
   background-color: transparent;
   height: 2px;
@@ -4660,63 +4841,92 @@ html.is-entering-home.is-entering-home-active .main-nav {
   background-size: 8px 2px;
   background-repeat: repeat-x;
 }
-.outdoor-climate__swatch--radiation{ background-color: #9EA052; height: 8px; }
-.outdoor-climate__swatch--rain     { background-color: #BCD8ED; height: 8px; }
-.outdoor-climate__swatch--wind     { background-color: #575756; height: 2px; }
+
+.outdoor-climate__swatch--radiation {
+  background-color: #9EA052;
+  height: 8px;
+}
+
+.outdoor-climate__swatch--rain {
+  background-color: #BCD8ED;
+  height: 8px;
+}
+
+.outdoor-climate__swatch--wind {
+  background-color: #575756;
+  height: 2px;
+}
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
+
   /* La tarjeta usa todo el ancho disponible dentro del contenedor mobile
      (que ya tiene márgenes laterales en .sust-process__media-wrap). */
   .outdoor-climate {
     max-width: 100%;
     padding: 1rem;
   }
+
   .outdoor-climate__months {
     font-size: 0.55rem;
     letter-spacing: 0.04em;
   }
+
   .outdoor-climate__panel-legend {
-    font-size: 0.5625rem; /* 9px — más chico para que entren los 3 en 1 línea */
-    gap: 0.3rem 1rem;  /* gap horizontal más apretado */
+    font-size: 0.5625rem;
+    /* 9px — más chico para que entren los 3 en 1 línea */
+    gap: 0.3rem 1rem;
+    /* gap horizontal más apretado */
     max-width: 100%;
-    flex-wrap: nowrap;     /* fuerza una sola línea */
-    white-space: nowrap;   /* evita que un item se parta */
+    flex-wrap: nowrap;
+    /* fuerza una sola línea */
+    white-space: nowrap;
+    /* evita que un item se parta */
     justify-content: flex-start;
   }
+
   /* El swatch también achicado para acompañar el font-size más chico. */
   .outdoor-climate__panel-legend .outdoor-climate__swatch {
     width: 10px;
   }
+
   .outdoor-climate__legend-item {
-    gap: 0.25rem; /* separación más chica entre swatch y label */
+    gap: 0.25rem;
+    /* separación más chica entre swatch y label */
   }
+
   /* Swap del mensaje default: en mobile mostramos la versión touch. */
   .outdoor-climate__readout-default {
     display: none;
   }
+
   .outdoor-climate__readout-default--mobile {
     display: inline;
   }
+
   /* Swap de etiquetas: en mobile usamos la versión abreviada. */
   .outdoor-climate__legend-label--desktop,
   .outdoor-climate__readout-when--desktop {
     display: none;
   }
+
   .outdoor-climate__legend-label--mobile,
   .outdoor-climate__readout-when--mobile {
     display: inline;
   }
+
   /* Readout: apretar gap y bajar font-size para que entre todo en un renglón. */
   .outdoor-climate__readout {
     flex-wrap: nowrap;
     white-space: nowrap;
     gap: 0.2rem 0.4rem;
-    font-size: 0.5625rem; /* 9px */
+    font-size: 0.5625rem;
+    /* 9px */
     letter-spacing: 0.02em;
     padding: 0;
     padding-left: 1rem;
   }
+
   .outdoor-climate__readout-metric em {
     margin-right: 0.15rem;
     letter-spacing: 0.03em;
@@ -4808,12 +5018,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .sust-climate__title-line {
   display: block;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
   -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .sust-climate__title-line-inner {
@@ -4842,6 +5052,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
+
   /* Climate mobile: texto primero, imagen después, todo en UNA sola vista.
      El orden del HTML ya es copy -> media. */
   .sust-climate {
@@ -4944,12 +5155,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .sust-breathe__title-line {
   display: block;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
-          mask-image: linear-gradient(to top, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 8px);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
   -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .sust-breathe__title-line-inner {
@@ -4982,6 +5193,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
+
   /* Breathe mobile: dejamos la estructura/altura/padding como estaban,
      solo ajustamos tamaños de texto (instrucción explícita) y el
      object-position de la imagen para que el encuadre se vea bien en
@@ -5153,6 +5365,18 @@ html.is-entering-home.is-entering-home-active .main-nav {
   pointer-events: bounding-box;
 }
 
+.sust-strategies__orbit-label-text--en {
+  display: none;
+}
+
+html[lang='en'] .sust-strategies__orbit-label-text--es {
+  display: none;
+}
+
+html[lang='en'] .sust-strategies__orbit-label-text--en {
+  display: inline;
+}
+
 .sust-strategies__orbit-label-item text {
   transition: opacity 220ms ease, fill 220ms ease;
 }
@@ -5233,6 +5457,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   0% {
     stroke-dashoffset: 100;
   }
+
   100% {
     stroke-dashoffset: 0;
   }
@@ -5242,15 +5467,19 @@ html.is-entering-home.is-entering-home-active .main-nav {
   0% {
     x: 40px;
   }
+
   30% {
     x: 520px;
   }
+
   50% {
     x: 520px;
   }
+
   80% {
     x: 40px;
   }
+
   100% {
     x: 40px;
   }
@@ -5313,6 +5542,11 @@ html.is-entering-home.is-entering-home-active .main-nav {
     padding-bottom: 2rem;
   }
 
+  /* Centrar horizontalmente el media (icono + label) dentro del stack. */
+  .sust-strategies__detail-media {
+    align-self: center;
+  }
+
   .sust-strategies__detail-title {
     font-size: 1.1rem;
   }
@@ -5335,6 +5569,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .sust-strategies__layout,
   .sust-strategies__diagram-shell,
   .sust-strategies__detail,
@@ -5600,8 +5835,13 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 @keyframes sustPilaresRingDraw {
-  0% { stroke-dashoffset: 100; }
-  100% { stroke-dashoffset: 0; }
+  0% {
+    stroke-dashoffset: 100;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
 }
 
 /* --- MOBILE --- */
@@ -5681,6 +5921,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .sust-pilares__layout,
   .sust-pilares__diagram-shell,
   .sust-pilares__detail,
@@ -5771,7 +6012,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   color: var(--color-gray-500);
 }
 
-.sust-section__text + .sust-section__text {
+.sust-section__text+.sust-section__text {
   margin-top: var(--space-lg);
 }
 
@@ -5991,7 +6232,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   color: var(--color-text-primary);
 }
 
-.sust-closing__quote p + p {
+.sust-closing__quote p+p {
   margin-top: var(--space-md);
 }
 
@@ -6027,6 +6268,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
+
   /* Emissions mobile: gráfico (vista 1) -> textos (vista 2). El orden
      del HTML ya es left (chart) -> right (copy). */
   .sust-emissions {
@@ -6167,6 +6409,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
+
   /* Leyenda del pie chart: una sola fila con los 5 items repartidos.
      Cambiamos de grid a flex para que cada item se ajuste a su contenido
      y compartan el ancho total disponible. */
@@ -6334,12 +6577,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
 .floating-logo--on-dialogue-blend .floating-logo__img--white {
   opacity: 1;
-  clip-path: inset(
-    var(--dialogue-overlap-top)
-    var(--dialogue-overlap-right)
-    var(--dialogue-overlap-bottom)
-    var(--dialogue-overlap-left)
-  );
+  clip-path: inset(var(--dialogue-overlap-top) var(--dialogue-overlap-right) var(--dialogue-overlap-bottom) var(--dialogue-overlap-left));
 }
 
 .floating-logo--on-values .floating-logo__img--gray {
@@ -6359,12 +6597,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    negra de base. Efecto pixel-por-pixel al cruzar la frontera. */
 .floating-logo--on-dialogue-blend.floating-logo--on-philosophy .floating-logo__img--white {
   opacity: 1;
-  clip-path: inset(
-    var(--dialogue-overlap-top)
-    var(--dialogue-overlap-right)
-    var(--dialogue-overlap-bottom)
-    var(--dialogue-overlap-left)
-  );
+  clip-path: inset(var(--dialogue-overlap-top) var(--dialogue-overlap-right) var(--dialogue-overlap-bottom) var(--dialogue-overlap-left));
 }
 
 .floating-logo--on-sust-hero .floating-logo__img--white {
@@ -6406,6 +6639,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .page--about-light .floating-logo,
   .page--about-light .floating-logo--visible,
   .page--projects-light .floating-logo,
@@ -6554,8 +6788,15 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 0.7; }
-  50%      { opacity: 0; }
+
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 0;
+  }
 }
 
 @media (max-width: 900px) {
@@ -6701,6 +6942,39 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   padding-top: 6rem;
 }
 
+.about-us__highlight {
+  margin: 0;
+  max-width: 22rem;
+  text-align: left;
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  font-weight: var(--fw-bold);
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  color: var(--color-white);
+  will-change: transform;
+}
+
+.about-us__highlight-line {
+  display: block;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.about-us__highlight-line-inner {
+  display: block;
+  transform: translateY(100%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about-us__highlight.is-revealed .about-us__highlight-line-inner {
+  transform: translateY(0);
+}
+
 .about-approach__mark {
   width: clamp(6rem, 8vw, 7.5rem);
   height: auto;
@@ -6755,6 +7029,10 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
     font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
     line-height: 1.45;
     letter-spacing: 0.02em;
+  }
+
+  .about-us__highlight {
+    max-width: clamp(16rem, 80vw, 22rem);
   }
 
   .about-approach__mark {
@@ -6906,7 +7184,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   color: var(--color-text-primary);
 }
 
-.page--about-light .about-founders{
+.page--about-light .about-founders {
   background-color: var(--color-sky)
 }
 
@@ -7291,6 +7569,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 @media (max-width: 1080px) {
+
   .services-overview__grid,
   .services-process__steps {
     grid-template-columns: 1fr;
@@ -7311,6 +7590,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 @media (max-width: 768px) {
+
   .services-hero__container,
   .services-sectors__copy {
     padding-right: var(--space-md);
@@ -7446,12 +7726,10 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(
-      to bottom,
+    linear-gradient(to bottom,
       rgba(255, 245, 228, 0.18) 0%,
       rgba(255, 245, 228, 0.06) 36%,
-      rgba(0, 0, 0, 0.14) 100%
-    );
+      rgba(0, 0, 0, 0.14) 100%);
   pointer-events: none;
 }
 
@@ -7744,19 +8022,25 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    ========================================================= */
 .projects-gallery {
   /* --- Variables globales (compartidas por toda la galería) --- */
-  --gallery-bg:              var(--color-gray-100);
-  --gallery-padding-top:     clamp(12rem, 15vw, 22rem);
-  --gallery-padding-bottom:  clamp(10rem, 12vw, 16rem);
-  --gallery-side-padding-right:    var(--margin-b);
-  --gallery-side-padding-left:    calc(var(--margin-c) );
-  --gallery-max-width:       1600px;
-  --gallery-row-gap-y:       1rem;       /* espacio vertical ENTRE filas */
-  --gallery-radius:          4px;        /* radius de las imágenes */
-  --gallery-caption-gap:     0.4rem;     /* espacio imagen ↔ caption */
-  --gallery-caption-height:  40px;       /* alto reservado para el caption */
-  --gallery-caption-line-gap:0.04rem;    /* espacio entre líneas del caption */
-  --gallery-caption-reveal-offset: 12px; /* origen del texto, unos px más arriba */
-  --gallery-caption-reveal-delay:  1000ms;
+  --gallery-bg: var(--color-gray-100);
+  --gallery-padding-top: clamp(6rem, 8vw, 12rem);
+  --gallery-padding-bottom: clamp(10rem, 12vw, 16rem);
+  --gallery-side-padding-right: var(--margin-b);
+  --gallery-side-padding-left: calc(var(--margin-c));
+  --gallery-max-width: 1600px;
+  --gallery-row-gap-y: 1rem;
+  /* espacio vertical ENTRE filas */
+  --gallery-radius: 4px;
+  /* radius de las imágenes */
+  --gallery-caption-gap: 0.4rem;
+  /* espacio imagen ↔ caption */
+  --gallery-caption-height: 40px;
+  /* alto reservado para el caption */
+  --gallery-caption-line-gap: 0.04rem;
+  /* espacio entre líneas del caption */
+  --gallery-caption-reveal-offset: 12px;
+  /* origen del texto, unos px más arriba */
+  --gallery-caption-reveal-delay: 1000ms;
   --gallery-caption-reveal-duration: 1450ms;
   --gallery-hover-card-delay: 650ms;
   --gallery-blur-activation-delay: var(--gallery-hover-card-delay);
@@ -7771,22 +8055,31 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   --gallery-hover-card-push: calc(var(--gallery-hover-card-width) + var(--gallery-hover-card-gap) + 0.45rem);
   --gallery-hover-card-shift-duration: 1400ms;
   --gallery-hover-card-shift-easing: cubic-bezier(0.65, 0, 0.35, 1);
-  --gallery-hover-card-shift-delay: 200ms; /* cuándo arranca el desplazamiento del item vecino */
-  --gallery-name-size:       0.75rem;    /* 12px */
-  --gallery-location-size:   0.75rem;    /* 12px */
+  --gallery-hover-card-shift-delay: 200ms;
+  /* cuándo arranca el desplazamiento del item vecino */
+  --gallery-name-size: 0.75rem;
+  /* 12px */
+  --gallery-location-size: 0.75rem;
+  /* 12px */
 
 
   background-color: var(--gallery-bg);
   padding:
-    var(--gallery-padding-top)
-    var(--gallery-side-padding-right)
-    var(--gallery-padding-bottom)
-    var(--gallery-side-padding-left)
-    ;
+    var(--gallery-padding-top) var(--gallery-side-padding-right) var(--gallery-padding-bottom) var(--gallery-side-padding-left);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   gap: var(--gallery-row-gap-y);
+}
+
+.projects-gallery__phrase {
+  padding-block: clamp(2rem, 3vw, 4rem);
+  font-size: clamp(1.875rem, 1.7vw + 0.85rem, 2.75rem);
+  font-weight: var(--fw-medium, 500);
+  line-height: 1.05;
+  max-width: 22ch;
+  color: var(--color-black);
+  letter-spacing: 0.04em;
 }
 
 /* =========================
@@ -7797,7 +8090,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 .projects-gallery__row {
   max-width: var(--gallery-max-width);
   width: 100%;
-  margin: 0 auto;
+  margin: 0 0;
   display: grid;
 }
 
@@ -7811,21 +8104,28 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    La imagen ocupa: row-height − caption-gap − caption-height.
    ----------------------------------------------------------- */
 .projects-gallery__row--1 {
-  --row-gap-x:          1.5rem;   /* gap horizontal entre las 5 columnas */
-  --row-pair-gap:       1rem;     /* gap entre las 2 imágenes cuadradas del item par */
-  --row-img-ratio:      16 / 9;  /* aspect-ratio de las imágenes */
-  --row-lead-ratio:     3 / 2;    /* imagen A: 50% más ancha que la cuadrada */
-  --row-square-ratio:   1 / 1;    /* aspect-ratio de las imágenes cuadradas */
-  --row-media-height:   calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
+  --row-gap-x: 1.5rem;
+  /* gap horizontal entre las 5 columnas */
+  --row-pair-gap: 1rem;
+  /* gap entre las 2 imágenes cuadradas del item par */
+  --row-img-ratio: 16 / 9;
+  /* aspect-ratio de las imágenes */
+  --row-lead-ratio: 3 / 2;
+  /* imagen A: 50% más ancha que la cuadrada */
+  --row-square-ratio: 1 / 1;
+  /* aspect-ratio de las imágenes cuadradas */
+  --row-media-height: calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
   /* Anchos explícitos del par (calculados desde el alto, sin depender de aspect-ratio):
        A (lead 3/2) = media-height * 3/2 − 40px (ajuste manual de A)
        B (square 1/1) = media-height
        Total = A + gap + B */
-  --row-lead-width:     calc(var(--row-media-height) * 3 / 2 - 40px);
-  --row-square-width:   var(--row-media-height);
-  --row-pair-width:     calc(var(--row-lead-width) + var(--row-pair-gap) + var(--row-square-width));
-  --row-height:         320px;    /* alto TOTAL de la fila (img + gap + caption) */
-  --row-caption-height: var(--gallery-caption-height); /* alto reservado para el caption */
+  --row-lead-width: calc(var(--row-media-height) * 3 / 2 - 40px);
+  --row-square-width: var(--row-media-height);
+  --row-pair-width: calc(var(--row-lead-width) + var(--row-pair-gap) + var(--row-square-width));
+  --row-height: 320px;
+  /* alto TOTAL de la fila (img + gap + caption) */
+  --row-caption-height: var(--gallery-caption-height);
+  /* alto reservado para el caption */
 
   grid-template-columns: repeat(5, 1fr);
   column-gap: var(--row-gap-x);
@@ -7833,19 +8133,19 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 /* Posicionamiento de cada item en la fila 1 */
-.projects-gallery__row--1 > .projects-gallery__item:nth-child(1) {
+.projects-gallery__row--1>.projects-gallery__item:nth-child(1) {
   grid-column: 1 / span 2;
 }
 
-.projects-gallery__row--1 > .projects-gallery__item:nth-child(2) {
+.projects-gallery__row--1>.projects-gallery__item:nth-child(2) {
   grid-column: 3 / span 2;
   /* Empujamos Tobar Lodge 30px hacia la derecha. */
   padding-left: 30px;
 }
 
-.projects-gallery__row--1 > .projects-gallery__item:first-child:hover + .projects-gallery__item .projects-gallery__item-frame,
-.projects-gallery__row--1 > .projects-gallery__item:first-child:focus-visible + .projects-gallery__item .projects-gallery__item-frame,
-.projects-gallery__row--1 > .projects-gallery__item:first-child:focus-within + .projects-gallery__item .projects-gallery__item-frame {
+.projects-gallery__row--1>.projects-gallery__item:first-child:hover+.projects-gallery__item .projects-gallery__item-frame,
+.projects-gallery__row--1>.projects-gallery__item:first-child:focus-visible+.projects-gallery__item .projects-gallery__item-frame,
+.projects-gallery__row--1>.projects-gallery__item:first-child:focus-within+.projects-gallery__item .projects-gallery__item-frame {
   /* Desplazamiento original del push menos 20px (pedido del usuario). */
   transform: translate3d(calc(var(--gallery-hover-card-push) - 20px), 0, 0);
   transition-delay: var(--gallery-hover-card-shift-delay);
@@ -7868,7 +8168,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    pero con A más ancha (3/2) y B cuadrada (1/1).
    Para que Safari y Chrome calculen lo mismo, definimos los anchos de
    ambas imágenes EXPLÍCITAMENTE (no derivados de aspect-ratio). */
-.projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media-pair {
+.projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media-pair {
   display: grid;
   grid-template-columns: var(--row-lead-width) var(--row-square-width);
   gap: var(--row-pair-gap);
@@ -7876,22 +8176,22 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   width: var(--row-pair-width);
 }
 
-.projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__visual {
+.projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__visual {
   width: var(--row-pair-width);
   max-width: none;
 }
 
-.projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media--square {
+.projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media--square {
   height: 100%;
   width: 100%;
   aspect-ratio: var(--row-square-ratio);
 }
 
-.projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media--square:first-child {
+.projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media--square:first-child {
   aspect-ratio: var(--row-lead-ratio);
 }
 
-.projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__caption {
+.projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__caption {
   width: var(--row-pair-width);
 }
 
@@ -7903,14 +8203,21 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    Alto total fijo de la fila (incluye imagen + gap + caption).
    ----------------------------------------------------------- */
 .projects-gallery__row--2 {
-  --row-gap-x:          1.5rem;  /* gap horizontal entre los 2 contenedores */
-  --row-pair-gap:       1rem;    /* gap entre las 2 imágenes de Tobar */
-  --row-square-ratio:   1 / 1;   /* aspect-ratio de las imágenes de Tobar */
-  --row-img-ratio:      16 / 9;  /* aspect-ratio de la imagen alargada (Suindá) */
-  --row-pair-width:     calc(((var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height)) * 2) + var(--row-pair-gap));
-  --row-height:         320px;   /* alto TOTAL de la fila (img + gap + caption) */
-  --row-caption-height: var(--gallery-caption-height); /* alto reservado para el caption */
-  --suinda-shift-x:     -65px;   /* desplazamiento horizontal de la posición inicial de Suindá (acompaña el +35px de Praderas) */
+  --row-gap-x: 1.5rem;
+  /* gap horizontal entre los 2 contenedores */
+  --row-pair-gap: 1rem;
+  /* gap entre las 2 imágenes de Tobar */
+  --row-square-ratio: 1 / 1;
+  /* aspect-ratio de las imágenes de Tobar */
+  --row-img-ratio: 16 / 9;
+  /* aspect-ratio de la imagen alargada (Suindá) */
+  --row-pair-width: calc(((var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height)) * 2) + var(--row-pair-gap));
+  --row-height: 320px;
+  /* alto TOTAL de la fila (img + gap + caption) */
+  --row-caption-height: var(--gallery-caption-height);
+  /* alto reservado para el caption */
+  --suinda-shift-x: -65px;
+  /* desplazamiento horizontal de la posición inicial de Suindá (acompaña el +35px de Praderas) */
 
   grid-template-columns: 1fr 1fr;
   column-gap: var(--row-gap-x);
@@ -7936,7 +8243,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
 /* Suindá: el item entero (imagen + caption) se alinea al borde
    derecho de su contenedor. */
-.projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) {
+.projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) {
   align-items: flex-end;
   /* Desplazamiento horizontal. Usamos `translate` (no `transform`)
      para no pisar la animación de entrada `anim-fade-up`. */
@@ -7953,7 +8260,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
 /* El caption de Suindá toma el mismo ancho que la imagen,
    así nombre y categoría quedan alineados con la foto. */
-.projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
+.projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
   width: calc((var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height)) * 16 / 9);
 }
 
@@ -7963,14 +8270,14 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 /* Tobar: el caption debe cerrar exactamente con el ancho del par de imágenes. */
-.projects-gallery__row--2 > .projects-gallery__item--pair .projects-gallery__caption {
+.projects-gallery__row--2>.projects-gallery__item--pair .projects-gallery__caption {
   width: var(--row-pair-width);
 }
 
 /* Praderas Cabin: desplazamiento horizontal hacia la derecha en todas las
    vistas desktop. Usamos `translate` (no `transform`) para no pisar la
    animación de entrada `anim-fade-up`. Mismo patrón que Suindá y Haras. */
-.projects-gallery__row--2 > .projects-gallery__item--pair {
+.projects-gallery__row--2>.projects-gallery__item--pair {
   translate: 35px 0;
 }
 
@@ -7982,23 +8289,26 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    Mismas proporciones que la fila 2, invertidas.
    ----------------------------------------------------------- */
 .projects-gallery__row--3 {
-  --row-gap-x:            1.5rem;
-  --row-pair-gap:         1rem;
-  --row-square-ratio:     1 / 1;
-  --row-lead-ratio:       3 / 2;    /* foto A: más ancha que la cuadrada (igual que Tobar en fila 1) */
-  --row-img-ratio:        16 / 9;  /* aspect-ratio de la imagen alargada (Cardano) */
-  --row-media-height:     calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
+  --row-gap-x: 1.5rem;
+  --row-pair-gap: 1rem;
+  --row-square-ratio: 1 / 1;
+  --row-lead-ratio: 3 / 2;
+  /* foto A: más ancha que la cuadrada (igual que Tobar en fila 1) */
+  --row-img-ratio: 16 / 9;
+  /* aspect-ratio de la imagen alargada (Cardano) */
+  --row-media-height: calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
   /* Anchos explícitos del par (mismo cálculo que Tobar fila 1, para que A
      de Haras tenga el MISMO ancho que A de Tobar):
        A (lead 3/2) = media-height * 3/2 − 40px
        B (square 1/1) = media-height
        Total = A + gap + B */
-  --row-lead-width:       calc(var(--row-media-height) * 3 / 2 - 40px);
-  --row-square-width:     var(--row-media-height);
-  --row-pair-width:       calc(var(--row-lead-width) + var(--row-pair-gap) + var(--row-square-width));
-  --row-height:           320px;
-  --row-caption-height:   var(--gallery-caption-height);
-  --haras-shift-x:        -30px;   /* desplazamiento horizontal de la posición inicial de Haras SP */
+  --row-lead-width: calc(var(--row-media-height) * 3 / 2 - 40px);
+  --row-square-width: var(--row-media-height);
+  --row-pair-width: calc(var(--row-lead-width) + var(--row-pair-gap) + var(--row-square-width));
+  --row-height: 320px;
+  --row-caption-height: var(--gallery-caption-height);
+  --haras-shift-x: -30px;
+  /* desplazamiento horizontal de la posición inicial de Haras SP */
 
   grid-template-columns: 1fr 1fr;
   column-gap: var(--row-gap-x);
@@ -8006,7 +8316,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 /* Item wide (Cardano): se queda a la izquierda — alineación por defecto */
-.projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) {
+.projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) {
   align-items: flex-start;
   /* Empujamos Cardano Clubhouse 60px hacia la derecha. */
   padding-left: 60px;
@@ -8019,7 +8329,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 /* El caption del item wide toma el mismo ancho que la imagen */
-.projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
+.projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
   width: calc((var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height)) * 16 / 9);
 }
 
@@ -8049,7 +8359,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
 /* Haras SP: el item entero (par + caption) se alinea al borde
    derecho de su contenedor, igual que Suindá en la fila 2. */
-.projects-gallery__row--3 > .projects-gallery__item--pair {
+.projects-gallery__row--3>.projects-gallery__item--pair {
   align-items: flex-end;
   /* Desplazamiento de la posición inicial hacia la izquierda.
      Usamos `translate` (no `transform`) para no pisar la animación
@@ -8064,7 +8374,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 /* Haras SP: el caption cierra exactamente con el ancho del par de imágenes. */
-.projects-gallery__row--3 > .projects-gallery__item--pair .projects-gallery__caption {
+.projects-gallery__row--3>.projects-gallery__item--pair .projects-gallery__caption {
   width: var(--row-pair-width);
 }
 
@@ -8077,21 +8387,21 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    .projects-gallery__caption para que la imagen y su tagline se muevan
    juntos (igual que en la fila 4, donde el shift está sobre el frame
    que contiene a ambos). La transición se declara en la regla siguiente. */
-.projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
-.projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
+.projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+.projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
   transform: translate3d(0, 0, 0);
   transition: transform var(--gallery-hover-card-shift-duration) var(--gallery-hover-card-shift-easing);
   will-change: transform;
 }
 
-.projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__media:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
-.projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__media:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-.projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__name:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
-.projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__name:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-.projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-visible) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
-.projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-visible) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-.projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-within) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
-.projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-within) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
+.projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__media:hover)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__media:hover)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__name:hover)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__name:hover)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-visible)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-visible)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-within)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+.projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-within)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
   /* 44% del push estándar: misma duración → velocidad menor. */
   transform: translate3d(calc(var(--gallery-hover-card-push) * -0.44), 0, 0);
   transition-delay: var(--gallery-hover-card-shift-delay);
@@ -8105,9 +8415,9 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
      Item 2    → cols 4-5
    ----------------------------------------------------------- */
 .projects-gallery__row--4 {
-  --row-gap-x:          1.5rem;
-  --row-img-ratio:      16 / 9;
-  --row-height:         320px;
+  --row-gap-x: 1.5rem;
+  --row-img-ratio: 16 / 9;
+  --row-height: 320px;
   --row-caption-height: var(--gallery-caption-height);
 
   grid-template-columns: repeat(5, 1fr);
@@ -8116,7 +8426,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 /* Posicionamiento de cada item en la fila 4 (volcado a la derecha) */
-.projects-gallery__row--4 > .projects-gallery__item:nth-child(1) {
+.projects-gallery__row--4>.projects-gallery__item:nth-child(1) {
   grid-column: 2 / span 2;
   /* Desplazamiento horizontal hacia la izquierda. Usamos `translate`
      (no `transform`) para no pisar la animación de shift por hover
@@ -8124,7 +8434,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   translate: -90px 0;
 }
 
-.projects-gallery__row--4 > .projects-gallery__item:nth-child(2) {
+.projects-gallery__row--4>.projects-gallery__item:nth-child(2) {
   grid-column: 4 / span 2;
 }
 
@@ -8132,10 +8442,10 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    segundo item (Club de Mar, hover-card a la izquierda), el primer
    item (Chacras de Murray) se desplaza hacia la izquierda para
    dejar espacio al hover-card. */
-.projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__media:hover) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
-.projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__name:hover) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
-.projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-visible) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
-.projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-within) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame {
+.projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__media:hover)>.projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+.projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__name:hover)>.projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+.projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-visible)>.projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+.projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-within)>.projects-gallery__item:nth-child(1) .projects-gallery__item-frame {
   transform: translate3d(calc(var(--gallery-hover-card-push) * -1), 0, 0);
   transition-delay: var(--gallery-hover-card-shift-delay);
 }
@@ -8158,19 +8468,22 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    contra el borde izquierdo (cols 1-2).
    ----------------------------------------------------------- */
 .projects-gallery__row--5 {
-  --row-gap-x:          1.5rem;
-  --row-pair-gap:       1rem;     /* gap entre las 2 imágenes del item par */
-  --row-img-ratio:      16 / 9;
-  --row-lead-ratio:     3 / 2;    /* foto A: 50% más ancha que la cuadrada */
-  --row-square-ratio:   1 / 1;    /* foto B: cuadrada */
-  --row-media-height:   calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
+  --row-gap-x: 1.5rem;
+  --row-pair-gap: 1rem;
+  /* gap entre las 2 imágenes del item par */
+  --row-img-ratio: 16 / 9;
+  --row-lead-ratio: 3 / 2;
+  /* foto A: 50% más ancha que la cuadrada */
+  --row-square-ratio: 1 / 1;
+  /* foto B: cuadrada */
+  --row-media-height: calc(var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height));
   /* Mismos anchos que Tobar Lodge en fila 1:
        A (lead 3/2) = media-height * 3/2 − 40px
        B (square 1/1) = media-height */
-  --row-lead-width:     calc(var(--row-media-height) * 3 / 2 - 40px);
-  --row-square-width:   var(--row-media-height);
-  --row-pair-width:     calc(var(--row-lead-width) + var(--row-pair-gap) + var(--row-square-width));
-  --row-height:         320px;
+  --row-lead-width: calc(var(--row-media-height) * 3 / 2 - 40px);
+  --row-square-width: var(--row-media-height);
+  --row-pair-width: calc(var(--row-lead-width) + var(--row-pair-gap) + var(--row-square-width));
+  --row-height: 320px;
   --row-caption-height: var(--gallery-caption-height);
 
   grid-template-columns: repeat(5, 1fr);
@@ -8178,7 +8491,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   height: var(--row-height);
 }
 
-.projects-gallery__row--5 > .projects-gallery__item:nth-child(1) {
+.projects-gallery__row--5>.projects-gallery__item:nth-child(1) {
   grid-column: 1 / span 2;
 }
 
@@ -8190,7 +8503,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
 /* Cherokee Residence: par de imágenes con mismos anchos que Tobar Lodge (fila 1).
    Anchos explícitos (no fracciones) para que coincidan exactamente con Tobar. */
-.projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media-pair {
+.projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media-pair {
   display: grid;
   grid-template-columns: var(--row-lead-width) var(--row-square-width);
   gap: var(--row-pair-gap);
@@ -8198,23 +8511,23 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   width: var(--row-pair-width);
 }
 
-.projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__visual {
+.projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__visual {
   width: var(--row-pair-width);
   max-width: none;
 }
 
-.projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media--square {
+.projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media--square {
   height: 100%;
   width: 100%;
   aspect-ratio: var(--row-square-ratio);
 }
 
-.projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media--square:first-child {
+.projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media--square:first-child {
   aspect-ratio: var(--row-lead-ratio);
 }
 
 /* Caption del par cierra exactamente con el ancho de las imágenes */
-.projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__caption {
+.projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__caption {
   width: var(--row-pair-width);
 }
 
@@ -8232,6 +8545,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    entre en la celda.
    ----------------------------------------------------------- */
 @media (max-width: 1535px) {
+
   .projects-gallery__row--1,
   .projects-gallery__row--2,
   .projects-gallery__row--3,
@@ -8247,6 +8561,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    Bajamos un poco más el --row-height para que la imagen entre
    en su celda sin invadir la celda vecina. */
 @media (max-width: 1366px) {
+
   .projects-gallery__row--1,
   .projects-gallery__row--2,
   .projects-gallery__row--3,
@@ -8257,8 +8572,10 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
        Bajamos los aspect-ratios para que las imágenes salgan más angostas
        y dejen aire entre portadas (no se peguen ni se solapen).
        El alto se mantiene en 260px porque sigue derivándose de --row-height. */
-    --row-img-ratio:  3 / 2;   /* wide: 16/9 → 3/2 (más angosta) */
-    --row-lead-ratio: 4 / 3;   /* lead del par: 3/2 → 4/3 (más angosta) */
+    --row-img-ratio: 3 / 2;
+    /* wide: 16/9 → 3/2 (más angosta) */
+    --row-lead-ratio: 4 / 3;
+    /* lead del par: 3/2 → 4/3 (más angosta) */
   }
 
   /* En las filas 1, 3 y 5 el ancho del par (lead + square) no se deriva de
@@ -8281,7 +8598,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
      16/9. No se le achica el ancho en este rango. Se override sólo el item
      wide para no afectar al par de Haras, que comparte la fila 3 pero sí
      debe seguir achicándose. */
-  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__media--wide {
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__media--wide {
     aspect-ratio: 16 / 9;
   }
 
@@ -8289,7 +8606,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
      celda del grid en lugar de la izquierda. Así respeta el padding derecho
      del contenedor en el rango ~1024–1130px, donde la imagen 16/9 con
      --row-height 260px es más ancha que las 2 celdas que ocupa y desbordaba. */
-  .projects-gallery__row--4 > .projects-gallery__item:nth-child(2) {
+  .projects-gallery__row--4>.projects-gallery__item:nth-child(2) {
     justify-self: end;
   }
 
@@ -8297,28 +8614,28 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
      con `16 / 9` hardcoded para acompañar el ancho de la portada wide.
      Como cambiamos el wide a 3/2, recalculamos el caption con 3/2 para que
      siga alineado con la foto. */
-  .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
+  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
     width: calc((var(--row-height) - var(--gallery-caption-gap) - var(--row-caption-height)) * 3 / 2);
   }
 
   /* Cardano Clubhouse (fila 3, item wide): contra el borde izquierdo del
      contenedor padre. Anula el padding-left: 60px de desktop. */
-  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) {
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) {
     padding-left: 0;
   }
 
   /* Chacras de Murray (fila 4, primer item): forzamos la ubicación en una
      sola línea. En este rango la celda se vuelve angosta y "Buenos Aires,
      Argentina" se parte en dos renglones. */
-  .projects-gallery__row--4 > .projects-gallery__item:nth-child(1) .projects-gallery__location {
+  .projects-gallery__row--4>.projects-gallery__item:nth-child(1) .projects-gallery__location {
     white-space: nowrap;
   }
 
   /* Chacras de Murray (fila 4, primer item): forzamos el nombre en 2 renglones
      ("CHACRAS DE MURRAY" / "PRIVATE ESTATE"). Mostramos el <br class="only-mobile">
      que ya existe en el HTML, sin afectar a los otros proyectos con la misma clase. */
-  .projects-gallery__row--4 > .projects-gallery__item:nth-child(1) .projects-gallery__name br.only-mobile {
+  .projects-gallery__row--4>.projects-gallery__item:nth-child(1) .projects-gallery__name br.only-mobile {
     display: inline;
   }
 
@@ -8335,21 +8652,21 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
      - Fila 1: Tobar se corre a la derecha cuando hover en Exuma.
      - Fila 3: Cardano se corre a la izquierda cuando hover en Haras.
      - Fila 4: Chacras se corre a la izquierda cuando hover en Club de Mar. */
-  .projects-gallery__row--1 > .projects-gallery__item:first-child:hover + .projects-gallery__item .projects-gallery__item-frame,
-  .projects-gallery__row--1 > .projects-gallery__item:first-child:focus-visible + .projects-gallery__item .projects-gallery__item-frame,
-  .projects-gallery__row--1 > .projects-gallery__item:first-child:focus-within + .projects-gallery__item .projects-gallery__item-frame,
-  .projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__media:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
-  .projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__media:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__name:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
-  .projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__name:hover) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-visible) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
-  .projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-visible) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-within) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
-  .projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-within) > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__media:hover) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
-  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__name:hover) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
-  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-visible) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
-  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-within) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame {
+  .projects-gallery__row--1>.projects-gallery__item:first-child:hover+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--1>.projects-gallery__item:first-child:focus-visible+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--1>.projects-gallery__item:first-child:focus-within+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__media:hover)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__media:hover)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__name:hover)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair .projects-gallery__name:hover)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-visible)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-visible)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-within)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--3:has(> .projects-gallery__item--pair:focus-within)>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__media:hover)>.projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__name:hover)>.projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-visible)>.projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-within)>.projects-gallery__item:nth-child(1) .projects-gallery__item-frame {
     transform: translate3d(0, 0, 0);
   }
 
@@ -8567,7 +8884,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 /* El caption se acopla al ancho real de la imagen (no al ancho de la celda).
    Así el borde derecho de .projects-gallery__category queda alineado con el
    borde derecho de la foto. */
-.projects-gallery__item-frame > .projects-gallery__caption {
+.projects-gallery__item-frame>.projects-gallery__caption {
   width: 100%;
 }
 
@@ -8628,14 +8945,14 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   mask-size: 100% 100%;
 }
 
-.projects-gallery__item--hover-card-right .projects-gallery__hover-card > .projects-gallery__hover-card-item {
+.projects-gallery__item--hover-card-right .projects-gallery__hover-card>.projects-gallery__hover-card-item {
   width: 100%;
   transform: translate3d(-100%, 0, 0);
   transition: transform var(--gallery-hover-card-enter-duration) cubic-bezier(0.22, 0.61, 0.36, 1);
   will-change: transform;
 }
 
-.projects-gallery__item--hover-card-left .projects-gallery__hover-card > .projects-gallery__hover-card-item {
+.projects-gallery__item--hover-card-left .projects-gallery__hover-card>.projects-gallery__hover-card-item {
   width: 100%;
   transform: translate3d(100%, 0, 0);
   transition: transform var(--gallery-hover-card-enter-duration) cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -8657,18 +8974,18 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
     var(--gallery-hover-card-delay);
 }
 
-.projects-gallery__item--hover-card-right:has(.projects-gallery__media:hover) .projects-gallery__hover-card > .projects-gallery__hover-card-item,
-.projects-gallery__item--hover-card-right:has(.projects-gallery__name:hover) .projects-gallery__hover-card > .projects-gallery__hover-card-item,
-.projects-gallery__item--hover-card-right:focus-visible .projects-gallery__hover-card > .projects-gallery__hover-card-item,
-.projects-gallery__item--hover-card-right:focus-within .projects-gallery__hover-card > .projects-gallery__hover-card-item {
+.projects-gallery__item--hover-card-right:has(.projects-gallery__media:hover) .projects-gallery__hover-card>.projects-gallery__hover-card-item,
+.projects-gallery__item--hover-card-right:has(.projects-gallery__name:hover) .projects-gallery__hover-card>.projects-gallery__hover-card-item,
+.projects-gallery__item--hover-card-right:focus-visible .projects-gallery__hover-card>.projects-gallery__hover-card-item,
+.projects-gallery__item--hover-card-right:focus-within .projects-gallery__hover-card>.projects-gallery__hover-card-item {
   transform: translate3d(0, 0, 0);
   transition-delay: var(--gallery-hover-card-delay);
 }
 
-.projects-gallery__item--hover-card-left:has(.projects-gallery__media:hover) .projects-gallery__hover-card > .projects-gallery__hover-card-item,
-.projects-gallery__item--hover-card-left:has(.projects-gallery__name:hover) .projects-gallery__hover-card > .projects-gallery__hover-card-item,
-.projects-gallery__item--hover-card-left:focus-visible .projects-gallery__hover-card > .projects-gallery__hover-card-item,
-.projects-gallery__item--hover-card-left:focus-within .projects-gallery__hover-card > .projects-gallery__hover-card-item {
+.projects-gallery__item--hover-card-left:has(.projects-gallery__media:hover) .projects-gallery__hover-card>.projects-gallery__hover-card-item,
+.projects-gallery__item--hover-card-left:has(.projects-gallery__name:hover) .projects-gallery__hover-card>.projects-gallery__hover-card-item,
+.projects-gallery__item--hover-card-left:focus-visible .projects-gallery__hover-card>.projects-gallery__hover-card-item,
+.projects-gallery__item--hover-card-left:focus-within .projects-gallery__hover-card>.projects-gallery__hover-card-item {
   transform: translate3d(0, 0, 0);
   transition-delay: var(--gallery-hover-card-delay);
 }
@@ -8800,11 +9117,11 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
      --gallery-padding-top: alto para que el primer proyecto no se pise
      con el navbar desplegado. Es un override que solo afecta mobile. */
   .projects-gallery {
-    --gallery-padding-top:           clamp(14rem, 40vw, 20rem);
-    --gallery-padding-bottom:        clamp(4rem, 12vw, 6rem);
-    --gallery-side-padding-right:    var(--margin-a);
-    --gallery-side-padding-left:     var(--margin-a);
-    --gallery-row-gap-y:             2.5rem;
+    --gallery-padding-top: clamp(14rem, 40vw, 20rem);
+    --gallery-padding-bottom: clamp(4rem, 12vw, 6rem);
+    --gallery-side-padding-right: var(--margin-a);
+    --gallery-side-padding-left: var(--margin-a);
+    --gallery-row-gap-y: 2.5rem;
   }
 
   /* Filas: una sola columna, alto automático, sin column-gap */
@@ -8821,28 +9138,33 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
   /* Items con posicionamiento desktop → reset a flujo normal.
      Neutraliza: grid-column específicos, padding-left (+30 Tobar,
-     +60 Cardano), translate (-100 Suindá, -30 Haras), align-items. */
-  .projects-gallery__row--1 > .projects-gallery__item:nth-child(1),
-  .projects-gallery__row--1 > .projects-gallery__item:nth-child(2),
-  .projects-gallery__row--2 > .projects-gallery__item--pair,
-  .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair),
-  .projects-gallery__row--3 > .projects-gallery__item--pair,
-  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair),
-  .projects-gallery__row--4 > .projects-gallery__item:nth-child(1),
-  .projects-gallery__row--4 > .projects-gallery__item:nth-child(2),
-  .projects-gallery__row--5 > .projects-gallery__item:nth-child(1) {
+     +60 Cardano), translate (-100 Suindá, -30 Haras), align-items,
+     y justify-self: end de Club de Mar (heredado del @media 1366px). */
+  .projects-gallery__row--1>.projects-gallery__item:nth-child(1),
+  .projects-gallery__row--1>.projects-gallery__item:nth-child(2),
+  .projects-gallery__row--2>.projects-gallery__item--pair,
+  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair),
+  .projects-gallery__row--3>.projects-gallery__item--pair,
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair),
+  .projects-gallery__row--4>.projects-gallery__item:nth-child(1),
+  .projects-gallery__row--4>.projects-gallery__item:nth-child(2),
+  .projects-gallery__row--5>.projects-gallery__item:nth-child(1) {
     grid-column: auto;
     padding-left: 0;
     align-items: stretch;
     translate: 0 0;
+    justify-self: start;
   }
 
   /* Plumbing del contenedor de imagen — necesario para que items con
      __item-frame (Exuma, Chacras, Club de Mar, Cherokee) y __visual
-     (todos) se estiren al ancho completo. En desktop son fit-content. */
+     (todos) se estiren al ancho completo. En desktop son fit-content.
+     align-items: stretch fuerza a los hijos del flex column a ocupar el
+     100% del frame (default flex-start los achicaba a fit-content). */
   .projects-gallery__item-frame {
     width: 100%;
     max-width: none;
+    align-items: stretch;
   }
 
   .projects-gallery__visual {
@@ -8862,20 +9184,27 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
      Se calcula sobre el ancho útil de la pantalla (100vw - paddings laterales)
      con ratio 3:2 — equivale a lo que mediría una portada al 100% con
      aspect-ratio 3/2. Así Exuma (90%), Suindá (85%) y las pares (100%)
-     comparten exactamente la misma altura visual. */
+     comparten exactamente la misma altura visual.
+     CAP de 300px: una vez alcanzado, la altura deja de crecer.
+     Al toparse la altura, el ancho también queda limitado (ver max-width
+     derivado más abajo), y el espacio sobrante queda a la derecha. */
   .projects-gallery {
-    --gallery-cover-height: calc((100vw - 2 * var(--margin-a)) * 2 / 3);
+    --gallery-cover-height: min(calc((100vw - 2 * var(--margin-a)) * 2 / 3), 300px);
   }
 
   /* Zona de imagen WIDE (5 items: Exuma, Suindá, Cardano, Chacras, Club de Mar)
      → ancho 90% (alineado a la izquierda, espacio sobrante a la derecha)
-     + altura uniforme via --gallery-cover-height */
+     + altura uniforme via --gallery-cover-height.
+     max-width: una vez que la altura llega al cap (300px), el ancho queda
+     limitado a altura * 3/2 * 0.9 = 405px, manteniendo la proporción 3:2
+     y el 90% relativo a las pares (450px). */
   .projects-gallery__row--1 .projects-gallery__media--wide,
   .projects-gallery__row--2 .projects-gallery__media--wide,
   .projects-gallery__row--3 .projects-gallery__media--wide,
   .projects-gallery__row--4 .projects-gallery__media--wide,
   .projects-gallery__row--5 .projects-gallery__media--wide {
     width: 90%;
+    max-width: calc(var(--gallery-cover-height) * 3 / 2 * 0.9);
     height: var(--gallery-cover-height);
     aspect-ratio: auto;
     margin-right: auto;
@@ -8884,28 +9213,35 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
   /* Excepciones WIDE → 85% de ancho (en vez del 90% general):
      - Suindá Lodge (fila 2, item NO-pair)
-     - Club de Mar Beach House (fila 4, segundo item) */
-  .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__media--wide,
-  .projects-gallery__row--4 > .projects-gallery__item:nth-child(2) .projects-gallery__media--wide {
+     - Club de Mar Beach House (fila 4, segundo item)
+     max-width: altura * 3/2 * 0.85 = ~382px en el cap. */
+  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__media--wide,
+  .projects-gallery__row--4>.projects-gallery__item:nth-child(2) .projects-gallery__media--wide {
     width: 85%;
+    max-width: calc(var(--gallery-cover-height) * 3 / 2 * 0.85);
   }
 
   /* Zona de imagen PAR (4 items: Tobar, Praderas, Haras, Cherokee)
      → ancho completo + altura uniforme via --gallery-cover-height,
-     dos fotos 70/30 adentro */
-  .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media-pair,
+     dos fotos 70/30 adentro.
+     max-width: altura * 3/2 = 450px en el cap (referencia 100%, las wide
+     se calculan relativas a este valor). */
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media-pair,
   .projects-gallery__row--2 .projects-gallery__media-pair,
   .projects-gallery__row--3 .projects-gallery__media-pair,
-  .projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media-pair {
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media-pair {
     width: 100%;
+    max-width: calc(var(--gallery-cover-height) * 3 / 2);
     height: var(--gallery-cover-height);
     aspect-ratio: auto;
     grid-template-columns: 7fr 3fr;
     gap: 0.5rem;
+    margin-right: auto;
+    margin-left: 0;
   }
 
   /* Excepción: TOBAR LODGE (par de la fila 1) invierte el ratio → 30/70 */
-  .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media-pair {
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media-pair {
     grid-template-columns: 3fr 7fr;
   }
 
@@ -8914,13 +9250,13 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
      fuerzan nombre y/o ubicación a quedar en un solo renglón. */
   .projects-gallery__row--1 .projects-gallery__name,
   .projects-gallery__row--1 .projects-gallery__location,
-  .projects-gallery__row--2 > .projects-gallery__item--pair .projects-gallery__name,
-  .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__location,
-  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__name,
-  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__location,
-  .projects-gallery__row--3 > .projects-gallery__item--pair .projects-gallery__location,
-  .projects-gallery__row--4 > .projects-gallery__item:nth-child(1) .projects-gallery__location,
-  .projects-gallery__row--4 > .projects-gallery__item:nth-child(2) .projects-gallery__location {
+  .projects-gallery__row--2>.projects-gallery__item--pair .projects-gallery__name,
+  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__location,
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__name,
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__location,
+  .projects-gallery__row--3>.projects-gallery__item--pair .projects-gallery__location,
+  .projects-gallery__row--4>.projects-gallery__item:nth-child(1) .projects-gallery__location,
+  .projects-gallery__row--4>.projects-gallery__item:nth-child(2) .projects-gallery__location {
     white-space: nowrap;
   }
 
@@ -8935,13 +9271,13 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
      cada foto queda en 2:3 vertical agradable.
      Importante: anula los aspect-ratio: 3/2 de la primera foto
      del par en filas 1, 3 y 5. */
-  .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media--square,
-  .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__media--square:first-child,
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media--square,
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media--square:first-child,
   .projects-gallery__row--2 .projects-gallery__media--square,
   .projects-gallery__row--3 .projects-gallery__media--square,
   .projects-gallery__row--3 .projects-gallery__media--square:first-child,
-  .projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media--square,
-  .projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__media--square:first-child {
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media--square,
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media--square:first-child {
     width: 100%;
     height: 100%;
     aspect-ratio: auto;
@@ -8950,14 +9286,14 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   /* Visual y caption del par o de items con ancho calculado:
      fuerzan ancho completo (anula los var(--row-pair-width) y los
      anchos derivados de (--row-height...) * 16/9). */
-  .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__visual,
-  .projects-gallery__row--1 > .projects-gallery__item--pair .projects-gallery__caption,
-  .projects-gallery__row--2 > .projects-gallery__item--pair .projects-gallery__caption,
-  .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--3 > .projects-gallery__item--pair .projects-gallery__caption,
-  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__visual,
-  .projects-gallery__row--5 > .projects-gallery__item--pair .projects-gallery__caption {
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__visual,
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__caption,
+  .projects-gallery__row--2>.projects-gallery__item--pair .projects-gallery__caption,
+  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--3>.projects-gallery__item--pair .projects-gallery__caption,
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__visual,
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__caption {
     width: 100%;
     max-width: none;
   }
@@ -8977,9 +9313,9 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
      (que pone width: 100% sobre los caption de Suindá y Cardano).
      Si se mueve más arriba, la cascada lo pisa.
      Por defecto 90% (Exuma, Cardano, Chacras), alineados a la izquierda. */
-  .projects-gallery__row--1 > .projects-gallery__item:nth-child(1) .projects-gallery__caption,
-  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--4 > .projects-gallery__item:nth-child(1) .projects-gallery__caption {
+  .projects-gallery__row--1>.projects-gallery__item:nth-child(1) .projects-gallery__caption,
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--4>.projects-gallery__item:nth-child(1) .projects-gallery__caption {
     width: 90%;
     max-width: none;
     margin-right: auto;
@@ -8987,8 +9323,8 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   }
 
   /* Captions de Suindá y Club de Mar → 85% para acompañar la portada acortada. */
-  .projects-gallery__row--2 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--4 > .projects-gallery__item:nth-child(2) .projects-gallery__caption {
+  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--4>.projects-gallery__item:nth-child(2) .projects-gallery__caption {
     width: 85%;
     max-width: none;
     margin-right: auto;
@@ -9002,15 +9338,15 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
   /* Shifts de hover (filas 1, 3 y 4): neutralizados por prolijidad.
      En mobile no hay hover, pero limpiamos los transforms residuales. */
-  .projects-gallery__row--1 > .projects-gallery__item:first-child:hover + .projects-gallery__item .projects-gallery__item-frame,
-  .projects-gallery__row--1 > .projects-gallery__item:first-child:focus-visible + .projects-gallery__item .projects-gallery__item-frame,
-  .projects-gallery__row--1 > .projects-gallery__item:first-child:focus-within + .projects-gallery__item .projects-gallery__item-frame,
-  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
-  .projects-gallery__row--3 > .projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__media:hover) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
-  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__name:hover) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
-  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-visible) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
-  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-within) > .projects-gallery__item:nth-child(1) .projects-gallery__item-frame {
+  .projects-gallery__row--1>.projects-gallery__item:first-child:hover+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--1>.projects-gallery__item:first-child:focus-visible+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--1>.projects-gallery__item:first-child:focus-within+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__media:hover)>.projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2) .projects-gallery__name:hover)>.projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-visible)>.projects-gallery__item:nth-child(1) .projects-gallery__item-frame,
+  .projects-gallery__row--4:has(> .projects-gallery__item:nth-child(2):focus-within)>.projects-gallery__item:nth-child(1) .projects-gallery__item-frame {
     transform: none;
   }
 }
@@ -9052,7 +9388,8 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    el relevo al scrollear.
    ============================================================================ */
 .projects-fixed-logo {
-  display: none; /* default: oculto (incluye desktop) */
+  display: none;
+  /* default: oculto (incluye desktop) */
 }
 
 @media (max-width: 1023.98px) {

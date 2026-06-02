@@ -55,6 +55,156 @@
       }
     }
 
+    /* ====================================================================
+       TOGGLE de ratio para .project-frame__img — TEMPORAL.
+       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
+       final. Borrar este bloque + el <script> de abajo + el <div
+       class="frame-ratio-toggle"> del HTML cuando se decida.
+       ==================================================================== */
+    .project-frame__photo .project-frame__img {
+      transition: opacity 600ms ease, transform 8000ms ease-out, aspect-ratio 0.5s ease;
+    }
+
+    .project-frame__photo[data-frame-ratio="3/2"] .project-frame__img {
+      aspect-ratio: 3 / 2;
+    }
+
+    .frame-ratio-toggle {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      display: flex;
+      gap: 0.25rem;
+      z-index: 5;
+    }
+
+    .frame-ratio-toggle button {
+      padding: 0.2rem 0.45rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.6rem;
+      font-weight: var(--fw-medium);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .frame-ratio-toggle button:hover {
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    .frame-ratio-toggle button.is-active {
+      background: #fff;
+      color: var(--color-black);
+      border-color: #fff;
+    }
+
+    /* ====================================================================
+       TOGGLE de ratio para .project-phrase__img — TEMPORAL.
+       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
+       final. Borrar este bloque + el <script> de abajo + el <div
+       class="phrase-ratio-toggle"> del HTML cuando se decida.
+       ==================================================================== */
+    .project-phrase__photo .project-phrase__img {
+      transition: opacity 600ms ease, transform 8000ms ease-out, aspect-ratio 0.5s ease;
+    }
+
+    .project-phrase__photo[data-phrase-ratio="3/2"] .project-phrase__img {
+      aspect-ratio: 3 / 2;
+    }
+
+    .phrase-ratio-toggle {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      display: flex;
+      gap: 0.25rem;
+      z-index: 5;
+    }
+
+    .phrase-ratio-toggle button {
+      padding: 0.2rem 0.45rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.6rem;
+      font-weight: var(--fw-medium);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .phrase-ratio-toggle button:hover {
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    .phrase-ratio-toggle button.is-active {
+      background: #fff;
+      color: var(--color-black);
+      border-color: #fff;
+    }
+
+    /* ====================================================================
+       TOGGLE de ratio para .project-palette__img — TEMPORAL.
+       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
+       final. Borrar este bloque + el <script> de abajo + el <div
+       class="palette-ratio-toggle"> del HTML cuando se decida.
+       ==================================================================== */
+    .project-palette__photo .project-palette__img {
+      transition: opacity 600ms ease, transform 8000ms ease-out, aspect-ratio 0.5s ease;
+    }
+
+    .project-palette__photo[data-palette-ratio="3/2"] .project-palette__img {
+      aspect-ratio: 3 / 2;
+    }
+
+    .palette-ratio-toggle {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      display: flex;
+      gap: 0.25rem;
+      z-index: 5;
+    }
+
+    .palette-ratio-toggle button {
+      padding: 0.2rem 0.45rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.6rem;
+      font-weight: var(--fw-medium);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .palette-ratio-toggle button:hover {
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    .palette-ratio-toggle button.is-active {
+      background: #fff;
+      color: var(--color-black);
+      border-color: #fff;
+    }
+
     .project-palette__copy > .project-palette__text:only-of-type {
       margin-top: 0;
       font-weight: var(--fw-regular);
@@ -92,9 +242,9 @@
   <main class="page-content">
 
     <!-- ====== HERO ====== -->
-    <section class="project-hero" id="hero" data-nav-theme="light">
+    <section class="project-hero project-hero--tobar" id="hero" data-nav-theme="light">
       <div class="project-hero__media" aria-hidden="true">
-        <img id="project-cover" src="../assets/images/projects/tobar-lodge/hero.jpg" alt="Tobar Lodge"
+        <img id="project-cover" src="../assets/images/projects/tobar-lodge/hero-a.jpg" alt="Tobar Lodge"
           loading="eager" decoding="async">
       </div>
 
@@ -108,7 +258,7 @@
     <!-- ====== OVERVIEW ====== -->
     <section class="project-overview" data-nav-theme="light">
       <div class="container project-overview__container">
-        <h2 class="project-overview__title">
+        <h2 class="project-overview__title" id="project-overview-title">
           <span class="project-overview__title-line"><span class="project-overview__title-line-inner">Refugio en el norte argentino</span></span>
           <!-- 2da línea opcional, descomentar y completar si aplica:
           <span class="project-overview__title-line"><span class="project-overview__title-line-inner">se encuentra con la naturaleza</span></span>
@@ -122,36 +272,36 @@
               <div class="project-overview__fact anim-fade-up" data-anim-delay="180">
                 <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/clima.svg" alt=""
                   aria-hidden="true" decoding="async">
-                <p class="project-overview__fact-label">CLIMA /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Subtropical seco</span></p>
+                <p class="project-overview__fact-label" data-i18n="projectPages.factLabels.climate">CLIMA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner" id="project-overview-climate">Subtropical seco</span></p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="240">
                 <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/bioma.svg" alt=""
                   aria-hidden="true" decoding="async">
-                <p class="project-overview__fact-label">BIOMA /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Bosque Chaqueño</span></p>
+                <p class="project-overview__fact-label" data-i18n="projectPages.factLabels.biome">BIOMA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner" id="project-overview-biome">Bosque Chaqueño</span></p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="300">
                 <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/terreno.svg" alt=""
                   aria-hidden="true" decoding="async">
-                <p class="project-overview__fact-label">TERRENO /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">60.000 m²</span></p>
+                <p class="project-overview__fact-label" data-i18n="projectPages.factLabels.land">TERRENO /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner" id="project-overview-land">60.000 m²</span></p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="360">
                 <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/area cubierta.svg"
                   alt="" aria-hidden="true" decoding="async">
-                <p class="project-overview__fact-label">ÁREA CUBIERTA /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">420 m²</span></p>
+                <p class="project-overview__fact-label" data-i18n="projectPages.factLabels.builtArea">ÁREA CUBIERTA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner" id="project-overview-built-area">420 m²</span></p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="120">
                 <img class="project-overview__fact-icon project-overview__fact-icon--location"
                   src="../assets/images/projects/project-icons/ubicacion.svg" alt="" aria-hidden="true" decoding="async">
-                <p class="project-overview__fact-label">UBICACIÓN /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Tucumán, Argentina</span></p>
+                <p class="project-overview__fact-label" data-i18n="projectPages.factLabels.location">UBICACIÓN /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner" id="project-overview-location">Tucumán, Argentina</span></p>
               </div>
 
               <div class="project-overview__map anim-fade-in" data-anim-delay="420">
@@ -183,11 +333,11 @@
     <section class="project-refuge" data-nav-theme="light">
       <div class="container project-refuge__container">
         <div class="project-refuge__copy">
-          <p class="project-refuge__text anim-fade-up" data-anim-delay="0">El proyecto se desarrolla en lo profundo del
+          <p class="project-refuge__text anim-fade-up" data-anim-delay="0" id="project-refuge-text-1">El proyecto se desarrolla en lo profundo del
             monte. El humedal al frente y la vegetación densa del bosque chaqueño al contrafrente funcionan que aseguran
             la mayor privacidad al tiempo que permiten la inmersión en dos entornos distintos y complementarios.
           </p>
-          <p class="project-refuge__text anim-fade-up" data-anim-delay="120">Su disposición elevada permite la protección
+          <p class="project-refuge__text anim-fade-up" data-anim-delay="120" id="project-refuge-text-2">Su disposición elevada permite la protección
             ante las fuertes lluvias estacionales y, al mismo tiempo, implica una mínima huella en el suelo. De este modo,
             el edificio no se impone: se adapta al paisaje.
           </p>
@@ -207,15 +357,33 @@
     </section>
 
     <!-- ====== FRAME ====== -->
-    <section class="project-frame project-frame--split" data-project-slug="tobar-lodge" data-nav-theme="light">
+    <section class="project-frame project-frame--split project-frame--gallery" data-project-slug="tobar-lodge" data-nav-theme="light">
       <div class="container project-frame__container">
-        <figure class="project-frame__media anim-fade-in">
-          <img src="../assets/images/projects/tobar-lodge/frame-01.jpg" alt="Tobar Lodge" loading="lazy"
-            decoding="async">
-        </figure>
+        <div class="project-frame__media anim-fade-in">
+          <div class="project-frame__dots">
+            <button class="project-frame__dot is-active" data-project-frame-slide="0" aria-label="Foto 1"></button>
+            <button class="project-frame__dot" data-project-frame-slide="1" aria-label="Foto 2"></button>
+            <button class="project-frame__dot" data-project-frame-slide="2" aria-label="Foto 3"></button>
+          </div>
+
+          <figure class="project-frame__photo" data-frame-ratio="16/9">
+            <img class="project-frame__img is-active" src="../assets/images/projects/tobar-lodge/frame-01.jpg"
+              alt="Tobar Lodge" loading="lazy" decoding="async">
+            <img class="project-frame__img" src="../assets/images/projects/tobar-lodge/frame-02.jpg"
+              alt="Tobar Lodge" loading="lazy" decoding="async">
+            <img class="project-frame__img" src="../assets/images/projects/tobar-lodge/frame-03.jpg"
+              alt="Tobar Lodge" loading="lazy" decoding="async">
+          </figure>
+          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
+               de abajo cuando se elija el ratio final. -->
+          <div class="frame-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
+            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
+            <button type="button" data-ratio="3/2">3 / 2</button>
+          </div>
+        </div>
 
         <div class="project-frame__copy">
-          <p class="project-frame__text anim-fade-up" data-anim-delay="0">
+          <p class="project-frame__text anim-fade-up" data-anim-delay="0" id="project-frame-text">
             La entrada se abre hacia el horizonte. Al atravesar las puertas, la naturaleza se revela: los amplios
             ventanales enmarcan el paisaje y la austeridad de los interiores dirige la atención hacia la riqueza del
             exterior. Las habitaciones se distinguen por su orientación: cada una se abre hacia un punto cardinal
@@ -225,94 +393,166 @@
       </div>
     </section>
 
-    <!-- ====== PHRASE ======
-         Texto cargado.
-         Imágenes con placeholder hasta que se suban `phrase-01.jpg` y `phrase-02.jpg`. -->
-    <section class="project-phrase" data-nav-theme="light">
+    <!-- ====== PHRASE ====== -->
+    <section class="project-phrase project-phrase--gallery" data-nav-theme="light">
       <div class="project-phrase__container">
         <div class="project-phrase__copy">
-          <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0">
+          <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0" id="project-phrase-text">
             El lodge, lugar de refugio y descanso, vincula a las personas con la naturaleza prístina de un paisaje que
             se expresa con fuerza y sin intervención.
           </p>
         </div>
 
-        <div class="project-phrase__images">
-          <figure class="project-phrase__image project-phrase__image--zoom anim-fade-in" data-anim-delay="120">
-            <img src="../assets/images/fondo-transitorio.png" alt="Tobar Lodge" loading="lazy" decoding="async">
-          </figure>
+        <div class="project-phrase__images anim-fade-in" data-anim-delay="120">
+          <div class="project-phrase__dots">
+            <button class="project-phrase__dot is-active" data-project-phrase-slide="0" aria-label="Foto 1"></button>
+            <button class="project-phrase__dot" data-project-phrase-slide="1" aria-label="Foto 2"></button>
+            <button class="project-phrase__dot" data-project-phrase-slide="2" aria-label="Foto 3"></button>
+          </div>
 
-          <figure class="project-phrase__image project-phrase__image--pan anim-fade-in anim-reveal-right" data-anim-delay="220">
-            <img src="../assets/images/fondo-transitorio.png" alt="Tobar Lodge" loading="lazy" decoding="async">
+          <figure class="project-phrase__photo" data-phrase-ratio="16/9">
+            <img class="project-phrase__img is-active" src="../assets/images/projects/tobar-lodge/phrase-01.jpg"
+              alt="Tobar Lodge" loading="lazy" decoding="async">
+            <img class="project-phrase__img" src="../assets/images/projects/tobar-lodge/phrase-02.jpg"
+              alt="Tobar Lodge" loading="lazy" decoding="async">
+            <img class="project-phrase__img" src="../assets/images/projects/tobar-lodge/phrase-03.jpg"
+              alt="Tobar Lodge" loading="lazy" decoding="async">
           </figure>
+          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
+               de abajo cuando se elija el ratio final. -->
+          <div class="phrase-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
+            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
+            <button type="button" data-ratio="3/2">3 / 2</button>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ====== HIGHLIGHT ======
-         Título cargado.
-         Imagen con placeholder hasta que se suba `highlight-01.jpg`. -->
-    <section class="project-highlight project-highlight--split" data-project-slug="tobar-lodge" data-nav-theme="light">
+    <!-- ====== HIGHLIGHT ====== -->
+    <section class="project-highlight project-highlight--split project-highlight--gallery" data-project-slug="tobar-lodge" data-nav-theme="light">
       <div class="container project-highlight__container">
-        <figure class="project-highlight__media anim-zoom-in">
-          <img src="../assets/images/fondo-transitorio.png" alt="Tobar Lodge" loading="lazy" decoding="async">
+        <div class="project-highlight__media anim-zoom-in">
+          <div class="project-highlight__dots">
+            <button class="project-highlight__dot is-active" data-project-highlight-slide="0" aria-label="Foto 1"></button>
+            <button class="project-highlight__dot" data-project-highlight-slide="1" aria-label="Foto 2"></button>
+          </div>
 
-          <h2 class="project-highlight__title project-highlight__title--light">
+          <figure class="project-highlight__photo">
+            <img class="project-highlight__img is-active" src="../assets/images/projects/tobar-lodge/highlight-01.jpg"
+              alt="Tobar Lodge" loading="lazy" decoding="async">
+            <img class="project-highlight__img" src="../assets/images/projects/tobar-lodge/highlight-02.jpg"
+              alt="Tobar Lodge" loading="lazy" decoding="async">
+          </figure>
+
+          <h2 class="project-highlight__title" id="project-highlight-title">
             <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">Habitar lo inhóspito,</span></span>
             <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">conectar con lo esencial.</span></span>
           </h2>
-        </figure>
+        </div>
       </div>
     </section>
 
-    <!-- ====== PALETTE ======
-         Reescrita con modo drag (estándar). Texto del original conservado.
+    <!-- TEMPORAL: toggle de tamaño para iterar la imagen del highlight.
+         Borrar este bloque + el <script> de abajo cuando se elija el valor final.
+         El toggle se inyecta por JS dentro de .project-highlight__media (abajo-derecha),
+         mismo estilo visual que los toggles de ratio del sitio. -->
+    <style>
+      .project-highlight-scale-toggle {
+        position: absolute;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        display: flex;
+        gap: 0.25rem;
+        z-index: 8;
+      }
+      .project-highlight-scale-toggle button {
+        padding: 0.2rem 0.45rem;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.35);
+        color: #fff;
+        font-family: inherit;
+        font-size: 0.6rem;
+        font-weight: var(--fw-medium);
+        letter-spacing: 0.06em;
+        line-height: 1;
+        cursor: pointer;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+      }
+      .project-highlight-scale-toggle button:hover {
+        background: rgba(0, 0, 0, 0.55);
+      }
+      .project-highlight-scale-toggle button.is-active {
+        background: #fff;
+        color: var(--color-black);
+        border-color: #fff;
+      }
+    </style>
+    <script>
+      (function () {
+        var section = document.querySelector('.project-highlight');
+        if (!section) return;
+        var media = section.querySelector('.project-highlight__media');
+        if (!media) return;
+        section.classList.add('project-highlight--scaled');
+        section.style.setProperty('--ph-scale', '1');
+        var scales = ['1', '0.9', '0.8'];
+        var toggle = document.createElement('div');
+        toggle.className = 'project-highlight-scale-toggle';
+        toggle.setAttribute('role', 'group');
+        toggle.setAttribute('aria-label', 'Cambiar tamaño de imagen del highlight');
+        scales.forEach(function (s, i) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.setAttribute('data-ph-scale', s);
+          btn.textContent = s;
+          if (i === 0) btn.classList.add('is-active');
+          toggle.appendChild(btn);
+        });
+        media.appendChild(toggle);
+        toggle.addEventListener('click', function (e) {
+          var btn = e.target.closest('button[data-ph-scale]');
+          if (!btn) return;
+          var scale = btn.getAttribute('data-ph-scale');
+          section.style.setProperty('--ph-scale', scale);
+          toggle.querySelectorAll('button').forEach(function (b) {
+            b.classList.toggle('is-active', b === btn);
+          });
+        });
+      })();
+    </script>
 
+    <!-- ====== PALETTE ======
          data-palette-reveal="off": desactiva el reveal por máscara (estandar-b) del
          módulo Timbo.projectPaletteTextReveal en esta página. El <p> usa estandar-a
          vía el anim-fade-up del wrapper .project-palette__copy. -->
-    <section class="project-palette" data-nav-theme="light" data-palette-mode="drag" data-palette-reveal="off">
+    <section class="project-palette project-palette--gallery" data-nav-theme="light" data-palette-reveal="off">
       <div class="project-palette__container">
         <div class="project-palette__copy anim-fade-up" data-anim-delay="0">
-          <p class="project-palette__text">El lodge está diseñado para ser habitado en dos estaciones opuestas: un verano húmedo, lluvioso y cálido, y un invierno frío y seco. La estructura cuenta con alta masa térmica para regular la temperatura interior, ventilación cruzada mediante ventanas orientadas según la dirección predominante del viento y muros opacos bien aislados en la fachada más expuesta a la radiación solar.<br><br>Así, lo que se percibe como sencillo y austero es, al mismo tiempo, funcional y eficiente.
+          <p class="project-palette__text" id="project-palette-text">El lodge está diseñado para ser habitado en dos estaciones opuestas: un verano húmedo, lluvioso y cálido, y un invierno frío y seco. La estructura cuenta con alta masa térmica para regular la temperatura interior, ventilación cruzada mediante ventanas orientadas según la dirección predominante del viento y muros opacos bien aislados en la fachada más expuesta a la radiación solar.<br><br>Así, lo que se percibe como sencillo y austero es, al mismo tiempo, funcional y eficiente.
           </p>
         </div>
 
-        <div class="project-palette__images project-palette__images--drag">
-          <figure class="project-palette__image project-palette__image--a anim-fade-in" data-anim-delay="120">
-            <img src="../assets/images/projects/tobar-lodge/palette-01.jpg" alt="Tobar Lodge"
-              decoding="async">
+        <div class="project-palette__images anim-fade-in" data-anim-delay="120">
+          <div class="project-palette__dots">
+            <button class="project-palette__dot is-active" data-project-palette-slide="0" aria-label="Foto 1"></button>
+            <button class="project-palette__dot" data-project-palette-slide="1" aria-label="Foto 2"></button>
+          </div>
+
+          <figure class="project-palette__photo" data-palette-ratio="16/9">
+            <img class="project-palette__img is-active" src="../assets/images/projects/tobar-lodge/palette-01.jpg"
+              alt="Tobar Lodge" decoding="async">
+            <img class="project-palette__img" src="../assets/images/projects/tobar-lodge/palette-02.jpg"
+              alt="Tobar Lodge" decoding="async">
           </figure>
-
-          <button type="button" class="project-palette__divider" aria-label="Arrastrar para redimensionar">
-            <span class="project-palette__divider-icon" aria-hidden="true">
-              <svg class="project-palette__divider-svg" viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                <!-- Chevron izquierdo "<" — trazo humano con dos segmentos. -->
-                <path class="project-palette__divider-chevron" d="M 23.4 11.6
-                         C 21.8 13.9, 17.9 17.3, 14.7 19.8
-                         C 17.8 22.6, 21.5 26.1, 23.2 28.6" fill="none" />
-
-                <!-- Círculo trazado a mano: contorno negro, interior gray-100. -->
-                <path class="project-palette__divider-circle" d="M 50.4 6.2
-                         C 57.1 6.5, 63.2 11.8, 63.6 19.4
-                         C 64.1 26.9, 58.5 33.1, 51.2 33.8
-                         C 43.6 34.5, 37.1 28.9, 36.5 21.3
-                         C 35.9 13.9, 41.7 7.0, 49.6 6.2
-                         C 52.3 5.9, 54.5 6.6, 56.1 7.4" fill="currentColor" />
-
-                <!-- Chevron derecho ">" — espejo del izquierdo. -->
-                <path class="project-palette__divider-chevron" d="M 76.7 11.4
-                         C 78.4 13.7, 82.1 17.2, 85.4 19.9
-                         C 82.2 22.7, 78.6 26.0, 76.9 28.7" fill="none" />
-              </svg>
-            </span>
-          </button>
-
-          <figure class="project-palette__image project-palette__image--b anim-fade-in" data-anim-delay="220">
-            <img src="../assets/images/projects/tobar-lodge/palette-02.jpg" alt="Tobar Lodge"
-              decoding="async">
-          </figure>
+          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
+               de abajo cuando se elija el ratio final. -->
+          <div class="palette-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
+            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
+            <button type="button" data-ratio="3/2">3 / 2</button>
+          </div>
         </div>
       </div>
     </section>
@@ -371,6 +611,60 @@
         }
 
         marker.textContent = label;
+      });
+    })();
+  </script>
+
+  <!-- TEMPORAL: lógica del toggle de ratio de frame. Borrar junto con el <style>
+       y el <div class="frame-ratio-toggle"> cuando se decida el ratio final. -->
+  <script>
+    (() => {
+      const photo = document.querySelector('.project-frame__photo[data-frame-ratio]');
+      if (!photo) return;
+      const buttons = photo.parentElement?.querySelectorAll('.frame-ratio-toggle button');
+      if (!buttons?.length) return;
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const ratio = btn.dataset.ratio;
+          photo.dataset.frameRatio = ratio;
+          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
+        });
+      });
+    })();
+  </script>
+
+  <!-- TEMPORAL: lógica del toggle de ratio de phrase. Borrar junto con el <style>
+       y el <div class="phrase-ratio-toggle"> cuando se decida el ratio final. -->
+  <script>
+    (() => {
+      const photo = document.querySelector('.project-phrase__photo[data-phrase-ratio]');
+      if (!photo) return;
+      const buttons = photo.parentElement?.querySelectorAll('.phrase-ratio-toggle button');
+      if (!buttons?.length) return;
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const ratio = btn.dataset.ratio;
+          photo.dataset.phraseRatio = ratio;
+          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
+        });
+      });
+    })();
+  </script>
+
+  <!-- TEMPORAL: lógica del toggle de ratio de palette. Borrar junto con el <style>
+       y el <div class="palette-ratio-toggle"> cuando se decida el ratio final. -->
+  <script>
+    (() => {
+      const photo = document.querySelector('.project-palette__photo[data-palette-ratio]');
+      if (!photo) return;
+      const buttons = photo.parentElement?.querySelectorAll('.palette-ratio-toggle button');
+      if (!buttons?.length) return;
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const ratio = btn.dataset.ratio;
+          photo.dataset.paletteRatio = ratio;
+          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
+        });
       });
     })();
   </script>

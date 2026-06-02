@@ -54,6 +54,110 @@
         font-size: 0.78rem;
       }
     }
+
+    /* ====================================================================
+       TOGGLE de ratio para .project-refuge__image — TEMPORAL.
+       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
+       final. Borrar este bloque + el <script> de abajo + el <div
+       class="refuge-ratio-toggle"> del HTML cuando se decida.
+       ==================================================================== */
+    .project-refuge__gallery {
+      position: relative;
+    }
+
+    .project-refuge__gallery .project-refuge__image {
+      transition: aspect-ratio 0.5s ease;
+    }
+
+    .project-refuge__gallery[data-refuge-ratio="3/2"] .project-refuge__image {
+      aspect-ratio: 3 / 2;
+    }
+
+    .refuge-ratio-toggle {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      display: flex;
+      gap: 0.25rem;
+      z-index: 5;
+    }
+
+    .refuge-ratio-toggle button {
+      padding: 0.2rem 0.45rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.6rem;
+      font-weight: var(--fw-medium);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .refuge-ratio-toggle button:hover {
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    .refuge-ratio-toggle button.is-active {
+      background: #fff;
+      color: var(--color-black);
+      border-color: #fff;
+    }
+
+    /* ====================================================================
+       TOGGLE de ratio para .project-phrase__image — TEMPORAL.
+       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
+       final. Borrar este bloque + el <script> de abajo + el <div
+       class="phrase-ratio-toggle"> del HTML cuando se decida.
+       ==================================================================== */
+    .project-phrase__images .project-phrase__image {
+      transition: aspect-ratio 0.5s ease;
+    }
+
+    .project-phrase__images[data-phrase-ratio="3/2"] .project-phrase__image {
+      aspect-ratio: 3 / 2;
+    }
+
+    .phrase-ratio-toggle {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      display: flex;
+      gap: 0.25rem;
+      z-index: 5;
+    }
+
+    .phrase-ratio-toggle button {
+      padding: 0.2rem 0.45rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.6rem;
+      font-weight: var(--fw-medium);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .phrase-ratio-toggle button:hover {
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    .phrase-ratio-toggle button.is-active {
+      background: #fff;
+      color: var(--color-black);
+      border-color: #fff;
+    }
   </style>
 </head>
 
@@ -90,13 +194,13 @@
          legítima (mismo patrón que --praderas y --cherokee). -->
     <section class="project-hero project-hero--chacras" id="hero" data-nav-theme="dark">
       <div class="project-hero__media" aria-hidden="true">
-        <img id="project-cover" src="../assets/images/projects/chacras-de-murray/hero.jpg" alt="Chacras de Murray"
+        <img id="project-cover" src="../assets/images/projects/chacras-de-murray/hero-01.jpg" alt="Chacras de Murray"
           loading="eager" decoding="async">
       </div>
 
       <div class="container project-hero__content">
         <div class="project-hero__title-mask">
-          <h1 class="project-hero__title">Chacras de Murray</h1>
+          <h1 class="project-hero__title" id="project-title">Casa de Campo Chacras de Murray</h1>
         </div>
       </div>
     </section>
@@ -104,7 +208,7 @@
     <!-- ====== OVERVIEW ====== -->
     <section class="project-overview" data-nav-theme="light">
       <div class="container project-overview__container">
-        <h2 class="project-overview__title">
+        <h2 class="project-overview__title" id="project-overview-title">
           <span class="project-overview__title-line"><span class="project-overview__title-line-inner">Lugar de retiro familiar</span></span>
           <span class="project-overview__title-line"><span class="project-overview__title-line-inner">para disfrutar del paisaje y el polo</span></span>
         </h2>
@@ -116,36 +220,36 @@
               <div class="project-overview__fact anim-fade-up" data-anim-delay="180">
                 <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/clima.svg" alt=""
                   aria-hidden="true" decoding="async">
-                <p class="project-overview__fact-label">CLIMA /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Templado Subtropical</span></p>
+                <p class="project-overview__fact-label" data-i18n="projectPages.factLabels.climate">CLIMA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner" id="project-overview-climate">Templado Subtropical</span></p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="240">
                 <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/bioma.svg" alt=""
                   aria-hidden="true" decoding="async">
-                <p class="project-overview__fact-label">BIOMA /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Pampa</span></p>
+                <p class="project-overview__fact-label" data-i18n="projectPages.factLabels.biome">BIOMA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner" id="project-overview-biome">Pampa</span></p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="300">
                 <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/terreno.svg" alt=""
                   aria-hidden="true" decoding="async">
-                <p class="project-overview__fact-label">TERRENO /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">3.000 m²</span></p>
+                <p class="project-overview__fact-label" data-i18n="projectPages.factLabels.land">TERRENO /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner" id="project-overview-land">3.000 m²</span></p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="360">
                 <img class="project-overview__fact-icon" src="../assets/images/projects/project-icons/area cubierta.svg"
                   alt="" aria-hidden="true" decoding="async">
-                <p class="project-overview__fact-label">ÁREA CUBIERTA /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">400 m²</span></p>
+                <p class="project-overview__fact-label" data-i18n="projectPages.factLabels.builtArea">ÁREA CUBIERTA /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner" id="project-overview-built-area">400 m²</span></p>
               </div>
 
               <div class="project-overview__fact anim-fade-up" data-anim-delay="120">
                 <img class="project-overview__fact-icon project-overview__fact-icon--location"
                   src="../assets/images/projects/project-icons/ubicacion.svg" alt="" aria-hidden="true" decoding="async">
-                <p class="project-overview__fact-label">UBICACIÓN /</p>
-                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner">Buenos Aires,<br>Argentina</span></p>
+                <p class="project-overview__fact-label" data-i18n="projectPages.factLabels.location">UBICACIÓN /</p>
+                <p class="project-overview__fact-value"><span class="project-overview__fact-value-inner" id="project-overview-location">Buenos Aires,<br>Argentina</span></p>
               </div>
 
               <div class="project-overview__map anim-fade-in" data-anim-delay="420">
@@ -174,24 +278,26 @@
     </section>
 
     <!-- ====== REFUGE ====== -->
-    <section class="project-refuge" data-nav-theme="light">
+    <section class="project-refuge project-refuge--single-horizontal" data-nav-theme="light">
       <div class="container project-refuge__container">
         <div class="project-refuge__copy">
-          <p class="project-refuge__text anim-fade-up" data-anim-delay="0">Este proyecto es una reinterpretación contemporánea de la tipología rural tradicional. A partir de una estructura clara tipo galpón, con cubierta a dos aguas, recupera la lógica constructiva y la sobriedad de la tradición argentina.
+          <p class="project-refuge__text anim-fade-up" data-anim-delay="0" id="project-refuge-text-1">Este proyecto es una reinterpretación contemporánea de la tipología rural tradicional. A partir de una estructura clara tipo galpón, con cubierta a dos aguas, recupera la lógica constructiva y la sobriedad de la tradición argentina.
           </p>
-          <p class="project-refuge__text anim-fade-up" data-anim-delay="120">La vivienda se organiza en dos alas en forma de L, cuidadosamente orientadas según el programa y su uso a lo largo del año. Esta disposición permite que ciertos espacios reciban mayor radiación solar en invierno, mientras que otros permanecen más protegidos, optimizando el confort térmico de manera pasiva.
+          <p class="project-refuge__text anim-fade-up" data-anim-delay="120" id="project-refuge-text-2">La vivienda se organiza en dos alas en forma de L, cuidadosamente orientadas según el programa y su uso a lo largo del año. Esta disposición permite que ciertos espacios reciban mayor radiación solar en invierno, mientras que otros permanecen más protegidos, optimizando el confort térmico de manera pasiva.
           </p>
         </div>
 
-        <div class="project-refuge__gallery">
+        <div class="project-refuge__gallery" data-refuge-ratio="16/9">
           <figure class="project-refuge__image anim-fade-in" data-anim-delay="0">
             <img src="../assets/images/projects/chacras-de-murray/refuge-01.jpg" alt="Chacras de Murray" loading="lazy"
               decoding="async">
           </figure>
-          <figure class="project-refuge__image anim-fade-in" data-anim-delay="400">
-            <img src="../assets/images/projects/chacras-de-murray/refuge-02.jpg" alt="Chacras de Murray" loading="lazy"
-              decoding="async">
-          </figure>
+          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
+               de abajo cuando se elija el ratio final. -->
+          <div class="refuge-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
+            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
+            <button type="button" data-ratio="3/2">3 / 2</button>
+          </div>
         </div>
       </div>
     </section>
@@ -205,10 +311,10 @@
         </figure>
 
         <div class="project-frame__copy">
-          <p class="project-frame__text anim-fade-up" data-anim-delay="0">
+          <p class="project-frame__text anim-fade-up" data-anim-delay="0" id="project-frame-text-1">
             Todos los ambientes cuentan con doble orientación, asegurando ventilación cruzada y una relación constante con el exterior. Así, la casa se percibe siempre rodeada de paisaje, que pasa a formar parte del interior.
           </p>
-          <p class="project-frame__text anim-fade-up" data-anim-delay="120">
+          <p class="project-frame__text anim-fade-up" data-anim-delay="120" id="project-frame-text-2">
             El conjunto contiene el jardín, generando un microclima reparado del viento, donde la vegetación puede desarrollarse en condiciones favorables. El área de la pileta se ubica en un sector más sombreado, garantizando confort durante los meses más calurosos.
           </p>
         </div>
@@ -222,22 +328,24 @@
          data-phrase-reveal="off": desactiva el reveal por máscara (estandar-b) del
          módulo Timbo.projectPhraseTextReveal en esta página. El <p> usa estandar-a
          (anim-fade-up) en su lugar. -->
-    <section class="project-phrase" data-nav-theme="light" data-phrase-reveal="off">
+    <section class="project-phrase project-phrase--single-horizontal" data-nav-theme="light" data-phrase-reveal="off">
       <div class="project-phrase__container">
         <div class="project-phrase__copy">
-          <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0">
+          <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0" id="project-phrase-text">
             Una galería continua y profunda recorre todo el perímetro, funcionando como espacio intermedio entre el afuera y el adentro. Su dimensión permite proteger del sol alto en verano y habilitar su ingreso en invierno, mejorando el comportamiento térmico del conjunto.<br><br>La doble altura de los espacios principales contribuye a mantener temperaturas más frescas, reduciendo la necesidad de sistemas mecánicos de climatización.
           </p>
         </div>
 
-        <div class="project-phrase__images">
+        <div class="project-phrase__images" data-phrase-ratio="16/9">
           <figure class="project-phrase__image project-phrase__image--zoom anim-fade-in" data-anim-delay="120">
-            <img src="../assets/images/fondo-transitorio.png" alt="Chacras de Murray" loading="lazy" decoding="async">
+            <img src="../assets/images/projects/chacras-de-murray/phrase-01.jpg" alt="Chacras de Murray" loading="lazy" decoding="async">
           </figure>
-
-          <figure class="project-phrase__image project-phrase__image--pan anim-fade-in anim-reveal-right" data-anim-delay="220">
-            <img src="../assets/images/fondo-transitorio.png" alt="Chacras de Murray" loading="lazy" decoding="async">
-          </figure>
+          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
+               de abajo cuando se elija el ratio final. -->
+          <div class="phrase-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
+            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
+            <button type="button" data-ratio="3/2">3 / 2</button>
+          </div>
         </div>
       </div>
     </section>
@@ -248,48 +356,100 @@
     <section class="project-highlight project-highlight--split" data-project-slug="chacras-de-murray" data-nav-theme="light">
       <div class="container project-highlight__container">
         <figure class="project-highlight__media anim-zoom-in">
-          <img src="../assets/images/fondo-transitorio.png" alt="Chacras de Murray" loading="lazy" decoding="async">
+          <img src="../assets/images/projects/chacras-de-murray/highlight-01.jpg" alt="Chacras de Murray" loading="lazy" decoding="async">
 
-          <h2 class="project-highlight__title project-highlight__title--light">
+          <h2 class="project-highlight__title" id="project-highlight-title">
             <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">La arquitectura se desarrolla por debajo del nivel natural del terreno, modificando la percepción del paisaje y generando una experiencia de privacidad.</span></span>
           </h2>
         </figure>
       </div>
     </section>
 
+    <!-- TEMPORAL: toggle de tamaño para iterar la imagen del highlight.
+         Borrar este bloque + el <script> de abajo cuando se elija el valor final.
+         El toggle se inyecta por JS dentro de .project-highlight__media (abajo-derecha),
+         mismo estilo visual que los toggles de ratio del sitio. -->
+    <style>
+      .project-highlight-scale-toggle {
+        position: absolute;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        display: flex;
+        gap: 0.25rem;
+        z-index: 8;
+      }
+      .project-highlight-scale-toggle button {
+        padding: 0.2rem 0.45rem;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.35);
+        color: #fff;
+        font-family: inherit;
+        font-size: 0.6rem;
+        font-weight: var(--fw-medium);
+        letter-spacing: 0.06em;
+        line-height: 1;
+        cursor: pointer;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+      }
+      .project-highlight-scale-toggle button:hover {
+        background: rgba(0, 0, 0, 0.55);
+      }
+      .project-highlight-scale-toggle button.is-active {
+        background: #fff;
+        color: var(--color-black);
+        border-color: #fff;
+      }
+    </style>
+    <script>
+      (function () {
+        var section = document.querySelector('.project-highlight');
+        if (!section) return;
+        var media = section.querySelector('.project-highlight__media');
+        if (!media) return;
+        section.classList.add('project-highlight--scaled');
+        section.style.setProperty('--ph-scale', '1');
+        var scales = ['1', '0.9', '0.8'];
+        var toggle = document.createElement('div');
+        toggle.className = 'project-highlight-scale-toggle';
+        toggle.setAttribute('role', 'group');
+        toggle.setAttribute('aria-label', 'Cambiar tamaño de imagen del highlight');
+        scales.forEach(function (s, i) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.setAttribute('data-ph-scale', s);
+          btn.textContent = s;
+          if (i === 0) btn.classList.add('is-active');
+          toggle.appendChild(btn);
+        });
+        media.appendChild(toggle);
+        toggle.addEventListener('click', function (e) {
+          var btn = e.target.closest('button[data-ph-scale]');
+          if (!btn) return;
+          var scale = btn.getAttribute('data-ph-scale');
+          section.style.setProperty('--ph-scale', scale);
+          toggle.querySelectorAll('button').forEach(function (b) {
+            b.classList.toggle('is-active', b === btn);
+          });
+        });
+      })();
+    </script>
+
     <!-- ====== PALETTE ======
          Reescrita con modo drag (estándar). Texto unificado. -->
-    <section class="project-palette" data-nav-theme="light" data-palette-mode="drag">
+    <section class="project-palette" data-nav-theme="light" data-palette-reveal="off">
       <div class="project-palette__container">
         <div class="project-palette__copy anim-fade-up" data-anim-delay="0">
-          <p class="project-palette__intro">La materialidad responde tanto a una búsqueda estética como a criterios de durabilidad y eficiencia. Madera, piedra y superficies claras se combinan en una lógica constructiva sencilla, pensada para un bajo mantenimiento y un buen desempeño en el tiempo.<br><br>Una casa con todo lo necesario para vivir bien, sin excesos, pensada para durar.</p>
+          <p class="project-palette__intro" id="project-palette-text">La materialidad responde tanto a una búsqueda estética como a criterios de durabilidad y eficiencia. Madera, piedra y superficies claras se combinan en una lógica constructiva sencilla, pensada para un bajo mantenimiento y un buen desempeño en el tiempo.<br><br>Una casa con todo lo necesario para vivir bien, sin excesos, pensada para durar.</p>
         </div>
 
-        <div class="project-palette__images project-palette__images--drag">
+        <div class="project-palette__images">
           <figure class="project-palette__image project-palette__image--a anim-fade-in" data-anim-delay="120">
             <img src="../assets/images/projects/chacras-de-murray/palette-01.jpg" alt="Chacras de Murray"
               decoding="async">
           </figure>
-
-          <button type="button" class="project-palette__divider" aria-label="Arrastrar para redimensionar">
-            <span class="project-palette__divider-icon" aria-hidden="true">
-              <svg class="project-palette__divider-svg" viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                <path class="project-palette__divider-chevron" d="M 23.4 11.6
-                         C 21.8 13.9, 17.9 17.3, 14.7 19.8
-                         C 17.8 22.6, 21.5 26.1, 23.2 28.6" fill="none" />
-                <path class="project-palette__divider-circle" d="M 50.4 6.2
-                         C 57.1 6.5, 63.2 11.8, 63.6 19.4
-                         C 64.1 26.9, 58.5 33.1, 51.2 33.8
-                         C 43.6 34.5, 37.1 28.9, 36.5 21.3
-                         C 35.9 13.9, 41.7 7.0, 49.6 6.2
-                         C 52.3 5.9, 54.5 6.6, 56.1 7.4" fill="currentColor" />
-                <path class="project-palette__divider-chevron" d="M 76.7 11.4
-                         C 78.4 13.7, 82.1 17.2, 85.4 19.9
-                         C 82.2 22.7, 78.6 26.0, 76.9 28.7" fill="none" />
-              </svg>
-            </span>
-          </button>
 
           <figure class="project-palette__image project-palette__image--b anim-fade-in" data-anim-delay="220">
             <img src="../assets/images/projects/chacras-de-murray/palette-02.jpg" alt="Chacras de Murray"
@@ -352,6 +512,40 @@
         }
 
         marker.textContent = label;
+      });
+    })();
+  </script>
+
+  <!-- TEMPORAL: lógica del toggle de ratio de refuge. Borrar junto con el <style>
+       y el <div class="refuge-ratio-toggle"> cuando se decida el ratio final. -->
+  <script>
+    (() => {
+      const gallery = document.querySelector('.project-refuge__gallery[data-refuge-ratio]');
+      if (!gallery) return;
+      const buttons = gallery.querySelectorAll('.refuge-ratio-toggle button');
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const ratio = btn.dataset.ratio;
+          gallery.dataset.refugeRatio = ratio;
+          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
+        });
+      });
+    })();
+  </script>
+
+  <!-- TEMPORAL: lógica del toggle de ratio de phrase. Borrar junto con el <style>
+       y el <div class="phrase-ratio-toggle"> cuando se decida el ratio final. -->
+  <script>
+    (() => {
+      const gallery = document.querySelector('.project-phrase__images[data-phrase-ratio]');
+      if (!gallery) return;
+      const buttons = gallery.querySelectorAll('.phrase-ratio-toggle button');
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const ratio = btn.dataset.ratio;
+          gallery.dataset.phraseRatio = ratio;
+          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
+        });
       });
     })();
   </script>

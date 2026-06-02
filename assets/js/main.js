@@ -169,6 +169,7 @@ const Timbo = {
       // Re-renderizar componentes dinámicos que dependen del idioma
       Timbo.projectPage.render();
       Timbo.sustPilaresDetail.refresh?.();
+      Timbo.sustStrategiesDetail.refresh?.();
     },
 
     /**
@@ -1031,10 +1032,107 @@ const Timbo = {
         if (value === undefined || value === null) return;
         const el = document.getElementById(id);
         if (!el) return;
+        el.hidden = false;
         el.textContent = value;
       };
 
-      setText('project-title', project.name);
+      const setOptionalText = (id, value) => {
+        if (value === undefined || value === null) return;
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.hidden = value === '';
+        el.textContent = value;
+      };
+
+      const setHTML = (id, value) => {
+        if (value === undefined || value === null) return;
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = value;
+      };
+
+      const setOverviewTitle = (desktopValue, mobileValue = desktopValue) => {
+        if (desktopValue === undefined || desktopValue === null) return;
+        const el = document.getElementById('project-overview-title');
+        if (!el) return;
+
+        el.dataset.lineRevealSourceDesktop = desktopValue;
+        el.dataset.lineRevealSourceMobile = mobileValue;
+        el.dataset.lineRevealSource = desktopValue;
+
+        Timbo.splitTextIntoVisualLines(el, {
+          lineClass: 'project-overview__title-line',
+          innerClass: 'project-overview__title-line-inner',
+        });
+      };
+
+      const setLineRevealText = (id, value, { lineClass, innerClass }) => {
+        if (value === undefined || value === null) return;
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        el.dataset.lineRevealSource = value;
+        Timbo.splitTextIntoVisualLines(el, { lineClass, innerClass });
+      };
+
+      const setPaletteText = (value) => {
+        if (value === undefined || value === null) return;
+        const el = document.getElementById('project-palette-text');
+        if (!el) return;
+
+        if (value === '') {
+          delete el.dataset.lineRevealSource;
+          el.hidden = true;
+          el.innerHTML = '';
+          return;
+        }
+
+        el.hidden = false;
+
+        const section = el.closest('.project-palette');
+        const hasHtmlBreaks = /<br\s*\/?>/i.test(value);
+
+        if (section?.dataset.paletteReveal === 'off' || hasHtmlBreaks) {
+          delete el.dataset.lineRevealSource;
+          el.innerHTML = value;
+          return;
+        }
+
+        setLineRevealText('project-palette-text', value, {
+          lineClass: 'project-palette__text-line',
+          innerClass: 'project-palette__text-line-inner',
+        });
+      };
+
+      const setPhraseText = (value) => {
+        if (value === undefined || value === null) return;
+        const el = document.getElementById('project-phrase-text');
+        if (!el) return;
+
+        const section = el.closest('.project-phrase');
+        const hasHtmlBreaks = /<br\s*\/?>/i.test(value);
+
+        if (section?.dataset.phraseReveal === 'off' || hasHtmlBreaks) {
+          delete el.dataset.lineRevealSource;
+          el.innerHTML = value;
+          return;
+        }
+
+        setLineRevealText('project-phrase-text', value, {
+          lineClass: 'project-phrase__text-line',
+          innerClass: 'project-phrase__text-line-inner',
+        });
+      };
+
+      const setPaletteIntro = (value) => {
+        if (value === undefined || value === null) return;
+        const el = document.getElementById('project-palette-intro');
+        if (!el) return;
+        el.hidden = value === '';
+        el.innerHTML = value;
+      };
+
+      setHTML('project-title', project.name);
       setText('project-location', project.location);
       setText('project-meta-location', project.location);
       setText('project-summary', project.summary);
@@ -1042,6 +1140,28 @@ const Timbo = {
       setText('project-status', project.status);
       setText('project-description-1', project.description1);
       setText('project-description-2', project.description2);
+      setOverviewTitle(
+        project.overviewTitleDesktop || project.overviewTitle,
+        project.overviewTitleMobile || project.overviewTitleDesktop || project.overviewTitle,
+      );
+      setText('project-overview-climate', project.overviewClimate);
+      setText('project-overview-biome', project.overviewBiome);
+      setText('project-overview-land', project.overviewLand);
+      setText('project-overview-built-area', project.overviewBuiltArea);
+      setHTML('project-overview-location', project.overviewLocation);
+      setOptionalText('project-refuge-text', project.refugeText);
+      setOptionalText('project-refuge-text-1', project.refugeText1);
+      setOptionalText('project-refuge-text-2', project.refugeText2);
+      setOptionalText('project-frame-text', project.frameText);
+      setOptionalText('project-frame-text-1', project.frameText1);
+      setOptionalText('project-frame-text-2', project.frameText2);
+      setPhraseText(project.phraseText);
+      setLineRevealText('project-highlight-title', project.highlightTitle, {
+        lineClass: 'project-highlight__title-line',
+        innerClass: 'project-highlight__title-line-inner',
+      });
+      setPaletteIntro(project.paletteIntro);
+      setPaletteText(project.paletteText);
 
       setText('project-meta-location-label', pageData.locationLabel);
       setText('project-meta-type-label', pageData.typeLabel);
@@ -1637,55 +1757,11 @@ const Timbo = {
       // El aside está siempre abierto: marcamos el estado una sola vez en el init.
       section.classList.add('is-detail-open');
 
-      const strategies = {
-        ventilacion: {
-          title: 'VENTILACIÓN NATURAL Y NOCTURNA',
-          description: 'Renueva el aire interior y libera el calor acumulado durante el día para refrescar los ambientes de forma pasiva, especialmente cuando baja la temperatura exterior.',
-          icon: 'assets/images/sustainability/sust-strategy/ventilacion-natural-y-nocturna.svg',
-          labelSvg: 'assets/images/sustainability/sust-strategy/ventilacion-natural-y-nocturna-texto.svg',
-        },
-        orientacion: {
-          title: 'ORIENTACIÓN CORRECTA',
-          description: 'Ubica cada ambiente según el recorrido solar y los vientos dominantes para captar energía útil, proteger las zonas sensibles y mejorar el confort durante todo el año.',
-          icon: 'assets/images/sustainability/sust-strategy/orientacion-correcta.svg',
-          labelSvg: 'assets/images/sustainability/sust-strategy/orientacion-correcta-texto.svg',
-        },
-        transmitancia: {
-          title: 'TRANSMITANCIA TÉRMICA DE LA ENVOLVENTE',
-          description: 'Controla cuánto calor entra o sale a través de muros, techos y aberturas, ajustando la envolvente para reducir pérdidas energéticas y estabilizar la temperatura interior.',
-          icon: 'assets/images/sustainability/sust-strategy/transmitancia-termica.svg',
-          labelSvg: 'assets/images/sustainability/sust-strategy/transmitancia-termica-texto.svg',
-        },
-        masa: {
-          title: 'MASA TÉRMICA',
-          description: 'Aprovecha materiales con inercia térmica para guardar calor o fresco y liberarlo de forma gradual, ayudando a suavizar los cambios bruscos entre día y noche.',
-          icon: 'assets/images/sustainability/sust-strategy/masa-termica.svg',
-          labelSvg: 'assets/images/sustainability/sust-strategy/masa-termica-texto.svg',
-        },
-        proporcion: {
-          title: 'PROPORCIÓN VIDRIADA',
-          description: 'Equilibra luz natural, vistas y desempeño térmico definiendo cuánto vidrio conviene usar en cada orientación, evitando excesos que comprometan el confort interior.',
-          icon: 'assets/images/sustainability/sust-strategy/proporcion-vidriada.svg',
-          labelSvg: 'assets/images/sustainability/sust-strategy/proporcion-vidriada-texto.svg',
-        },
-        albedo: {
-          title: 'ALBEDO',
-          description: 'Usa superficies más reflectantes para bajar la absorción térmica de cubiertas y envolventes, evitando sobrecalentamiento y mejorando el comportamiento del conjunto.',
-          icon: 'assets/images/sustainability/sust-strategy/albedo.svg',
-          labelSvg: 'assets/images/sustainability/sust-strategy/albedo-texto.svg',
-        },
-        proteccion: {
-          title: 'PROTECCIÓN SOLAR',
-          description: 'Filtra el sol directo con aleros, parasoles o vegetación para mejorar el confort, reducir el deslumbramiento y disminuir la necesidad de enfriamiento artificial.',
-          icon: 'assets/images/sustainability/sust-strategy/proteccion-solar.svg',
-          labelSvg: 'assets/images/sustainability/sust-strategy/proteccion-solar-texto.svg',
-        },
-        cubiertas: {
-          title: 'CUBIERTAS VERDES',
-          description: 'Suman aislación, retención de agua y una relación más amable entre edificio y paisaje, aportando además inercia térmica y una presencia más integrada al entorno.',
-          icon: 'assets/images/sustainability/sust-strategy/cubiertas-verdes.svg',
-          labelSvg: 'assets/images/sustainability/sust-strategy/cubiertas-verdes-texto.svg',
-        },
+      const getStrategies = () => {
+        const lang = Timbo.state.lang === 'en' ? 'en' : 'es';
+        return SITE_DATA.sustainability?.[lang]?.strategies?.items
+          || SITE_DATA.sustainability?.es?.strategies?.items
+          || {};
       };
 
       let activeKey = '';
@@ -1697,10 +1773,13 @@ const Timbo = {
 
       const setDetailContent = (strategy) => {
         detailMedia.dataset.strategy = strategy ? activeKey : '';
+        const lang = Timbo.state.lang === 'en' ? 'en' : 'es';
 
         if (strategy) {
           detailIcon.src = strategy.icon;
-          detailIcon.alt = `Icono de ${strategy.title}`;
+          detailIcon.alt = lang === 'en'
+            ? `Icon of ${strategy.title}`
+            : `Icono de ${strategy.title}`;
           detailIcon.hidden = false;
         } else {
           detailIcon.removeAttribute('src');
@@ -1721,8 +1800,24 @@ const Timbo = {
         }
 
         detailTitle.textContent = strategy ? strategy.title : '';
-        detailText.textContent = strategy ? strategy.description : '';
+        detailText.textContent = strategy?.description || '';
+        detailText.hidden = !strategy?.description;
       };
+
+      const refreshInteractiveText = () => {
+        const strategies = getStrategies();
+
+        labelItems.forEach((item) => {
+          const strategy = strategies[item.dataset.strategy];
+          if (!strategy) return;
+          item.setAttribute('aria-label', strategy.title);
+        });
+
+        if (!activeKey || !strategies[activeKey]) return;
+        setDetailContent(strategies[activeKey]);
+      };
+
+      this.refresh = refreshInteractiveText;
 
       const animateDetailSwap = async (strategy, token) => {
         const exitAnimation = detailStack.animate([
@@ -1779,6 +1874,8 @@ const Timbo = {
       };
 
       const setActive = (key = '') => {
+        const strategies = getStrategies();
+
         // El aside está siempre abierto: ignoramos llamadas sin key
         // (que antes cerraban el detalle).
         if (!key || !strategies[key]) return;
@@ -1814,6 +1911,7 @@ const Timbo = {
       };
 
       const openStrategy = (key) => {
+        const strategies = getStrategies();
         if (!strategies[key]) return;
 
         setActive(key);
@@ -1822,6 +1920,7 @@ const Timbo = {
 
       labelItems.forEach((item) => {
         const key = item.dataset.strategy;
+        const strategies = getStrategies();
         const strategy = strategies[key];
         if (!strategy) return;
 
@@ -1846,6 +1945,7 @@ const Timbo = {
       });
 
       orbitApi?.setReferenceChangeCallback((key) => {
+        const strategies = getStrategies();
         if (!key || !strategies[key]) return;
         setActive(key);
       });
@@ -1856,6 +1956,7 @@ const Timbo = {
       const isMobileViewport = window.matchMedia?.('(max-width: 1023.98px)').matches;
       const initialKey = isMobileViewport ? 'proporcion' : 'transmitancia';
       openStrategy(initialKey);
+      refreshInteractiveText();
     },
   },
 
@@ -3173,13 +3274,12 @@ const Timbo = {
     init() {
       const title = document.querySelector('.project-overview__title');
       if (!title) return;
-
-      const desktopSource =
-        title.dataset.lineRevealSourceDesktop ||
-        Timbo.extractLineRevealSource(title);
       const mobileQuery = window.matchMedia('(max-width: 1023.98px)');
 
       const rebuildLines = () => {
+        const desktopSource =
+          title.dataset.lineRevealSourceDesktop ||
+          Timbo.extractLineRevealSource(title);
         const mobileSource = title.dataset.lineRevealSourceMobile;
         const source = mobileQuery.matches && mobileSource ? mobileSource : desktopSource;
 
@@ -3231,25 +3331,50 @@ const Timbo = {
     TRIGGER_RATIO: 0.6,
 
     init() {
-      const title = document.querySelector('.project-highlight__title');
-      if (!title) return;
-
-      const rebuildLines = () => {
-        Timbo.splitTextIntoVisualLines(title, {
+      const targets = [
+        {
+          selector: '.project-highlight__title',
           lineClass: 'project-highlight__title-line',
           innerClass: 'project-highlight__title-line-inner',
+        },
+        {
+          selector: '.about-us__highlight',
+          lineClass: 'about-us__highlight-line',
+          innerClass: 'about-us__highlight-line-inner',
+        },
+      ]
+        .map((config) => {
+          const element = document.querySelector(config.selector);
+          return element ? { ...config, element } : null;
+        })
+        .filter(Boolean);
+
+      if (!targets.length) return;
+
+      const rebuildLines = () => {
+        targets.forEach(({ element, lineClass, innerClass }) => {
+          Timbo.splitTextIntoVisualLines(element, {
+            lineClass,
+            innerClass,
+          });
         });
       };
 
       const update = () => {
-        const rect = title.getBoundingClientRect();
-        const trigger = window.innerHeight * this.TRIGGER_RATIO;
+        targets.forEach(({ element }) => {
+          const customTriggerRatio = Number.parseFloat(element.dataset.revealTriggerRatio || '');
+          const triggerRatio = Number.isFinite(customTriggerRatio)
+            ? customTriggerRatio
+            : this.TRIGGER_RATIO;
+          const trigger = window.innerHeight * triggerRatio;
+          const rect = element.getBoundingClientRect();
 
-        if (rect.top <= trigger) {
-          title.classList.add('is-revealed');
-        } else {
-          title.classList.remove('is-revealed');
-        }
+          if (rect.top <= trigger) {
+            element.classList.add('is-revealed');
+          } else {
+            element.classList.remove('is-revealed');
+          }
+        });
       };
 
       let resizeRaf = 0;
@@ -4921,15 +5046,17 @@ const Timbo = {
     this.aboutFinalZoom.init();
     this.projectMap.init();
     this.projectOverviewSlider.init();
+    this.projectRefugeSlider.init();
+    this.projectFrameSlider.init();
+    this.projectPhraseSlider.init();
+    this.projectPaletteSlider.init();
+    this.projectHighlightSlider.init();
     this.projectFactsParallax.init();
     this.projectFrameCopyParallax.init();
     this.projectPaletteTextParallax.init();
     this.projectPaletteTextReveal.init();
     this.natureDialogueTextReveal.init();
-    this.projectPaletteScrollWidth.init();
-    this.projectPaletteDrag.init();
     this.projectPhraseTextParallax.init();
-    this.projectPhraseScrollWidth.init();
     this.contactForm.init();
     this.contactPhoneActions.init();
     this.keyboardNav.init();
@@ -4961,6 +5088,116 @@ const Timbo = {
           imgs.forEach(i => i.classList.remove('is-active'));
           dot.classList.add('is-active');
           if (imgs[idx]) imgs[idx].classList.add('is-active');
+        });
+      });
+    },
+  },
+
+  projectRefugeSlider: {
+    init() {
+      const sections = document.querySelectorAll('.project-refuge--gallery');
+      if (!sections.length) return;
+
+      sections.forEach((section) => {
+        const dots = section.querySelectorAll('.project-refuge__dot[data-project-refuge-slide]');
+        const imgs = section.querySelectorAll('.project-refuge__img');
+        if (!dots.length || !imgs.length) return;
+
+        dots.forEach(dot => {
+          dot.addEventListener('click', () => {
+            const idx = Number(dot.dataset.projectRefugeSlide);
+            dots.forEach(d => d.classList.remove('is-active'));
+            imgs.forEach(i => i.classList.remove('is-active'));
+            dot.classList.add('is-active');
+            if (imgs[idx]) imgs[idx].classList.add('is-active');
+          });
+        });
+      });
+    },
+  },
+
+  projectFrameSlider: {
+    init() {
+      const dots = document.querySelectorAll('.project-frame__dot[data-project-frame-slide]');
+      const imgs = document.querySelectorAll('.project-frame__img');
+      if (!dots.length || !imgs.length) return;
+
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          const idx = Number(dot.dataset.projectFrameSlide);
+          dots.forEach(d => d.classList.remove('is-active'));
+          imgs.forEach(i => i.classList.remove('is-active'));
+          dot.classList.add('is-active');
+          if (imgs[idx]) imgs[idx].classList.add('is-active');
+        });
+      });
+    },
+  },
+
+  projectPhraseSlider: {
+    init() {
+      const sections = document.querySelectorAll('.project-phrase--gallery');
+      if (!sections.length) return;
+
+      sections.forEach((section) => {
+        const dots = section.querySelectorAll('.project-phrase__dot[data-project-phrase-slide]');
+        const imgs = section.querySelectorAll('.project-phrase__img');
+        if (!dots.length || !imgs.length) return;
+
+        dots.forEach(dot => {
+          dot.addEventListener('click', () => {
+            const idx = Number(dot.dataset.projectPhraseSlide);
+            dots.forEach(d => d.classList.remove('is-active'));
+            imgs.forEach(i => i.classList.remove('is-active'));
+            dot.classList.add('is-active');
+            if (imgs[idx]) imgs[idx].classList.add('is-active');
+          });
+        });
+      });
+    },
+  },
+
+  projectPaletteSlider: {
+    init() {
+      const sections = document.querySelectorAll('.project-palette--gallery');
+      if (!sections.length) return;
+
+      sections.forEach((section) => {
+        const dots = section.querySelectorAll('.project-palette__dot[data-project-palette-slide]');
+        const imgs = section.querySelectorAll('.project-palette__img');
+        if (!dots.length || !imgs.length) return;
+
+        dots.forEach(dot => {
+          dot.addEventListener('click', () => {
+            const idx = Number(dot.dataset.projectPaletteSlide);
+            dots.forEach(d => d.classList.remove('is-active'));
+            imgs.forEach(i => i.classList.remove('is-active'));
+            dot.classList.add('is-active');
+            if (imgs[idx]) imgs[idx].classList.add('is-active');
+          });
+        });
+      });
+    },
+  },
+
+  projectHighlightSlider: {
+    init() {
+      const sections = document.querySelectorAll('.project-highlight--gallery');
+      if (!sections.length) return;
+
+      sections.forEach((section) => {
+        const dots = section.querySelectorAll('.project-highlight__dot[data-project-highlight-slide]');
+        const imgs = section.querySelectorAll('.project-highlight__img');
+        if (!dots.length || !imgs.length) return;
+
+        dots.forEach(dot => {
+          dot.addEventListener('click', () => {
+            const idx = Number(dot.dataset.projectHighlightSlide);
+            dots.forEach(d => d.classList.remove('is-active'));
+            imgs.forEach(i => i.classList.remove('is-active'));
+            dot.classList.add('is-active');
+            if (imgs[idx]) imgs[idx].classList.add('is-active');
+          });
         });
       });
     },
@@ -6000,927 +6237,6 @@ const Timbo = {
         const offset = Math.min(entered * this.RATE, this.MAX_OFFSET) - this.START_OFFSET;
         el.style.transform = `translate3d(0, ${offset}px, 0)`;
       });
-    },
-  },
-
-  projectPaletteScrollWidth: {
-    SCROLL_POINTS: [2500, 3000, 3500, 4000, 4500],
-    PHOTO_A_WIDTH_POINTS: [60, 70, 100, 130, 140],
-    PHOTO_B_WIDTH_POINTS: [140, 130, 100, 70, 60],
-    items: [],
-    ticking: false,
-    resizeRaf: 0,
-
-    clamp(value, min, max) {
-      return Math.min(max, Math.max(min, value));
-    },
-
-    lerp(start, end, progress) {
-      return start + (end - start) * progress;
-    },
-
-    parseNumberList(value, fallback) {
-      if (!value) return fallback.slice();
-
-      const numbers = value
-        .split(',')
-        .map((chunk) => Number(chunk.trim()))
-        .filter((number) => Number.isFinite(number));
-
-      return numbers.length ? numbers : fallback.slice();
-    },
-
-    resolveTimeline(section) {
-      const scrollPoints = this.parseNumberList(
-        section.dataset.scrollWidthPoints,
-        this.SCROLL_POINTS
-      );
-      const photoAWidthPoints = this.parseNumberList(
-        section.dataset.photoAWidthPoints,
-        this.PHOTO_A_WIDTH_POINTS
-      );
-      const photoBWidthPoints = this.parseNumberList(
-        section.dataset.photoBWidthPoints,
-        this.PHOTO_B_WIDTH_POINTS
-      );
-
-      const hasMatchingLengths =
-        scrollPoints.length >= 2 &&
-        scrollPoints.length === photoAWidthPoints.length &&
-        scrollPoints.length === photoBWidthPoints.length;
-
-      const isAscending = scrollPoints.every((point, index) => (
-        index === 0 || point > scrollPoints[index - 1]
-      ));
-
-      if (hasMatchingLengths && isAscending) {
-        return {
-          scrollPoints,
-          photoAWidthPoints,
-          photoBWidthPoints,
-        };
-      }
-
-      return {
-        scrollPoints: this.SCROLL_POINTS.slice(),
-        photoAWidthPoints: this.PHOTO_A_WIDTH_POINTS.slice(),
-        photoBWidthPoints: this.PHOTO_B_WIDTH_POINTS.slice(),
-      };
-    },
-
-    clearItemStyles(item) {
-      item.wrapper.classList.remove('project-palette__images--scroll-width-active');
-      item.wrapper.style.height = '';
-
-      item.photoA.style.width = '';
-      item.photoA.style.height = '';
-      item.photoA.style.left = '';
-      item.photoA.style.right = '';
-      item.photoA.style.top = '';
-      item.photoA.style.willChange = '';
-      item.photoAImage.style.objectPosition = '';
-
-      item.photoB.style.width = '';
-      item.photoB.style.height = '';
-      item.photoB.style.left = '';
-      item.photoB.style.right = '';
-      item.photoB.style.top = '';
-      item.photoB.style.willChange = '';
-      item.photoBImage.style.objectPosition = '';
-    },
-
-    measureItem(item) {
-      this.clearItemStyles(item);
-
-      const photoARect = item.photoA.getBoundingClientRect();
-      const photoBRect = item.photoB.getBoundingClientRect();
-
-      item.baseWidthA = photoARect.width;
-      item.baseWidthB = photoBRect.width;
-      item.baseHeight = Math.max(photoARect.height, photoBRect.height);
-    },
-
-    applyBaseLayout(item) {
-      item.wrapper.classList.add('project-palette__images--scroll-width-active');
-      item.wrapper.style.height = `${item.baseHeight}px`;
-
-      item.photoA.style.top = '0';
-      item.photoA.style.left = '0';
-      item.photoA.style.right = 'auto';
-      item.photoA.style.height = '100%';
-      item.photoA.style.willChange = 'width';
-      item.photoAImage.style.objectPosition = 'left center';
-
-      item.photoB.style.top = '0';
-      item.photoB.style.left = 'auto';
-      item.photoB.style.right = '0';
-      item.photoB.style.height = '100%';
-      item.photoB.style.willChange = 'width';
-      item.photoBImage.style.objectPosition = 'right center';
-    },
-
-    setItemWidths(item, photoAWidth, photoBWidth) {
-      item.photoA.style.width = `${photoAWidth}px`;
-      item.photoB.style.width = `${photoBWidth}px`;
-    },
-
-    getWidthFromTimeline(scrollY, scrollPoints, widthPoints, baseWidth) {
-      const firstPoint = scrollPoints[0];
-      const lastPoint = scrollPoints[scrollPoints.length - 1];
-
-      if (scrollY <= firstPoint) {
-        return baseWidth * (widthPoints[0] / 100);
-      }
-
-      if (scrollY >= lastPoint) {
-        return baseWidth * (widthPoints[widthPoints.length - 1] / 100);
-      }
-
-      for (let index = 0; index < scrollPoints.length - 1; index += 1) {
-        const startPoint = scrollPoints[index];
-        const endPoint = scrollPoints[index + 1];
-
-        if (scrollY > endPoint) continue;
-
-        const progress = this.clamp((scrollY - startPoint) / (endPoint - startPoint), 0, 1);
-        const startWidth = baseWidth * (widthPoints[index] / 100);
-        const endWidth = baseWidth * (widthPoints[index + 1] / 100);
-
-        return this.lerp(startWidth, endWidth, progress);
-      }
-
-      return baseWidth * (widthPoints[widthPoints.length - 1] / 100);
-    },
-
-    updateItem(item, scrollYOverride = null) {
-      const scrollY = scrollYOverride === null ? window.scrollY : scrollYOverride;
-      this.setItemWidths(
-        item,
-        this.getWidthFromTimeline(
-          scrollY,
-          item.scrollPoints,
-          item.photoAWidthPoints,
-          item.baseWidthA
-        ),
-        this.getWidthFromTimeline(
-          scrollY,
-          item.scrollPoints,
-          item.photoBWidthPoints,
-          item.baseWidthB
-        )
-      );
-    },
-
-    update(scrollYOverride = null) {
-      this.items.forEach((item) => this.updateItem(item, scrollYOverride));
-    },
-
-    refresh() {
-      this.items.forEach((item) => {
-        this.measureItem(item);
-        this.applyBaseLayout(item);
-      });
-
-      this.update();
-    },
-
-    onScroll() {
-      if (this.ticking) return;
-
-      this.ticking = true;
-      requestAnimationFrame(() => {
-        this.update();
-        this.ticking = false;
-      });
-    },
-
-    onResize() {
-      cancelAnimationFrame(this.resizeRaf);
-      this.resizeRaf = requestAnimationFrame(() => this.refresh());
-    },
-
-    init() {
-      const sections = document.querySelectorAll('.project-palette[data-scroll-width-points]');
-      if (!sections.length) return;
-
-      this.items = Array.from(sections).map((section) => {
-        const wrapper = section.querySelector('.project-palette__images');
-        if (!wrapper) return null;
-
-        const photos = wrapper.querySelectorAll('.project-palette__image');
-        if (photos.length < 2) return null;
-
-        const photoA = photos[0];
-        const photoB = photos[1];
-        const photoAImage = photoA.querySelector('img');
-        const photoBImage = photoB.querySelector('img');
-
-        if (!photoAImage || !photoBImage) return null;
-        const timeline = this.resolveTimeline(section);
-
-        return {
-          section,
-          wrapper,
-          photoA,
-          photoAImage,
-          photoB,
-          photoBImage,
-          scrollPoints: timeline.scrollPoints,
-          photoAWidthPoints: timeline.photoAWidthPoints,
-          photoBWidthPoints: timeline.photoBWidthPoints,
-          baseWidthA: 0,
-          baseWidthB: 0,
-          baseHeight: 0,
-        };
-      }).filter(Boolean);
-
-      if (!this.items.length) return;
-
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduceMotion) {
-        this.items.forEach((item) => {
-          this.measureItem(item);
-          this.applyBaseLayout(item);
-          this.setItemWidths(item, item.baseWidthA, item.baseWidthB);
-        });
-        return;
-      }
-
-      this.refresh();
-      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
-      window.addEventListener('resize', () => this.onResize(), { passive: true });
-    },
-  },
-
-  /* ============================================================
-     PROJECT PALETTE DRAG
-     Divisor arrastrable entre las dos imágenes de .project-palette
-     cuando la section tiene data-palette-mode="drag".
-     El usuario controla el ancho relativo de cada imagen con
-     mouse o touch (pointer events).
-     ============================================================ */
-  projectPaletteDrag: {
-    MIN_PERCENT: 0.1,
-    MAX_PERCENT: 99.9,
-    // Aspect ratio del marco (vertical). Coincide con el aspect-ratio
-    // original de .project-palette__image (3 / 4.4). El alto del wrapper
-    // se calcula como (ancho_wrapper / 2) * (4.4 / 3), es decir: el alto
-    // que tendría una figura al 50% de ancho con ese aspecto. Así queda
-    // fijo y no varía al mover el divider.
-    FRAME_RATIO: 4.4 / 3,
-    // Aspect ratio de las fotos (horizontal). Praderas usa 1920×1080
-    // aproximadamente, ratio ≈ 16/9. Se usa para calcular cuánto
-    // corre la imagen lateralmente cuando la figura se aproxima al
-    // 100% del wrapper, para que quede centrada en lugar de pegada
-    // al borde exterior.
-    PHOTO_RATIO: 16 / 9,
-    // Animación de entrada: hint visual para que el usuario entienda
-    // que el divider se puede arrastrar.
-    INTRO_START_PERCENT: 35,   // A=35%, B=65% (equivale a A=70%/B=130% del estado neutro)
-    INTRO_END_PERCENT: 50,     // A=50%, B=50%
-    INTRO_DURATION_MS: 1400,
-    INTRO_DELAY_MS: 350,
-    // Efecto sutil: por cada 1px de scrollY (desde que la section entra
-    // en viewport), el divider se desplaza SCROLL_RATE px hacia la derecha.
-    // Con 0.1: 10px de scroll = 1px de desplazamiento del divider.
-    // No reemplaza al drag manual ni a la intro: se suma encima.
-    SCROLL_RATE: 0.1,
-    items: [],
-    resizeRaf: 0,
-    scrollTicking: false,
-
-    clamp(value, min, max) {
-      return Math.min(max, Math.max(min, value));
-    },
-
-    // Easing suave (easeOutCubic) para que el divider llegue al
-    // estado neutro de forma orgánica.
-    easeOutCubic(t) {
-      return 1 - Math.pow(1 - t, 3);
-    },
-
-    // Setea la "posición base" del divider (el porcentaje que define
-    // la intro animation o el drag manual del usuario) y re-renderiza
-    // sumando el offset actual del scroll.
-    applyPercent(item, percent) {
-      item.basePercent = percent;
-      this.renderItem(item);
-    },
-
-    // Renderiza la posición visual final del divider:
-    //   visible = basePercent + scrollOffsetPercent  (clamped)
-    // Cada imagen ocupa "visible%" o "(100-visible)%" del wrapper
-    // menos 4px (mitad del gap visual de 8px), de forma que la
-    // frontera real coincida exactamente con visible% del wrapper.
-    //
-    // Además, para que cuando una imagen ocupe el 100% del wrapper
-    // quede CENTRADA (en lugar de pegada al borde exterior con todo
-    // el recorte de un solo lado), corremos cada <img> hacia el centro
-    // proporcionalmente al excedente de ancho que tenga la figura
-    // respecto al estado neutro (50%).
-    renderItem(item) {
-      const base = item.basePercent;
-      const offset = item.scrollOffsetPercent || 0;
-      const clamped = this.clamp(base + offset, this.MIN_PERCENT, this.MAX_PERCENT);
-      item.photoA.style.width = `calc(${clamped}% - 4px)`;
-      item.photoB.style.width = `calc(${100 - clamped}% - 4px)`;
-      item.divider.style.left = `${clamped}%`;
-      item.currentPercent = clamped;
-
-      // Posición fija de cada <img>: la calculamos para que cuando
-      // la figura ocupe el 100% del wrapper, la imagen quede centrada.
-      // Como el shift no depende del width actual de la figura, la
-      // imagen NO se panea cuando se arrastra el divider: simplemente
-      // queda fija en su lugar y el contenedor la va destapando o
-      // tapando con su overflow: hidden.
-      //
-      // imgWidth = alto del marco × PHOTO_RATIO
-      // shift = -(imgWidth - wrapperWidth) / 2
-      const wrapperWidth = item.wrapper.getBoundingClientRect().width;
-      if (wrapperWidth <= 0) return;
-      const frameHeight = (wrapperWidth / 2) * this.FRAME_RATIO;
-      const imgWidth = frameHeight * this.PHOTO_RATIO;
-      const shift = -(imgWidth - wrapperWidth) / 2;
-      item.photoA.querySelector('img').style.left = `${shift}px`;
-      item.photoB.querySelector('img').style.right = `${shift}px`;
-    },
-
-    // Calcula y actualiza el scrollOffsetPercent de cada item, en
-    // función de cuánto se scrolleó desde que la section entró en
-    // viewport. Convierte píxeles a porcentaje del wrapper.
-    updateScrollOffset() {
-      this.items.forEach((item) => {
-        if (item.scrollAnchor === null || item.scrollAnchor === undefined) return;
-        const rect = item.wrapper.getBoundingClientRect();
-        if (rect.width <= 0) return;
-        const deltaY = window.scrollY - item.scrollAnchor;
-        const offsetPx = deltaY * this.SCROLL_RATE;
-        const offsetPercent = (offsetPx / rect.width) * 100;
-        item.scrollOffsetPercent = offsetPercent;
-        this.renderItem(item);
-      });
-    },
-
-    onScroll() {
-      if (this.scrollTicking) return;
-      this.scrollTicking = true;
-      requestAnimationFrame(() => {
-        this.updateScrollOffset();
-        this.scrollTicking = false;
-      });
-    },
-
-    // Aplica una posición vertical al handle. Solo cosmético: no afecta
-    // a las imágenes. Recibe Y absoluto en píxeles, lo clampeamos al
-    // rango del wrapper.
-    applyDividerY(item, y) {
-      const rect = item.wrapper.getBoundingClientRect();
-      if (rect.height <= 0) return;
-      const dividerHeight = item.divider.offsetHeight || 0;
-      const minY = dividerHeight / 2;
-      const maxY = rect.height - dividerHeight / 2;
-      const clampedY = this.clamp(y, minY, maxY);
-      item.divider.style.top = `${clampedY}px`;
-      item.currentY = clampedY;
-    },
-
-    // Anima el divider desde INTRO_START_PERCENT hasta INTRO_END_PERCENT
-    // usando requestAnimationFrame. Si el usuario interactúa antes de que
-    // termine, se cancela y se respeta su posición actual.
-    playIntroAnimation(item) {
-      if (item.introPlayed) return;
-      item.introPlayed = true;
-
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduceMotion) {
-        this.applyPercent(item, this.INTRO_END_PERCENT);
-        return;
-      }
-
-      const start = this.INTRO_START_PERCENT;
-      const end = this.INTRO_END_PERCENT;
-      const duration = this.INTRO_DURATION_MS;
-      const delay = this.INTRO_DELAY_MS;
-
-      // Estado inicial visible antes de que arranque el delay.
-      this.applyPercent(item, start);
-
-      const startAnimation = () => {
-        // Si el usuario empezó a arrastrar durante el delay, no animar.
-        if (item.isDragging || item.introCancelled) return;
-        const startTime = performance.now();
-
-        const step = (now) => {
-          if (item.isDragging || item.introCancelled) {
-            item.introRaf = 0;
-            return;
-          }
-          const elapsed = now - startTime;
-          const progress = this.clamp(elapsed / duration, 0, 1);
-          const eased = this.easeOutCubic(progress);
-          const current = start + (end - start) * eased;
-          this.applyPercent(item, current);
-          if (progress < 1) {
-            item.introRaf = requestAnimationFrame(step);
-          } else {
-            item.introRaf = 0;
-          }
-        };
-
-        item.introRaf = requestAnimationFrame(step);
-      };
-
-      item.introTimer = window.setTimeout(startAnimation, delay);
-    },
-
-    cancelIntroAnimation(item) {
-      item.introCancelled = true;
-      if (item.introTimer) {
-        clearTimeout(item.introTimer);
-        item.introTimer = 0;
-      }
-      if (item.introRaf) {
-        cancelAnimationFrame(item.introRaf);
-        item.introRaf = 0;
-      }
-    },
-
-    // Animación generalizada: lleva el basePercent del item desde su
-    // valor actual hasta targetPercent, en duration ms, con easeOutCubic.
-    // Se usa para el "reset al neutro" cuando el usuario hace click sin
-    // arrastrar. Si el usuario empieza a arrastrar mientras corre, se
-    // cancela.
-    animateToPercent(item, targetPercent, duration = 600) {
-      if (item.resetRaf) {
-        cancelAnimationFrame(item.resetRaf);
-        item.resetRaf = 0;
-      }
-
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduceMotion) {
-        this.applyPercent(item, targetPercent);
-        return;
-      }
-
-      const start = item.basePercent;
-      const startTime = performance.now();
-
-      const step = (now) => {
-        if (item.isDragging) {
-          item.resetRaf = 0;
-          return;
-        }
-        const elapsed = now - startTime;
-        const progress = this.clamp(elapsed / duration, 0, 1);
-        const eased = this.easeOutCubic(progress);
-        const current = start + (targetPercent - start) * eased;
-        this.applyPercent(item, current);
-        if (progress < 1) {
-          item.resetRaf = requestAnimationFrame(step);
-        } else {
-          item.resetRaf = 0;
-        }
-      };
-
-      item.resetRaf = requestAnimationFrame(step);
-    },
-
-    updateHeight(item) {
-      const rect = item.wrapper.getBoundingClientRect();
-      if (rect.width <= 0) return;
-      // Alto fijo basado en una figura al 50% del ancho del wrapper.
-      const height = (rect.width / 2) * this.FRAME_RATIO;
-      item.wrapper.style.setProperty('--palette-drag-height', `${height}px`);
-    },
-
-    onPointerDown(item, event) {
-      event.preventDefault();
-      // Si la animación de entrada todavía está corriendo, cortarla
-      // para no pelearla con el drag manual.
-      this.cancelIntroAnimation(item);
-      // Cancelar también la animación de reset si está corriendo.
-      if (item.resetRaf) {
-        cancelAnimationFrame(item.resetRaf);
-        item.resetRaf = 0;
-      }
-      item.isDragging = true;
-      // Guardar posición inicial del pointer para detectar después
-      // si fue un click puro (sin movimiento) o un drag real.
-      item.pointerDownX = event.clientX;
-      item.pointerDownY = event.clientY;
-      item.pointerMoved = false;
-      item.wrapper.classList.add('is-dragging');
-      try {
-        item.divider.setPointerCapture(event.pointerId);
-      } catch (err) {
-        // Algunos navegadores antiguos pueden fallar silenciosamente.
-      }
-    },
-
-    onPointerMove(item, event) {
-      if (!item.isDragging) return;
-
-      // Detectar si el pointer se movió lo suficiente como para
-      // considerarse un drag (umbral de 5px en cualquier dirección).
-      if (!item.pointerMoved) {
-        const dx = event.clientX - item.pointerDownX;
-        const dy = event.clientY - item.pointerDownY;
-        if (Math.hypot(dx, dy) > 5) {
-          item.pointerMoved = true;
-        }
-      }
-
-      const rect = item.wrapper.getBoundingClientRect();
-      if (rect.width <= 0) return;
-      // X: el cursor define la posición VISIBLE del divider. Como el
-      // render suma scrollOffsetPercent al basePercent, hay que
-      // descontarlo para que el divider quede exactamente donde está
-      // el cursor.
-      const x = event.clientX - rect.left;
-      const percent = (x / rect.width) * 100;
-      const offset = item.scrollOffsetPercent || 0;
-      this.applyPercent(item, percent - offset);
-      // Y: solo reposiciona el handle, sin efecto sobre las imágenes.
-      const y = event.clientY - rect.top;
-      this.applyDividerY(item, y);
-    },
-
-    onPointerUp(item, event) {
-      if (!item.isDragging) return;
-      item.isDragging = false;
-      item.wrapper.classList.remove('is-dragging');
-      try {
-        if (item.divider.hasPointerCapture(event.pointerId)) {
-          item.divider.releasePointerCapture(event.pointerId);
-        }
-      } catch (err) {
-        // Ignorar.
-      }
-
-      // Si el pointer no se movió: fue un click puro. Animar el
-      // divider de vuelta al neutro (50% VISIBLE). Como el render
-      // suma scrollOffsetPercent al basePercent, hay que descontarlo
-      // del target para que la posición renderizada caiga exactamente
-      // en 50.
-      if (!item.pointerMoved && event.type === 'pointerup') {
-        const offset = item.scrollOffsetPercent || 0;
-        this.animateToPercent(item, 50 - offset);
-      }
-    },
-
-    bindItem(item) {
-      item.divider.addEventListener('pointerdown', (event) => this.onPointerDown(item, event));
-      item.divider.addEventListener('pointermove', (event) => this.onPointerMove(item, event));
-      item.divider.addEventListener('pointerup', (event) => this.onPointerUp(item, event));
-      item.divider.addEventListener('pointercancel', (event) => this.onPointerUp(item, event));
-      // Evita que un click accidental envíe el formulario / scroll.
-      item.divider.addEventListener('click', (event) => event.preventDefault());
-    },
-
-    init() {
-      const sections = document.querySelectorAll('.project-palette[data-palette-mode="drag"]');
-      if (!sections.length) return;
-
-      this.items = Array.from(sections).map((section) => {
-        const wrapper = section.querySelector('.project-palette__images');
-        if (!wrapper) return null;
-
-        const photoA = wrapper.querySelector('.project-palette__image--a');
-        const photoB = wrapper.querySelector('.project-palette__image--b');
-        const divider = wrapper.querySelector('.project-palette__divider');
-
-        if (!photoA || !photoB || !divider) return null;
-
-        return {
-          section,
-          wrapper,
-          photoA,
-          photoB,
-          divider,
-          isDragging: false,
-          // basePercent: porcentaje "lógico" del divider (intro / drag).
-          // scrollOffsetPercent: corrimiento sutil derivado del scroll.
-          // currentPercent: lo que efectivamente se renderiza (clamped).
-          basePercent: this.INTRO_START_PERCENT,
-          scrollOffsetPercent: 0,
-          scrollAnchor: null,
-          currentPercent: this.INTRO_START_PERCENT,
-          introPlayed: false,
-          introCancelled: false,
-          introTimer: 0,
-          introRaf: 0,
-        };
-      }).filter(Boolean);
-
-      if (!this.items.length) return;
-
-      this.items.forEach((item) => {
-        this.updateHeight(item);
-        // Arrancar en el estado inicial de la animación (35/65) para
-        // que la animación parta desde ahí cuando la section entre en
-        // viewport. Si el usuario interactúa antes, applyPercent del
-        // pointer override esto inmediatamente.
-        this.applyPercent(item, this.INTRO_START_PERCENT);
-        // Centrar el handle verticalmente al inicio.
-        const rect = item.wrapper.getBoundingClientRect();
-        this.applyDividerY(item, rect.height / 2);
-        this.bindItem(item);
-      });
-
-      // Disparar la animación de entrada cuando cada section se hace
-      // visible por primera vez, y anclar también el scrollY desde el
-      // cual se mide el efecto sutil de scroll-driven offset.
-      if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            const item = this.items.find((it) => it.section === entry.target);
-            if (!item) return;
-            item.scrollAnchor = window.scrollY;
-            this.playIntroAnimation(item);
-            observer.unobserve(entry.target);
-          });
-        }, { threshold: 0.3 });
-
-        this.items.forEach((item) => observer.observe(item.section));
-      } else {
-        // Fallback: disparar la animación inmediatamente.
-        this.items.forEach((item) => {
-          item.scrollAnchor = window.scrollY;
-          this.playIntroAnimation(item);
-        });
-      }
-
-      // Listener global de scroll: actualiza el offset sutil del divider.
-      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
-
-      window.addEventListener('resize', () => {
-        cancelAnimationFrame(this.resizeRaf);
-        this.resizeRaf = requestAnimationFrame(() => {
-          this.items.forEach((item) => {
-            const prevRect = item.wrapper.getBoundingClientRect();
-            const prevHeight = prevRect.height || 1;
-            const ratio = (item.currentY || prevHeight / 2) / prevHeight;
-            this.updateHeight(item);
-            // Reaplicar Y proporcional al nuevo alto del wrapper.
-            const newRect = item.wrapper.getBoundingClientRect();
-            this.applyDividerY(item, ratio * newRect.height);
-          });
-        });
-      }, { passive: true });
-    },
-  },
-
-  /* ============================================================
-     PROJECT PHRASE SCROLL WIDTH
-     Clon de projectPaletteScrollWidth para .project-phrase
-     ============================================================ */
-  projectPhraseScrollWidth: {
-    SCROLL_POINTS: [2500, 3000, 3500, 4000, 4500],
-    PHOTO_A_WIDTH_POINTS: [60, 70, 100, 130, 140],
-    PHOTO_B_WIDTH_POINTS: [140, 130, 100, 70, 60],
-    items: [],
-    ticking: false,
-    resizeRaf: 0,
-
-    clamp(value, min, max) {
-      return Math.min(max, Math.max(min, value));
-    },
-
-    lerp(start, end, progress) {
-      return start + (end - start) * progress;
-    },
-
-    parseNumberList(value, fallback) {
-      if (!value) return fallback.slice();
-
-      const numbers = value
-        .split(',')
-        .map((chunk) => Number(chunk.trim()))
-        .filter((number) => Number.isFinite(number));
-
-      return numbers.length ? numbers : fallback.slice();
-    },
-
-    resolveTimeline(section) {
-      const scrollPoints = this.parseNumberList(
-        section.dataset.scrollWidthPoints,
-        this.SCROLL_POINTS
-      );
-      const photoAWidthPoints = this.parseNumberList(
-        section.dataset.photoAWidthPoints,
-        this.PHOTO_A_WIDTH_POINTS
-      );
-      const photoBWidthPoints = this.parseNumberList(
-        section.dataset.photoBWidthPoints,
-        this.PHOTO_B_WIDTH_POINTS
-      );
-
-      const hasMatchingLengths =
-        scrollPoints.length >= 2 &&
-        scrollPoints.length === photoAWidthPoints.length &&
-        scrollPoints.length === photoBWidthPoints.length;
-
-      const isAscending = scrollPoints.every((point, index) => (
-        index === 0 || point > scrollPoints[index - 1]
-      ));
-
-      if (hasMatchingLengths && isAscending) {
-        return {
-          scrollPoints,
-          photoAWidthPoints,
-          photoBWidthPoints,
-        };
-      }
-
-      return {
-        scrollPoints: this.SCROLL_POINTS.slice(),
-        photoAWidthPoints: this.PHOTO_A_WIDTH_POINTS.slice(),
-        photoBWidthPoints: this.PHOTO_B_WIDTH_POINTS.slice(),
-      };
-    },
-
-    clearItemStyles(item) {
-      item.wrapper.classList.remove('project-phrase__images--scroll-width-active');
-      item.wrapper.style.height = '';
-
-      item.photoA.style.width = '';
-      item.photoA.style.height = '';
-      item.photoA.style.left = '';
-      item.photoA.style.right = '';
-      item.photoA.style.top = '';
-      item.photoA.style.willChange = '';
-      item.photoAImage.style.objectPosition = '';
-
-      item.photoB.style.width = '';
-      item.photoB.style.height = '';
-      item.photoB.style.left = '';
-      item.photoB.style.right = '';
-      item.photoB.style.top = '';
-      item.photoB.style.willChange = '';
-      item.photoBImage.style.objectPosition = '';
-    },
-
-    measureItem(item) {
-      this.clearItemStyles(item);
-
-      const photoARect = item.photoA.getBoundingClientRect();
-      const photoBRect = item.photoB.getBoundingClientRect();
-
-      item.baseWidthA = photoARect.width;
-      item.baseWidthB = photoBRect.width;
-      item.baseHeight = Math.max(photoARect.height, photoBRect.height);
-    },
-
-    applyBaseLayout(item) {
-      item.wrapper.classList.add('project-phrase__images--scroll-width-active');
-      item.wrapper.style.height = `${item.baseHeight}px`;
-
-      item.photoA.style.top = '0';
-      item.photoA.style.left = '0';
-      item.photoA.style.right = 'auto';
-      item.photoA.style.height = '100%';
-      item.photoA.style.willChange = 'width';
-      item.photoAImage.style.objectPosition = 'left center';
-
-      item.photoB.style.top = '0';
-      item.photoB.style.left = 'auto';
-      item.photoB.style.right = '0';
-      item.photoB.style.height = '100%';
-      item.photoB.style.willChange = 'width';
-      item.photoBImage.style.objectPosition = 'right center';
-    },
-
-    setItemWidths(item, photoAWidth, photoBWidth) {
-      item.photoA.style.width = `${photoAWidth}px`;
-      item.photoB.style.width = `${photoBWidth}px`;
-    },
-
-    getWidthFromTimeline(scrollY, scrollPoints, widthPoints, baseWidth) {
-      const firstPoint = scrollPoints[0];
-      const lastPoint = scrollPoints[scrollPoints.length - 1];
-
-      if (scrollY <= firstPoint) {
-        return baseWidth * (widthPoints[0] / 100);
-      }
-
-      if (scrollY >= lastPoint) {
-        return baseWidth * (widthPoints[widthPoints.length - 1] / 100);
-      }
-
-      for (let index = 0; index < scrollPoints.length - 1; index += 1) {
-        const startPoint = scrollPoints[index];
-        const endPoint = scrollPoints[index + 1];
-
-        if (scrollY > endPoint) continue;
-
-        const progress = this.clamp((scrollY - startPoint) / (endPoint - startPoint), 0, 1);
-        const startWidth = baseWidth * (widthPoints[index] / 100);
-        const endWidth = baseWidth * (widthPoints[index + 1] / 100);
-
-        return this.lerp(startWidth, endWidth, progress);
-      }
-
-      return baseWidth * (widthPoints[widthPoints.length - 1] / 100);
-    },
-
-    updateItem(item, scrollYOverride = null) {
-      const scrollY = scrollYOverride === null ? window.scrollY : scrollYOverride;
-      this.setItemWidths(
-        item,
-        this.getWidthFromTimeline(
-          scrollY,
-          item.scrollPoints,
-          item.photoAWidthPoints,
-          item.baseWidthA
-        ),
-        this.getWidthFromTimeline(
-          scrollY,
-          item.scrollPoints,
-          item.photoBWidthPoints,
-          item.baseWidthB
-        )
-      );
-    },
-
-    update(scrollYOverride = null) {
-      this.items.forEach((item) => this.updateItem(item, scrollYOverride));
-    },
-
-    refresh() {
-      this.items.forEach((item) => {
-        this.measureItem(item);
-        this.applyBaseLayout(item);
-      });
-
-      this.update();
-    },
-
-    onScroll() {
-      if (this.ticking) return;
-
-      this.ticking = true;
-      requestAnimationFrame(() => {
-        this.update();
-        this.ticking = false;
-      });
-    },
-
-    onResize() {
-      cancelAnimationFrame(this.resizeRaf);
-      this.resizeRaf = requestAnimationFrame(() => this.refresh());
-    },
-
-    init() {
-      const sections = document.querySelectorAll('.project-phrase[data-scroll-width-points]');
-      if (!sections.length) return;
-
-      this.items = Array.from(sections).map((section) => {
-        const wrapper = section.querySelector('.project-phrase__images');
-        if (!wrapper) return null;
-
-        const photos = wrapper.querySelectorAll('.project-phrase__image');
-        if (photos.length < 2) return null;
-
-        const photoA = photos[0];
-        const photoB = photos[1];
-        const photoAImage = photoA.querySelector('img');
-        const photoBImage = photoB.querySelector('img');
-
-        if (!photoAImage || !photoBImage) return null;
-        const timeline = this.resolveTimeline(section);
-
-        return {
-          section,
-          wrapper,
-          photoA,
-          photoAImage,
-          photoB,
-          photoBImage,
-          scrollPoints: timeline.scrollPoints,
-          photoAWidthPoints: timeline.photoAWidthPoints,
-          photoBWidthPoints: timeline.photoBWidthPoints,
-          baseWidthA: 0,
-          baseWidthB: 0,
-          baseHeight: 0,
-        };
-      }).filter(Boolean);
-
-      if (!this.items.length) return;
-
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduceMotion) {
-        this.items.forEach((item) => {
-          this.measureItem(item);
-          this.applyBaseLayout(item);
-          this.setItemWidths(item, item.baseWidthA, item.baseWidthB);
-        });
-        return;
-      }
-
-      this.refresh();
-      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
-      window.addEventListener('resize', () => this.onResize(), { passive: true });
     },
   },
 
