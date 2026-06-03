@@ -57,7 +57,7 @@
 </head>
 
 <body class="page--haras-light">
-  <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
+  <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
     <ul class="nav__links">
       <li><a href="../index.html" class="nav__link" data-i18n="nav.home">Inicio</a></li>
       <li><a href="../proyectos.html" class="nav__link nav__link--active" data-i18n="nav.projects">Proyectos</a></li>
@@ -85,7 +85,7 @@
 
     <!-- ====== HERO ======
          Mantiene `project-hero--exuma` por la regla CSS de color del título. -->
-    <section class="project-hero project-hero--exuma" id="hero" data-nav-theme="light">
+    <section class="project-hero project-hero--exuma" id="hero" data-nav-theme="dark">
       <div class="project-hero__media" aria-hidden="true">
         <img id="project-cover" src="../assets/images/projects/exuma-lodge/hero-01.jpg" alt="Exuma Lodge"
           loading="eager" decoding="async">
@@ -152,7 +152,7 @@
             </div>
           </div>
 
-          <div class="project-overview__media anim-fade-in" data-anim-delay="160">
+          <div class="project-overview__media anim-fade-in" data-anim-delay="160" data-gallery-autoplay="7000">
             <div class="project-overview__dots">
               <button class="project-overview__dot is-active" data-project-overview-slide="0" aria-label="Foto 1"></button>
               <button class="project-overview__dot" data-project-overview-slide="1" aria-label="Foto 2"></button>
@@ -192,7 +192,7 @@
     <!-- ====== FRAME ====== -->
     <section class="project-frame project-frame--split project-frame--gallery" data-project-slug="exuma-lodge" data-nav-theme="light">
       <div class="container project-frame__container">
-        <div class="project-frame__media anim-fade-in">
+        <div class="project-frame__media anim-fade-in" data-gallery-autoplay="7000">
           <div class="project-frame__dots">
             <button class="project-frame__dot is-active" data-project-frame-slide="0" aria-label="Foto 1"></button>
             <button class="project-frame__dot" data-project-frame-slide="1" aria-label="Foto 2"></button>
@@ -228,8 +228,7 @@
           <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0" id="project-phrase-text">
             El diseño se centra en el confort, la funcionalidad y el descanso. Los interiores de madera y los materiales
             naturales generan un ambiente cálido y acogedor. La modulación regular de la planta facilita la circulación
-            y el uso del espacio. Amplios aleros, una cubierta alta y ventanas en ambos lados permiten la ventilación
-            cruzada del edificio, manteniéndolo fresco y protegido del sol de las Bahamas.
+            y el uso del espacio.
           </p>
         </div>
 
@@ -245,13 +244,15 @@
          NUEVA sección. TODO cliente: imagen highlight-01.jpg + dos líneas de título. -->
     <section class="project-highlight project-highlight--split" data-project-slug="exuma-lodge" data-nav-theme="light">
       <div class="container project-highlight__container">
-        <figure class="project-highlight__media anim-zoom-in">
-          <img src="../assets/images/projects/exuma-lodge/highlight-01.jpg" alt="Exuma Lodge" loading="lazy" decoding="async">
+        <div class="project-highlight__visual">
+          <figure class="project-highlight__media anim-zoom-in">
+            <img src="../assets/images/projects/exuma-lodge/highlight-01.jpg" alt="Exuma Lodge" loading="lazy" decoding="async">
+          </figure>
 
-          <h2 class="project-highlight__title project-highlight__title--light" id="project-highlight-title">
+          <h2 class="project-highlight__title project-highlight__title--light" id="project-highlight-title" data-reveal-trigger-ratio-mobile="0.85">
             <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">Una celebración de los ritmos naturales del paisaje bahameño.</span></span>
           </h2>
-        </figure>
+        </div>
       </div>
     </section>
 
@@ -261,6 +262,8 @@
         <div class="project-palette__copy">
           <p class="project-palette__text" id="project-palette-text">Entre tradición vernácula e innovación contemporánea, el lodge establece un diálogo con el clima y la naturaleza.</p>
         </div>
+
+        <p class="project-palette__mobile-text" id="project-palette-mobile-text" hidden></p>
 
         <div class="project-palette__images">
           <figure class="project-palette__image project-palette__image--a anim-fade-in" data-anim-delay="120">

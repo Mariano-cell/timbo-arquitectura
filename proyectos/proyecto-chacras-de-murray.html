@@ -55,108 +55,9 @@
       }
     }
 
-    /* ====================================================================
-       TOGGLE de ratio para .project-refuge__image — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="refuge-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
-    .project-refuge__gallery {
-      position: relative;
-    }
-
-    .project-refuge__gallery .project-refuge__image {
-      transition: aspect-ratio 0.5s ease;
-    }
-
-    .project-refuge__gallery[data-refuge-ratio="3/2"] .project-refuge__image {
-      aspect-ratio: 3 / 2;
-    }
-
-    .refuge-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 5;
-    }
-
-    .refuge-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .refuge-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .refuge-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
-    }
-
-    /* ====================================================================
-       TOGGLE de ratio para .project-phrase__image — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="phrase-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
-    .project-phrase__images .project-phrase__image {
-      transition: aspect-ratio 0.5s ease;
-    }
-
-    .project-phrase__images[data-phrase-ratio="3/2"] .project-phrase__image {
-      aspect-ratio: 3 / 2;
-    }
-
-    .phrase-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 5;
-    }
-
-    .phrase-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .phrase-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .phrase-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
+    .project-refuge--single-horizontal .project-refuge__image,
+    .project-phrase--single-horizontal .project-phrase__image {
+      aspect-ratio: 16 / 9;
     }
   </style>
 </head>
@@ -287,17 +188,11 @@
           </p>
         </div>
 
-        <div class="project-refuge__gallery" data-refuge-ratio="16/9">
+        <div class="project-refuge__gallery">
           <figure class="project-refuge__image anim-fade-in" data-anim-delay="0">
             <img src="../assets/images/projects/chacras-de-murray/refuge-01.jpg" alt="Chacras de Murray" loading="lazy"
               decoding="async">
           </figure>
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="refuge-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </div>
       </div>
     </section>
@@ -336,16 +231,10 @@
           </p>
         </div>
 
-        <div class="project-phrase__images" data-phrase-ratio="16/9">
+        <div class="project-phrase__images">
           <figure class="project-phrase__image project-phrase__image--zoom anim-fade-in" data-anim-delay="120">
             <img src="../assets/images/projects/chacras-de-murray/phrase-01.jpg" alt="Chacras de Murray" loading="lazy" decoding="async">
           </figure>
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="phrase-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </div>
       </div>
     </section>
@@ -355,33 +244,38 @@
          Imagen con placeholder hasta que se suba `highlight-01.jpg`. -->
     <section class="project-highlight project-highlight--split" data-project-slug="chacras-de-murray" data-nav-theme="light">
       <div class="container project-highlight__container">
-        <figure class="project-highlight__media anim-zoom-in">
-          <img src="../assets/images/projects/chacras-de-murray/highlight-01.jpg" alt="Chacras de Murray" loading="lazy" decoding="async">
+        <div class="project-highlight__visual">
+          <figure class="project-highlight__media anim-zoom-in">
+            <img src="../assets/images/projects/chacras-de-murray/highlight-01.jpg" alt="Chacras de Murray" loading="lazy" decoding="async">
+          </figure>
 
-          <h2 class="project-highlight__title" id="project-highlight-title">
+          <h2 class="project-highlight__title" id="project-highlight-title" data-reveal-trigger-ratio-mobile="0.85">
             <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">La arquitectura se desarrolla por debajo del nivel natural del terreno, modificando la percepción del paisaje y generando una experiencia de privacidad.</span></span>
           </h2>
-        </figure>
+        </div>
       </div>
     </section>
 
-    <!-- ====== PALETTE ======
-         Reescrita con modo drag (estándar). Texto unificado. -->
-    <section class="project-palette" data-nav-theme="light" data-palette-reveal="off">
+    <!-- ====== PALETTE ====== -->
+    <section class="project-palette project-palette--gallery" data-nav-theme="light" data-palette-reveal="off">
       <div class="project-palette__container">
         <div class="project-palette__copy anim-fade-up" data-anim-delay="0">
           <p class="project-palette__intro" id="project-palette-text">La materialidad responde tanto a una búsqueda estética como a criterios de durabilidad y eficiencia. Madera, piedra y superficies claras se combinan en una lógica constructiva sencilla, pensada para un bajo mantenimiento y un buen desempeño en el tiempo.<br><br>Una casa con todo lo necesario para vivir bien, sin excesos, pensada para durar.</p>
         </div>
 
-        <div class="project-palette__images">
-          <figure class="project-palette__image project-palette__image--a anim-fade-in" data-anim-delay="120">
-            <img src="../assets/images/projects/chacras-de-murray/palette-01.jpg" alt="Chacras de Murray"
-              decoding="async">
-          </figure>
+        <p class="project-palette__mobile-text" id="project-palette-mobile-text" hidden></p>
 
-          <figure class="project-palette__image project-palette__image--b anim-fade-in" data-anim-delay="220">
-            <img src="../assets/images/projects/chacras-de-murray/palette-02.jpg" alt="Chacras de Murray"
-              decoding="async">
+        <div class="project-palette__images anim-fade-in" data-anim-delay="120">
+          <div class="project-palette__dots">
+            <button class="project-palette__dot is-active" data-project-palette-slide="0" aria-label="Foto 1"></button>
+            <button class="project-palette__dot" data-project-palette-slide="1" aria-label="Foto 2"></button>
+          </div>
+
+          <figure class="project-palette__photo">
+            <img class="project-palette__img is-active" src="../assets/images/projects/chacras-de-murray/palette-01.jpg"
+              alt="Chacras de Murray" decoding="async">
+            <img class="project-palette__img" src="../assets/images/projects/chacras-de-murray/palette-02.jpg"
+              alt="Chacras de Murray" decoding="async">
           </figure>
         </div>
       </div>
@@ -444,39 +338,6 @@
     })();
   </script>
 
-  <!-- TEMPORAL: lógica del toggle de ratio de refuge. Borrar junto con el <style>
-       y el <div class="refuge-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const gallery = document.querySelector('.project-refuge__gallery[data-refuge-ratio]');
-      if (!gallery) return;
-      const buttons = gallery.querySelectorAll('.refuge-ratio-toggle button');
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          gallery.dataset.refugeRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
-
-  <!-- TEMPORAL: lógica del toggle de ratio de phrase. Borrar junto con el <style>
-       y el <div class="phrase-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const gallery = document.querySelector('.project-phrase__images[data-phrase-ratio]');
-      if (!gallery) return;
-      const buttons = gallery.querySelectorAll('.phrase-ratio-toggle button');
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          gallery.dataset.phraseRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
 </body>
 
 </html>

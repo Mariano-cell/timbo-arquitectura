@@ -74,7 +74,7 @@ Así cada sección queda autocontenida: desktop arriba, mobile pegado abajo.
 
 Este es el **estándar de comportamiento tipográfico mobile** del sitio. Se aplica dentro de `@media (max-width: 1023.98px)` a títulos, etiquetas (kickers/labels) y párrafos de las secciones que usen este patrón.
 
-**Nombre corto:** `estandar-a-mobile`. El usuario puede pedir aplicarlo refiriéndose a él por este nombre, y aclarará si se refiere al **estándar para título** (`.selector__claim`), al **estándar para párrafo** (`.selector__text`) o al **estándar para label/kicker** (`.selector__label`). Si dice "estandar-a-mobile" sin aclarar, se aplica el bloque entero (label + claim + text + body gap).
+**Nombre corto:** `estandar-a-mobile`. El usuario puede pedir aplicarlo refiriéndose a él por este nombre, y aclarará si se refiere al **estándar para título** (`.selector__claim`), al **estándar para párrafo** (`.selector__text`), al **estándar para label/kicker** (`.selector__label`) o al **estándar para frase-destacada** (`.selector__highlight`). Si dice "estandar-a-mobile" sin aclarar, preguntar a cuál se refiere.
 
 **No se aplica automáticamente a todas las secciones** — sólo a las que indique el usuario. Pero cuando se aplica, se usan estos valores tal cual (o se adaptan proporcionalmente si el diseño lo pide).
 
@@ -109,6 +109,14 @@ Este es el **estándar de comportamiento tipográfico mobile** del sitio. Se apl
     max-width: clamp(16rem, 80vw, 30rem);
   }
 
+  /* Frase destacada (mismo tamaño que párrafo, bold, line-height ajustado) */
+  .selector__highlight {
+    /* Fluid: 16px @ 375px → 23px @ 1023px (igual que __text) */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+  }
+
   /* Contenedor flex en columna que agrupa label + claim + text */
   .selector__body {
     gap: var(--space-md); /* 16px — mitad del gap desktop típico */
@@ -118,7 +126,7 @@ Este es el **estándar de comportamiento tipográfico mobile** del sitio. Se apl
 
 ### Referencia: cómo se ven los tamaños en distintos anchos
 
-| Ancho | label | claim | text |
+| Ancho | label | claim | text / highlight |
 |---|---|---|---|
 | 375px | 10px | 28px | 16px |
 | 500px | ~10.8px | ~30.3px | ~17.3px |
@@ -126,9 +134,11 @@ Este es el **estándar de comportamiento tipográfico mobile** del sitio. Se apl
 | 900px | ~13.3px | ~37.7px | ~21.7px |
 | 1023px | 14px | 40px | 23px |
 
+`__text` y `__highlight` comparten font-size. Los diferencian `font-weight` (regular vs bold) y `line-height` (default vs 1.2).
+
 ### Origen del estándar
 
-Calibrado sobre la sección `.intro` de `index.html` (home). Si se modifican los valores del estándar, actualizarlos primero en esta sección de `CLAUDE.md` y luego propagar a las secciones donde ya esté aplicado.
+Calibrado sobre la sección `.intro` de `index.html` (home). El bloque de `__highlight` se calibró sobre `.project-highlight__title` (común a todas las páginas de proyecto). Si se modifican los valores del estándar, actualizarlos primero en esta sección de `CLAUDE.md` y luego propagar a las secciones donde ya esté aplicado.
 
 ### Cómo aplicar a una sección nueva
 
@@ -413,6 +423,7 @@ Si durante la revisión se agregan helpers temporales inline dentro de una pági
 - [x] `proyecto-tobar-lodge.html` — sección `.project-highlight` con modificador `.project-highlight--gallery` y galería de `2` fotos.
 - [x] `proyecto-tobar-lodge.html` — sección `.project-palette` con modificador `.project-palette--gallery` y galería de `2` fotos.
 - [x] `proyecto-cardano-clubhouse.html` — sección `.project-palette` con modificador `.project-palette--gallery` y galería de `2` fotos.
+- [x] `proyecto-chacras-de-murray.html` — sección `.project-palette` con modificador `.project-palette--gallery` y galería de `2` fotos.
 
 (A medida que se aplique a otras secciones, registrar acá página, sección, modificador y cantidad de fotos.)
 

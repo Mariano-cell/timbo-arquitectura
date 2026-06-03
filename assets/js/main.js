@@ -1132,6 +1132,21 @@ const Timbo = {
         el.innerHTML = value;
       };
 
+      const setPaletteMobileText = (value) => {
+        const el = document.getElementById('project-palette-mobile-text');
+        if (!el) return;
+
+        if (value === undefined || value === null || value === '') {
+          delete el.dataset.lineRevealSource;
+          el.hidden = true;
+          el.innerHTML = '';
+          return;
+        }
+
+        el.hidden = false;
+        el.innerHTML = value;
+      };
+
       setHTML('project-title', project.name);
       setText('project-location', project.location);
       setText('project-meta-location', project.location);
@@ -1161,6 +1176,7 @@ const Timbo = {
         innerClass: 'project-highlight__title-line-inner',
       });
       setPaletteIntro(project.paletteIntro);
+      setPaletteMobileText(project.paletteMobileText);
       setPaletteText(project.paletteText);
 
       setText('project-meta-location-label', pageData.locationLabel);
@@ -3351,6 +3367,8 @@ const Timbo = {
 
       if (!targets.length) return;
 
+      const mobileQuery = window.matchMedia('(max-width: 1023.98px)');
+
       const rebuildLines = () => {
         targets.forEach(({ element, lineClass, innerClass }) => {
           Timbo.splitTextIntoVisualLines(element, {
@@ -3360,12 +3378,24 @@ const Timbo = {
         });
       };
 
+      const getTriggerRatio = (element) => {
+        const customTriggerRatio = Number.parseFloat(element.dataset.revealTriggerRatio || '');
+        const customMobileTriggerRatio = Number.parseFloat(element.dataset.revealTriggerRatioMobile || '');
+
+        if (mobileQuery.matches && Number.isFinite(customMobileTriggerRatio)) {
+          return customMobileTriggerRatio;
+        }
+
+        if (Number.isFinite(customTriggerRatio)) {
+          return customTriggerRatio;
+        }
+
+        return this.TRIGGER_RATIO;
+      };
+
       const update = () => {
         targets.forEach(({ element }) => {
-          const customTriggerRatio = Number.parseFloat(element.dataset.revealTriggerRatio || '');
-          const triggerRatio = Number.isFinite(customTriggerRatio)
-            ? customTriggerRatio
-            : this.TRIGGER_RATIO;
+          const triggerRatio = getTriggerRatio(element);
           const trigger = window.innerHeight * triggerRatio;
           const rect = element.getBoundingClientRect();
 
@@ -5075,27 +5105,51 @@ const Timbo = {
 
   },
 
+  initAutoGallery(root, dots, activate) {
+    if (!root || dots.length < 2) return;
+
+    const intervalMs = Number.parseInt(root.dataset.galleryAutoplay || '', 10);
+    if (!Number.isFinite(intervalMs) || intervalMs <= 0) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    window.setInterval(() => {
+      const currentIndex = Array.from(dots).findIndex((dot) => dot.classList.contains('is-active'));
+      const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % dots.length : 0;
+      activate(nextIndex);
+    }, intervalMs);
+  },
+
   projectOverviewSlider: {
     init() {
-      const dots = document.querySelectorAll('.project-overview__dot[data-project-overview-slide]');
-      const imgs = document.querySelectorAll('.project-overview__img');
+      const media = document.querySelector('.project-overview__media');
+      if (!media) return;
+
+      const dots = media.querySelectorAll('.project-overview__dot[data-project-overview-slide]');
+      const imgs = media.querySelectorAll('.project-overview__img');
       if (!dots.length || !imgs.length) return;
+
+      const setSlide = (idx) => {
+        dots.forEach((d) => d.classList.remove('is-active'));
+        imgs.forEach((i) => i.classList.remove('is-active'));
+        if (dots[idx]) dots[idx].classList.add('is-active');
+        if (imgs[idx]) imgs[idx].classList.add('is-active');
+      };
 
       dots.forEach(dot => {
         dot.addEventListener('click', () => {
           const idx = Number(dot.dataset.projectOverviewSlide);
-          dots.forEach(d => d.classList.remove('is-active'));
-          imgs.forEach(i => i.classList.remove('is-active'));
-          dot.classList.add('is-active');
-          if (imgs[idx]) imgs[idx].classList.add('is-active');
+          setSlide(idx);
         });
       });
+
+      Timbo.initAutoGallery(media, dots, setSlide);
     },
   },
 
   projectRefugeSlider: {
     init() {
-      const sections = document.querySelectorAll('.project-refuge--gallery');
+      const sections = document.querySelectorAll('.project-refuge--gallery, .project-refuge--gallery-mobile-only');
       if (!sections.length) return;
 
       sections.forEach((section) => {
@@ -5118,25 +5172,37 @@ const Timbo = {
 
   projectFrameSlider: {
     init() {
-      const dots = document.querySelectorAll('.project-frame__dot[data-project-frame-slide]');
-      const imgs = document.querySelectorAll('.project-frame__img');
-      if (!dots.length || !imgs.length) return;
+      const sections = document.querySelectorAll('.project-frame--gallery');
+      if (!sections.length) return;
 
-      dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-          const idx = Number(dot.dataset.projectFrameSlide);
-          dots.forEach(d => d.classList.remove('is-active'));
-          imgs.forEach(i => i.classList.remove('is-active'));
-          dot.classList.add('is-active');
+      sections.forEach((section) => {
+        const media = section.querySelector('.project-frame__media');
+        const dots = section.querySelectorAll('.project-frame__dot[data-project-frame-slide]');
+        const imgs = section.querySelectorAll('.project-frame__img');
+        if (!media || !dots.length || !imgs.length) return;
+
+        const setSlide = (idx) => {
+          dots.forEach((d) => d.classList.remove('is-active'));
+          imgs.forEach((i) => i.classList.remove('is-active'));
+          if (dots[idx]) dots[idx].classList.add('is-active');
           if (imgs[idx]) imgs[idx].classList.add('is-active');
+        };
+
+        dots.forEach(dot => {
+          dot.addEventListener('click', () => {
+            const idx = Number(dot.dataset.projectFrameSlide);
+            setSlide(idx);
+          });
         });
+
+        Timbo.initAutoGallery(media, dots, setSlide);
       });
     },
   },
 
   projectPhraseSlider: {
     init() {
-      const sections = document.querySelectorAll('.project-phrase--gallery');
+      const sections = document.querySelectorAll('.project-phrase--gallery, .project-phrase--gallery-mobile-only');
       if (!sections.length) return;
 
       sections.forEach((section) => {
@@ -5159,7 +5225,7 @@ const Timbo = {
 
   projectPaletteSlider: {
     init() {
-      const sections = document.querySelectorAll('.project-palette--gallery');
+      const sections = document.querySelectorAll('.project-palette--gallery, .project-palette--gallery-mobile-only');
       if (!sections.length) return;
 
       sections.forEach((section) => {
@@ -5972,11 +6038,13 @@ const Timbo = {
     el: null,
     section: null,
     ticking: false,
+    mobileQuery: null,
 
     init() {
       this.el = document.querySelector('.project-frame__copy');
       if (!this.el) return;
       this.section = this.el.closest('.project-frame') || this.el.parentElement;
+      this.mobileQuery = window.matchMedia('(max-width: 1023.98px)');
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduceMotion) return;
@@ -5997,6 +6065,11 @@ const Timbo = {
 
     update() {
       if (!this.el || !this.section) return;
+      if (this.mobileQuery && this.mobileQuery.matches) {
+        this.el.style.transform = '';
+        return;
+      }
+
       const rect = this.section.getBoundingClientRect();
       const entered = window.innerHeight - rect.top;
       if (entered <= 0) {
@@ -6078,10 +6151,12 @@ const Timbo = {
     START_OFFSET: 80,
     items: [],
     ticking: false,
+    mobileQuery: null,
 
     init() {
       const els = document.querySelectorAll('.project-palette__text');
       if (!els.length) return;
+      this.mobileQuery = window.matchMedia('(max-width: 1023.98px)');
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduceMotion) return;
@@ -6108,6 +6183,10 @@ const Timbo = {
     update() {
       this.items.forEach(({ el, section }) => {
         if (!el || !section) return;
+        if (this.mobileQuery && this.mobileQuery.matches) {
+          el.style.transform = '';
+          return;
+        }
         const rect = section.getBoundingClientRect();
         const entered = window.innerHeight - rect.top;
         if (entered <= 0) {
@@ -6198,10 +6277,12 @@ const Timbo = {
     START_OFFSET: 80,
     items: [],
     ticking: false,
+    mobileQuery: null,
 
     init() {
       const els = document.querySelectorAll('.project-phrase__text');
       if (!els.length) return;
+      this.mobileQuery = window.matchMedia('(max-width: 1023.98px)');
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduceMotion) return;
@@ -6228,6 +6309,10 @@ const Timbo = {
     update() {
       this.items.forEach(({ el, section }) => {
         if (!el || !section) return;
+        if (this.mobileQuery && this.mobileQuery.matches) {
+          el.style.transform = '';
+          return;
+        }
         const rect = section.getBoundingClientRect();
         const entered = window.innerHeight - rect.top;
         if (entered <= 0) {

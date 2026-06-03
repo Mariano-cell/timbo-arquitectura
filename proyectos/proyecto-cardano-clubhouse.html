@@ -53,158 +53,21 @@
       }
     }
 
-    /* ====================================================================
-       TOGGLE de ratio para .project-refuge__image — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="refuge-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
-    .project-refuge__gallery {
-      position: relative;
+    .project-refuge--single-horizontal .project-refuge__image,
+    .project-frame__media,
+    .project-palette--gallery .project-palette__img {
+      aspect-ratio: 16 / 9;
     }
 
-    .project-refuge__gallery .project-refuge__image {
-      transition: aspect-ratio 0.5s ease;
+    .project-phrase--gallery-mobile-only .project-phrase__img {
+      aspect-ratio: 1133 / 1388;
     }
 
-    .project-refuge__gallery[data-refuge-ratio="3/2"] .project-refuge__image {
-      aspect-ratio: 3 / 2;
-    }
-
-    .refuge-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 5;
-    }
-
-    .refuge-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .refuge-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .refuge-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
-    }
-
-    /* ====================================================================
-       TOGGLE de ratio para .project-frame__media — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="frame-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
-    .project-frame__media {
-      transition: aspect-ratio 0.5s ease;
-    }
-
-    .project-frame__media[data-frame-ratio="3/2"] {
-      aspect-ratio: 3 / 2;
-    }
-
-    .frame-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 7;
-    }
-
-    .frame-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .frame-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .frame-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
-    }
-
-    /* ====================================================================
-       TOGGLE de ratio para .project-palette__img — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="palette-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
-    .project-palette__photo .project-palette__img {
-      transition: opacity 600ms ease, transform 8000ms ease-out, aspect-ratio 0.5s ease;
-    }
-
-    .project-palette__photo[data-palette-ratio="3/2"] .project-palette__img {
-      aspect-ratio: 3 / 2;
-    }
-
-    .palette-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 5;
-    }
-
-    .palette-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .palette-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .palette-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
+    @media (min-width: 1024px) {
+      .project-highlight[data-project-slug="cardano"] .project-highlight__title {
+        top: auto;
+        bottom: var(--margin-b);
+      }
     }
   </style>
 </head>
@@ -339,17 +202,11 @@
           </p>
         </div>
 
-        <div class="project-refuge__gallery" data-refuge-ratio="16/9">
+        <div class="project-refuge__gallery">
           <figure class="project-refuge__image anim-fade-in" data-anim-delay="0">
             <img src="../assets/images/projects/cardano/refuge-01.png" alt="Cardano Clubhouse" loading="lazy"
               decoding="async">
           </figure>
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="refuge-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </div>
       </div>
     </section>
@@ -357,15 +214,9 @@
     <!-- ====== FRAME ====== -->
     <section class="project-frame project-frame--split" data-project-slug="cardano" data-nav-theme="light">
       <div class="container project-frame__container">
-        <figure class="project-frame__media anim-fade-in" data-frame-ratio="16/9">
+        <figure class="project-frame__media anim-fade-in">
           <img src="../assets/images/projects/cardano/frame-01.jpg" alt="Cardano Clubhouse" loading="lazy"
             decoding="async">
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="frame-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </figure>
 
         <div class="project-frame__copy">
@@ -384,7 +235,7 @@
          data-phrase-reveal="off": desactiva el reveal por máscara (estandar-b) del
          módulo Timbo.projectPhraseTextReveal en esta página. El <p> usa estandar-a
          (anim-fade-up) en su lugar. -->
-    <section class="project-phrase" data-nav-theme="light" data-phrase-reveal="off">
+    <section class="project-phrase project-phrase--gallery-mobile-only" data-nav-theme="light" data-phrase-reveal="off">
       <div class="project-phrase__container">
         <div class="project-phrase__copy">
           <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0" id="project-phrase-text">
@@ -407,6 +258,20 @@
             <img src="../assets/images/projects/cardano/phrase-02.png" alt="Cardano Clubhouse" loading="lazy" decoding="async">
           </figure>
         </div>
+
+        <div class="project-phrase__gallery-mobile anim-fade-in" data-anim-delay="120" aria-hidden="false">
+          <div class="project-phrase__dots">
+            <button class="project-phrase__dot is-active" data-project-phrase-slide="0" aria-label="Foto 1"></button>
+            <button class="project-phrase__dot" data-project-phrase-slide="1" aria-label="Foto 2"></button>
+          </div>
+
+          <figure class="project-phrase__photo">
+            <img class="project-phrase__img is-active" src="../assets/images/projects/cardano/phrase-01.png"
+              alt="Cardano Clubhouse" loading="lazy" decoding="async">
+            <img class="project-phrase__img" src="../assets/images/projects/cardano/phrase-02.png"
+              alt="Cardano Clubhouse" loading="lazy" decoding="async">
+          </figure>
+        </div>
       </div>
     </section>
 
@@ -414,13 +279,15 @@
          NUEVA sección. TODO cliente: imagen highlight-01.jpg + dos líneas de título. -->
     <section class="project-highlight project-highlight--split" data-project-slug="cardano" data-nav-theme="light">
       <div class="container project-highlight__container">
-        <figure class="project-highlight__media anim-zoom-in">
-          <img src="../assets/images/projects/cardano/highlight-01.jpg" alt="Cardano Clubhouse" loading="lazy" decoding="async">
+        <div class="project-highlight__visual">
+          <figure class="project-highlight__media anim-zoom-in">
+            <img src="../assets/images/projects/cardano/highlight-01.jpg" alt="Cardano Clubhouse" loading="lazy" decoding="async">
+          </figure>
 
-          <h2 class="project-highlight__title" id="project-highlight-title">
+          <h2 class="project-highlight__title" id="project-highlight-title" data-reveal-trigger-ratio-mobile="0.85">
             <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">La arquitectura se desarrolla por debajo del nivel natural del terreno, modificando la percepción del paisaje y generando una experiencia de privacidad.</span></span>
           </h2>
-        </figure>
+        </div>
       </div>
     </section>
 
@@ -431,24 +298,20 @@
           <p class="project-palette__text" id="project-palette-text">En contraste con la densidad habitacional del barrio, el clubhouse se configura como un espacio aislado y sereno, habitable a lo largo del día y la noche.</p>
         </div>
 
+        <p class="project-palette__mobile-text" id="project-palette-mobile-text" hidden></p>
+
         <div class="project-palette__images anim-fade-in" data-anim-delay="120">
           <div class="project-palette__dots">
             <button class="project-palette__dot is-active" data-project-palette-slide="0" aria-label="Foto 1"></button>
             <button class="project-palette__dot" data-project-palette-slide="1" aria-label="Foto 2"></button>
           </div>
 
-          <figure class="project-palette__photo" data-palette-ratio="16/9">
+          <figure class="project-palette__photo">
             <img class="project-palette__img is-active" src="../assets/images/projects/cardano/palette-01.png"
               alt="Cardano Clubhouse" decoding="async">
             <img class="project-palette__img" src="../assets/images/projects/cardano/palette-02.png"
               alt="Cardano Clubhouse" decoding="async">
           </figure>
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="palette-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </div>
       </div>
     </section>
@@ -498,57 +361,6 @@
     })();
   </script>
 
-  <!-- TEMPORAL: lógica del toggle de ratio de refuge. Borrar junto con el <style>
-       y el <div class="refuge-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const gallery = document.querySelector('.project-refuge__gallery[data-refuge-ratio]');
-      if (!gallery) return;
-      const buttons = gallery.querySelectorAll('.refuge-ratio-toggle button');
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          gallery.dataset.refugeRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
-
-  <!-- TEMPORAL: lógica del toggle de ratio de frame. Borrar junto con el <style>
-       y el <div class="frame-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const media = document.querySelector('.project-frame__media[data-frame-ratio]');
-      if (!media) return;
-      const buttons = media.querySelectorAll('.frame-ratio-toggle button');
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          media.dataset.frameRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
-
-  <!-- TEMPORAL: lógica del toggle de ratio de palette. Borrar junto con el <style>
-       y el <div class="palette-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const photo = document.querySelector('.project-palette__photo[data-palette-ratio]');
-      if (!photo) return;
-      const buttons = photo.parentElement?.querySelectorAll('.palette-ratio-toggle button');
-      if (!buttons?.length) return;
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          photo.dataset.paletteRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
 </body>
 
 </html>

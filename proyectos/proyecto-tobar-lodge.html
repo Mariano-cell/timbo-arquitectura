@@ -55,154 +55,10 @@
       }
     }
 
-    /* ====================================================================
-       TOGGLE de ratio para .project-frame__img — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="frame-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
-    .project-frame__photo .project-frame__img {
-      transition: opacity 600ms ease, transform 8000ms ease-out, aspect-ratio 0.5s ease;
-    }
-
-    .project-frame__photo[data-frame-ratio="3/2"] .project-frame__img {
-      aspect-ratio: 3 / 2;
-    }
-
-    .frame-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 5;
-    }
-
-    .frame-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .frame-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .frame-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
-    }
-
-    /* ====================================================================
-       TOGGLE de ratio para .project-phrase__img — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="phrase-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
-    .project-phrase__photo .project-phrase__img {
-      transition: opacity 600ms ease, transform 8000ms ease-out, aspect-ratio 0.5s ease;
-    }
-
-    .project-phrase__photo[data-phrase-ratio="3/2"] .project-phrase__img {
-      aspect-ratio: 3 / 2;
-    }
-
-    .phrase-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 5;
-    }
-
-    .phrase-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .phrase-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .phrase-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
-    }
-
-    /* ====================================================================
-       TOGGLE de ratio para .project-palette__img — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="palette-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
+    .project-frame__photo .project-frame__img,
+    .project-phrase__photo .project-phrase__img,
     .project-palette__photo .project-palette__img {
-      transition: opacity 600ms ease, transform 8000ms ease-out, aspect-ratio 0.5s ease;
-    }
-
-    .project-palette__photo[data-palette-ratio="3/2"] .project-palette__img {
       aspect-ratio: 3 / 2;
-    }
-
-    .palette-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 5;
-    }
-
-    .palette-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .palette-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .palette-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
     }
 
     .project-palette__copy > .project-palette__text:only-of-type {
@@ -330,7 +186,7 @@
     </section>
 
     <!-- ====== REFUGE ====== -->
-    <section class="project-refuge" data-nav-theme="light">
+    <section class="project-refuge project-refuge--gallery-mobile-only" data-nav-theme="light">
       <div class="container project-refuge__container">
         <div class="project-refuge__copy">
           <p class="project-refuge__text anim-fade-up" data-anim-delay="0" id="project-refuge-text-1">El proyecto se desarrolla en lo profundo del
@@ -343,6 +199,7 @@
           </p>
         </div>
 
+        <!-- DESKTOP: galería original de dos figures (se oculta en mobile vía CSS modificador). -->
         <div class="project-refuge__gallery">
           <figure class="project-refuge__image anim-fade-in" data-anim-delay="0">
             <img src="../assets/images/projects/tobar-lodge/refuge-01.jpg" alt="Tobar Lodge" loading="lazy"
@@ -351,6 +208,22 @@
           <figure class="project-refuge__image anim-fade-in" data-anim-delay="400">
             <img src="../assets/images/projects/tobar-lodge/refuge-02.jpg" alt="Tobar Lodge" loading="lazy"
               decoding="async">
+          </figure>
+        </div>
+
+        <!-- MOBILE: galería slider con dots, replicada del patrón conversion-a-galeria.
+             Vive oculta en desktop y se muestra en @media (max-width: 1023.98px). -->
+        <div class="project-refuge__gallery-mobile anim-fade-in" data-anim-delay="0" aria-hidden="false">
+          <div class="project-refuge__dots">
+            <button class="project-refuge__dot is-active" data-project-refuge-slide="0" aria-label="Foto 1"></button>
+            <button class="project-refuge__dot" data-project-refuge-slide="1" aria-label="Foto 2"></button>
+          </div>
+
+          <figure class="project-refuge__photo">
+            <img class="project-refuge__img is-active" src="../assets/images/projects/tobar-lodge/refuge-01.jpg"
+              alt="Tobar Lodge" loading="lazy" decoding="async">
+            <img class="project-refuge__img" src="../assets/images/projects/tobar-lodge/refuge-02.jpg"
+              alt="Tobar Lodge" loading="lazy" decoding="async">
           </figure>
         </div>
       </div>
@@ -366,7 +239,7 @@
             <button class="project-frame__dot" data-project-frame-slide="2" aria-label="Foto 3"></button>
           </div>
 
-          <figure class="project-frame__photo" data-frame-ratio="16/9">
+          <figure class="project-frame__photo">
             <img class="project-frame__img is-active" src="../assets/images/projects/tobar-lodge/frame-01.jpg"
               alt="Tobar Lodge" loading="lazy" decoding="async">
             <img class="project-frame__img" src="../assets/images/projects/tobar-lodge/frame-02.jpg"
@@ -374,12 +247,6 @@
             <img class="project-frame__img" src="../assets/images/projects/tobar-lodge/frame-03.jpg"
               alt="Tobar Lodge" loading="lazy" decoding="async">
           </figure>
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="frame-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </div>
 
         <div class="project-frame__copy">
@@ -410,7 +277,7 @@
             <button class="project-phrase__dot" data-project-phrase-slide="2" aria-label="Foto 3"></button>
           </div>
 
-          <figure class="project-phrase__photo" data-phrase-ratio="16/9">
+          <figure class="project-phrase__photo">
             <img class="project-phrase__img is-active" src="../assets/images/projects/tobar-lodge/phrase-01.jpg"
               alt="Tobar Lodge" loading="lazy" decoding="async">
             <img class="project-phrase__img" src="../assets/images/projects/tobar-lodge/phrase-02.jpg"
@@ -418,12 +285,6 @@
             <img class="project-phrase__img" src="../assets/images/projects/tobar-lodge/phrase-03.jpg"
               alt="Tobar Lodge" loading="lazy" decoding="async">
           </figure>
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="phrase-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </div>
       </div>
     </section>
@@ -431,20 +292,22 @@
     <!-- ====== HIGHLIGHT ====== -->
     <section class="project-highlight project-highlight--split project-highlight--gallery" data-project-slug="tobar-lodge" data-nav-theme="light">
       <div class="container project-highlight__container">
-        <div class="project-highlight__media anim-zoom-in">
-          <div class="project-highlight__dots">
-            <button class="project-highlight__dot is-active" data-project-highlight-slide="0" aria-label="Foto 1"></button>
-            <button class="project-highlight__dot" data-project-highlight-slide="1" aria-label="Foto 2"></button>
+        <div class="project-highlight__visual">
+          <div class="project-highlight__media anim-zoom-in">
+            <div class="project-highlight__dots">
+              <button class="project-highlight__dot is-active" data-project-highlight-slide="0" aria-label="Foto 1"></button>
+              <button class="project-highlight__dot" data-project-highlight-slide="1" aria-label="Foto 2"></button>
+            </div>
+
+            <figure class="project-highlight__photo">
+              <img class="project-highlight__img is-active" src="../assets/images/projects/tobar-lodge/highlight-01.jpg"
+                alt="Tobar Lodge" loading="lazy" decoding="async">
+              <img class="project-highlight__img" src="../assets/images/projects/tobar-lodge/highlight-02.jpg"
+                alt="Tobar Lodge" loading="lazy" decoding="async">
+            </figure>
           </div>
 
-          <figure class="project-highlight__photo">
-            <img class="project-highlight__img is-active" src="../assets/images/projects/tobar-lodge/highlight-01.jpg"
-              alt="Tobar Lodge" loading="lazy" decoding="async">
-            <img class="project-highlight__img" src="../assets/images/projects/tobar-lodge/highlight-02.jpg"
-              alt="Tobar Lodge" loading="lazy" decoding="async">
-          </figure>
-
-          <h2 class="project-highlight__title" id="project-highlight-title">
+          <h2 class="project-highlight__title" id="project-highlight-title" data-reveal-trigger-ratio-mobile="0.85">
             <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">Habitar lo inhóspito,</span></span>
             <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">conectar con lo esencial.</span></span>
           </h2>
@@ -463,24 +326,20 @@
           </p>
         </div>
 
+        <p class="project-palette__mobile-text" id="project-palette-mobile-text" hidden></p>
+
         <div class="project-palette__images anim-fade-in" data-anim-delay="120">
           <div class="project-palette__dots">
             <button class="project-palette__dot is-active" data-project-palette-slide="0" aria-label="Foto 1"></button>
             <button class="project-palette__dot" data-project-palette-slide="1" aria-label="Foto 2"></button>
           </div>
 
-          <figure class="project-palette__photo" data-palette-ratio="16/9">
+          <figure class="project-palette__photo">
             <img class="project-palette__img is-active" src="../assets/images/projects/tobar-lodge/palette-01.jpg"
               alt="Tobar Lodge" decoding="async">
             <img class="project-palette__img" src="../assets/images/projects/tobar-lodge/palette-02.jpg"
               alt="Tobar Lodge" decoding="async">
           </figure>
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="palette-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </div>
       </div>
     </section>
@@ -543,59 +402,6 @@
     })();
   </script>
 
-  <!-- TEMPORAL: lógica del toggle de ratio de frame. Borrar junto con el <style>
-       y el <div class="frame-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const photo = document.querySelector('.project-frame__photo[data-frame-ratio]');
-      if (!photo) return;
-      const buttons = photo.parentElement?.querySelectorAll('.frame-ratio-toggle button');
-      if (!buttons?.length) return;
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          photo.dataset.frameRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
-
-  <!-- TEMPORAL: lógica del toggle de ratio de phrase. Borrar junto con el <style>
-       y el <div class="phrase-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const photo = document.querySelector('.project-phrase__photo[data-phrase-ratio]');
-      if (!photo) return;
-      const buttons = photo.parentElement?.querySelectorAll('.phrase-ratio-toggle button');
-      if (!buttons?.length) return;
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          photo.dataset.phraseRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
-
-  <!-- TEMPORAL: lógica del toggle de ratio de palette. Borrar junto con el <style>
-       y el <div class="palette-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const photo = document.querySelector('.project-palette__photo[data-palette-ratio]');
-      if (!photo) return;
-      const buttons = photo.parentElement?.querySelectorAll('.palette-ratio-toggle button');
-      if (!buttons?.length) return;
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          photo.dataset.paletteRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
 </body>
 
 </html>

@@ -53,59 +53,22 @@
       }
     }
 
-    /* ====================================================================
-       TOGGLE de ratio para .project-frame__media — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="frame-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
     .project-frame__media {
-      transition: aspect-ratio 0.5s ease;
-    }
-
-    .project-frame__media[data-frame-ratio="3/2"] {
-      aspect-ratio: 3 / 2;
-    }
-
-    .frame-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 7;
-    }
-
-    .frame-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .frame-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .frame-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
+      aspect-ratio: 16 / 9;
     }
 
     /* Encuadre excepcional solo para la imagen izquierda de refuge en esta
        página: prioriza mostrar la franja derecha y recorta desde la izquierda. */
     .project-refuge__image--focus-right img {
+      object-position: right center;
+    }
+
+    .project-refuge--gallery-mobile-only .project-refuge__img,
+    .project-palette--gallery-mobile-only .project-palette__img {
+      aspect-ratio: 2720 / 3200;
+    }
+
+    .project-refuge--gallery-mobile-only .project-refuge__img--focus-right {
       object-position: right center;
     }
 
@@ -124,11 +87,17 @@
         transform: translateX(calc(var(--margin-c) * -1));
       }
     }
+
+    .project-highlight[data-project-slug="club-de-mar"] .project-highlight__title {
+      left: var(--margin-c);
+      right: auto;
+      color: var(--color-black);
+    }
   </style>
 </head>
 
 <body class="page--haras-light">
-  <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
+  <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
     <ul class="nav__links">
       <li><a href="../index.html" class="nav__link" data-i18n="nav.home">Inicio</a></li>
       <li><a href="../proyectos.html" class="nav__link nav__link--active" data-i18n="nav.projects">Proyectos</a></li>
@@ -157,7 +126,7 @@
     <!-- ====== HERO ======
          NOTA: las imágenes de Club de Mar tienen nombres descriptivos largos
          del estudio TMAST. Se respetan los paths existentes. -->
-    <section class="project-hero project-hero--club-de-mar" id="hero" data-nav-theme="light">
+    <section class="project-hero project-hero--club-de-mar" id="hero" data-nav-theme="dark">
       <div class="project-hero__media" aria-hidden="true">
         <img id="project-cover"
           src="../assets/images/projects/club-de-mar/hero-01.jpeg"
@@ -246,18 +215,13 @@
     </section>
 
     <!-- ====== REFUGE ====== -->
-    <section class="project-refuge" data-nav-theme="light">
+    <section class="project-refuge project-refuge--gallery-mobile-only" data-nav-theme="light">
       <div class="container project-refuge__container">
         <div class="project-refuge__copy">
           <p class="project-refuge__text anim-fade-up" data-anim-delay="0" id="project-refuge-text-1">Este proyecto consiste en la transformación
             integral de una vivienda existente, originalmente ineficiente tanto en su desempeño ambiental como en su
             organización espacial. Los ambientes se percibían oscuros, calurosos y poco funcionales, sin una relación
             clara con el exterior.
-          </p>
-          <p class="project-refuge__text anim-fade-up" data-anim-delay="120" id="project-refuge-text-2">La intervención reordena el programa y
-            redefine la relación entre interior y paisaje. A través de nuevas aberturas, ajustes en su tamaño y
-            posicionamiento, y una envolvente mejorada, la casa incorpora luz natural, favorece la ventilación cruzada y
-            optimiza el confort térmico.
           </p>
         </div>
 
@@ -271,29 +235,36 @@
               alt="Club de Mar" loading="lazy" decoding="async">
           </figure>
         </div>
+
+        <div class="project-refuge__gallery-mobile anim-fade-in" data-anim-delay="0" aria-hidden="false">
+          <div class="project-refuge__dots">
+            <button class="project-refuge__dot is-active" data-project-refuge-slide="0" aria-label="Foto 1"></button>
+            <button class="project-refuge__dot" data-project-refuge-slide="1" aria-label="Foto 2"></button>
+          </div>
+
+          <figure class="project-refuge__photo">
+            <img class="project-refuge__img project-refuge__img--focus-right is-active" src="../assets/images/projects/club-de-mar/refuge-01.jpeg"
+              alt="Club de Mar" loading="lazy" decoding="async">
+            <img class="project-refuge__img" src="../assets/images/projects/club-de-mar/refuge-02.jpeg"
+              alt="Club de Mar" loading="lazy" decoding="async">
+          </figure>
+        </div>
       </div>
     </section>
 
     <!-- ====== FRAME ====== -->
     <section class="project-frame project-frame--split" data-project-slug="club-de-mar" data-nav-theme="light">
       <div class="container project-frame__container">
-        <figure class="project-frame__media anim-fade-in" data-frame-ratio="16/9">
+        <figure class="project-frame__media anim-fade-in">
           <img src="../assets/images/projects/club-de-mar/frame-01.jpeg"
             alt="Club de Mar" loading="lazy" decoding="async">
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="frame-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </figure>
 
         <div class="project-frame__copy">
           <p class="project-frame__text anim-fade-up" data-anim-delay="0" id="project-frame-text">
-            El proyecto integra las concepciones de la arquitectura, el interiorismo y el paisajismo como un único
-            sistema. Los espacios exteriores se diseñan como una extensión de la vivienda, no solo desde lo espacial,
-            sino también como parte de su funcionamiento ambiental: aportan sombra, reducen la radiación sobre las
-            superficies más expuestas y colaboran en la regulación térmica del conjunto.
+            La intervención reordena el programa y redefine la relación entre interior y paisaje. A través de nuevas
+            aberturas, ajustes en su tamaño y posicionamiento, y una envolvente mejorada, la casa incorpora luz natural,
+            favorece la ventilación cruzada y optimiza el confort térmico.
           </p>
         </div>
       </div>
@@ -309,8 +280,12 @@
       <div class="project-phrase__container">
         <div class="project-phrase__copy">
           <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0" id="project-phrase-text">
-            Cada decisión proyectual fue evaluada mediante simulaciones, pruebas e iteraciones, buscando una
-            intervención precisa que mejore el desempeño energético y el confort.
+            El proyecto integra las concepciones de la arquitectura, el interiorismo y el paisajismo como un único
+            sistema. Los espacios exteriores se diseñan como una extensión de la vivienda, no solo desde lo espacial,
+            sino también como parte de su funcionamiento ambiental: aportan sombra, reducen la radiación sobre las
+            superficies más expuestas y colaboran en la regulación térmica del conjunto.<br><br>Cada decisión
+            proyectual fue evaluada mediante simulaciones, pruebas e iteraciones, buscando una intervención precisa que
+            mejore el desempeño energético y el confort.
           </p>
         </div>
 
@@ -326,18 +301,20 @@
          NUEVA sección. TODO cliente: imagen highlight-01.jpg + dos líneas de título. -->
     <section class="project-highlight project-highlight--split" data-project-slug="club-de-mar" data-nav-theme="light">
       <div class="container project-highlight__container">
-        <figure class="project-highlight__media anim-zoom-in">
-          <img src="../assets/images/projects/club-de-mar/highlight-01.jpeg" alt="Club de Mar" loading="lazy" decoding="async">
+        <div class="project-highlight__visual">
+          <figure class="project-highlight__media anim-zoom-in">
+            <img src="../assets/images/projects/club-de-mar/highlight-01.jpeg" alt="Club de Mar" loading="lazy" decoding="async">
+          </figure>
 
-          <h2 class="project-highlight__title project-highlight__title--light" id="project-highlight-title">
+          <h2 class="project-highlight__title" id="project-highlight-title" data-reveal-trigger-ratio-mobile="0.85">
             <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">El paisajismo aporta una estrategia de control solar, reduciendo la radiación sobre las superficies más expuestas.</span></span>
           </h2>
-        </figure>
+        </div>
       </div>
     </section>
 
     <!-- ====== PALETTE ====== -->
-    <section class="project-palette" data-nav-theme="light">
+    <section class="project-palette project-palette--gallery-mobile-only" data-nav-theme="light">
       <div class="project-palette__container">
         <div class="project-palette__copy anim-fade-up" data-anim-delay="0">
           <p class="project-palette__intro" id="project-palette-intro">La casa se reorganiza en torno a los ritmos
@@ -345,6 +322,8 @@
             materialidad simple y serena que construye una atmósfera de calma.</p>
           <p class="project-palette__text" id="project-palette-text">Más que una renovación, se trata de una recalibración: una casa existente, repensada desde su uso, su clima y su relación con el entorno.</p>
         </div>
+
+        <p class="project-palette__mobile-text" id="project-palette-mobile-text" hidden></p>
 
         <div class="project-palette__images">
           <figure class="project-palette__image project-palette__image--a anim-fade-in" data-anim-delay="120">
@@ -354,6 +333,20 @@
 
           <figure class="project-palette__image project-palette__image--b anim-fade-in" data-anim-delay="220">
             <img src="../assets/images/projects/club-de-mar/palette-02.jpeg"
+              alt="Club de Mar" decoding="async">
+          </figure>
+        </div>
+
+        <div class="project-palette__gallery-mobile anim-fade-in" data-anim-delay="120" aria-hidden="false">
+          <div class="project-palette__dots">
+            <button class="project-palette__dot is-active" data-project-palette-slide="0" aria-label="Foto 1"></button>
+            <button class="project-palette__dot" data-project-palette-slide="1" aria-label="Foto 2"></button>
+          </div>
+
+          <figure class="project-palette__photo">
+            <img class="project-palette__img is-active" src="../assets/images/projects/club-de-mar/palette-01.jpeg"
+              alt="Club de Mar" decoding="async">
+            <img class="project-palette__img" src="../assets/images/projects/club-de-mar/palette-02.jpeg"
               alt="Club de Mar" decoding="async">
           </figure>
         </div>
@@ -406,22 +399,6 @@
     })();
   </script>
 
-  <!-- TEMPORAL: lógica del toggle de ratio de frame. Borrar junto con el <style>
-       y el <div class="frame-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const media = document.querySelector('.project-frame__media[data-frame-ratio]');
-      if (!media) return;
-      const buttons = media.querySelectorAll('.frame-ratio-toggle button');
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          media.dataset.frameRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
 </body>
 
 </html>

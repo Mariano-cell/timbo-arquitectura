@@ -53,109 +53,9 @@
       }
     }
 
-    /* ====================================================================
-       TOGGLE de ratio para .project-frame__media — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="frame-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
-    .project-frame__media {
-      transition: aspect-ratio 0.5s ease;
-    }
-
-    .project-frame__media[data-frame-ratio="3/2"] {
+    .project-frame--ratio-3-2-local .project-frame__media,
+    .project-palette--ratio-3-2-local .project-palette__img {
       aspect-ratio: 3 / 2;
-    }
-
-    .frame-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 7;
-    }
-
-    .frame-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .frame-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .frame-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
-    }
-
-    /* ====================================================================
-       TOGGLE de ratio para .project-palette__image — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="palette-ratio-toggle"> del HTML cuando se decida.
-       Comportamiento: crece la altura, el ancho NO se modifica.
-       ==================================================================== */
-    .project-palette__images {
-      position: relative;
-    }
-
-    .project-palette__images .project-palette__img {
-      transition: aspect-ratio 0.5s ease;
-    }
-
-    .project-palette__images[data-palette-ratio="3/2"] .project-palette__img {
-      aspect-ratio: 3 / 2;
-    }
-
-    .palette-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 5;
-    }
-
-    .palette-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .palette-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .palette-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
     }
   </style>
 </head>
@@ -274,7 +174,7 @@
     </section>
 
     <!-- ====== REFUGE ====== -->
-    <section class="project-refuge" data-nav-theme="light">
+    <section class="project-refuge project-refuge--gallery-mobile-only" data-nav-theme="light">
       <div class="container project-refuge__container">
         <div class="project-refuge__copy">
           <p class="project-refuge__text anim-fade-up" data-anim-delay="0" id="project-refuge-text-1">Este proyecto inspiró el nombre del estudio.
@@ -297,21 +197,29 @@
               decoding="async">
           </figure>
         </div>
+
+        <div class="project-refuge__gallery-mobile anim-fade-in" data-anim-delay="0" aria-hidden="false">
+          <div class="project-refuge__dots">
+            <button class="project-refuge__dot is-active" data-project-refuge-slide="0" aria-label="Foto 1"></button>
+            <button class="project-refuge__dot" data-project-refuge-slide="1" aria-label="Foto 2"></button>
+          </div>
+
+          <figure class="project-refuge__photo">
+            <img class="project-refuge__img is-active" src="../assets/images/projects/cabana-suinda/refuge-01.jpg"
+              alt="Suindá Lodge" loading="lazy" decoding="async">
+            <img class="project-refuge__img" src="../assets/images/projects/cabana-suinda/refuge-02.jpg"
+              alt="Suindá Lodge" loading="lazy" decoding="async">
+          </figure>
+        </div>
       </div>
     </section>
 
     <!-- ====== FRAME ====== -->
-    <section class="project-frame project-frame--split" data-project-slug="cabana-suinda" data-nav-theme="light">
+    <section class="project-frame project-frame--split project-frame--ratio-3-2-local" data-project-slug="cabana-suinda" data-nav-theme="light">
       <div class="container project-frame__container">
-        <figure class="project-frame__media anim-fade-in" data-frame-ratio="16/9">
+        <figure class="project-frame__media anim-fade-in">
           <img src="../assets/images/projects/cabana-suinda/frame-01.jpg" alt="Suindá Lodge" loading="lazy"
             decoding="async">
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="frame-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </figure>
 
         <div class="project-frame__copy">
@@ -330,7 +238,7 @@
          data-phrase-reveal="off": desactiva el reveal por máscara (estandar-b) del
          módulo Timbo.projectPhraseTextReveal en esta página. El <p> usa estandar-a
          (anim-fade-up) en su lugar. -->
-    <section class="project-phrase" data-nav-theme="light" data-phrase-reveal="off">
+    <section class="project-phrase project-phrase--gallery-mobile-only" data-nav-theme="light" data-phrase-reveal="off">
       <div class="project-phrase__container">
         <div class="project-phrase__copy">
           <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0" id="project-phrase-text">
@@ -350,6 +258,20 @@
             <img src="../assets/images/projects/cabana-suinda/phrase-02.jpg" alt="Suindá Lodge" loading="lazy" decoding="async">
           </figure>
         </div>
+
+        <div class="project-phrase__gallery-mobile anim-fade-in" data-anim-delay="120" aria-hidden="false">
+          <div class="project-phrase__dots">
+            <button class="project-phrase__dot is-active" data-project-phrase-slide="0" aria-label="Foto 1"></button>
+            <button class="project-phrase__dot" data-project-phrase-slide="1" aria-label="Foto 2"></button>
+          </div>
+
+          <figure class="project-phrase__photo">
+            <img class="project-phrase__img is-active" src="../assets/images/projects/cabana-suinda/phrase-01.jpg"
+              alt="Suindá Lodge" loading="lazy" decoding="async">
+            <img class="project-phrase__img" src="../assets/images/projects/cabana-suinda/phrase-02.jpg"
+              alt="Suindá Lodge" loading="lazy" decoding="async">
+          </figure>
+        </div>
       </div>
     </section>
 
@@ -357,18 +279,20 @@
          NUEVA sección. TODO cliente: imagen highlight-01.jpg + dos líneas de título. -->
     <section class="project-highlight project-highlight--split" data-project-slug="cabana-suinda" data-nav-theme="light">
       <div class="container project-highlight__container">
-        <figure class="project-highlight__media anim-zoom-in">
-          <img src="../assets/images/projects/cabana-suinda/highlight-01.jpg" alt="Suindá Lodge" loading="lazy" decoding="async">
+        <div class="project-highlight__visual">
+          <figure class="project-highlight__media anim-zoom-in">
+            <img src="../assets/images/projects/cabana-suinda/highlight-01.jpg" alt="Suindá Lodge" loading="lazy" decoding="async">
+          </figure>
 
-          <h2 class="project-highlight__title project-highlight__title--light" id="project-highlight-title">
+          <h2 class="project-highlight__title project-highlight__title--light" id="project-highlight-title" data-reveal-trigger-ratio-mobile="0.85">
             <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">Al atardecer, cuando el sol se posa sobre el río, el paisaje se transforma a través de la luz.</span></span>
           </h2>
-        </figure>
+        </div>
       </div>
     </section>
 
     <!-- ====== PALETTE ====== -->
-    <section class="project-palette project-palette--gallery" data-nav-theme="light">
+    <section class="project-palette project-palette--gallery project-palette--ratio-3-2-local" data-nav-theme="light">
       <div class="project-palette__container">
         <div class="project-palette__copy anim-fade-up" data-anim-delay="0">
           <p class="project-palette__intro" id="project-palette-intro">Rodeado de timbós, cuya forma protege de la
@@ -377,7 +301,9 @@
           <p class="project-palette__text" id="project-palette-text">Una celebración del habitar simple frente a una naturaleza exuberante.</p>
         </div>
 
-        <div class="project-palette__images anim-fade-in" data-anim-delay="120" data-palette-ratio="16/9">
+        <p class="project-palette__mobile-text" id="project-palette-mobile-text" hidden></p>
+
+        <div class="project-palette__images anim-fade-in" data-anim-delay="120">
           <div class="project-palette__dots">
             <button class="project-palette__dot is-active" data-project-palette-slide="0" aria-label="Foto 1"></button>
             <button class="project-palette__dot" data-project-palette-slide="1" aria-label="Foto 2"></button>
@@ -389,12 +315,6 @@
             <img class="project-palette__img" src="../assets/images/projects/cabana-suinda/palette-02.jpg"
               alt="Suindá Lodge" decoding="async">
           </figure>
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="palette-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </div>
       </div>
     </section>
@@ -444,39 +364,6 @@
     })();
   </script>
 
-  <!-- TEMPORAL: lógica del toggle de ratio de frame. Borrar junto con el <style>
-       y el <div class="frame-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const media = document.querySelector('.project-frame__media[data-frame-ratio]');
-      if (!media) return;
-      const buttons = media.querySelectorAll('.frame-ratio-toggle button');
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          media.dataset.frameRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
-
-  <!-- TEMPORAL: lógica del toggle de ratio de palette. Borrar junto con el <style>
-       y el <div class="palette-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const gallery = document.querySelector('.project-palette__images[data-palette-ratio]');
-      if (!gallery) return;
-      const buttons = gallery.querySelectorAll('.palette-ratio-toggle button');
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          gallery.dataset.paletteRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
 </body>
 
 </html>

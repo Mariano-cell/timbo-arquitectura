@@ -58,204 +58,15 @@
       object-position: 58% 58%;
     }
 
-    /* ====================================================================
-       TOGGLE de ratio para .project-refuge__img — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="refuge-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
-    .project-refuge--gallery .project-refuge__img {
-      transition: aspect-ratio 0.5s ease;
+    .project-refuge--gallery .project-refuge__img,
+    .project-frame__media,
+    .project-phrase--single-horizontal .project-phrase__image,
+    .project-palette--gallery .project-palette__img {
+      aspect-ratio: 16 / 9;
     }
 
-    .project-refuge--gallery .project-refuge__photo[data-refuge-ratio="3/2"] .project-refuge__img {
-      aspect-ratio: 3 / 2;
-    }
-
-    .refuge-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 5;
-    }
-
-    .refuge-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .refuge-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .refuge-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
-    }
-
-    /* ====================================================================
-       TOGGLE de ratio para .project-frame__media — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="frame-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
-    .project-frame__media {
-      transition: aspect-ratio 0.5s ease;
-    }
-
-    .project-frame__media[data-frame-ratio="3/2"] {
-      aspect-ratio: 3 / 2;
-    }
-
-    .frame-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 7;
-    }
-
-    .frame-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .frame-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .frame-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
-    }
-
-    /* ====================================================================
-       TOGGLE de ratio para .project-phrase__image — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="phrase-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
-    .project-phrase__images .project-phrase__image {
-      transition: aspect-ratio 0.5s ease;
-    }
-
-    .project-phrase__images[data-phrase-ratio="3/2"] .project-phrase__image {
-      aspect-ratio: 3 / 2;
-    }
-
-    .phrase-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 5;
-    }
-
-    .phrase-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .phrase-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .phrase-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
-    }
-
-    /* ====================================================================
-       TOGGLE de ratio para .project-palette__image — TEMPORAL.
-       Permite alternar entre 16/9 y 3/2 en vivo para elegir el ratio
-       final. Borrar este bloque + el <script> de abajo + el <div
-       class="palette-ratio-toggle"> del HTML cuando se decida.
-       ==================================================================== */
-    .project-palette__images .project-palette__img {
-      transition: aspect-ratio 0.5s ease;
-    }
-
-    .project-palette__images[data-palette-ratio="3/2"] .project-palette__img {
-      aspect-ratio: 3 / 2;
-    }
-
-    .palette-ratio-toggle {
-      position: absolute;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      display: flex;
-      gap: 0.25rem;
-      z-index: 5;
-    }
-
-    .palette-ratio-toggle button {
-      padding: 0.2rem 0.45rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.6rem;
-      font-weight: var(--fw-medium);
-      letter-spacing: 0.06em;
-      line-height: 1;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-    }
-
-    .palette-ratio-toggle button:hover {
-      background: rgba(0, 0, 0, 0.55);
-    }
-
-    .palette-ratio-toggle button.is-active {
-      background: #fff;
-      color: var(--color-black);
-      border-color: #fff;
+    .project-highlight[data-project-slug="praderas-cabin"] .project-highlight__title {
+      max-width: 30rem;
     }
   </style>
 </head>
@@ -405,34 +216,21 @@
             <button class="project-refuge__dot" data-project-refuge-slide="1" aria-label="Foto 2"></button>
           </div>
 
-          <figure class="project-refuge__photo" data-refuge-ratio="16/9">
+          <figure class="project-refuge__photo">
             <img class="project-refuge__img is-active" src="../assets/images/projects/praderas-cabin/refuge-01.jpg"
               alt="Praderas Cabin" loading="lazy" decoding="async">
             <img class="project-refuge__img" src="../assets/images/projects/praderas-cabin/refuge-02.jpg"
               alt="Praderas Cabin" loading="lazy" decoding="async">
           </figure>
-
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               correspondiente cuando se elija el ratio final. -->
-          <div class="refuge-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </div>
       </div>
     </section>
 
     <section class="project-frame project-frame--split" data-project-slug="praderas-cabin" data-nav-theme="light">
       <div class="container project-frame__container">
-        <figure class="project-frame__media anim-fade-in" data-frame-ratio="16/9">
+        <figure class="project-frame__media anim-fade-in">
           <img src="../assets/images/projects/praderas-cabin/frame-01.jpg" alt="Praderas Cabin" loading="lazy"
             decoding="async">
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="frame-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </figure>
 
         <div class="project-frame__copy">
@@ -456,17 +254,11 @@
           </p>
         </div>
 
-        <div class="project-phrase__images" data-phrase-ratio="16/9">
+        <div class="project-phrase__images">
           <figure class="project-phrase__image project-phrase__image--zoom anim-fade-in" data-anim-delay="120">
             <img src="../assets/images/projects/praderas-cabin/phrase-01.jpg" alt="Praderas Cabin"
               loading="lazy" decoding="async">
           </figure>
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="phrase-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </div>
       </div>
     </section>
@@ -474,14 +266,16 @@
     <section class="project-highlight project-highlight--split" data-project-slug="praderas-cabin"
       data-nav-theme="light">
       <div class="container project-highlight__container">
-        <figure class="project-highlight__media anim-zoom-in">
-          <img src="../assets/images/projects/praderas-cabin/highlight-01.jpg" alt="Praderas Cabin" loading="lazy"
-            decoding="async">
+        <div class="project-highlight__visual">
+          <figure class="project-highlight__media anim-zoom-in">
+            <img src="../assets/images/projects/praderas-cabin/highlight-01.jpg" alt="Praderas Cabin" loading="lazy"
+              decoding="async">
+          </figure>
 
-          <h2 class="project-highlight__title" id="project-highlight-title">
+          <h2 class="project-highlight__title" id="project-highlight-title" data-reveal-trigger-ratio-mobile="0.85">
             <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">La paleta de materiales de la envolvente se inspira en las texturas y los colores de la montaña nevada:<br><br>las piedras, los troncos plateados y la vegetación de altura.</span></span>
           </h2>
-        </figure>
+        </div>
 
         <!-- Texto temporalmente anulado: la imagen ocupa todo el ancho del contenedor.
         <div class="project-highlight__copy">
@@ -510,7 +304,9 @@
           <p class="project-palette__text" id="project-palette-text">Discreta hacia el exterior, su arquitectura revela un interior rico en detalles que aportan calidez y contención frente a la inmensidad del paisaje.</p>
         </div>
 
-        <div class="project-palette__images anim-fade-in" data-anim-delay="120" data-palette-ratio="16/9">
+        <p class="project-palette__mobile-text" id="project-palette-mobile-text" hidden></p>
+
+        <div class="project-palette__images anim-fade-in" data-anim-delay="120">
           <div class="project-palette__dots">
             <button class="project-palette__dot is-active" data-project-palette-slide="0" aria-label="Foto 1"></button>
             <button class="project-palette__dot" data-project-palette-slide="1" aria-label="Foto 2"></button>
@@ -522,12 +318,6 @@
             <img class="project-palette__img" src="../assets/images/projects/praderas-cabin/palette-02.jpg"
               alt="Praderas Cabin" decoding="async">
           </figure>
-          <!-- TEMPORAL: toggle de ratio para iterar. Borrar este bloque + el <style>/<script>
-               de abajo cuando se elija el ratio final. -->
-          <div class="palette-ratio-toggle" role="group" aria-label="Cambiar proporción de imagen">
-            <button type="button" data-ratio="16/9" class="is-active">16 / 9</button>
-            <button type="button" data-ratio="3/2">3 / 2</button>
-          </div>
         </div>
       </div>
     </section>
@@ -539,7 +329,7 @@
 
       <div class="project-final__content">
         <div class="project-final__logo-mask">
-          <img class="project-final__logo" src="../assets/images/logo/logo-nuevo-blanco-15.svg" alt="Timbó">
+          <img class="project-final__logo" src="../assets/images/logo/logo-nuevo-negro-16.svg" alt="Timbó">
         </div>
       </div>
     </section>
@@ -581,75 +371,6 @@
     })();
   </script>
 
-  <!-- TEMPORAL: lógica del toggle de ratio de refuge. Borrar junto con el <style>
-       y el <div class="refuge-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const photo = document.querySelector('.project-refuge--gallery .project-refuge__photo[data-refuge-ratio]');
-      if (!photo) return;
-      const toggle = document.querySelector('.refuge-ratio-toggle');
-      if (!toggle) return;
-      const buttons = toggle.querySelectorAll('button');
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          photo.dataset.refugeRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
-
-  <!-- TEMPORAL: lógica del toggle de ratio de frame. Borrar junto con el <style>
-       y el <div class="frame-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const media = document.querySelector('.project-frame__media[data-frame-ratio]');
-      if (!media) return;
-      const buttons = media.querySelectorAll('.frame-ratio-toggle button');
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          media.dataset.frameRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
-
-  <!-- TEMPORAL: lógica del toggle de ratio de phrase. Borrar junto con el <style>
-       y el <div class="phrase-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const gallery = document.querySelector('.project-phrase__images[data-phrase-ratio]');
-      if (!gallery) return;
-      const buttons = gallery.querySelectorAll('.phrase-ratio-toggle button');
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          gallery.dataset.phraseRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
-
-  <!-- TEMPORAL: lógica del toggle de ratio de palette. Borrar junto con el <style>
-       y el <div class="palette-ratio-toggle"> cuando se decida el ratio final. -->
-  <script>
-    (() => {
-      const gallery = document.querySelector('.project-palette__images[data-palette-ratio]');
-      if (!gallery) return;
-      const buttons = gallery.querySelectorAll('.palette-ratio-toggle button');
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const ratio = btn.dataset.ratio;
-          gallery.dataset.paletteRatio = ratio;
-          buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
-        });
-      });
-    })();
-  </script>
 </body>
 
 </html>

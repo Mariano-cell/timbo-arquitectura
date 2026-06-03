@@ -58,8 +58,8 @@
   </style>
 </head>
 
-<body class="page--haras-light">
-  <nav class="main-nav main-nav--light is-visible" aria-label="Main navigation">
+<body class="page--haras-light page--cherokee-ave">
+  <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
     <ul class="nav__links">
       <li><a href="../index.html" class="nav__link" data-i18n="nav.home">Inicio</a></li>
       <li><a href="../proyectos.html" class="nav__link nav__link--active" data-i18n="nav.projects">Proyectos</a></li>
@@ -87,7 +87,7 @@
 
     <!-- ====== HERO ======
          Mantiene `project-hero--cherokee` por la regla CSS de color del título. -->
-    <section class="project-hero project-hero--cherokee" id="hero" data-nav-theme="light">
+    <section class="project-hero project-hero--cherokee" id="hero" data-nav-theme="dark">
       <div class="project-hero__media" aria-hidden="true">
         <img id="project-cover" src="../assets/images/projects/cherokee-ave/hero-01.png" alt="Cherokee Residence"
           loading="eager" decoding="async">
@@ -254,13 +254,15 @@
          NUEVA sección. TODO cliente: imagen highlight-01.jpg + dos líneas de título. -->
     <section class="project-highlight project-highlight--split" data-project-slug="cherokee-ave" data-nav-theme="light">
       <div class="container project-highlight__container">
-        <figure class="project-highlight__media anim-zoom-in">
-          <img src="../assets/images/projects/cherokee-ave/highlight-01.png" alt="Cherokee Residence" loading="lazy" decoding="async">
+        <div class="project-highlight__visual">
+          <figure class="project-highlight__media anim-zoom-in">
+            <img src="../assets/images/projects/cherokee-ave/highlight-01.png" alt="Cherokee Residence" loading="lazy" decoding="async">
+          </figure>
 
-          <h2 class="project-highlight__title project-highlight__title--light" id="project-highlight-title">
+          <h2 class="project-highlight__title" id="project-highlight-title" data-reveal-trigger-ratio-mobile="0.85">
             <span class="project-highlight__title-line"><span class="project-highlight__title-line-inner">Arquitectura de permanencia y solidez.</span></span>
           </h2>
-        </figure>
+        </div>
       </div>
     </section>
 
@@ -275,6 +277,8 @@
             liviandad y robustez.</p>
           <p class="project-palette__text" id="project-palette-text">Entre masa y aire, entre robustez y liviandad.</p>
         </div>
+
+        <p class="project-palette__mobile-text" id="project-palette-mobile-text" hidden></p>
 
         <div class="project-palette__images">
           <figure class="project-palette__image project-palette__image--a anim-fade-in" data-anim-delay="120">

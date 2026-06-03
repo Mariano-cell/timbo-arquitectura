@@ -88,6 +88,31 @@ const SITE_DATA = {
       breatheTitle:     'Un proyecto timbó<br>no es hermético:<br>respira.',
       breatheText1:     'Se vincula con su entorno y evoluciona <br>con quienes lo habitan.<br>',
       breatheText2:     'Nuestra arquitectura se adapta a la vida <br>y a sus cambios.',
+      benefits: {
+        title: 'Beneficios',
+        items: {
+          comfort: {
+            title: 'Confort',
+            text: 'Garantizar bienestar mediante condiciones térmicas estables, aire limpio y buen acceso de luz natural.',
+          },
+          energy: {
+            title: 'Ahorro energético y económico',
+            text: 'Reducción de demanda energética y los costos operativos.',
+          },
+          longevity: {
+            title: 'Funcionalidad a largo plazo',
+            text: 'Edificios que se adaptan a los distintos usos sin perder calidad ni integridad a lo largo del tiempo.',
+          },
+          environment: {
+            title: 'Cuidado ambiental',
+            text: 'Menos dióxido de carbono en el ambiente, mayor relación con la naturaleza.',
+          },
+          mechanical: {
+            title: 'Reducción de dependencia en sistemas mecánicos',
+            text: 'Diseño de estrategias pasivas para minimizar el uso de climatización artificial.',
+          },
+        },
+      },
       outdoorClimate: {
         figureAriaLabel:         'Datos climáticos anuales de Buenos Aires, Argentina',
         koppen:                  'Clima subtropical húmedo',
@@ -255,6 +280,31 @@ const SITE_DATA = {
       breatheTitle:     'A Timbó project<br>is not sealed:<br>it breathes.',
       breatheText1:     'It engages with its surroundings<br class="br-desktop">and evolves with those who inhabit it.',
       breatheText2:     'Our architecture adapts to life<br class="br-desktop">and to change',
+      benefits: {
+        title: 'Benefits',
+        items: {
+          comfort: {
+            title: 'Comfort',
+            text: 'Ensuring wellbeing through stable thermal conditions, clean air, and good access to natural light.',
+          },
+          energy: {
+            title: 'Energy and cost savings',
+            text: 'Reduced energy demand and operating costs.',
+          },
+          longevity: {
+            title: 'Long-term functionality',
+            text: 'Buildings that adapt to different uses without losing quality or integrity over time.',
+          },
+          environment: {
+            title: 'Environmental care',
+            text: 'Less carbon dioxide in the environment and a stronger relationship with nature.',
+          },
+          mechanical: {
+            title: 'Reduced dependence on mechanical systems',
+            text: 'Passive strategies designed to minimise the use of artificial climate control.',
+          },
+        },
+      },
       outdoorClimate: {
         figureAriaLabel:         'Annual climate data for Buenos Aires, Argentina',
         koppen:                  'Humid subtropical climate',
@@ -671,8 +721,9 @@ const SITE_DATA = {
           overviewLocation:'Gran Exuma, Bahamas',
           refugeText:   'Ubicado en el extremo de la península de Exuma, el lodge ofrece amplias vistas al mar desde el frente y ambos laterales. Su forma de herradura sigue las curvas del terreno. Mientras que las fachadas exteriores miran al océano, las interiores contienen un jardín con plantas nativas.',
           frameText:    'El área de recepción, espacio principal del lodge, se ubica alineada con la entrada y el camino de acceso, ofreciendo desde el primer momento una vista privilegiada al mar. El lounge, el comedor y la sala de estar se disponen de manera de disfrutar distintas vistas del paisaje. Las habitaciones de los huéspedes, además de ofrecer una cuidada privacidad, están ubicadas en un nivel más elevado con vistas despejadas del océano y una atmósfera relajante.',
-          phraseText:   'El diseño se centra en el confort, la funcionalidad y el descanso. Los interiores de madera y los materiales naturales generan un ambiente cálido y acogedor. La modulación regular de la planta facilita la circulación y el uso del espacio. Amplios aleros, una cubierta alta y ventanas en ambos lados permiten la ventilación cruzada del edificio, manteniéndolo fresco y protegido del sol de las Bahamas.',
+          phraseText:   'El diseño se centra en el confort, la funcionalidad y el descanso. Los interiores de madera y los materiales naturales generan un ambiente cálido y acogedor. La modulación regular de la planta facilita la circulación y el uso del espacio.',
           highlightTitle:'Una celebración de los ritmos naturales del paisaje bahameño.',
+          paletteMobileText: 'Amplios aleros, una cubierta alta y ventanas en ambos lados permiten la ventilación cruzada del edificio, manteniéndolo fresco y protegido del sol de las Bahamas.',
           paletteText:  'Entre tradición vernácula e innovación contemporánea, el lodge establece un diálogo con el clima y la naturaleza.',
 
           summary:      'Un refugio costero diseñado para maximizar ventilación cruzada, sombra profunda y relación directa con el paisaje marino.',
@@ -731,9 +782,9 @@ const SITE_DATA = {
           overviewBuiltArea: '120 m²',
           overviewLocation:  'José Ignacio,<br>Uruguay',
           refugeText1:       'Este proyecto consiste en la transformación integral de una vivienda existente, originalmente ineficiente tanto en su desempeño ambiental como en su organización espacial. Los ambientes se percibían oscuros, calurosos y poco funcionales, sin una relación clara con el exterior.',
-          refugeText2:       'La intervención reordena el programa y redefine la relación entre interior y paisaje. A través de nuevas aberturas, ajustes en su tamaño y posicionamiento, y una envolvente mejorada, la casa incorpora luz natural, favorece la ventilación cruzada y optimiza el confort térmico.',
-          frameText:         'El proyecto integra las concepciones de la arquitectura, el interiorismo y el paisajismo como un único sistema. Los espacios exteriores se diseñan como una extensión de la vivienda, no solo desde lo espacial, sino también como parte de su funcionamiento ambiental: aportan sombra, reducen la radiación sobre las superficies más expuestas y colaboran en la regulación térmica del conjunto.',
-          phraseText:        'Cada decisión proyectual fue evaluada mediante simulaciones, pruebas e iteraciones, buscando una intervención precisa que mejore el desempeño energético y el confort.',
+          refugeText2:       '',
+          frameText:         'La intervención reordena el programa y redefine la relación entre interior y paisaje. A través de nuevas aberturas, ajustes en su tamaño y posicionamiento, y una envolvente mejorada, la casa incorpora luz natural, favorece la ventilación cruzada y optimiza el confort térmico.',
+          phraseText:        'El proyecto integra las concepciones de la arquitectura, el interiorismo y el paisajismo como un único sistema. Los espacios exteriores se diseñan como una extensión de la vivienda, no solo desde lo espacial, sino también como parte de su funcionamiento ambiental: aportan sombra, reducen la radiación sobre las superficies más expuestas y colaboran en la regulación térmica del conjunto.<br><br>Cada decisión proyectual fue evaluada mediante simulaciones, pruebas e iteraciones, buscando una intervención precisa que mejore el desempeño energético y el confort.',
           highlightTitle:    'El paisajismo aporta una estrategia de control solar, reduciendo la radiación sobre las superficies más expuestas.',
           paletteIntro:      'La casa se reorganiza en torno a los ritmos cotidianos de quienes la habitan: la luz de la mañana y de la tarde, la ventilación natural, y una materialidad simple y serena que construye una atmósfera de calma.',
           paletteText:       'Más que una renovación, se trata de una recalibración: una casa existente, repensada desde su uso, su clima y su relación con el entorno.',
@@ -925,10 +976,10 @@ const SITE_DATA = {
           overviewLand:      '2.500 m2',
           overviewBuiltArea: '120 m2',
           overviewLocation:  'José Ignacio, Uruguay',
-          refugeText1:       'A recalibration of an existing house, originally dark, overheated, and disconnected from its surroundings. The intervention reworks the layout and redefines the relationship between interior and landscape through new openings, an upgraded envelope, and improved environmental performance.',
+          refugeText1:       'This project consists of the complete transformation of an existing house, originally inefficient both in its environmental performance and in its spatial organisation. The rooms felt dark, hot, and poorly functional, with no clear relationship to the exterior.',
           refugeText2:       '',
-          frameText:         'Architecture, interior, and landscape are conceived as a single, interdependent system. Outdoor spaces extend the house, providing shade, reducing solar exposure, and supporting natural cooling. Openings are repositioned to improve daylight and cross-ventilation, establishing a more stable and comfortable interior environment.',
-          phraseText:        'This symbiotic approach allows the building and its surroundings to work together: the house moderates exposure, while the landscape contributes to cooling, shading, and spatial continuity. Material and spatial strategies respond to wind, salt, and sun, prioritising durability and clarity.',
+          frameText:         'The intervention reorganises the programme and redefines the relationship between interior and landscape. Through new openings, adjustments to their size and positioning, and an improved envelope, the house brings in natural light, promotes cross-ventilation, and optimises thermal comfort.',
+          phraseText:        'The project integrates architecture, interior design, and landscape design as a single system. Outdoor spaces are conceived as an extension of the house, not only in spatial terms, but also as part of its environmental performance: they provide shade, reduce solar radiation on the most exposed surfaces, and contribute to the thermal regulation of the whole.<br><br>Each design decision was evaluated through simulations, tests, and iterations, seeking a precise intervention that improves energy performance and comfort.',
           highlightTitle:    'Openings are calibrated to capture prevailing breezes from the east and northwest.',
           paletteIntro:      '',
           paletteText:       'Informed by simulation and iterative testing, the project refines the building’s performance, bringing light, air, and landscape into balance with the demands of the coastal environment.',
