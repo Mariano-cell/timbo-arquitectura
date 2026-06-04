@@ -3977,32 +3977,76 @@ const Timbo = {
       },
       'praderas-cabin': {
         stages: [
-          { center: [-69.5, -40.5], zoom: 4, hold: 800 },
-          { center: [-71.50, -41.75], zoom: 7.5, speed: 1.4 },
-          { center: [-71.700, -41.850], zoom: 12, speed: 1.0 },
+          { center: [-65, -43], zoom: 3, hold: 800 },
+          { center: [-71, -41.5], zoom: 6.5, speed: 1.4 },
+          { center: [-71.5378, -41.7780], zoom: 11, speed: 1.0 },
         ],
-        marker: [-71.700, -41.850],
-        label: { name: 'Perito Moreno', detail: 'Río Negro, Argentina' },
-        polygon: [
-          [-71.7150, -41.8200], [-71.7050, -41.8180], [-71.6950, -41.8210],
-          [-71.6870, -41.8260], [-71.6800, -41.8320], [-71.6760, -41.8400],
-          [-71.6740, -41.8480], [-71.6760, -41.8560], [-71.6800, -41.8630],
-          [-71.6860, -41.8690], [-71.6940, -41.8730], [-71.7030, -41.8745],
-          [-71.7120, -41.8740], [-71.7200, -41.8720], [-71.7270, -41.8680],
-          [-71.7320, -41.8620], [-71.7350, -41.8550], [-71.7355, -41.8470],
-          [-71.7340, -41.8390], [-71.7305, -41.8320], [-71.7250, -41.8260],
-          [-71.7180, -41.8220], [-71.7150, -41.8200],
+        marker: [-71.5378, -41.7780],
+        label: { name: 'Praderas Cabin', detail: 'Río Negro, Argentina' },
+      },
+      'cherokee-ave': {
+        stages: [
+          { center: [-80, 28], zoom: 2.5, hold: 800 },
+          { center: [-80.2, 25.9], zoom: 8, speed: 1.4 },
+          { center: [-80.1291, 25.8264], zoom: 13, speed: 1.0 },
         ],
+        marker: [-80.1291, 25.8264],
+        label: { name: 'Cherokee Ave', detail: 'Miami Beach, Florida' },
+        minRoads: true,
+      },
+      'club-de-mar': {
+        stages: [
+          { center: [-56, -36], zoom: 3, hold: 800 },
+          { center: [-54.8, -34.9], zoom: 7, speed: 1.4 },
+          { center: [-54.6407, -34.8377], zoom: 11, speed: 1.0 },
+        ],
+        marker: [-54.6407, -34.8377],
+        label: { name: 'Club de Mar', detail: 'José Ignacio, Uruguay' },
+      },
+      'chacras-de-murray': {
+        stages: [
+          { center: [-64, -38], zoom: 3, hold: 800 },
+          { center: [-59.5, -34.5], zoom: 7, speed: 1.4 },
+          { center: [-58.9405, -34.5101], zoom: 11, speed: 1.0 },
+        ],
+        marker: [-58.9405, -34.5101],
+        label: { name: 'Chacras de Murray', detail: 'Buenos Aires, Argentina' },
+      },
+      'haras-san-pablo': {
+        stages: [
+          { center: [-64, -38], zoom: 3, hold: 800 },
+          { center: [-59.5, -34.5], zoom: 7, speed: 1.4 },
+          { center: [-59.0392, -34.6065], zoom: 11, speed: 1.0 },
+        ],
+        marker: [-59.0392, -34.6065],
+        label: { name: 'Haras San Pablo', detail: 'Buenos Aires, Argentina' },
+      },
+      'cardano': {
+        stages: [
+          { center: [-64, -38], zoom: 3, hold: 800 },
+          { center: [-59.5, -34.5], zoom: 7, speed: 1.4 },
+          { center: [-58.9263, -34.5128], zoom: 11, speed: 1.0 },
+        ],
+        marker: [-58.9263, -34.5128],
+        label: { name: 'Clubhouse Barrio Cardano', detail: 'Buenos Aires, Argentina' },
+      },
+      'tobar-lodge': {
+        stages: [
+          { center: [-64, -38], zoom: 3, hold: 800 },
+          { center: [-65.5, -27], zoom: 6.5, speed: 1.4 },
+          { center: [-65.1022, -27.5117], zoom: 11, speed: 1.0 },
+        ],
+        marker: [-65.1022, -27.5117],
+        label: { name: 'Tobar Lodge', detail: 'Tucumán, Argentina' },
       },
       'cabana-suinda': {
         stages: [
-          { center: [-58, -30], zoom: 2.8, hold: 800 },
-          { center: [-60, -30], zoom: 5, speed: 1.2 },
-          { center: [-58.5, -28.5], zoom: 7, speed: 1.2 },
-          { center: [-58.1682, -27.2807], zoom: 14, speed: 1.0 },
+          { center: [-60, -35], zoom: 3, hold: 800 },
+          { center: [-58.5, -28], zoom: 6.5, speed: 1.3 },
+          { center: [-58.1671, -27.2805], zoom: 11, speed: 1.0 },
         ],
-        polygonAfterStage: 2,
-        marker: [-58.1682, -27.2807],
+        polygonAfterStage: 1,
+        marker: [-58.1671, -27.2805],
         label: { name: 'Cabaña Suindá', detail: 'Corrientes, Argentina' },
         polygon: [
           [-58.2431, -27.262], [-58.4134, -27.2867], [-58.4892, -27.2733],
@@ -4091,8 +4135,7 @@ const Timbo = {
       // Read project slug from the page
       const section = document.querySelector('[data-project-slug]');
       const slug = section ? section.dataset.projectSlug : null;
-      const mapSlug = slug === 'tobar-lodge' ? 'exuma-lodge' : slug;
-      this.config = mapSlug ? this.MAP_CONFIGS[mapSlug] : null;
+      this.config = slug ? this.MAP_CONFIGS[slug] : null;
       if (!this.config) return;
 
       // Lazy-load MapLibre when container is ~2 viewports away
@@ -4317,6 +4360,29 @@ const Timbo = {
           this.setLayerPaint(layer.id, 'fill-extrusion-color', colors.extrusion);
         }
       });
+
+      // minRoads: suprimir calles y avenidas para mapas con demasiada trama urbana
+      if (this.config.minRoads) {
+        const layers = this.map.getStyle()?.layers || [];
+        layers.forEach((layer) => {
+          const id = (layer.id || '').toLowerCase();
+          if (layer.type === 'line') {
+            const isRoad = id.includes('road') || id.includes('street') || id.includes('motorway') ||
+              id.includes('highway') || id.includes('bridge') || id.includes('tunnel') ||
+              id.includes('path') || id.includes('rail') || id.includes('transit');
+            if (isRoad) {
+              try { this.map.setLayoutProperty(layer.id, 'visibility', 'none'); } catch (_) {}
+            }
+          }
+          if (layer.type === 'symbol') {
+            const isLabel = id.includes('road') || id.includes('street') || id.includes('transit') ||
+              id.includes('highway') || id.includes('motorway');
+            if (isLabel) {
+              try { this.map.setLayoutProperty(layer.id, 'visibility', 'none'); } catch (_) {}
+            }
+          }
+        });
+      }
     },
 
     // Compute a center that places MARKER_COORDS at ~25% from the left edge
