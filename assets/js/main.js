@@ -4361,7 +4361,7 @@ const Timbo = {
         }
       });
 
-      // minRoads: suprimir calles y avenidas para mapas con demasiada trama urbana
+      // minRoads: suprimir calles, avenidas y edificios para mapas con demasiada trama urbana
       if (this.config.minRoads) {
         const layers = this.map.getStyle()?.layers || [];
         layers.forEach((layer) => {
@@ -4374,9 +4374,18 @@ const Timbo = {
               try { this.map.setLayoutProperty(layer.id, 'visibility', 'none'); } catch (_) {}
             }
           }
+          if (layer.type === 'fill') {
+            const isBuilding = id.includes('building');
+            if (isBuilding) {
+              try { this.map.setLayoutProperty(layer.id, 'visibility', 'none'); } catch (_) {}
+            }
+          }
+          if (layer.type === 'fill-extrusion') {
+            try { this.map.setLayoutProperty(layer.id, 'visibility', 'none'); } catch (_) {}
+          }
           if (layer.type === 'symbol') {
             const isLabel = id.includes('road') || id.includes('street') || id.includes('transit') ||
-              id.includes('highway') || id.includes('motorway');
+              id.includes('highway') || id.includes('motorway') || id.includes('building');
             if (isLabel) {
               try { this.map.setLayoutProperty(layer.id, 'visibility', 'none'); } catch (_) {}
             }
@@ -5316,19 +5325,25 @@ const Timbo = {
       if (!sections.length) return;
 
       sections.forEach((section) => {
+        const root = section.querySelector('.project-refuge__gallery-mobile') || section.querySelector('.project-refuge__gallery');
         const dots = section.querySelectorAll('.project-refuge__dot[data-project-refuge-slide]');
         const imgs = section.querySelectorAll('.project-refuge__img');
         if (!dots.length || !imgs.length) return;
 
+        const setSlide = (idx) => {
+          dots.forEach(d => d.classList.remove('is-active'));
+          imgs.forEach(i => i.classList.remove('is-active'));
+          if (dots[idx]) dots[idx].classList.add('is-active');
+          if (imgs[idx]) imgs[idx].classList.add('is-active');
+        };
+
         dots.forEach(dot => {
           dot.addEventListener('click', () => {
-            const idx = Number(dot.dataset.projectRefugeSlide);
-            dots.forEach(d => d.classList.remove('is-active'));
-            imgs.forEach(i => i.classList.remove('is-active'));
-            dot.classList.add('is-active');
-            if (imgs[idx]) imgs[idx].classList.add('is-active');
+            setSlide(Number(dot.dataset.projectRefugeSlide));
           });
         });
+
+        Timbo.initAutoGallery(root, dots, setSlide);
       });
     },
   },
@@ -5369,19 +5384,25 @@ const Timbo = {
       if (!sections.length) return;
 
       sections.forEach((section) => {
+        const root = section.querySelector('.project-phrase__gallery-mobile') || section.querySelector('.project-phrase__images');
         const dots = section.querySelectorAll('.project-phrase__dot[data-project-phrase-slide]');
         const imgs = section.querySelectorAll('.project-phrase__img');
         if (!dots.length || !imgs.length) return;
 
+        const setSlide = (idx) => {
+          dots.forEach(d => d.classList.remove('is-active'));
+          imgs.forEach(i => i.classList.remove('is-active'));
+          if (dots[idx]) dots[idx].classList.add('is-active');
+          if (imgs[idx]) imgs[idx].classList.add('is-active');
+        };
+
         dots.forEach(dot => {
           dot.addEventListener('click', () => {
-            const idx = Number(dot.dataset.projectPhraseSlide);
-            dots.forEach(d => d.classList.remove('is-active'));
-            imgs.forEach(i => i.classList.remove('is-active'));
-            dot.classList.add('is-active');
-            if (imgs[idx]) imgs[idx].classList.add('is-active');
+            setSlide(Number(dot.dataset.projectPhraseSlide));
           });
         });
+
+        Timbo.initAutoGallery(root, dots, setSlide);
       });
     },
   },
@@ -5392,19 +5413,25 @@ const Timbo = {
       if (!sections.length) return;
 
       sections.forEach((section) => {
+        const root = section.querySelector('.project-palette__gallery-mobile') || section.querySelector('.project-palette__images');
         const dots = section.querySelectorAll('.project-palette__dot[data-project-palette-slide]');
         const imgs = section.querySelectorAll('.project-palette__img');
         if (!dots.length || !imgs.length) return;
 
+        const setSlide = (idx) => {
+          dots.forEach(d => d.classList.remove('is-active'));
+          imgs.forEach(i => i.classList.remove('is-active'));
+          if (dots[idx]) dots[idx].classList.add('is-active');
+          if (imgs[idx]) imgs[idx].classList.add('is-active');
+        };
+
         dots.forEach(dot => {
           dot.addEventListener('click', () => {
-            const idx = Number(dot.dataset.projectPaletteSlide);
-            dots.forEach(d => d.classList.remove('is-active'));
-            imgs.forEach(i => i.classList.remove('is-active'));
-            dot.classList.add('is-active');
-            if (imgs[idx]) imgs[idx].classList.add('is-active');
+            setSlide(Number(dot.dataset.projectPaletteSlide));
           });
         });
+
+        Timbo.initAutoGallery(root, dots, setSlide);
       });
     },
   },
@@ -5415,19 +5442,25 @@ const Timbo = {
       if (!sections.length) return;
 
       sections.forEach((section) => {
+        const root = section.querySelector('.project-highlight__media');
         const dots = section.querySelectorAll('.project-highlight__dot[data-project-highlight-slide]');
         const imgs = section.querySelectorAll('.project-highlight__img');
         if (!dots.length || !imgs.length) return;
 
+        const setSlide = (idx) => {
+          dots.forEach(d => d.classList.remove('is-active'));
+          imgs.forEach(i => i.classList.remove('is-active'));
+          if (dots[idx]) dots[idx].classList.add('is-active');
+          if (imgs[idx]) imgs[idx].classList.add('is-active');
+        };
+
         dots.forEach(dot => {
           dot.addEventListener('click', () => {
-            const idx = Number(dot.dataset.projectHighlightSlide);
-            dots.forEach(d => d.classList.remove('is-active'));
-            imgs.forEach(i => i.classList.remove('is-active'));
-            dot.classList.add('is-active');
-            if (imgs[idx]) imgs[idx].classList.add('is-active');
+            setSlide(Number(dot.dataset.projectHighlightSlide));
           });
         });
+
+        Timbo.initAutoGallery(root, dots, setSlide);
       });
     },
   },

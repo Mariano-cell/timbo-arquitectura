@@ -1120,7 +1120,7 @@ const SITE_DATA = {
   about: {
     es: {
       title:            'Sobre Nosotros',
-      heroTitle:        'Somos Gerónimo Vigil<br>y Mia Morrone',
+      heroTitle:        'Somos <br>Gerónimo y Mia',
       heroTextLead:     'Arquitectos argentinos y apasionados por la naturaleza.',
       heroTextBody:     'Timbó nació de una convicción compartida: que la arquitectura debe profundizar nuestra conexión con la naturaleza y enriquecer la forma en que la habitamos, respondiendo de manera inteligente al clima y al lugar.',
       foundersText1:    'Gerónimo, graduado en la Universidad de Belgrano, lidera el área de diseño del estudio. Su experiencia proyectando en paisajes silvestres y prístinos dio forma a un enfoque sensible y profundamente contextual. Cada proyecto nace del entorno, equilibrando materialidad, proporción y simplicidad contemporánea, con una identidad clara y coherente.',
@@ -1137,11 +1137,11 @@ const SITE_DATA = {
     },
     en: {
       title:            'About Us',
-      heroTitle:        'We are Gerónimo Vigil and Mía Morrone',
+      heroTitle:        'We are <br>Gerónimo and Mia',
       heroTextLead:     'Argentine architects and lifelong observers of the natural world.',
       heroTextBody:     'Timbó was founded on a shared belief: architecture should strengthen our connection to nature and enrich the way we inhabit it, responding intelligently to climate and place.',
-      foundersText1:    'Gerónimo, a graduate of Universidad de Belgrano, leads the studio’s design vision. His experience working in remote and sensitive landscapes has shaped a contextual approach in which each project emerges from its surroundings, balancing materiality, proportion, and contemporary simplicity with a clear and coherent identity.',
-      foundersText2:    'Mía completed her graduate and postgraduate studies at the Universidad Torcuato Di Tella and holds a Master of Science in Sustainable Environmental Design from the Architectural Association in London. She leads environmental performance and research, applying rigorous, measurable, and evidence-based strategies to ensure each project meets high environmental standards.',
+      foundersText1:    'Gerónimo Vigil, a graduate of Universidad de Belgrano, leads the studio’s design vision. His experience working in remote and sensitive landscapes has shaped a contextual approach in which each project emerges from its surroundings, balancing materiality, proportion, and contemporary simplicity with a clear and coherent identity.',
+      foundersText2:    'Mía Morrone completed her graduate and postgraduate studies at the Universidad Torcuato Di Tella and holds a Master of Science in Sustainable Environmental Design from the Architectural Association in London. She leads environmental performance and research, applying rigorous, measurable, and evidence-based strategies to ensure each project meets high environmental standards.',
       approachText:     'Our work brings together architecture and science. We design in response to climate and anticipate the challenges of a changing environment, with a focus on human wellbeing: creating spaces that support comfort, use and daily life.<br><br>Gardens, fields, mountains or cities: every landscape is an opportunity to work in dialogue with its conditions. We approach every project, regardless of scale, climate, or context, with the same level of attention, responsibility and care.',
       approachHighlight:'At Timbó, architecture is understood as a long-term commitment: to the environment, to those who inhabit each space, and to the future we help shape.',
       team: [

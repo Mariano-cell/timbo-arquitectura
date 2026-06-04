@@ -1156,11 +1156,12 @@ html[lang="es"] .sust-hero__visual-img--en {
 }
 
 .nature-dialogue__text-mask {
-  --nature-dialogue-inline-start: var(--margin-c);
+  --nature-dialogue-inline-end: var(--margin-c);
   position: absolute;
-  left: var(--nature-dialogue-inline-start);
+  right: var(--nature-dialogue-inline-end);
   bottom: clamp(64px, 12vh, 144px);
-  max-width: min(980px, calc(100vw - var(--nature-dialogue-inline-start) - var(--space-xl)));
+  max-width: min(980px, calc(100vw - var(--nature-dialogue-inline-end) - var(--space-xl)));
+  text-align: right;
 }
 
 .nature-dialogue__text {
@@ -2725,6 +2726,20 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .project-highlight[data-project-slug="haras-san-pablo"] .project-highlight__title {
   top: auto;
   bottom: var(--margin-c);
+}
+
+.project-highlight[data-project-slug="chacras-de-murray"] .project-highlight__title {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+html[lang="es"] .project-highlight[data-project-slug="chacras-de-murray"] .project-highlight__title {
+  top: var(--margin-a);
+}
+
+html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .project-highlight__title {
+  top: var(--margin-c);
 }
 
 .project-highlight__title-line {
@@ -5229,7 +5244,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .sust-hero__text {
-  max-width: 50ch;
+  max-width: 35ch;
   margin: clamp(2rem, 4vw, 3rem) 0 0;
   font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
   font-weight: var(--fw-regular);
