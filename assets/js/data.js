@@ -35,6 +35,28 @@ const SITE_DATA = {
     },
   },
 
+  /* ----- Títulos de pestaña ----- */
+  pageMeta: {
+    es: {
+      brand:           'Timbó',
+      home:            'Timbó — Inicio',
+      projects:        'Timbó — Proyectos',
+      sustainability:  'Timbó — Sustentabilidad',
+      services:        'Timbó — Servicios',
+      about:           'Timbó — Sobre Nosotros',
+      contact:         'Timbó — Contacto',
+    },
+    en: {
+      brand:           'Timbó',
+      home:            'Timbó — Home',
+      projects:        'Timbó — Projects',
+      sustainability:  'Timbó — Sustainability',
+      services:        'Timbó — Services',
+      about:           'Timbó — About Us',
+      contact:         'Timbó — Contact',
+    },
+  },
+
   /* ----- Home ----- */
   home: {
     es: {

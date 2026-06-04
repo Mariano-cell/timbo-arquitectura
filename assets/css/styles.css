@@ -60,6 +60,83 @@ html[lang="es"] .sust-hero__visual-img--en {
   display: none;
 }
 
+/* --- Lang toggle ---
+   Widget ES / EN que se inyecta en el hero de cada página via Timbo.langToggle.
+   Posición: esquina inferior derecha del hero, sobre la imagen.
+   Color: hereda del data-nav-theme del hero (--dark → blanco, --light → negro). */
+.lang-toggle {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+}
+
+/* En home el hero excede el viewport → toggle fijo al viewport */
+.lang-toggle--fixed {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  z-index: 10;
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+  user-select: none;
+}
+
+.lang-toggle__sep {
+  opacity: 0.35;
+}
+
+/* Variante dark (hero con fondo oscuro/imagen) → texto blanco */
+.lang-toggle--dark .lang-option,
+.lang-toggle--dark .lang-toggle__sep {
+  color: #ffffff;
+}
+
+/* Variante light (hero con fondo claro) → texto negro */
+.lang-toggle--light .lang-option,
+.lang-toggle--light .lang-toggle__sep {
+  color: var(--color-black);
+}
+
+.lang-option {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  line-height: inherit;
+  opacity: 0.4;
+  transition: opacity 200ms ease;
+}
+
+.lang-option:hover {
+  opacity: 0.75;
+}
+
+.lang-option--active {
+  opacity: 1;
+}
+
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  .lang-toggle,
+  .lang-toggle--fixed {
+    bottom: 1.25rem;
+    right: 1.25rem;
+    font-size: 0.6875rem;
+  }
+}
+
 /* =========================
    NAVEGACIÓN
    ========================= */
@@ -1277,7 +1354,7 @@ html[lang="es"] .sust-hero__visual-img--en {
   display: grid;
   grid-template-columns: repeat(3, 12vw);
   row-gap: clamp(1.75rem, 2.8vw, 3rem);
-  column-gap: clamp(0.5rem, 1vw, 1rem);
+  column-gap: clamp(1rem, 1.75vw, 1.5rem);
   justify-items: center;
   align-items: start;
   justify-self: end;
@@ -1298,6 +1375,16 @@ html[lang="es"] .sust-hero__visual-img--en {
   width: clamp(5rem, 6.5vw, 7rem);
   height: clamp(5rem, 6.5vw, 7rem);
   object-fit: contain;
+}
+
+.philosophy__signal-icon--solar-path {
+  width: clamp(5.75rem, 7.2vw, 7.75rem);
+  height: clamp(5.75rem, 7.2vw, 7.75rem);
+}
+
+.philosophy__signal-icon--radiation {
+  width: clamp(6.5rem, 8vw, 9rem);
+  height: clamp(6.5rem, 8vw, 9rem);
 }
 
 .philosophy__signal-icon--humidity {
@@ -1324,8 +1411,25 @@ html[lang='es'] .philosophy__signal-label-svg--precipitation-es {
   height: 24px;
 }
 
+html[lang='es'] .philosophy__signal-label-svg--radiation-es {
+  height: 32px;
+  --philosophy-signal-label-offset-y: -6px;
+}
+
 html[lang='es'] .philosophy__signal-label-svg--two-lines {
   height: 48px;
+}
+
+html[lang='es'] .philosophy__signal-label-svg--solar-path-es {
+  height: 44px;
+}
+
+html[lang='es'] .philosophy__signal-label-svg--wind-es {
+  height: 44px;
+}
+
+html[lang='es'] .philosophy__signal-label-svg--sky-coverage-es {
+  height: 44px;
 }
 
 .philosophy__signal-label-svg--humidity {
@@ -1356,35 +1460,59 @@ html[lang='es'] .philosophy__signal-label {
   border: 0;
 }
 
-/* === Títulos SVG en inglés (mismo patrón que los de español) === */
+/* === Títulos SVG en inglés === */
 .philosophy__signal-label-svg-en {
   --philosophy-signal-label-offset-y: 0px;
   display: none;
   width: auto;
-  height: clamp(1.4rem, 1.85vw, 1.8rem);
+  height: auto;
+  max-width: 100%;
   object-fit: contain;
   transform: translateY(var(--philosophy-signal-label-offset-y));
   transform-origin: center center;
 }
 
-.philosophy__signal-label-svg-en--humidity {
-  height: clamp(1.02rem, 1.32vw, 1.24rem);
-  --philosophy-signal-label-offset-y: 8px;
-}
-
-.philosophy__signal-label-svg-en--precipitation {
-  height: clamp(1.4rem, 1.85vw, 1.8rem);
-}
-
-.philosophy__signal-label-svg-en--wind {
-  /* Wind patterns tiene viewBox ~8:1 (164.79 x 20.54); el ancho de la
-     columna lo recorta, así que controlamos por width, no por height. */
-  width: clamp(8rem, 9vw, 11rem);
-  height: auto;
-}
-
 html[lang='en'] .philosophy__signal-label-svg-en {
   display: block;
+}
+
+html[lang='en'] .philosophy__signal-label-svg-en--one-line {
+  height: 24px;
+  width: auto;
+}
+
+html[lang='en'] .philosophy__signal-label-svg-en--two-lines {
+  height: 48px;
+  width: auto;
+}
+
+/* Hooks por item: mantienen el tamaño actual y permiten retocar cada señal
+   en EN sin volver a tocar el HTML. */
+html[lang='en'] .philosophy__signal-label-svg-en--climatic-zone {
+  height: 42px;
+}
+
+html[lang='en'] .philosophy__signal-label-svg-en--temperature,
+html[lang='en'] .philosophy__signal-label-svg-en--humidity,
+html[lang='en'] .philosophy__signal-label-svg-en--sky-coverage {
+  height: 24px;
+}
+
+html[lang='en'] .philosophy__signal-label-svg-en--radiation {
+  height: 24px;
+  --philosophy-signal-label-offset-y: -6px;
+}
+
+html[lang='en'] .philosophy__signal-label-svg-en--precipitation {
+  height: 28px;
+}
+
+html[lang='en'] .philosophy__signal-label-svg-en--solar-path {
+  height: 28px;
+}
+
+html[lang='en'] .philosophy__signal-label-svg-en--wind {
+  height: 22px;
 }
 
 @media (min-width: 1024px) {
@@ -1392,30 +1520,6 @@ html[lang='en'] .philosophy__signal-label-svg-en {
   .philosophy__signal-label-svg-en {
     max-width: none;
     flex: 0 0 auto;
-  }
-
-  html[lang='en'] .philosophy__signal-label-svg-en {
-    height: calc(25.6px);
-  }
-
-  html[lang='en'] .philosophy__signal-label-svg-en--climatic-zone {
-    height: calc(28.16px);
-  }
-
-  html[lang='en'] .philosophy__signal-label-svg-en--humidity {
-    height: calc(19.888px);
-  }
-
-  html[lang='en'] .philosophy__signal-label-svg-en--precipitation {
-    height: calc(28.16px);
-  }
-
-  html[lang='en'] .philosophy__signal-label-svg-en--wind {
-    width: 10.45rem;
-  }
-
-  html[lang='en'] .philosophy__signal-label-svg-en--sky-coverage {
-    height: calc(28.16px);
   }
 }
 
@@ -1463,7 +1567,7 @@ html[lang='en'] .philosophy__signal-label {
     grid-template-columns: repeat(3, 1fr);
     justify-content: end;
     column-gap: clamp(0.5rem, 4vw, 2rem);
-    padding-left: var(--margin-c);
+    padding-left: 0;
     padding-right: var(--margin-b);
   }
 
@@ -1525,6 +1629,22 @@ html[lang='en'] .philosophy__signal-label {
 /* --- MOBILE CHICO (opcional) --- */
 @media (max-width: 480px) {
   /* sólo si hace falta ajuste extra para celulares chicos */
+}
+
+/* --- SIGNALS: ajuste para pantallas muy chicas (≤350px) --- */
+@media (max-width: 350px) {
+  .philosophy__signals {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .philosophy__signal {
+    width: 100%;
+  }
+
+  .philosophy__signal-icon {
+    width: clamp(3rem, 18vw, 4rem);
+    height: clamp(3rem, 18vw, 4rem);
+  }
 }
 
 /* =========================
@@ -1896,6 +2016,11 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .project-hero__content.is-visible .project-hero__title {
   opacity: 1;
   filter: blur(0);
+}
+
+/* Oculta los marcadores temporales de revision usados durante feedback. */
+.page-content > section[data-review-section] > .project-review-section-label {
+  display: none !important;
 }
 
 .project-detail {
@@ -3248,12 +3373,25 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
-  .page--haras-san-pablo .main-nav:not(.main-nav--scrolled) {
-    color: var(--color-black);
+  .page--haras-san-pablo .main-nav:not(.main-nav--scrolled),
+  .page--haras-san-pablo .main-nav:not(.main-nav--scrolled) .nav__link {
+    color: var(--color-white);
+  }
+
+  .page--haras-san-pablo .project-palette__text {
+    max-width: 70vw;
   }
 
   .page--cherokee-ave .main-nav:not(.main-nav--scrolled) {
     color: var(--color-black);
+  }
+
+  .page--cabana-suinda .main-nav:not(.main-nav--scrolled) {
+    color: var(--color-black);
+  }
+
+  .project-hero--cardano .project-hero__title {
+    color: #fff;
   }
 
   .page--exuma-lodge .project-phrase--single-horizontal .project-phrase__images {
@@ -3686,23 +3824,40 @@ html.is-entering-home.is-entering-home-active .main-nav {
     padding-block: var(--margin-b);
   }
 
+  .project-refuge{
+    padding-block: calc(var(--margin-b) * 6);
+  }
+  .project-phrase{
+    padding-block: calc(var(--margin-b) * 6);
+  }
+
   .project-overview{
-    padding-top: calc(var(--margin-b) * 2);
+    padding-top: calc(var(--margin-b) * 4);
   }
 
   .project-refuge__copy {}
+
+  /* Haras San Pablo: el título de overview tiene spans por línea (para la
+     animación de reveal). En mobile se desactiva el salto forzado. */
+  .page--haras-light .project-overview__title-line,
+  .page--haras-light .project-overview__title-line-inner {
+    display: inline;
+    overflow: visible;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
 
   .project-phrase {
     padding-bottom: var(--margin-b);
   }
 
   .project-palette {
-    padding-bottom: calc(var(--margin-b) * 2);
+    padding-bottom: calc(var(--margin-b) * 6);
   }
 
   .project-highlight {
     /* padding-block: clamp(2rem, 3vh, 4rem); */
-    padding-block: clamp(12rem, 16vh, 20rem);
+    padding-block: clamp(9rem, 12vh, 14rem);
   }
 
   .page--cherokee-ave .project-highlight {
@@ -3927,21 +4082,6 @@ html.is-entering-home.is-entering-home-active .main-nav {
     background-color: #aaa243;
   }
 
-  /* Tobar Lodge: en tablet conservamos las dos fotos lado a lado,
-     pero el bloque sigue bajando debajo del texto desde 1024px. */
-  .page--tobar-lodge .project-refuge--gallery-mobile-only .project-refuge__gallery {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .page--tobar-lodge .project-refuge--gallery-mobile-only .project-refuge__image:nth-child(2) {
-    display: block;
-  }
-
-  .page--tobar-lodge .project-refuge--gallery-mobile-only .project-refuge__gallery-mobile {
-    display: none;
-  }
-
   /* Frame: una columna, con texto arriba e imagen abajo (invertido vs desktop). */
   .project-frame__container {
     grid-template-columns: 1fr;
@@ -4060,6 +4200,20 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .project-phrase__images {
     display: none;
+  }
+
+  .project-phrase--single-horizontal .project-phrase__images {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .project-phrase[data-project-slug="praderas-cabin"] .project-phrase__images {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .project-phrase[data-project-slug="praderas-cabin"] .project-phrase__image {
+    aspect-ratio: 16 / 9;
   }
 
   .project-palette--gallery .project-palette__images {
@@ -4190,12 +4344,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .project-highlight__title {
     position: static;
-    align-self: center;
-    max-width: clamp(16rem, 82vw, 30rem);
+    align-self: flex-end;
+    max-width: 70vw;
     /* estandar-a-mobile para frase-destacada */
     font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
     line-height: 1.2;
-    text-align: center;
+    text-align: right;
     color: var(--color-black);
   }
 
@@ -4205,123 +4359,34 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 @media (max-width: 1023.98px) {
-  /* Suinda Lodge: en tablet conservamos las dos fotos lado a lado,
-     pero el bloque sigue bajando debajo del texto desde 1024px. */
-  .page--cabana-suinda .project-refuge--gallery-mobile-only .project-refuge__gallery {
+  /* Patrón compartido para galerías verticales:
+     desde 1024px las imágenes bajan debajo del texto, pero se mantienen
+     en dupla hasta 600px. Debajo de 600px la segunda desaparece.
+
+     Cuando una sección tiene ambas clases (--gallery-mobile-only + --pair-to-600),
+     --pair-to-600 manda: el wrapper legacy queda oculto y las imágenes reales
+     se muestran en dupla. El JS también ignora el legacy en estos casos (ver main.js). */
+  .project-refuge--pair-to-600 .project-refuge__gallery {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
 
-  .page--cabana-suinda .project-refuge--gallery-mobile-only .project-refuge__image:nth-child(2) {
+  .project-refuge--pair-to-600 .project-refuge__image:nth-child(2) {
     display: block;
   }
 
-  .page--cabana-suinda .project-refuge--gallery-mobile-only .project-refuge__gallery-mobile {
-    display: none;
-  }
-
-  .page--cabana-suinda .project-phrase__images {
+  /* Neutraliza el legacy --gallery-mobile-only si coexiste con --pair-to-600 */
+  .project-refuge--gallery-mobile-only.project-refuge--pair-to-600 .project-refuge__gallery {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
 
-  .page--cabana-suinda .project-phrase--gallery-mobile-only .project-phrase__gallery-mobile {
+  .project-refuge--pair-to-600 .project-refuge__gallery-mobile,
+  .project-refuge--gallery-mobile-only.project-refuge--pair-to-600 .project-refuge__gallery-mobile {
     display: none;
   }
 
-  .page--cardano-clubhouse .project-phrase__images {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .page--cardano-clubhouse .project-phrase--gallery-mobile-only .project-phrase__gallery-mobile {
-    display: none;
-  }
-
-  .page--haras-san-pablo .project-palette__container {
-    width: auto;
-    max-width: var(--max-width);
-    min-height: 0;
-    grid-template-columns: 1fr;
-    margin-top: 0;
-    gap: 0;
-  }
-
-  .page--haras-san-pablo .project-palette__images {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    order: 2;
-  }
-
-  .page--haras-san-pablo .project-palette__copy {
-    order: 1;
-    padding-right: 0;
-    padding-top: 0;
-  }
-
-  .page--haras-san-pablo .project-palette__intro,
-  .page--haras-san-pablo .project-palette__text {
-    max-width: none;
-    margin-top: 1rem;
-  }
-
-  .page--haras-san-pablo .project-palette--gallery-mobile-only .project-palette__gallery-mobile {
-    display: none;
-  }
-
-  .page--club-de-mar .project-refuge--gallery-mobile-only .project-refuge__gallery {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .page--club-de-mar .project-refuge--gallery-mobile-only .project-refuge__image:nth-child(2) {
-    display: block;
-  }
-
-  .page--club-de-mar .project-refuge--gallery-mobile-only .project-refuge__gallery-mobile {
-    display: none;
-  }
-
-  .page--club-de-mar .project-palette__container {
-    width: auto;
-    max-width: var(--max-width);
-    min-height: 0;
-    grid-template-columns: 1fr;
-    margin-top: 0;
-    gap: 0;
-  }
-
-  .page--club-de-mar .project-palette__images {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    order: 2;
-  }
-
-  .page--club-de-mar .project-palette__copy {
-    order: 1;
-    padding-right: 0;
-    padding-top: 0;
-  }
-
-  .page--club-de-mar .project-palette__intro,
-  .page--club-de-mar .project-palette__text {
-    max-width: none;
-    margin-top: 1rem;
-  }
-
-  .page--club-de-mar .project-palette--gallery-mobile-only .project-palette__gallery-mobile {
-    display: none;
-  }
-
-  .page--cherokee-ave .project-refuge__gallery {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .page--cherokee-ave .project-refuge__image:nth-child(2) {
-    display: block;
-  }
-
-  .page--cherokee-ave .project-phrase__container {
+  .project-phrase--pair-to-600 .project-phrase__container {
     width: auto;
     max-width: var(--max-width);
     min-height: 0;
@@ -4329,22 +4394,28 @@ html.is-entering-home.is-entering-home-active .main-nav {
     margin-top: 1rem;
   }
 
-  .page--cherokee-ave .project-phrase__copy {
+  .project-phrase--pair-to-600 .project-phrase__copy {
     padding-right: 0;
     padding-top: 1rem;
   }
 
-  .page--cherokee-ave .project-phrase__intro,
-  .page--cherokee-ave .project-phrase__text {
+  .project-phrase--pair-to-600 .project-phrase__intro,
+  .project-phrase--pair-to-600 .project-phrase__text {
     max-width: none;
   }
 
-  .page--cherokee-ave .project-phrase__images {
+  .project-phrase--pair-to-600 .project-phrase__images,
+  .project-phrase--gallery-mobile-only.project-phrase--pair-to-600 .project-phrase__images {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
 
-  .page--cherokee-ave .project-palette__container {
+  .project-phrase--pair-to-600 .project-phrase__gallery-mobile,
+  .project-phrase--gallery-mobile-only.project-phrase--pair-to-600 .project-phrase__gallery-mobile {
+    display: none;
+  }
+
+  .project-palette--pair-to-600 .project-palette__container {
     width: auto;
     max-width: var(--max-width);
     min-height: 0;
@@ -4353,80 +4424,79 @@ html.is-entering-home.is-entering-home-active .main-nav {
     gap: 0;
   }
 
-  .page--cherokee-ave .project-palette__images {
+  .project-palette--pair-to-600 .project-palette__images,
+  .project-palette--gallery-mobile-only.project-palette--pair-to-600 .project-palette__images {
     display: grid;
     grid-template-columns: 1fr 1fr;
     order: 2;
   }
 
-  .page--cherokee-ave .project-palette__copy {
+  .project-palette--pair-to-600 .project-palette__copy {
     order: 1;
     padding-right: 0;
     padding-top: 0;
   }
 
-  .page--cherokee-ave .project-palette__intro,
-  .page--cherokee-ave .project-palette__text {
-    max-width: none;
+  .project-palette--pair-to-600 .project-palette__intro,
+  .project-palette--pair-to-600 .project-palette__text {
+    max-width: 75vw;
     margin-top: 1rem;
+  }
+
+  .project-palette--pair-to-600 .project-palette__gallery-mobile,
+  .project-palette--gallery-mobile-only.project-palette--pair-to-600 .project-palette__gallery-mobile {
+    display: none;
   }
 }
 
 @media (max-width: 599.98px) {
-  .page--tobar-lodge .project-refuge--gallery-mobile-only .project-refuge__gallery {
-    grid-template-columns: 1fr;
-  }
-
-  .page--tobar-lodge .project-refuge--gallery-mobile-only .project-refuge__image:nth-child(2) {
+  /* Debajo de 600px: ocultar la galería de dos fotos y mostrar el slider con dots.
+     Los selectores compuestos (tres clases) tienen especificidad (0,3,0) para ganar
+     sobre la regla de neutralización del bloque ≤1023px que también usa (0,3,0)
+     pero está declarada antes. */
+  .project-refuge--pair-to-600 .project-refuge__gallery,
+  .project-refuge--gallery-mobile-only.project-refuge--pair-to-600 .project-refuge__gallery {
     display: none;
   }
 
-  .page--cabana-suinda .project-refuge--gallery-mobile-only .project-refuge__gallery,
-  .page--cabana-suinda .project-phrase__images {
-    grid-template-columns: 1fr;
+  .project-refuge--pair-to-600 .project-refuge__gallery-mobile,
+  .project-refuge--gallery-mobile-only.project-refuge--pair-to-600 .project-refuge__gallery-mobile {
+    display: block;
+    position: relative;
+    margin: 0;
+    padding-top: 0;
+    overflow: visible;
+    z-index: 6;
   }
 
-  .page--cabana-suinda .project-refuge--gallery-mobile-only .project-refuge__image:nth-child(2),
-  .page--cabana-suinda .project-phrase__image:nth-child(2) {
+  .project-phrase--pair-to-600 .project-phrase__images,
+  .project-phrase--gallery-mobile-only.project-phrase--pair-to-600 .project-phrase__images {
     display: none;
   }
 
-  .page--cardano-clubhouse .project-phrase__images {
-    grid-template-columns: 1fr;
+  .project-phrase--pair-to-600 .project-phrase__gallery-mobile,
+  .project-phrase--gallery-mobile-only.project-phrase--pair-to-600 .project-phrase__gallery-mobile {
+    display: block;
+    position: relative;
+    margin: 0;
+    padding-top: 0;
+    overflow: visible;
+    z-index: 6;
   }
 
-  .page--cardano-clubhouse .project-phrase__image:nth-child(2) {
+  .project-palette--pair-to-600 .project-palette__images,
+  .project-palette--gallery-mobile-only.project-palette--pair-to-600 .project-palette__images {
     display: none;
   }
 
-  .page--haras-san-pablo .project-palette__images {
-    grid-template-columns: 1fr;
-  }
-
-  .page--haras-san-pablo .project-palette__image:nth-child(2) {
-    display: none;
-  }
-
-  .page--club-de-mar .project-refuge--gallery-mobile-only .project-refuge__gallery,
-  .page--club-de-mar .project-palette__images {
-    grid-template-columns: 1fr;
-  }
-
-  .page--club-de-mar .project-refuge--gallery-mobile-only .project-refuge__image:nth-child(2),
-  .page--club-de-mar .project-palette__image:nth-child(2) {
-    display: none;
-  }
-
-  .page--cherokee-ave .project-refuge__gallery,
-  .page--cherokee-ave .project-phrase__images,
-  .page--cherokee-ave .project-palette__images {
-    grid-template-columns: 1fr;
-  }
-
-  .page--cherokee-ave .project-refuge__image:nth-child(2),
-  .page--cherokee-ave .project-phrase__image:nth-child(2),
-  .page--cherokee-ave .project-palette__image:nth-child(2) {
-    display: none;
+  .project-palette--pair-to-600 .project-palette__gallery-mobile,
+  .project-palette--gallery-mobile-only.project-palette--pair-to-600 .project-palette__gallery-mobile {
+    display: block;
+    position: relative;
+    margin: 0;
+    padding-top: 0;
+    overflow: visible;
+    z-index: 6;
   }
 }
 
@@ -4497,7 +4567,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .project-phrase__intro,
   .project-phrase__text {
-    max-width: none;
+    max-width: 75vw;
   }
 
   .project-final__content {
@@ -4520,6 +4590,15 @@ html.is-entering-home.is-entering-home-active .main-nav {
     font-size: clamp(2rem, 7vw, 2.8rem);
   }
 
+  .project-overview__title-line,
+  .project-overview__title-line-inner {
+    display: inline;
+  }
+
+  .project-overview__title-line::after {
+    content: ' ';
+  }
+
   .project-overview__map {
     width: 100%;
   }
@@ -4531,8 +4610,9 @@ html.is-entering-home.is-entering-home-active .main-nav {
   }
 
   .project-palette__text{
-    padding-block: clamp(0.5rem, 1rem, 2rem);
-    margin-top: 0;
+    padding-block: clamp(2rem, 3vw, 4rem);
+    margin-top: clamp(4rem, 4vw, 6rem);
+    max-width: 70vw;
   }
 
   .project-palette__intro {
@@ -4545,7 +4625,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .project-phrase__intro,
   .project-phrase__text {
-    font-size: clamp(1rem, 4.2vw, 1.2rem);
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
     line-height: 1.5;
   }
 
@@ -5324,11 +5404,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
 
-  /* Process mobile: el orden del HTML ya es media -> copy,
-     así que naturalmente queda: gráfico (vista 1) -> texto (vista 2). */
+  /* Process mobile: invertimos el orden visual para mostrar
+     primero el texto y después el gráfico. */
   .sust-process {
     min-height: auto;
     padding: 0;
+    padding-block: clamp(2rem, 3vw, 4rem);
   }
 
   .sust-process__container {
@@ -5338,11 +5419,12 @@ html.is-entering-home.is-entering-home-active .main-nav {
     padding-right: 0;
   }
 
-  /* GRÁFICO: una vista completa, centrado vertical y con márgenes. */
+  /* GRÁFICO: una vista completa, alineado arriba y con márgenes. */
   .sust-process__media-wrap {
+    order: 2;
     min-height: 100vh;
-    padding: var(--space-2xl) var(--margin-a);
-    justify-content: center;
+    padding: 0 var(--margin-a);
+    justify-content: flex-start;
   }
 
   .sust-process__media {
@@ -5351,8 +5433,9 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   /* COPY: otra vista completa, centrado vertical (espacio arriba y abajo). */
   .sust-process__copy {
+    order: 1;
     min-height: 50vh;
-    padding: var(--space-2xl) var(--margin-a) var(--space-4xl);
+    padding: var(--space-2xl) var(--margin-a) 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -5865,7 +5948,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .sust-climate__container {
     width: 100%;
     grid-template-columns: 1fr;
-    gap: var(--space-2xl);
+    gap: var(--margin-a);
     margin: 0;
     padding: 0 var(--margin-a);
   }
@@ -5992,18 +6075,17 @@ html.is-entering-home.is-entering-home-active .main-nav {
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
 
-  /* Breathe mobile: dejamos la estructura/altura/padding como estaban,
-     solo ajustamos tamaños de texto (instrucción explícita) y el
-     object-position de la imagen para que el encuadre se vea bien en
-     formato vertical de celular. */
+  /* Breathe mobile: mantenemos la estructura, dejamos la sección al
+     95% del viewport y conservamos el ajuste de encuadre de la imagen
+     para formato vertical. */
   .sust-breathe {
-    min-height: 82vh;
+    min-height: 95vh;
   }
 
   .sust-breathe__content {
     flex-direction: column;
     align-items: flex-start;
-    min-height: 82vh;
+    min-height: 95vh;
     padding-top: calc(2.5rem);
     padding-bottom: 3rem;
   }
@@ -6472,6 +6554,22 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
   }
 }
 
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  .sust-benefits__item-title {
+    /* estandar-a-mobile frase-destacada — Fluid: 16px @ 375px → 23px @ 1023px */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+  }
+
+  .sust-benefits__item-text {
+    /* estandar-a-mobile párrafo — Fluid: 16px @ 375px → 23px @ 1023px */
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
+  }
+}
+
 /* =========================
    SUST-PILARES (rueda de pilares)
    ========================= */
@@ -6770,7 +6868,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
     position: static;
     width: 100%;
     height: auto;
-    margin-top: 1.5rem;
+    margin-top: 0;
     padding-left: 0;
     border-left: none;
     overflow: visible;
@@ -10527,25 +10625,50 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   }
 }
 
-/* ========================= SCROLL INDICATOR (DEBUG) =========================
-   Widget chico abajo a la derecha que muestra scrollY.
-   Inyectado por Timbo.scrollIndicator en main.js.
-   Quitar el .init() correspondiente para ocultarlo.
-   =========================================================================== */
-.scroll-indicator {
-  position: fixed;
-  bottom: 8px;
-  right: 8px;
-  z-index: 9999;
-  padding: 3px 6px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 10px;
-  line-height: 1;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 4px;
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-select: none;
-  font-variant-numeric: tabular-nums;
+@media (min-width: 901px) {
+  .page--haras-san-pablo .project-palette__container {
+    row-gap: clamp(1.5rem, 2.4vw, 2.25rem);
+    column-gap: clamp(1.5rem, 3vw, 4rem);
+  }
+
+  .page--haras-san-pablo .project-palette__copy--text-only {
+    padding-top: 0;
+  }
+
+  .page--cherokee-ave .project-palette__container {
+    row-gap: clamp(1.5rem, 2.4vw, 2.25rem);
+    column-gap: clamp(1.5rem, 3vw, 4rem);
+  }
+
+  .page--cherokee-ave .project-palette__copy--text-only {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 1023.98px) {
+  .page--haras-san-pablo .project-palette__copy--intro-only {
+    order: 1;
+  }
+
+  .page--haras-san-pablo .project-palette__images,
+  .page--haras-san-pablo .project-palette__gallery-mobile {
+    order: 2;
+  }
+
+  .page--haras-san-pablo .project-palette__copy--text-only {
+    order: 3;
+  }
+
+  .page--cherokee-ave .project-palette__copy--intro-only {
+    order: 1;
+  }
+
+  .page--cherokee-ave .project-palette__images,
+  .page--cherokee-ave .project-palette__gallery-mobile {
+    order: 2;
+  }
+
+  .page--cherokee-ave .project-palette__copy--text-only {
+    order: 3;
+  }
 }

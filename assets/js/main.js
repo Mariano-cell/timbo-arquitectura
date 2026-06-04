@@ -165,6 +165,7 @@ const Timbo = {
       // Aplicar traducciones
       this.apply();
       this.updateToggle();
+      Timbo.pageTitle.update();
 
       // Re-renderizar componentes dinámicos que dependen del idioma
       Timbo.projectPage.render();
@@ -1000,6 +1001,57 @@ const Timbo = {
   },
 
   /* ============================================================
+     PAGE TITLE
+     Centraliza lo que se muestra en la pestaña del navegador.
+     ============================================================ */
+  pageTitle: {
+    STATIC_PAGE_KEYS: {
+      'index.html': 'home',
+      'proyectos.html': 'projects',
+      'sustentabilidad.html': 'sustainability',
+      'servicios.html': 'services',
+      'sobre-nosotros.html': 'about',
+      'contacto.html': 'contact',
+    },
+
+    getPageName(pathname = window.location.pathname) {
+      const raw = pathname.split('/').pop() || 'index.html';
+      return raw.toLowerCase();
+    },
+
+    getStaticTitle(lang) {
+      const meta = SITE_DATA.pageMeta?.[lang];
+      if (!meta) return '';
+
+      const pageName = this.getPageName();
+      const pageKey = this.STATIC_PAGE_KEYS[pageName];
+      if (!pageKey) return meta.brand || '';
+
+      return meta[pageKey] || meta.brand || '';
+    },
+
+    getProjectTitle(lang) {
+      const page = document.querySelector('[data-project-slug]');
+      const slug = page?.getAttribute('data-project-slug');
+      if (!slug) return '';
+
+      const project = SITE_DATA.projectPages?.[lang]?.projects?.[slug];
+      const brand = SITE_DATA.pageMeta?.[lang]?.brand || 'Timbó';
+      if (!project?.name) return brand;
+
+      return `${brand} — ${project.name}`;
+    },
+
+    update() {
+      const lang = Timbo.state.lang || 'es';
+      const title = this.getProjectTitle(lang) || this.getStaticTitle(lang);
+      if (!title) return;
+
+      document.title = title;
+    },
+  },
+
+  /* ============================================================
      PROJECT PAGE (detalle)
      Renderiza contenido de cada página de proyecto por slug
      ============================================================ */
@@ -1192,8 +1244,6 @@ const Timbo = {
       if (backLink) {
         backLink.href = `${depth}proyectos.html?lang=${lang}`;
       }
-
-      document.title = `Timbó — ${project.name}`;
     },
   },
 
@@ -5031,11 +5081,59 @@ const Timbo = {
   },
 
   /* ============================================================
+     LANG TOGGLE
+     Inyecta el widget ES / EN en el hero de cada página.
+     Busca el primer elemento con clase .hero, .sust-hero o .project-hero
+     y le agrega un <div class="lang-toggle"> en la esquina inferior derecha.
+     El color (dark/light) se infiere del data-nav-theme del hero.
+
+     Caso especial — home (.hero): el hero excede el viewport en altura,
+     así que el toggle se fija al viewport con position:fixed en vez de
+     absolute, usando la clase modificadora .lang-toggle--fixed.
+     ============================================================ */
+  langToggle: {
+    init() {
+      const hero = document.querySelector('.hero, .sust-hero, .project-hero');
+      if (!hero) return;
+
+      // Asegurarse de que el hero tenga position relativa para que el absolute funcione
+      const heroPosition = window.getComputedStyle(hero).position;
+      if (heroPosition === 'static') {
+        hero.style.position = 'relative';
+      }
+
+      const theme = hero.dataset.navTheme === 'dark' ? 'dark' : 'light';
+
+      // En home (.hero) el hero supera el viewport → toggle fixed al viewport.
+      // En el resto de páginas → toggle absolute dentro del hero.
+      const isHome = hero.classList.contains('hero');
+      const fixedClass = isHome ? ' lang-toggle--fixed' : '';
+
+      const toggle = document.createElement('div');
+      toggle.className = `lang-toggle lang-toggle--${theme}${fixedClass}`;
+      toggle.innerHTML = `
+        <button class="lang-option" data-lang="es" aria-label="Español">ES</button>
+        <span class="lang-toggle__sep" aria-hidden="true">/</span>
+        <button class="lang-option" data-lang="en" aria-label="English">EN</button>
+      `;
+
+      toggle.addEventListener('click', (e) => {
+        const btn = e.target.closest('.lang-option');
+        if (!btn) return;
+        Timbo.i18n.set(btn.dataset.lang);
+      });
+
+      hero.appendChild(toggle);
+    },
+  },
+
+  /* ============================================================
      INICIALIZACIÓN
      ============================================================ */
   init() {
     // 1. Renderizar componentes compartidos
     this.footer.render();
+    this.langToggle.init();
     this.floatingLogo.init();
     this.navLinkUnderline.init();
     this.introLinkOval.init();
@@ -5094,7 +5192,6 @@ const Timbo = {
     // El módulo queda disponible por si se reactiva: this.projectsGalleryHoverBlur.init();
     this.galleryCoverCycle.init();
     this.galleryCoverCyclePairs.init();
-    this.scrollIndicator.init();
 
     // 3. Detectar idioma y aplicar
     const lang = this.i18n.detect();
@@ -6091,6 +6188,7 @@ const Timbo = {
      ============================================================ */
   projectPaletteTextReveal: {
     TRIGGER_RATIO: 0.6,
+    MOBILE_TRIGGER_RATIO: 0.85,
 
     init() {
       const text = document.querySelector('.project-palette__text');
@@ -6108,7 +6206,9 @@ const Timbo = {
 
       const update = () => {
         const rect = text.getBoundingClientRect();
-        const trigger = window.innerHeight * this.TRIGGER_RATIO;
+        const isMobile = window.matchMedia('(max-width: 1023.98px)').matches;
+        const ratio = isMobile ? this.MOBILE_TRIGGER_RATIO : this.TRIGGER_RATIO;
+        const trigger = window.innerHeight * ratio;
 
         if (rect.top <= trigger) {
           text.classList.add('is-revealed');
@@ -6635,33 +6735,6 @@ const Timbo = {
 
         return pair;
       }).filter(Boolean);
-    },
-  },
-
-  /* ============================================================
-     scrollIndicator — debug widget (esquina inferior derecha)
-     Muestra el scrollY actual. Útil para coordinar ajustes con
-     el asistente. Quitar el .init() en Timbo.init() para ocultar.
-     ============================================================ */
-  scrollIndicator: {
-    el: null,
-    init() {
-      // Evitar duplicados si init() corre dos veces
-      if (document.querySelector('.scroll-indicator')) return;
-
-      const el = document.createElement('div');
-      el.className = 'scroll-indicator';
-      el.textContent = '0';
-      document.body.appendChild(el);
-      this.el = el;
-
-      const update = () => {
-        this.el.textContent = Math.round(window.scrollY);
-      };
-
-      update();
-      window.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update, { passive: true });
     },
   },
 

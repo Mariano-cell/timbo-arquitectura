@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Timbó — Cherokee Residence">
-  <title>Timbó — Cherokee Residence</title>
+  <title>Timbó — Casa Cherokee</title>
   <link rel="icon" type="image/png" href="../assets/images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
   <link rel="stylesheet" href="../assets/css/variables.css">
   <link rel="stylesheet" href="../assets/css/styles.css">
@@ -173,7 +173,7 @@
     </section>
 
     <!-- ====== REFUGE ====== -->
-    <section class="project-refuge" data-nav-theme="light">
+    <section class="project-refuge project-refuge--gallery-mobile-only project-refuge--pair-to-600" data-nav-theme="light">
       <div class="container project-refuge__container">
         <div class="project-refuge__copy">
           <p class="project-refuge__text anim-fade-up" data-anim-delay="0" id="project-refuge-text-1">Este proyecto residencial se concibe como una
@@ -187,6 +187,7 @@
           </p>
         </div>
 
+        <!-- DESKTOP + mobile ≥600px: galería de dos figures. -->
         <div class="project-refuge__gallery">
           <figure class="project-refuge__image anim-fade-in" data-anim-delay="0">
             <img src="../assets/images/projects/cherokee-ave/refuge-01.jpg" alt="Cherokee Residence" loading="lazy"
@@ -195,6 +196,20 @@
           <figure class="project-refuge__image anim-fade-in" data-anim-delay="400">
             <img src="../assets/images/projects/cherokee-ave/refuge-02.jpg" alt="Cherokee Residence" loading="lazy"
               decoding="async">
+          </figure>
+        </div>
+
+        <!-- MOBILE <600px: slider con dots. -->
+        <div class="project-refuge__gallery-mobile anim-fade-in" data-anim-delay="0" aria-hidden="false">
+          <div class="project-refuge__dots">
+            <button class="project-refuge__dot is-active" data-project-refuge-slide="0" aria-label="Foto 1"></button>
+            <button class="project-refuge__dot" data-project-refuge-slide="1" aria-label="Foto 2"></button>
+          </div>
+          <figure class="project-refuge__photo">
+            <img class="project-refuge__img is-active" src="../assets/images/projects/cherokee-ave/refuge-01.jpg"
+              alt="Cherokee Residence" loading="lazy" decoding="async">
+            <img class="project-refuge__img" src="../assets/images/projects/cherokee-ave/refuge-02.jpg"
+              alt="Cherokee Residence" loading="lazy" decoding="async">
           </figure>
         </div>
       </div>
@@ -229,7 +244,7 @@
          data-phrase-reveal="off": desactiva el reveal por máscara (estandar-b) del
          módulo Timbo.projectPhraseTextReveal en esta página. El <p> usa estandar-a
          (anim-fade-up) en su lugar. -->
-    <section class="project-phrase" data-nav-theme="light" data-phrase-reveal="off">
+    <section class="project-phrase project-phrase--gallery-mobile-only project-phrase--pair-to-600" data-nav-theme="light" data-phrase-reveal="off">
       <div class="project-phrase__container">
         <div class="project-phrase__copy">
           <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0" id="project-phrase-text">
@@ -238,6 +253,7 @@
           </p>
         </div>
 
+        <!-- DESKTOP + mobile ≥600px: dos figures. -->
         <div class="project-phrase__images">
           <figure class="project-phrase__image project-phrase__image--zoom anim-fade-in" data-anim-delay="120">
             <img src="../assets/images/projects/cherokee-ave/phrase-01.jpg" alt="Cherokee Residence" loading="lazy" decoding="async">
@@ -245,6 +261,20 @@
 
           <figure class="project-phrase__image project-phrase__image--pan anim-fade-in anim-reveal-right" data-anim-delay="220">
             <img src="../assets/images/projects/cherokee-ave/phrase-02.jpg" alt="Cherokee Residence" loading="lazy" decoding="async">
+          </figure>
+        </div>
+
+        <!-- MOBILE <600px: slider con dots. -->
+        <div class="project-phrase__gallery-mobile anim-fade-in" data-anim-delay="0" aria-hidden="false">
+          <div class="project-phrase__dots">
+            <button class="project-phrase__dot is-active" data-project-phrase-slide="0" aria-label="Foto 1"></button>
+            <button class="project-phrase__dot" data-project-phrase-slide="1" aria-label="Foto 2"></button>
+          </div>
+          <figure class="project-phrase__photo">
+            <img class="project-phrase__img is-active" src="../assets/images/projects/cherokee-ave/phrase-01.jpg"
+              alt="Cherokee Residence" loading="lazy" decoding="async">
+            <img class="project-phrase__img" src="../assets/images/projects/cherokee-ave/phrase-02.jpg"
+              alt="Cherokee Residence" loading="lazy" decoding="async">
           </figure>
         </div>
       </div>
@@ -269,17 +299,17 @@
     <!-- ====== PALETTE ======
          Reescrita con modo drag. NOTA: palette-01 tiene extensión .JPG (mayúsculas)
          — case-sensitivity puede romper en Netlify. Registrar como deuda. -->
-    <section class="project-palette" data-nav-theme="light">
+    <section class="project-palette project-palette--gallery-mobile-only project-palette--pair-to-600" data-nav-theme="light">
       <div class="project-palette__container">
-        <div class="project-palette__copy anim-fade-up" data-anim-delay="0">
+        <div class="project-palette__copy project-palette__copy--intro-only anim-fade-up" data-anim-delay="0">
           <p class="project-palette__intro" id="project-palette-intro">La casa no se abre indiscriminadamente,
             sino que controla cuidadosamente el nivel de exposición de cada plano. Así, construye un equilibrio entre
             liviandad y robustez.</p>
-          <p class="project-palette__text" id="project-palette-text">Entre masa y aire, entre robustez y liviandad.</p>
         </div>
 
         <p class="project-palette__mobile-text" id="project-palette-mobile-text" hidden></p>
 
+        <!-- DESKTOP + mobile ≥600px: dos figures. -->
         <div class="project-palette__images">
           <figure class="project-palette__image project-palette__image--a anim-fade-in" data-anim-delay="120">
             <img src="../assets/images/projects/cherokee-ave/palette-01.jpg" alt="Cherokee Residence"
@@ -290,6 +320,24 @@
             <img src="../assets/images/projects/cherokee-ave/palette-02.jpg" alt="Cherokee Residence"
               decoding="async">
           </figure>
+        </div>
+
+        <!-- MOBILE <600px: slider con dots. -->
+        <div class="project-palette__gallery-mobile anim-fade-in" data-anim-delay="0" aria-hidden="false">
+          <div class="project-palette__dots">
+            <button class="project-palette__dot is-active" data-project-palette-slide="0" aria-label="Foto 1"></button>
+            <button class="project-palette__dot" data-project-palette-slide="1" aria-label="Foto 2"></button>
+          </div>
+          <figure class="project-palette__photo">
+            <img class="project-palette__img is-active" src="../assets/images/projects/cherokee-ave/palette-01.jpg"
+              alt="Cherokee Residence" loading="lazy" decoding="async">
+            <img class="project-palette__img" src="../assets/images/projects/cherokee-ave/palette-02.jpg"
+              alt="Cherokee Residence" loading="lazy" decoding="async">
+          </figure>
+        </div>
+
+        <div class="project-palette__copy project-palette__copy--text-only anim-fade-up" data-anim-delay="0">
+          <p class="project-palette__text" id="project-palette-text">Entre masa y aire, entre robustez y liviandad.</p>
         </div>
       </div>
     </section>
