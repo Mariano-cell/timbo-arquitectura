@@ -236,14 +236,15 @@ html[lang="es"] .sust-hero__visual-img--en {
      vertical que respeta el alto que ocupa la lista de items. */
   .main-nav {
     height: auto;
-    padding: var(--margin-a) var(--margin-a);
+    padding-block: clamp(1rem, 0.93vw + 0.78rem, 1.5rem);
+    padding-inline: var(--margin-a);
   }
 
   .nav__links {
     flex-direction: column;
     align-items: flex-end;
     justify-content: flex-start;
-    gap: 4px;
+    gap: clamp(4px, 0.62vw + 1.7px, 8px);
     height: auto;
     /* Transición suave para la aparición/desaparición al scrollear */
     transition: opacity 300ms ease;
@@ -261,7 +262,9 @@ html[lang="es"] .sust-hero__visual-img--en {
   }
 
   .nav__link {
-    font-size: var(--text-xs);
+    /* 12px @ 375px → 18px @ 1023px.
+       Mantiene el tamaño actual en celular y crece para tablet vertical. */
+    font-size: clamp(0.75rem, 0.93vw + 0.53rem, 1.125rem);
     line-height: 1.4;
     text-align: right;
   }
@@ -997,15 +1000,8 @@ html[lang="es"] .sust-hero__visual-img--en {
   }
 
   .intro__photos {
-    grid-template-columns: 1fr;
     width: 100%;
     max-height: none;
-  }
-
-  /* Ocultamos la segunda foto (la angosta de la derecha) en mobile:
-     la primera (wide) ocupa todo el ancho y crece manteniendo proporción. */
-  .intro__photo--narrow {
-    display: none;
   }
 
   .intro__body {
@@ -1028,6 +1024,18 @@ html[lang="es"] .sust-hero__visual-img--en {
   .intro__claim {
     /* Fluid: 28px @ 375px → 40px @ 1023px */
     font-size: clamp(1.75rem, 1.85vw + 1.06rem, 2.5rem);
+  }
+}
+
+@media (max-width: 599.98px) {
+  .intro__photos {
+    grid-template-columns: 1fr;
+  }
+
+  /* Recién en mobile chico dejamos una sola imagen para evitar que
+     la dupla se vuelva demasiado angosta. */
+  .intro__photo--narrow {
+    display: none;
   }
 }
 
@@ -1082,7 +1090,7 @@ html[lang="es"] .sust-hero__visual-img--en {
   color: var(--color-text-light);
   /* estandar-desktop para frase-destacada (mismo patrón tipográfico que
      .project-palette__text en las páginas de proyecto). */
-  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 5rem);
   letter-spacing: 0.03em;
   line-height: 1.5;
   font-weight: var(--fw-bold);
@@ -1286,10 +1294,6 @@ html[lang="es"] .sust-hero__visual-img--en {
   will-change: opacity;
 }
 
-.philosophy__signal--centered {
-  grid-column: 1;
-}
-
 .philosophy__signal-icon {
   width: clamp(5rem, 6.5vw, 7rem);
   height: clamp(5rem, 6.5vw, 7rem);
@@ -1301,20 +1305,31 @@ html[lang="es"] .sust-hero__visual-img--en {
 }
 
 .philosophy__signal-label-svg {
+  --philosophy-signal-label-offset-y: 0px;
   display: none;
   width: auto;
-  height: clamp(1.4rem, 1.85vw, 1.8rem);
+  height: auto;
   max-width: 100%;
   object-fit: contain;
+  transform: translateY(var(--philosophy-signal-label-offset-y));
+  transform-origin: center center;
+}
+
+html[lang='es'] .philosophy__signal-label-svg--one-line {
+  height: 24px;
+  width: auto;
+}
+
+html[lang='es'] .philosophy__signal-label-svg--precipitation-es {
+  height: 24px;
+}
+
+html[lang='es'] .philosophy__signal-label-svg--two-lines {
+  height: 48px;
 }
 
 .philosophy__signal-label-svg--humidity {
-  height: clamp(1.02rem, 1.32vw, 1.24rem);
-  transform: translateY(8px);
-}
-
-.philosophy__signal-label-svg--precipitation {
-  height: clamp(0.92rem, 1.18vw, 1.1rem);
+  --philosophy-signal-label-offset-y: 8px;
 }
 
 .philosophy__signal-label {
@@ -1343,15 +1358,18 @@ html[lang='es'] .philosophy__signal-label {
 
 /* === Títulos SVG en inglés (mismo patrón que los de español) === */
 .philosophy__signal-label-svg-en {
+  --philosophy-signal-label-offset-y: 0px;
   display: none;
   width: auto;
   height: clamp(1.4rem, 1.85vw, 1.8rem);
   object-fit: contain;
+  transform: translateY(var(--philosophy-signal-label-offset-y));
+  transform-origin: center center;
 }
 
 .philosophy__signal-label-svg-en--humidity {
   height: clamp(1.02rem, 1.32vw, 1.24rem);
-  transform: translateY(8px);
+  --philosophy-signal-label-offset-y: 8px;
 }
 
 .philosophy__signal-label-svg-en--precipitation {
@@ -1367,6 +1385,38 @@ html[lang='es'] .philosophy__signal-label {
 
 html[lang='en'] .philosophy__signal-label-svg-en {
   display: block;
+}
+
+@media (min-width: 1024px) {
+  .philosophy__signal-label-svg,
+  .philosophy__signal-label-svg-en {
+    max-width: none;
+    flex: 0 0 auto;
+  }
+
+  html[lang='en'] .philosophy__signal-label-svg-en {
+    height: calc(25.6px);
+  }
+
+  html[lang='en'] .philosophy__signal-label-svg-en--climatic-zone {
+    height: calc(28.16px);
+  }
+
+  html[lang='en'] .philosophy__signal-label-svg-en--humidity {
+    height: calc(19.888px);
+  }
+
+  html[lang='en'] .philosophy__signal-label-svg-en--precipitation {
+    height: calc(28.16px);
+  }
+
+  html[lang='en'] .philosophy__signal-label-svg-en--wind {
+    width: 10.45rem;
+  }
+
+  html[lang='en'] .philosophy__signal-label-svg-en--sky-coverage {
+    height: calc(28.16px);
+  }
 }
 
 html[lang='en'] .philosophy__signal-label {
@@ -1410,8 +1460,21 @@ html[lang='en'] .philosophy__signal-label {
      (max-width: 600px), por pedido del diseño. */
   .philosophy__signals {
     width: 100%;
+    grid-template-columns: repeat(3, 1fr);
     justify-content: end;
     column-gap: clamp(0.5rem, 4vw, 2rem);
+    padding-left: var(--margin-c);
+    padding-right: var(--margin-b);
+  }
+
+  .philosophy__signal {
+    width: 100%;
+    align-items: center;
+  }
+
+  .philosophy__signal-icon {
+    width: clamp(4rem, 12vw, 8rem);
+    height: clamp(4rem, 12vw, 8rem);
   }
 
   /* Estándar tipográfico mobile (ver CLAUDE.md):
@@ -1442,7 +1505,7 @@ html[lang='en'] .philosophy__signal-label {
    Sólo afecta la grilla interna de .philosophy__signals. El resto del
    layout mobile (apilado, gap del container, etc.) sigue cambiando a
    1023.98px en el @media de arriba. */
-@media (max-width: 600px) {
+@media (max-width: 500px) {
 
   /* Columnas fijas (9rem c/u, un poco más chicas que las 11rem de
      desktop, para que entren cómodas en 375px). justify-content: end
@@ -3193,6 +3256,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
     color: var(--color-black);
   }
 
+  .page--exuma-lodge .project-phrase--single-horizontal .project-phrase__images {
+    display: grid;
+  }
+
   .page--haras-san-pablo .project-phrase__text {
     margin-top: 0;
   }
@@ -3634,8 +3701,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
   }
 
   .project-highlight {
-
-    padding-block: clamp(2rem, 3vh, 4rem);
+    /* padding-block: clamp(2rem, 3vh, 4rem); */
+    padding-block: clamp(12rem, 16vh, 20rem);
   }
 
   .page--cherokee-ave .project-highlight {
@@ -3858,6 +3925,21 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .project-refuge--gallery-mobile-only .project-refuge__dot.is-active {
     background-color: #aaa243;
+  }
+
+  /* Tobar Lodge: en tablet conservamos las dos fotos lado a lado,
+     pero el bloque sigue bajando debajo del texto desde 1024px. */
+  .page--tobar-lodge .project-refuge--gallery-mobile-only .project-refuge__gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .page--tobar-lodge .project-refuge--gallery-mobile-only .project-refuge__image:nth-child(2) {
+    display: block;
+  }
+
+  .page--tobar-lodge .project-refuge--gallery-mobile-only .project-refuge__gallery-mobile {
+    display: none;
   }
 
   /* Frame: una columna, con texto arriba e imagen abajo (invertido vs desktop). */
@@ -4119,6 +4201,232 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .page--cherokee-ave .project-highlight__title {
     padding-top: 1rem;
+  }
+}
+
+@media (max-width: 1023.98px) {
+  /* Suinda Lodge: en tablet conservamos las dos fotos lado a lado,
+     pero el bloque sigue bajando debajo del texto desde 1024px. */
+  .page--cabana-suinda .project-refuge--gallery-mobile-only .project-refuge__gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .page--cabana-suinda .project-refuge--gallery-mobile-only .project-refuge__image:nth-child(2) {
+    display: block;
+  }
+
+  .page--cabana-suinda .project-refuge--gallery-mobile-only .project-refuge__gallery-mobile {
+    display: none;
+  }
+
+  .page--cabana-suinda .project-phrase__images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .page--cabana-suinda .project-phrase--gallery-mobile-only .project-phrase__gallery-mobile {
+    display: none;
+  }
+
+  .page--cardano-clubhouse .project-phrase__images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .page--cardano-clubhouse .project-phrase--gallery-mobile-only .project-phrase__gallery-mobile {
+    display: none;
+  }
+
+  .page--haras-san-pablo .project-palette__container {
+    width: auto;
+    max-width: var(--max-width);
+    min-height: 0;
+    grid-template-columns: 1fr;
+    margin-top: 0;
+    gap: 0;
+  }
+
+  .page--haras-san-pablo .project-palette__images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    order: 2;
+  }
+
+  .page--haras-san-pablo .project-palette__copy {
+    order: 1;
+    padding-right: 0;
+    padding-top: 0;
+  }
+
+  .page--haras-san-pablo .project-palette__intro,
+  .page--haras-san-pablo .project-palette__text {
+    max-width: none;
+    margin-top: 1rem;
+  }
+
+  .page--haras-san-pablo .project-palette--gallery-mobile-only .project-palette__gallery-mobile {
+    display: none;
+  }
+
+  .page--club-de-mar .project-refuge--gallery-mobile-only .project-refuge__gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .page--club-de-mar .project-refuge--gallery-mobile-only .project-refuge__image:nth-child(2) {
+    display: block;
+  }
+
+  .page--club-de-mar .project-refuge--gallery-mobile-only .project-refuge__gallery-mobile {
+    display: none;
+  }
+
+  .page--club-de-mar .project-palette__container {
+    width: auto;
+    max-width: var(--max-width);
+    min-height: 0;
+    grid-template-columns: 1fr;
+    margin-top: 0;
+    gap: 0;
+  }
+
+  .page--club-de-mar .project-palette__images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    order: 2;
+  }
+
+  .page--club-de-mar .project-palette__copy {
+    order: 1;
+    padding-right: 0;
+    padding-top: 0;
+  }
+
+  .page--club-de-mar .project-palette__intro,
+  .page--club-de-mar .project-palette__text {
+    max-width: none;
+    margin-top: 1rem;
+  }
+
+  .page--club-de-mar .project-palette--gallery-mobile-only .project-palette__gallery-mobile {
+    display: none;
+  }
+
+  .page--cherokee-ave .project-refuge__gallery {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .page--cherokee-ave .project-refuge__image:nth-child(2) {
+    display: block;
+  }
+
+  .page--cherokee-ave .project-phrase__container {
+    width: auto;
+    max-width: var(--max-width);
+    min-height: 0;
+    grid-template-columns: 1fr;
+    margin-top: 1rem;
+  }
+
+  .page--cherokee-ave .project-phrase__copy {
+    padding-right: 0;
+    padding-top: 1rem;
+  }
+
+  .page--cherokee-ave .project-phrase__intro,
+  .page--cherokee-ave .project-phrase__text {
+    max-width: none;
+  }
+
+  .page--cherokee-ave .project-phrase__images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .page--cherokee-ave .project-palette__container {
+    width: auto;
+    max-width: var(--max-width);
+    min-height: 0;
+    grid-template-columns: 1fr;
+    margin-top: 0;
+    gap: 0;
+  }
+
+  .page--cherokee-ave .project-palette__images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    order: 2;
+  }
+
+  .page--cherokee-ave .project-palette__copy {
+    order: 1;
+    padding-right: 0;
+    padding-top: 0;
+  }
+
+  .page--cherokee-ave .project-palette__intro,
+  .page--cherokee-ave .project-palette__text {
+    max-width: none;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 599.98px) {
+  .page--tobar-lodge .project-refuge--gallery-mobile-only .project-refuge__gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .page--tobar-lodge .project-refuge--gallery-mobile-only .project-refuge__image:nth-child(2) {
+    display: none;
+  }
+
+  .page--cabana-suinda .project-refuge--gallery-mobile-only .project-refuge__gallery,
+  .page--cabana-suinda .project-phrase__images {
+    grid-template-columns: 1fr;
+  }
+
+  .page--cabana-suinda .project-refuge--gallery-mobile-only .project-refuge__image:nth-child(2),
+  .page--cabana-suinda .project-phrase__image:nth-child(2) {
+    display: none;
+  }
+
+  .page--cardano-clubhouse .project-phrase__images {
+    grid-template-columns: 1fr;
+  }
+
+  .page--cardano-clubhouse .project-phrase__image:nth-child(2) {
+    display: none;
+  }
+
+  .page--haras-san-pablo .project-palette__images {
+    grid-template-columns: 1fr;
+  }
+
+  .page--haras-san-pablo .project-palette__image:nth-child(2) {
+    display: none;
+  }
+
+  .page--club-de-mar .project-refuge--gallery-mobile-only .project-refuge__gallery,
+  .page--club-de-mar .project-palette__images {
+    grid-template-columns: 1fr;
+  }
+
+  .page--club-de-mar .project-refuge--gallery-mobile-only .project-refuge__image:nth-child(2),
+  .page--club-de-mar .project-palette__image:nth-child(2) {
+    display: none;
+  }
+
+  .page--cherokee-ave .project-refuge__gallery,
+  .page--cherokee-ave .project-phrase__images,
+  .page--cherokee-ave .project-palette__images {
+    grid-template-columns: 1fr;
+  }
+
+  .page--cherokee-ave .project-refuge__image:nth-child(2),
+  .page--cherokee-ave .project-phrase__image:nth-child(2),
+  .page--cherokee-ave .project-palette__image:nth-child(2) {
+    display: none;
   }
 }
 
@@ -4971,7 +5279,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
   max-width: 42rem;
 }
 
-.sust-process__title {
+.sust-process__title,
+.sust-benefits__title {
   margin: 0;
   font-size: clamp(1.875rem, 1.7vw + 0.85rem, 2.75rem);
   font-weight: var(--fw-medium, 500);
@@ -5050,7 +5359,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
     max-width: 100%;
   }
 
-  .sust-process__title {
+  .sust-process__title,
+  .sust-benefits__title {
     /* Estándar mobile (estandar-a-mobile / título) — Fluid: 28px @ 375px → 40px @ 1023px */
     font-size: clamp(1.75rem, 1.85vw + 1.06rem, 2.5rem);
     max-width: 18ch;
@@ -5829,7 +6139,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 }
 
 .sust-strategies__detail-media[data-strategy="ventilacion"] .sust-strategies__detail-label {
-  align-self: flex-start;
+  align-self: center;
   width: clamp(11rem, 13vw, 12rem);
   max-width: none;
 }
@@ -6042,6 +6352,11 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
     align-self: center;
   }
 
+  .sust-strategies__detail-icon {
+    /* Fluid: 6rem @ 375px → 10rem @ 1024px */
+    width: clamp(6rem, 9.86vw + 3.7rem, 10rem);
+  }
+
   .sust-strategies__detail-title {
     font-size: 1.1rem;
   }
@@ -6060,6 +6375,13 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
 
   .sust-strategies__diagram-svg text[font-size="11"] {
     font-size: 11px;
+  }
+}
+
+/* --- MOBILE MEDIANO (600px–1023px): separar la rueda de los bordes --- */
+@media (min-width: 600px) and (max-width: 1023.98px) {
+  .sust-strategies__diagram-shell {
+    padding-inline: var(--margin-b);
   }
 }
 
@@ -6136,6 +6458,18 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
   letter-spacing: 0.03em;
   color: var(--color-black);
   max-width: 34ch;
+}
+
+@media (max-width: 599.98px) {
+  .sust-benefits .container {
+    margin-left: var(--margin-a);
+    padding-inline: 0;
+  }
+
+  .sust-benefits__grid {
+    grid-template-columns: 1fr;
+    padding-left: var(--margin-b);
+  }
 }
 
 /* =========================
@@ -6251,9 +6585,9 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
   object-fit: contain;
 }
 
-/* Pequeño ajuste de posición histórico para "luz" (texto muy corto). */
+/* "Luz / Light" comparte el mismo arranque visual que el ícono y el texto. */
 .sust-pilares__detail-media[data-pilar="luz"] .sust-pilares__detail-label {
-  transform: translateX(-30px);
+  align-self: flex-start;
 }
 
 /* Items con texto largo se alinean a la izquierda en vez de centrarse. */
@@ -6461,6 +6795,13 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
      ahora que la rueda crece, así todo escala junto y queda legible. */
   .sust-pilares__diagram-svg text[font-size="14"] {
     font-size: 14px;
+  }
+}
+
+/* --- MOBILE MEDIANO (600px–1023px): separar la rueda de los bordes --- */
+@media (min-width: 600px) and (max-width: 1023.98px) {
+  .sust-pilares__diagram-shell {
+    padding-inline: var(--margin-b);
   }
 }
 
@@ -6835,7 +7176,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   }
 
   .sust-emissions__right {
-    min-height: 100vh;
+    min-height: 60vh;
     padding: var(--space-2xl) var(--margin-a);
     display: flex;
     flex-direction: column;
@@ -6984,7 +7325,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   /* Pie un poco más chico para dejar espacio a título y leyenda dentro
      de la vista de 100vh. */
   .emissions-chart__pie {
-    width: clamp(220px, 65vw, 320px);
+    width: clamp(220px, 45vw, 420px);
   }
 }
 
@@ -7483,7 +7824,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   line-height: 1.35;
   letter-spacing: 0.03em;
   color: rgba(255, 255, 255, 0.96);
-  padding-top: 6rem;
+  padding-top: clamp(3rem, 4vw, 5rem);
 }
 
 .about-us__highlight {
@@ -7494,8 +7835,9 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   font-weight: var(--fw-bold);
   line-height: 1.5;
   letter-spacing: 0.03em;
-  color: var(--color-white);
+  color: var(--color-black);
   will-change: transform;
+  padding-top: clamp(1rem, 2vw, 3rem);
 }
 
 .about-us__highlight-line {
@@ -8210,12 +8552,97 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 .services-directory__title {
   max-width: 22ch;
   margin: 0;
-  font-size: clamp(1.44rem, 2.88vw, 2.96rem);
+  font-size: clamp(3rem, 2.78vw + 0.15rem, 5rem);
   font-weight: var(--fw-regular);
   line-height: 0.98;
   letter-spacing: 0.03em;
   color: var(--color-text-primary);
   text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page--services-light .services-directory__item {
+    --services-domino-delay: 0ms;
+    --services-domino-offset-y: -4.5rem;
+    position: relative;
+    opacity: 0;
+    transform: translate3d(0, var(--services-domino-offset-y), 0) scaleY(0.985);
+    animation: services-domino-drop 1380ms cubic-bezier(0.2, 0.95, 0.24, 1) forwards;
+    animation-delay: var(--services-domino-delay);
+    will-change: transform, opacity;
+  }
+
+  .page--services-light .services-directory__item:nth-child(1) { --services-domino-delay: 140ms; }
+  .page--services-light .services-directory__item:nth-child(2) { --services-domino-delay: 280ms; }
+  .page--services-light .services-directory__item:nth-child(3) { --services-domino-delay: 420ms; }
+  .page--services-light .services-directory__item:nth-child(4) { --services-domino-delay: 560ms; }
+  .page--services-light .services-directory__item:nth-child(5) { --services-domino-delay: 700ms; }
+  .page--services-light .services-directory__item:nth-child(6) { --services-domino-delay: 840ms; }
+
+  .page--services-light .services-directory__title {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translate3d(0, -0.75rem, 0);
+    animation: services-domino-title-in 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: calc(var(--services-domino-delay) + 150ms);
+    will-change: transform, opacity, filter;
+  }
+}
+
+@keyframes services-domino-drop {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, var(--services-domino-offset-y), 0) scaleY(0.985);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate3d(0, 0.22rem, 0) scaleY(1.003);
+  }
+
+  72% {
+    transform: translate3d(0, 0.08rem, 0) scaleY(1.001);
+  }
+
+  88% {
+    transform: translate3d(0, -0.025rem, 0) scaleY(0.9995);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scaleY(1);
+  }
+}
+
+@keyframes services-domino-title-in {
+  0% {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translate3d(0, -0.75rem, 0);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (max-width: 768px) {
+  .page--services-light .services-directory__item {
+    --services-domino-offset-y: -2.75rem;
+  }
+}
+
+/* --- MOBILE --- */
+@media (max-width: 1023.98px) {
+  .services-directory {
+    padding-top: calc(var(--nav-height) + clamp(6rem, 15vw, 10rem));
+  }
 }
 
 @media (max-width: 768px) {
@@ -8646,6 +9073,10 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   letter-spacing: 0.04em;
 }
 
+.projects-gallery__phrase-line {
+  display: inline;
+}
+
 /* =========================
    FILA (base común)
    Layout flex con dos slots (item A + item B) y un gap horizontal
@@ -8894,7 +9325,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   --row-pair-width: calc(var(--row-lead-width) + var(--row-pair-gap) + var(--row-square-width));
   /* Cardano: ancho IGUAL al par de Praderas en fila 2.
      Dos squares (1:1 + 1:1) con un gap de 1rem entre ellas. */
-  --row-cardano-width: calc((var(--row-media-height) * 2) + var(--row-pair-gap));
+  --row-cardano-width: calc(var(--row-media-height) * 16 / 9);
   /* Anchos de los items A y B de esta fila (para calcular --row-push-distance) */
   --row-item-a-width: var(--row-cardano-width);
   --row-item-b-width: var(--row-pair-width);
@@ -8922,41 +9353,18 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   transition-delay: var(--gallery-hover-card-shift-delay);
 }
 
-/* Ancho elástico para fila 3 sólo:
-   - Haras (item B, par) tiene su ancho fijo y NO se achica si el row está apretado.
-   - Cardano (item A, wide) tiene un ancho ideal (--row-cardano-width) pero puede
-     achicarse si Haras + gap no entran. Así se evita que Haras desborde el
-     padding derecho del .projects-gallery en viewports apretados (ej. 1550px). */
-.projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) {
-  flex: 0 1 var(--row-cardano-width);
-  min-width: 0;
-}
-.projects-gallery__row--3>.projects-gallery__item--pair {
-  flex-shrink: 0;
-  /* Cuando Cardano se achicó (porque no entraban A + gap + B en el row),
-     Haras se corre a la izquierda EL MISMO MONTO que perdió Cardano. Así el
-     gap visual entre ambos se mantiene constante = --gallery-row-col-gap,
-     sin importar el aprete del viewport.
-     "deficit" = lo que faltaba para que A + gap + B entrara en el row. */
-  margin-left: calc(-1 * max(0px,
-    var(--row-cardano-width)
-    + var(--gallery-row-col-gap)
-    + var(--row-pair-width)
-    - var(--gallery-row-width)
-  ));
-}
-
-/* Cardano: la imagen y el caption toman el ancho REAL del item
-   (que puede ser menor que --row-cardano-width si hubo aprete). */
+/* Cardano: ancho explícito (no aspect-ratio). La imagen se estira para
+   ocupar todo el contenedor; object-fit: cover (heredado del default
+   de .projects-gallery__media img) recorta lo que sobra. */
 .projects-gallery__row--3 .projects-gallery__media--wide {
   height: var(--row-media-height);
-  width: 100%;
+  width: var(--row-cardano-width);
   aspect-ratio: auto;
 }
 
-/* Caption de Cardano: ancho igual al de su imagen (= ancho del item). */
+/* Caption de Cardano: ancho igual al de su imagen. */
 .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
-  width: 100%;
+  width: var(--row-cardano-width);
 }
 
 /* Par de imágenes (Haras SP Private Estate).
@@ -9210,6 +9618,17 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   }
 }
 
+
+/* En viewports 1024–1200px, Club de Mar (fila 4) pasa de 16/9 a 3/2,
+   igual al ancho que tiene Suindá en ese mismo rango.
+   Pisa la excepción --row-img-ratio: 16/9 que fila 4 tiene en ≤1366px. */
+@media (max-width: 1200px) {
+
+  .projects-gallery__row--4 {
+    --row-img-ratio: 3 / 2;
+  }
+}
+
 /* En viewports ≤1279px ocultamos la hover-card. Como ya no hay tarjeta que
    mostrar, tampoco tiene sentido el desplazamiento del proyecto vecino que
    le hacía espacio. */
@@ -9262,41 +9681,30 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   z-index: 3;
 }
 
+/* =========================
+   ANIMACIÓN DE ENTRADA (simplificada — global desktop + mobile)
+   Reemplaza la versión anterior, que combinaba translate del item +
+   scale del __media + clip-path en los textos del caption. Esa combinación
+   causaba espasmos en mobile chico (≤449) porque el __media-pair ahí es
+   un scroll-x container con margin negativos: el scale animado de las
+   fotos hacía que el navegador recalculara el ancho del contenido
+   continuamente, generando micro-saltos en el scroll-left.
+   La versión nueva solo anima opacity del item: ningún transform sobre
+   el __item ni el __media. Robusto, predecible y sin conflictos con el
+   scroll-x ni con el hover-push de desktop.
+   ========================= */
 .projects-gallery__item.anim-fade-up {
-  transform: translate3d(0, clamp(80px, 10vh, 140px), 0);
+  opacity: 0;
+  transform: translate3d(0, 60px, 0);
   transition:
-    opacity 2200ms cubic-bezier(0.22, 0.61, 0.36, 1) var(--anim-delay),
-    transform 2600ms cubic-bezier(0.16, 1, 0.3, 1) var(--anim-delay);
+    opacity 1400ms cubic-bezier(0.22, 0.61, 0.36, 1) var(--anim-delay),
+    transform 1400ms cubic-bezier(0.22, 0.61, 0.36, 1) var(--anim-delay);
   will-change: opacity, transform;
 }
 
 .projects-gallery__item.anim-fade-up.is-visible {
+  opacity: 1;
   transform: translate3d(0, 0, 0);
-}
-
-.projects-gallery__item.anim-fade-up .projects-gallery__media {
-  transform: scale(0.94);
-  transform-origin: center center;
-  filter: saturate(0.7);
-  transition:
-    transform 2500ms cubic-bezier(0.22, 0.61, 0.36, 1) var(--anim-delay),
-    filter 2500ms cubic-bezier(0.22, 0.61, 0.36, 1) var(--anim-delay);
-}
-
-.projects-gallery__item.anim-fade-up.is-visible .projects-gallery__media {
-  transform: scale(1);
-  filter: saturate(1);
-}
-
-.projects-gallery__item.anim-fade-up .projects-gallery__caption {
-  opacity: 1;
-  transform: none;
-  transition: none;
-}
-
-.projects-gallery__item.anim-fade-up.is-visible .projects-gallery__caption {
-  opacity: 1;
-  transform: none;
 }
 
 /* =========================
@@ -9366,22 +9774,31 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
    contiene las 4 imágenes como hijas — escalan todas juntas
    sin reinicio.
    ========================= */
+/* Zoom continuo: arranca en scale(1) y sigue creciendo sin detenerse
+   mientras dure el hover. Usamos animation en lugar de transition
+   para que no haya un valor final fijo. */
 .projects-gallery__cover-stack {
   position: absolute;
   inset: 0;
-  transform: scale(1);
+  scale: 1;
+  translate: 0 0;
   transform-origin: center center;
-  transition: transform 2000ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  /* El zoom (scale) y el translate son manejados por JS con inline style.
+     Esta transition aplica al salir del hover: zoom-out en 3s, translate
+     de vuelta en 5s sin delay. */
+  transition:
+    scale 3000ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    translate 5000ms cubic-bezier(0.22, 0.61, 0.36, 1);
   will-change: transform;
 }
 
-.projects-gallery__item[data-cover-cycle] .projects-gallery__media:hover .projects-gallery__cover-stack,
-.projects-gallery__item[data-cover-cycle]:has(.projects-gallery__name:hover) .projects-gallery__cover-stack,
-.projects-gallery__item[data-cover-cycle]:focus-visible .projects-gallery__cover-stack,
-.projects-gallery__media[data-cover-cycle]:hover .projects-gallery__cover-stack,
-.projects-gallery__item:has(.projects-gallery__name:hover) .projects-gallery__media[data-cover-cycle] .projects-gallery__cover-stack,
-.projects-gallery__item:focus-visible .projects-gallery__media[data-cover-cycle] .projects-gallery__cover-stack {
-  transform: scale(1.06);
+/* Translate al entrar en hover — JS agrega is-hovered-direct o
+   is-partner-hovered y sobreescribe translate via inline style.
+   El delay de 600ms solo aplica al entrar; al salir el JS limpia
+   el inline y la transition base (sin delay) toma el control. */
+.projects-gallery__cover-stack.is-hovered-direct {
+  translate: -7% 0;
+  transition-delay: 0ms, 600ms; /* scale sin delay, translate con 600ms */
 }
 
 .projects-gallery__item[data-cover-cycle] .projects-gallery__media .projects-gallery__cover,
@@ -9619,34 +10036,10 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   color: var(--color-text-primary);
 }
 
-.projects-gallery__item.anim-fade-up .projects-gallery__name,
-.projects-gallery__item.anim-fade-up .projects-gallery__category,
-.projects-gallery__item.anim-fade-up .projects-gallery__location {
-  opacity: 0;
-  transform: translateY(calc(var(--gallery-caption-reveal-offset) * -1));
-  clip-path: inset(0 0 100% 0);
-  will-change: opacity, transform, clip-path;
-}
-
-.projects-gallery__item.anim-fade-up.is-visible .projects-gallery__name,
-.projects-gallery__item.anim-fade-up.is-visible .projects-gallery__category,
-.projects-gallery__item.anim-fade-up.is-visible .projects-gallery__location {
-  animation: projects-caption-drop var(--gallery-caption-reveal-duration) cubic-bezier(0.16, 1, 0.3, 1) var(--gallery-caption-reveal-delay) both;
-}
-
-@keyframes projects-caption-drop {
-  0% {
-    opacity: 0;
-    transform: translateY(calc(var(--gallery-caption-reveal-offset) * -1));
-    clip-path: inset(0 0 100% 0);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-    clip-path: inset(0 0 0 0);
-  }
-}
+/* Captions del proyecto: heredan el fade del .projects-gallery__item.
+   No tienen animación propia — la animación vieja con clip-path
+   (`projects-caption-drop`) y el scale en el __media quedaron
+   eliminados porque generaban espasmos en mobile chico (scroll-x). */
 
 /* =========================
    Saltos de línea sólo-mobile dentro de captions de la galería.
@@ -9660,248 +10053,414 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 /* =========================
    RESPONSIVE
    ========================= */
+@media (max-width: 600px) {
+  .projects-gallery__phrase-line {
+    display: block;
+  }
+}
+
 /* --- MOBILE --- */
 /* =========================================================
    PÁGINA: PROYECTOS — MOBILE (≤ 1023.98px)
    ---------------------------------------------------------
-   Reemplaza el @media (max-width: 768px) legacy.
-   Las 9 filas se apilan en una sola columna.
-   Todos los items tienen la MISMA altura visual gracias al
-   aspect-ratio 4/3 aplicado al contenedor de imagen
-   (.projects-gallery__media--wide y __media-pair).
+   Cada fila pasa a stack vertical (un proyecto por fila visual).
+   TODAS las portadas comparten la misma --row-height (altura
+   única en mobile). El ancho de cada portada se DERIVA de esa
+   altura aplicando el ratio nativo de desktop (16/9 para wides,
+   lead+square para pares, etc.). Como cada portada tiene su
+   ratio nativo, los anchos terminan distintos: el borde
+   izquierdo queda contra el borde izquierdo del contenedor,
+   y el borde derecho varía portada por portada.
    ========================================================= */
 @media (max-width: 1023.98px) {
 
   /* Contenedor: paddings y gap entre filas para mobile.
-     --gallery-padding-top: alto para que el primer proyecto no se pise
-     con el navbar desplegado. Es un override que solo afecta mobile. */
+     --gallery-padding-top alto para que el primer proyecto no se pise
+     con el navbar desplegado. */
   .projects-gallery {
-    --gallery-padding-top: clamp(14rem, 40vw, 20rem);
+    --gallery-padding-top: clamp(10rem, 26vw, 16rem);
     --gallery-padding-bottom: clamp(4rem, 12vw, 6rem);
     --gallery-side-padding-right: var(--margin-a);
     --gallery-side-padding-left: var(--margin-a);
-    --gallery-row-gap-y: 2.5rem;
+    --gallery-row-gap-y: 1.25rem;
   }
 
-  /* Filas: el layout desktop de 2 proyectos se parte en mobile.
-     Cada row pasa a stack vertical real, así quedan 9 filas de 1 proyecto. */
+  /* Filas: el layout desktop de 2 proyectos por fila se parte en mobile.
+     Cada row pasa a stack vertical real → 9 items, uno debajo del otro.
+     align-items: flex-start asegura que cada item se ancle al borde
+     izquierdo y no se estire a 100% (manteniendo su ancho intrínseco).
+     height: auto !important: cada fila individual (--1, --2, ...) tiene
+     height: var(--row-height) fuera del @media; lo sobreescribimos acá
+     porque en mobile la fila crece según el contenido apilado. */
   .projects-gallery__row {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
     height: auto;
-    gap: 2.5rem;
+    gap: 1.25rem;
+  }
+  .projects-gallery__row--1,
+  .projects-gallery__row--2,
+  .projects-gallery__row--3,
+  .projects-gallery__row--4,
+  .projects-gallery__row--5 {
+    height: auto;
   }
 
-  /* Items con posicionamiento desktop → reset a flujo normal.
-     Neutraliza: grid-column específicos, padding-left (+30 Tobar,
-     +60 Cardano), translate (-100 Suindá, -30 Haras), align-items,
-     y justify-self: end de Club de Mar (heredado del @media 1366px). */
-  .projects-gallery__row--1>.projects-gallery__item:nth-child(1),
-  .projects-gallery__row--1>.projects-gallery__item:nth-child(2),
-  .projects-gallery__row--2>.projects-gallery__item--pair,
-  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair),
-  .projects-gallery__row--3>.projects-gallery__item--pair,
-  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair),
-  .projects-gallery__row--4>.projects-gallery__item:nth-child(1),
-  .projects-gallery__row--4>.projects-gallery__item:nth-child(2),
-  .projects-gallery__row--5>.projects-gallery__item:nth-child(1) {
-    grid-column: auto;
-    width: 100%;
+  /* ALTURA ÚNICA + RATIOS NATIVOS para todas las portadas en mobile.
+     - Override de --row-height: reemplaza los 320/280/260 de desktop.
+       Toda la cadena (--row-media-height, --row-pair-width,
+       --row-wide-width, --row-cardano-width, etc.) se recalcula
+       automáticamente a partir de este valor.
+     - Override de los aspect-ratios y --row-lead-width: el media query
+       ≤1366px los reduce a 3/2 y 4/3 para pantallas chicas desktop.
+       En mobile volvemos a los ratios nativos (16/9 y 3/2) para que las
+       portadas se vean con su proporción original, no la versión apretada.
+     - Override de --row-wide-width: idem (volver a 16/9 sobre la altura
+       mobile real).
+
+     clamp(220px, 45vw, 340px):
+       375px viewport → 220px (tope mínimo, mobile chico)
+       500px viewport → 225px
+       600px viewport → 270px
+       755px viewport → 340px (tope máximo, tablet vertical) */
+  .projects-gallery__row--1,
+  .projects-gallery__row--2,
+  .projects-gallery__row--3,
+  .projects-gallery__row--4,
+  .projects-gallery__row--5 {
+    --row-height: clamp(220px, 45vw, 340px);
+    --row-img-ratio: 16 / 9;
+    --row-lead-ratio: 3 / 2;
+  }
+
+  /* Filas 1, 3 y 5: --row-lead-width fue recalculado a 4/3 en ≤1366px.
+     Lo volvemos a 3/2 (valor nativo desktop) sobre la altura mobile. */
+  .projects-gallery__row--1,
+  .projects-gallery__row--3,
+  .projects-gallery__row--5 {
+    --row-lead-width: calc(var(--row-media-height) * 3 / 2 - 40px);
+  }
+
+  /* Fila 2: --row-wide-width fue recalculado a 3/2 en ≤1366px.
+     Lo volvemos a 16/9 (valor nativo desktop) sobre la altura mobile. */
+  .projects-gallery__row--2 {
+    --row-wide-width: calc(var(--row-media-height) * 16 / 9);
+  }
+
+  /* Items: ancho intrínseco (fit-content) — cada uno mide lo que mide su
+     portada según el ratio nativo. Reset de cualquier translate o
+     padding heredado de desktop. */
+  .projects-gallery__row>.projects-gallery__item {
+    width: fit-content;
+    max-width: 100%;
     min-width: 0;
     flex: none;
     padding-left: 0;
     margin-left: 0;
-    align-items: stretch;
     translate: 0 0;
-    justify-self: start;
   }
 
-  /* Plumbing del contenedor de imagen — necesario para que items con
-     __item-frame (Exuma, Chacras, Club de Mar, Cherokee) y __visual
-     (todos) se estiren al ancho completo. En desktop son fit-content.
-     align-items: stretch fuerza a los hijos del flex column a ocupar el
-     100% del frame (default flex-start los achicaba a fit-content). */
+  /* __item-frame y __visual: en desktop son fit-content. En mobile siguen
+     siendo fit-content (heredan del item). Sólo aseguro que no haya
+     overrides de width: 100% que rompan el ancho intrínseco. */
   .projects-gallery__item-frame {
-    width: 100%;
-    max-width: none;
-    align-items: stretch;
+    width: fit-content;
+    max-width: 100%;
+    align-items: flex-start;
   }
 
   .projects-gallery__visual {
-    width: 100%;
-    max-width: none;
-    display: block;
+    width: fit-content;
+    max-width: 100%;
+    display: inline-block;
   }
 
-  /* El __media-pair en desktop es display: flex (línea ~7787). En mobile
-     pasa a grid de 2 columnas iguales para que las 2 fotos del par queden
-     50/50 dentro del contenedor con aspect-ratio 4/3. */
-  .projects-gallery__media-pair {
-    display: grid;
-  }
-
-  /* Altura uniforme para TODAS las portadas, sin importar su ancho propio.
-     Se calcula sobre el ancho útil de la pantalla (100vw - paddings laterales)
-     con ratio 3:2 — equivale a lo que mediría una portada al 100% con
-     aspect-ratio 3/2. Así Exuma (90%), Suindá (85%) y las pares (100%)
-     comparten exactamente la misma altura visual.
-     CAP de 300px: una vez alcanzado, la altura deja de crecer.
-     Al toparse la altura, el ancho también queda limitado (ver max-width
-     derivado más abajo), y el espacio sobrante queda a la derecha. */
-  .projects-gallery {
-    --gallery-cover-height: min(calc((100vw - 2 * var(--margin-a)) * 2 / 3), 300px);
-  }
-
-  /* Zona de imagen WIDE (5 items: Exuma, Suindá, Cardano, Chacras, Club de Mar)
-     → ancho 90% (alineado a la izquierda, espacio sobrante a la derecha)
-     + altura uniforme via --gallery-cover-height.
-     max-width: una vez que la altura llega al cap (300px), el ancho queda
-     limitado a altura * 3/2 * 0.9 = 405px, manteniendo la proporción 3:2
-     y el 90% relativo a las pares (450px). */
-  .projects-gallery__row--1 .projects-gallery__media--wide,
-  .projects-gallery__row--2 .projects-gallery__media--wide,
-  .projects-gallery__row--3 .projects-gallery__media--wide,
-  .projects-gallery__row--4 .projects-gallery__media--wide,
-  .projects-gallery__row--5 .projects-gallery__media--wide {
-    width: 90%;
-    max-width: calc(var(--gallery-cover-height) * 3 / 2 * 0.9);
-    height: var(--gallery-cover-height);
-    aspect-ratio: auto;
-    margin-right: auto;
-    margin-left: 0;
-  }
-
-  /* Excepciones WIDE → 85% de ancho (en vez del 90% general):
-     - Suindá Lodge (fila 2, item NO-pair)
-     - Club de Mar Beach House (fila 4, segundo item)
-     max-width: altura * 3/2 * 0.85 = ~382px en el cap. */
-  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__media--wide,
-  .projects-gallery__row--4>.projects-gallery__item:nth-child(2) .projects-gallery__media--wide {
-    width: 85%;
-    max-width: calc(var(--gallery-cover-height) * 3 / 2 * 0.85);
-  }
-
-  /* Zona de imagen PAR (4 items: Tobar, Praderas, Haras, Cherokee)
-     → ancho completo + altura uniforme via --gallery-cover-height,
-     dos fotos 70/30 adentro.
-     max-width: altura * 3/2 = 450px en el cap (referencia 100%, las wide
-     se calculan relativas a este valor). */
-  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media-pair,
-  .projects-gallery__row--2 .projects-gallery__media-pair,
-  .projects-gallery__row--3 .projects-gallery__media-pair,
-  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media-pair {
-    width: 100%;
-    max-width: calc(var(--gallery-cover-height) * 3 / 2);
-    height: var(--gallery-cover-height);
-    aspect-ratio: auto;
-    grid-template-columns: 7fr 3fr;
-    gap: 0.5rem;
-    margin-right: auto;
-    margin-left: 0;
-  }
-
-  /* Excepción: TOBAR LODGE (par de la fila 1) invierte el ratio → 30/70 */
-  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media-pair {
-    grid-template-columns: 3fr 7fr;
-  }
-
-  /* Excepción de texto: EXUMA, TOBAR (fila 1), PRADERAS, SUINDÁ (fila 2),
-     CARDANO y HARAS (fila 3), CHACRAS DE MURRAY y CLUB DE MAR (fila 4)
-     fuerzan nombre y/o ubicación a quedar en un solo renglón. */
-  .projects-gallery__row--1 .projects-gallery__name,
-  .projects-gallery__row--1 .projects-gallery__location,
-  .projects-gallery__row--2>.projects-gallery__item--pair .projects-gallery__name,
-  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__location,
-  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__name,
-  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__location,
-  .projects-gallery__row--3>.projects-gallery__item--pair .projects-gallery__location,
-  .projects-gallery__row--4>.projects-gallery__item:nth-child(1) .projects-gallery__location,
-  .projects-gallery__row--4>.projects-gallery__item:nth-child(2) .projects-gallery__location {
-    white-space: nowrap;
+  /* Captions: altura automática en mobile (anula los height fijos de
+     desktop reservados para el alineamiento del row). */
+  .projects-gallery__caption {
+    height: auto;
   }
 
   /* Saltos de línea sólo-mobile dentro de captions: en mobile sí rompen.
-     Aplica a HARAS SAN PABLO (nombre y categoría en 2 líneas cada uno). */
+     Aplica a HARAS SAN PABLO (nombre en 2 líneas). */
   .projects-gallery__caption br.only-mobile {
     display: inline;
   }
 
-  /* Fotos dentro del par: llenan su celda del grid.
-     El aspect-ratio del contenedor padre define la altura;
-     cada foto queda en 2:3 vertical agradable.
-     Importante: anula los aspect-ratio: 3/2 de la primera foto
-     del par en filas 1, 3 y 5. */
-  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media--square,
-  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media--square:first-child,
-  .projects-gallery__row--2 .projects-gallery__media--square,
-  .projects-gallery__row--3 .projects-gallery__media--square,
-  .projects-gallery__row--3 .projects-gallery__media--square:first-child,
-  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media--square,
-  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media--square:first-child {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: auto;
-  }
-
-  /* Visual y caption del par o de items con ancho calculado:
-     fuerzan ancho completo (anula los var(--row-pair-width) y los
-     anchos derivados de (--row-height...) * 16/9). */
-  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__visual,
-  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__caption,
-  .projects-gallery__row--2>.projects-gallery__item--pair .projects-gallery__caption,
-  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--3>.projects-gallery__item--pair .projects-gallery__caption,
-  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__visual,
-  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__caption {
-    width: 100%;
-    max-width: none;
-  }
-
-  /* Captions: altura automática (anula los height fijos por fila) */
-  .projects-gallery__row--1 .projects-gallery__caption,
-  .projects-gallery__row--2 .projects-gallery__caption,
-  .projects-gallery__row--3 .projects-gallery__caption,
-  .projects-gallery__row--4 .projects-gallery__caption,
-  .projects-gallery__row--5 .projects-gallery__caption {
-    height: auto;
-  }
-
-  /* Captions de items WIDE → igualan el ancho de su portada.
-     IMPORTANTE: este bloque tiene que ir DESPUÉS del bloque de
-     "Visual y caption del par o de items con ancho calculado"
-     (que pone width: 100% sobre los caption de Suindá y Cardano).
-     Si se mueve más arriba, la cascada lo pisa.
-     Por defecto 90% (Exuma, Cardano, Chacras), alineados a la izquierda. */
-  .projects-gallery__row--1>.projects-gallery__item:nth-child(1) .projects-gallery__caption,
-  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--4>.projects-gallery__item:nth-child(1) .projects-gallery__caption {
-    width: 90%;
-    max-width: none;
-    margin-right: auto;
-    margin-left: 0;
-  }
-
-  /* Captions de Suindá y Club de Mar → 85% para acompañar la portada acortada. */
-  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
-  .projects-gallery__row--4>.projects-gallery__item:nth-child(2) .projects-gallery__caption {
-    width: 85%;
-    max-width: none;
-    margin-right: auto;
-    margin-left: 0;
-  }
-
-  /* Hover-cards: no aplican en mobile */
+  /* Hover-cards: no aplican en mobile (ya estaban ocultadas a ≤1279px,
+     pero acá lo reafirmamos por prolijidad dentro del scope mobile). */
   .projects-gallery__hover-card {
     display: none;
   }
 
-  /* Shift de hover de la fila 1: neutralizado por prolijidad.
-     En mobile no hay hover, pero limpiamos los transforms residuales. */
+  /* Shift de hover en todas las filas: neutralizado. En mobile no hay
+     hover, pero limpiamos cualquier transform residual. */
   .projects-gallery__row--1>.projects-gallery__item:first-child:hover+.projects-gallery__item .projects-gallery__item-frame,
   .projects-gallery__row--1>.projects-gallery__item:first-child:focus-visible+.projects-gallery__item .projects-gallery__item-frame,
-  .projects-gallery__row--1>.projects-gallery__item:first-child:focus-within+.projects-gallery__item .projects-gallery__item-frame {
+  .projects-gallery__row--1>.projects-gallery__item:first-child:focus-within+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--2>.projects-gallery__item:first-child:hover+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--2>.projects-gallery__item:first-child:focus-visible+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--2>.projects-gallery__item:first-child:focus-within+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--3>.projects-gallery__item:first-child:hover+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--3>.projects-gallery__item:first-child:focus-visible+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--3>.projects-gallery__item:first-child:focus-within+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--4>.projects-gallery__item:first-child:hover+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--4>.projects-gallery__item:first-child:focus-visible+.projects-gallery__item .projects-gallery__item-frame,
+  .projects-gallery__row--4>.projects-gallery__item:first-child:focus-within+.projects-gallery__item .projects-gallery__item-frame {
     transform: none;
+  }
+}
+
+/* =========================================================
+   PÁGINA: PROYECTOS — MOBILE CHICO (≤ 449.98px)
+   ---------------------------------------------------------
+   Patch sobre el bloque ≤1023.98px: cuando la pantalla es
+   chica (~iPhone SE, etc.), algunas portadas desbordan el
+   borde derecho del viewport. Soluciones acá:
+
+   - Portadas con UNA imagen (wide): la imagen pasa a ocupar
+     el 100% del ancho del row, con aspect-ratio 16/9 (la
+     altura sale del ancho).
+
+   - Portadas con DOS imágenes (par): SÓLO la primera foto
+     pasa a 100% con 16/9. La segunda foto se mantiene con
+     su tamaño actual y desborda hacia la derecha (lo
+     atacamos en una segunda instancia).
+
+   - El caption del par se ajusta al 100% del row (no al
+     ancho total del par) para que no se vaya con la segunda
+     foto al overflow.
+
+   El ancho del row disponible se referencia con `100%` desde
+   dentro del item (que ya está al ancho del row vía flex).
+   ========================================================= */
+@media (max-width: 449.98px) {
+
+  /* --- WIDES (Exuma, Suindá, Cardano, Club de Mar) ---
+     Foto única → 100% del row, aspect-ratio 16/9 define la altura. */
+  .projects-gallery__row--1 .projects-gallery__media--wide,
+  .projects-gallery__row--2 .projects-gallery__media--wide,
+  .projects-gallery__row--3 .projects-gallery__media--wide,
+  .projects-gallery__row--4 .projects-gallery__media--wide {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  /* El item wide tiene que poder estirarse al ancho completo del row.
+     En el bloque ≤1023.98px su width es fit-content; en este rango lo
+     forzamos a 100% del row (que es 100vw − paddings del .projects-gallery). */
+  .projects-gallery__row--1>.projects-gallery__item:not(.projects-gallery__item--pair),
+  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair),
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair),
+  .projects-gallery__row--4>.projects-gallery__item:not(.projects-gallery__item--pair) {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* También el __item-frame y __visual de los wides: 100% del item.
+     Por defecto en mobile son fit-content; acá los forzamos a estirarse. */
+  .projects-gallery__row--1>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__item-frame,
+  .projects-gallery__row--1>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__item-frame,
+  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__item-frame,
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual,
+  .projects-gallery__row--4>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__item-frame,
+  .projects-gallery__row--4>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__visual {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Captions de los wides (Suindá fila 2, Cardano fila 3): fuera del @media,
+     tienen `width: var(--row-wide-width)` y `width: var(--row-cardano-width)`,
+     que en mobile resuelven a valores más grandes que el row → empujan la
+     página entera más ancha. Las sobreescribimos a 100% del item. */
+  .projects-gallery__row--1>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--2>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--3>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption,
+  .projects-gallery__row--4>.projects-gallery__item:not(.projects-gallery__item--pair) .projects-gallery__caption {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* --- PARES (Tobar, Praderas, Haras, Chacras, Cherokee) ---
+     El __media-pair "rompe" el padding lateral del .projects-gallery via
+     margin negativos: se extiende hasta el borde físico del viewport por
+     ambos lados (left y right). El padding-left de la propia media-pair
+     reposiciona la primera foto en su lugar original (alineada con el
+     resto del contenido del item). La segunda foto queda al lado de la
+     primera y asoma por la derecha del viewport como señal de que hay
+     más contenido scrolleable.
+
+     overflow-x: auto + overscroll-behavior-x: contain hacen que el usuario
+     pueda hacer scroll horizontal DENTRO de la portada para ver la segunda
+     foto, sin que ese scroll se propague al body. El caption (que es hermano
+     del __media-pair, no hijo) queda fuera del scroll → estático.
+
+     touch-action: pan-x permite que en touch el gesto horizontal scrollee
+     las fotos pero el gesto vertical scrollee la página normalmente.
+
+     scroll-snap-type para que las fotos "encajen" al deslizar. */
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media-pair,
+  .projects-gallery__row--2 .projects-gallery__media-pair,
+  .projects-gallery__row--3 .projects-gallery__media-pair,
+  .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__media-pair,
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media-pair {
+    /* Grid de TRES columnas: foto 1, foto 2, spacer de 1px (rellenado por
+       ::after). La tercera columna materializa el final del scroll. El
+       espacio visual entre la segunda foto y el borde derecho viene del
+       `gap` del grid (ya existente, = --row-pair-gap), no del spacer. */
+    grid-template-columns: calc(100vw - 2 * var(--margin-a)) auto 1px;
+    width: 100vw;
+    margin-left: calc(-1 * var(--margin-a));
+    margin-right: calc(-1 * var(--margin-a));
+    padding-left: var(--margin-a);
+    height: auto;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+    scroll-snap-type: x mandatory;
+    /* scroll-padding-left hace que el snap respete el padding del container:
+       cuando la primera foto "encaja", queda alineada con el borde derecho
+       del padding (no con el borde izquierdo del viewport). Sin esto, el
+       snap pisa visualmente el padding y la foto se ve pegada al borde. */
+    scroll-padding-left: var(--margin-a);
+    /* Oculta la barra de scroll en navegadores que la muestran (mobile la oculta sola) */
+    scrollbar-width: none;
+  }
+
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media-pair::-webkit-scrollbar,
+  .projects-gallery__row--2 .projects-gallery__media-pair::-webkit-scrollbar,
+  .projects-gallery__row--3 .projects-gallery__media-pair::-webkit-scrollbar,
+  .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__media-pair::-webkit-scrollbar,
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media-pair::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* "Spacer" final: pseudo-elemento de 1px de ancho que ocupa la tercera
+     columna del grid. Es un hijo REAL del grid: su bounding box extiende
+     el scroll-width del container. El espacio visual REAL entre la
+     segunda foto y el borde derecho del viewport viene del `gap` del grid
+     (= --row-pair-gap), NO de este spacer. */
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media-pair::after,
+  .projects-gallery__row--2 .projects-gallery__media-pair::after,
+  .projects-gallery__row--3 .projects-gallery__media-pair::after,
+  .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__media-pair::after,
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media-pair::after {
+    content: "";
+    grid-column: 3;
+    grid-row: 1;
+    width: 1px;
+    height: 1px;
+  }
+
+  /* Snap points: cada foto del par "encaja" cuando se la termina de scrollear.
+     Así el usuario no queda con una vista "a medias" entre foto 1 y foto 2. */
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media,
+  .projects-gallery__row--2 .projects-gallery__media,
+  .projects-gallery__row--3 .projects-gallery__media,
+  .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__media,
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media {
+    scroll-snap-align: start;
+  }
+
+  /* Gap entre las dos imágenes del par: la mitad del valor desktop (1rem → 0.5rem).
+     Override de --row-pair-gap para todas las filas en este rango. */
+  .projects-gallery__row--1,
+  .projects-gallery__row--2,
+  .projects-gallery__row--3,
+  .projects-gallery__row--4,
+  .projects-gallery__row--5 {
+    --row-pair-gap: 0.5rem;
+  }
+
+  /* PRIMERA foto del par: ocupa el ancho del row con aspect 16/9.
+     `100vw − 2 * --margin-a` = ancho del row mobile (igual al padding lateral
+     que define `.projects-gallery` en mobile). */
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media--square:first-child,
+  .projects-gallery__row--2 .projects-gallery__media--square:first-child,
+  .projects-gallery__row--3 .projects-gallery__media--square:first-child,
+  .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__media--square:first-child,
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media--square:first-child {
+    width: calc(100vw - 2 * var(--margin-a));
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  /* SEGUNDA foto del par: misma ALTURA que la primera (= width * 9/16),
+     pero ancho DERIVADO del aspect-ratio nativo de cada fila (no forzado a 16/9).
+     Ratios nativos heredados del CSS desktop:
+       - Fila 1 (Tobar foto B):     square 1/1
+       - Fila 2 (Praderas foto B):  estirada → ancho = altura * 3/2 − 40px*
+                                    (esta foto NO es 1/1 por --row-pair-b-width)
+       - Fila 3 (Haras foto B):     square 1/1
+       - Fila 4 (Chacras foto B):   square 1/1
+       - Fila 5 (Cherokee foto B):  square 1/1
+     (*) Para Praderas necesitamos override propio, ver bloque siguiente. */
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media--square:not(:first-child),
+  .projects-gallery__row--3 .projects-gallery__media--square:not(:first-child),
+  .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__media--square:not(:first-child),
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media--square:not(:first-child) {
+    height: calc((100vw - 2 * var(--margin-a)) * 9 / 16);
+    /* width EXPLÍCITO (no `auto`): el grid necesita conocer el ancho real
+       de la columna 2 sin tener que medir el contenido. Sin esto, el grid
+       no incluye correctamente la columna 3 (spacer) en el scroll-width.
+       Como aspect-ratio es 1:1, width = height. */
+    width: calc((100vw - 2 * var(--margin-a)) * 9 / 16);
+    aspect-ratio: auto;
+  }
+
+  /* Fila 2 (Praderas) caso especial: la foto B no es 1/1, sino que tiene
+     ancho `media-height * 3/2 − 40px`. Mantenemos la proporción nativa:
+     altura igual a la primera, ancho = altura * (3/2) − un ajuste proporcional.
+     Como el "-40px" original era sobre la --row-media-height desktop,
+     usamos la misma fórmula relativa pero sobre la nueva altura mobile. */
+  .projects-gallery__row--2 .projects-gallery__media--square:not(:first-child) {
+    height: calc((100vw - 2 * var(--margin-a)) * 9 / 16);
+    width: calc(((100vw - 2 * var(--margin-a)) * 9 / 16) * 3 / 2 - 40px);
+    aspect-ratio: auto;
+  }
+
+  /* El __item, __item-frame, __visual y el __caption del par también pasan
+     al ancho del row (100% del .projects-gallery − paddings) para que el
+     caption no acompañe la segunda foto al overflow.
+     La estructura del par (display: grid con columnas explícitas) sigue
+     existiendo: por eso la segunda foto queda fuera del viewport. */
+  .projects-gallery__row--1>.projects-gallery__item--pair,
+  .projects-gallery__row--2>.projects-gallery__item--pair,
+  .projects-gallery__row--3>.projects-gallery__item--pair,
+  .projects-gallery__row--4>.projects-gallery__item--pair,
+  .projects-gallery__row--5>.projects-gallery__item--pair {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__item-frame,
+  .projects-gallery__row--2>.projects-gallery__item--pair .projects-gallery__item-frame,
+  .projects-gallery__row--3>.projects-gallery__item--pair .projects-gallery__item-frame,
+  .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__item-frame,
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__item-frame {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__visual,
+  .projects-gallery__row--2>.projects-gallery__item--pair .projects-gallery__visual,
+  .projects-gallery__row--3>.projects-gallery__item--pair .projects-gallery__visual,
+  .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__visual,
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__visual {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__caption,
+  .projects-gallery__row--2>.projects-gallery__item--pair .projects-gallery__caption,
+  .projects-gallery__row--3>.projects-gallery__item--pair .projects-gallery__caption,
+  .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__caption,
+  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__caption {
+    width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -9913,18 +10472,12 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   }
 
   .projects-gallery__item.anim-fade-up,
-  .projects-gallery__item.anim-fade-up .projects-gallery__media,
-  .projects-gallery__item.anim-fade-up .projects-gallery__caption,
-  .projects-gallery__item.anim-fade-up .projects-gallery__name,
-  .projects-gallery__item.anim-fade-up .projects-gallery__category,
-  .projects-gallery__item.anim-fade-up .projects-gallery__location,
   .projects-gallery__item .projects-gallery__media img,
   .projects-gallery__media:hover img,
   .projects-gallery__item:has(.projects-gallery__name:hover) .projects-gallery__media img {
     opacity: 1;
     transform: none;
     filter: none;
-    clip-path: none;
     animation: none;
     transition: none;
   }

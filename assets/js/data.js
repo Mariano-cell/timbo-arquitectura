@@ -48,6 +48,7 @@ const SITE_DATA = {
       philosophyCta:    'VER MÁS',
       philosophyClimateZone: 'Zona<br>climática',
       philosophySunPath: 'Trayectoria<br>solar',
+      philosophyRadiation: 'Radiación',
       philosophyOutdoorTemperature: 'Temperatura<br>exterior',
       philosophyHumidity: 'Humedad',
       philosophyPrecipitation: 'Precipitación',
@@ -65,6 +66,7 @@ const SITE_DATA = {
       philosophyCta:    'SEE MORE',
       philosophyClimateZone: 'Climate<br>zone',
       philosophySunPath: 'Solar<br>path',
+      philosophyRadiation: 'Radiation',
       philosophyOutdoorTemperature: 'Outdoor<br>temperature',
       philosophyHumidity: 'Humidity',
       philosophyPrecipitation: 'Precipitation',
@@ -368,7 +370,7 @@ const SITE_DATA = {
             title: 'DAYLIGHT',
             description: 'This involves assessing access to natural light, both direct sunlight and diffuse light, inside and outside the building. The goal is to ensure high-quality lighting while maximising energy efficiency. This is achieved through illuminance and luminance modeling, lighting energy calculations, and simulations.',
             icon: 'assets/images/sustainability/sust-pilars/luz.svg',
-            labelSvg: 'assets/images/sustainability/sust-pilars/english/light.svg',
+            labelSvg: 'assets/images/sustainability/sust-pilars/english/daylight.svg',
           },
           flujo_aire: {
             title: 'AIRFLOW',
@@ -408,7 +410,7 @@ const SITE_DATA = {
             title: 'ENVELOPE THERMAL TRANSMITTANCE',
             description: '',
             icon: 'assets/images/sustainability/sust-strategy/transmitancia-termica.svg',
-            labelSvg: null,
+            labelSvg: 'assets/images/sustainability/sust-strategy/english/envelope-thermal-transmittance.svg',
           },
           masa: {
             title: 'THERMAL MASS',
@@ -420,7 +422,7 @@ const SITE_DATA = {
             title: 'GLAZING FRACTION',
             description: '',
             icon: 'assets/images/sustainability/sust-strategy/proporcion-vidriada.svg',
-            labelSvg: null,
+            labelSvg: 'assets/images/sustainability/sust-strategy/english/glazing-fraction.svg',
           },
           albedo: {
             title: 'ALBEDO',
@@ -432,7 +434,7 @@ const SITE_DATA = {
             title: 'SOLAR SHADING',
             description: '',
             icon: 'assets/images/sustainability/sust-strategy/proteccion-solar.svg',
-            labelSvg: null,
+            labelSvg: 'assets/images/sustainability/sust-strategy/english/solar-shading.svg',
           },
           cubiertas: {
             title: 'GREEN ROOFS',
@@ -491,20 +493,20 @@ const SITE_DATA = {
       title:            'Nuestros proyectos',
       viewProject:      'Ver proyecto',
       items: [
-        { slug: 'exuma-lodge',     page: 'proyectos/proyecto-exuma-lodge.html',     name: 'Exuma Lodge',                    category: 'Hospitality Lodge',        location: 'Bahamas',                image: 'assets/images/projects/project-covers/exuma-lodge-bahamas-01.jpg' },
-        { slug: 'haras-san-pablo', page: 'proyectos/proyecto-haras-san-pablo.html', name: 'Haras San Pablo Private Estate', category: 'Residencial + Productivo', location: 'Buenos Aires, Argentina', image: 'assets/images/projects/project-covers/haras-sanpablo-001.jpg' },
-        { slug: 'tobar-lodge',     page: 'proyectos/proyecto-tobar-lodge.html',     name: 'Tobar Lodge',                    category: 'Hospitalidad / Retiro',    location: 'Tucumán, Argentina',      image: 'assets/images/projects/project-covers/tobar-lodge-02.jpg' },
-        { slug: 'cabana-suinda',   page: 'proyectos/proyecto-cabana-suinda.html',   name: 'Suindá Lodge',                   category: 'Cabaña / Refugio',         location: 'Corrientes, Argentina',   image: 'assets/images/projects/project-covers/cabana-suinda.jpg' },
+        { slug: 'exuma-lodge',     page: 'proyectos/proyecto-exuma-lodge.html',     name: 'Exuma Lodge',                    category: 'Hospitality Lodge',        location: 'Bahamas',                image: 'assets/images/projects/project-covers/portada-exuma-01.jpg' },
+        { slug: 'haras-san-pablo', page: 'proyectos/proyecto-haras-san-pablo.html', name: 'Haras San Pablo Private Estate', category: 'Residencial + Productivo', location: 'Buenos Aires, Argentina', image: 'assets/images/projects/project-covers/portada-haras-01.jpg' },
+        { slug: 'tobar-lodge',     page: 'proyectos/proyecto-tobar-lodge.html',     name: 'Tobar Lodge',                    category: 'Hospitalidad / Retiro',    location: 'Tucumán, Argentina',      image: 'assets/images/projects/project-covers/portada-tobar-01.jpg' },
+        { slug: 'cabana-suinda',   page: 'proyectos/proyecto-cabana-suinda.html',   name: 'Suindá Lodge',                   category: 'Cabaña / Refugio',         location: 'Corrientes, Argentina',   image: 'assets/images/projects/project-covers/portada-suinda-01.jpg' },
       ],
     },
     en: {
       title:            'Our Projects',
       viewProject:      'View project',
       items: [
-        { slug: 'exuma-lodge',     page: 'proyectos/proyecto-exuma-lodge.html',     name: 'Exuma Lodge',                    category: 'Hospitality Lodge',        location: 'Bahamas',                 image: 'assets/images/projects/project-covers/exuma-lodge-bahamas-01.jpg' },
-        { slug: 'haras-san-pablo', page: 'proyectos/proyecto-haras-san-pablo.html', name: 'Haras San Pablo Private Estate', category: 'Residential + Productive', location: 'Buenos Aires, Argentina', image: 'assets/images/projects/project-covers/haras-sanpablo-001.jpg' },
-        { slug: 'tobar-lodge',     page: 'proyectos/proyecto-tobar-lodge.html',     name: 'Tobar Lodge',                    category: 'Hospitality / Retreat',    location: 'Tucumán, Argentina',      image: 'assets/images/projects/project-covers/tobar-lodge-02.jpg' },
-        { slug: 'cabana-suinda',   page: 'proyectos/proyecto-cabana-suinda.html',   name: 'Suindá Lodge',                   category: 'Cabin / Retreat',          location: 'Corrientes, Argentina',   image: 'assets/images/projects/project-covers/cabana-suinda.jpg' },
+        { slug: 'exuma-lodge',     page: 'proyectos/proyecto-exuma-lodge.html',     name: 'Exuma Lodge',                    category: 'Hospitality Lodge',        location: 'Bahamas',                 image: 'assets/images/projects/project-covers/portada-exuma-01.jpg' },
+        { slug: 'haras-san-pablo', page: 'proyectos/proyecto-haras-san-pablo.html', name: 'Haras San Pablo Private Estate', category: 'Residential + Productive', location: 'Buenos Aires, Argentina', image: 'assets/images/projects/project-covers/portada-haras-01.jpg' },
+        { slug: 'tobar-lodge',     page: 'proyectos/proyecto-tobar-lodge.html',     name: 'Tobar Lodge',                    category: 'Hospitality / Retreat',    location: 'Tucumán, Argentina',      image: 'assets/images/projects/project-covers/portada-tobar-01.jpg' },
+        { slug: 'cabana-suinda',   page: 'proyectos/proyecto-cabana-suinda.html',   name: 'Suindá Lodge',                   category: 'Cabin / Retreat',          location: 'Corrientes, Argentina',   image: 'assets/images/projects/project-covers/portada-suinda-01.jpg' },
       ],
     },
   },
@@ -512,6 +514,7 @@ const SITE_DATA = {
   /* ----- Galería de Proyectos (proyectos.html) ----- */
   projectsGallery: {
     es: {
+      phrase: '<span class="projects-gallery__phrase-line">Arquitectura</span> <span class="projects-gallery__phrase-line">para un futuro</span> <span class="projects-gallery__phrase-line">resiliente</span>',
       factLabels: {
         climate:     'CLIMA /',
         biome:       'BIOMA /',
@@ -603,6 +606,7 @@ const SITE_DATA = {
       },
     },
     en: {
+      phrase: '<span class="projects-gallery__phrase-line">Architecture</span> <span class="projects-gallery__phrase-line">for a resilient</span> <span class="projects-gallery__phrase-line">future</span>',
       factLabels: {
         climate:     'CLIMATE /',
         biome:       'BIOME /',

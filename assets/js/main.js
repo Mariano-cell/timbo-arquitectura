@@ -6549,14 +6549,80 @@ const Timbo = {
           intervalTimer: 0,
         };
 
+        // Zoom manejado enteramente por JS para poder capturar el valor
+        // exacto al salir y hacer zoom-out con transition sin salto.
+        // Cada stack tiene: rafId (zoom-in loop), currentScale, zoomOutTimer.
+        const stacks = pair.entries.map((e) =>
+          e.target.querySelector('.projects-gallery__cover-stack')
+        );
+
+        const ZOOM_DURATION = 2000;   // ms para ir de 1 → 1.21
+        const ZOOM_TARGET   = 1.21;
+        const ZOOM_BASE     = 1;
+
+        function startZoom(stack) {
+          if (!stack) return;
+          if (stack._zoomRafId) cancelAnimationFrame(stack._zoomRafId);
+          if (stack._zoomOutTimer) clearTimeout(stack._zoomOutTimer);
+          const startTime = performance.now();
+          const startScale = stack._currentScale ?? ZOOM_BASE;
+          // Proporción del recorrido ya recorrida (para arrancar desde donde estaba).
+          const elapsed0 = ((startScale - ZOOM_BASE) / (ZOOM_TARGET - ZOOM_BASE)) * ZOOM_DURATION;
+
+          function tick(now) {
+            const t = Math.min((now - startTime + elapsed0) / ZOOM_DURATION, 1);
+            const s = ZOOM_BASE + (ZOOM_TARGET - ZOOM_BASE) * t;
+            stack._currentScale = s;
+            stack.style.scale = s;
+            if (t < 1) stack._zoomRafId = requestAnimationFrame(tick);
+          }
+          stack._zoomRafId = requestAnimationFrame(tick);
+        }
+
+        function stopZoom(stack) {
+          if (!stack) return;
+          if (stack._zoomRafId) {
+            cancelAnimationFrame(stack._zoomRafId);
+            stack._zoomRafId = null;
+          }
+          // Zoom-out: fijar el scale actual inline, agregar transition, ir a 1.
+          const s = stack._currentScale ?? ZOOM_BASE;
+          stack.style.transition = 'scale 1000ms cubic-bezier(0.22, 0.61, 0.36, 1), translate 1000ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+          stack.style.scale = s;
+          void stack.offsetWidth; // reflow
+          stack.style.scale = ZOOM_BASE;
+          // Limpiar el inline de transition una vez que termina el zoom-out.
+          stack._zoomOutTimer = setTimeout(() => {
+            stack.style.transition = '';
+            stack.style.scale = '';
+            stack._currentScale = ZOOM_BASE;
+          }, 1100);
+        }
+
         entries.forEach((entry, index) => {
           entry.target.addEventListener('mouseenter', () => {
             const oppositeIndex = (index + 1) % pair.entries.length;
             this.startPair(pair, oppositeIndex);
+
+            // Zoom-in en ambos stacks; translate solo en el hovereado.
+            stacks.forEach((stack, i) => {
+              if (!stack) return;
+              startZoom(stack);
+              if (i === index) {
+                stack.classList.add('is-hovered-direct');
+              }
+            });
           });
         });
 
-        pairTarget.addEventListener('mouseleave', () => this.resetPair(pair));
+        pairTarget.addEventListener('mouseleave', () => {
+          this.resetPair(pair);
+          stacks.forEach((stack) => {
+            if (!stack) return;
+            stack.classList.remove('is-hovered-direct', 'is-partner-hovered');
+            stopZoom(stack);
+          });
+        });
 
         const focusable = pairTarget.matches('a, button, [tabindex]')
           ? pairTarget
