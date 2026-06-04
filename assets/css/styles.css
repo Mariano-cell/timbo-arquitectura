@@ -6546,9 +6546,29 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
     width: clamp(7.5rem, 12.3vw + 4.6rem, 12.5rem);
   }
 
+  html[lang='en'] .sust-strategies__detail-media[data-strategy="albedo"] {
+    --sust-strategies-detail-media-width: clamp(6.75rem, 11.02vw + 4.11rem, 11.2rem);
+    --sust-strategies-detail-label-width: clamp(6.75rem, 11.02vw + 4.11rem, 11.2rem);
+  }
+
+  html[lang='es'] .sust-strategies__detail-media[data-strategy="masa"] {
+    --sust-strategies-detail-media-width: clamp(5.1rem, 8.38vw + 3.15rem, 8.5rem);
+    --sust-strategies-detail-label-width: clamp(5.1rem, 8.38vw + 3.15rem, 8.5rem);
+  }
+
+  html[lang='en'] .sust-strategies__detail-media[data-strategy="proporcion"] {
+    --sust-strategies-detail-media-width: clamp(5.94rem, 9.76vw + 3.66rem, 9.9rem);
+    --sust-strategies-detail-label-width: clamp(5.94rem, 9.76vw + 3.66rem, 9.9rem);
+  }
+
+  html[lang='en'] .sust-strategies__detail-media[data-strategy="proteccion"] {
+    --sust-strategies-detail-media-width: clamp(6rem, 9.86vw + 3.7rem, 11.5rem);
+    --sust-strategies-detail-label-width: clamp(6rem, 9.86vw + 3.7rem, 11.5rem);
+  }
+
   html[lang='en'] .sust-strategies__detail-media[data-strategy="masa"] {
-    --sust-strategies-detail-media-width: clamp(4.2rem, 6.9vw + 2.59rem, 7.35rem);
-    --sust-strategies-detail-label-width: clamp(4.2rem, 6.9vw + 2.59rem, 7.35rem);
+    --sust-strategies-detail-media-width: clamp(5.75rem, 9.2vw + 3.45rem, 9.8rem);
+    --sust-strategies-detail-label-width: clamp(5.75rem, 9.2vw + 3.45rem, 9.8rem);
   }
 
   .sust-strategies__detail-title {
@@ -7603,7 +7623,10 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   position: fixed;
   left: var(--page-side-padding);
   bottom: var(--space-lg);
-  height: auto;
+  /* Safari no infiere el alto de un <a> con width explícito aunque el SVG
+     tenga dimensiones naturales. Se fuerza height con el mismo clamp del width
+     multiplicado por la proporción del viewBox (27.13 / 104.63 ≈ 0.2593). */
+  height: clamp(15.04px, 1.893vw + 0.296rem, 28.52px);
   z-index: 5;
   --dialogue-overlap-top: 100%;
   --dialogue-overlap-right: 0px;
@@ -7663,6 +7686,9 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   display: block;
   width: 100%;
   height: auto;
+  /* Safari no infiere el aspect-ratio de SVGs sin width/height intrínsecos.
+     Valor calculado del viewBox="0 0 104.63 27.13" del logo. */
+  aspect-ratio: 104.63 / 27.13;
   opacity: 0;
   transition: opacity 300ms ease;
 }
