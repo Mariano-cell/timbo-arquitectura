@@ -6249,11 +6249,84 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
   object-fit: contain;
 }
 
-.sust-strategies__detail-media[data-strategy="ventilacion"] .sust-strategies__detail-label {
-  align-self: center;
-  width: clamp(11rem, 13vw, 12rem);
-  max-width: none;
+html[lang='es'] .sust-strategies__detail-media[data-strategy="ventilacion"] {
+  --sust-strategies-detail-label-width: min(100%, 11.5rem);
 }
+
+html[lang='es'] .sust-strategies__detail-media[data-strategy="transmitancia"] {
+  --sust-strategies-detail-media-width: 10rem;
+  --sust-strategies-detail-label-width: 10rem;
+}
+
+html[lang='en'] .sust-strategies__detail-media[data-strategy="transmitancia"] {
+  --sust-strategies-detail-media-width: 16rem;
+  --sust-strategies-detail-label-width: 16rem;
+}
+
+html[lang='es'] .sust-strategies__detail-media[data-strategy="orientacion"] {
+  --sust-strategies-detail-media-width: 10rem;
+  --sust-strategies-detail-label-width: 10rem;
+}
+
+html[lang='en'] .sust-strategies__detail-media[data-strategy="orientacion"] {
+  --sust-strategies-detail-media-width: 11rem;
+  --sust-strategies-detail-label-width: 11rem;
+}
+
+html[lang='es'] .sust-strategies__detail-media[data-strategy="proteccion"] {
+  --sust-strategies-detail-media-width: 10rem;
+  --sust-strategies-detail-label-width: 10rem;
+}
+
+html[lang='es'] .sust-strategies__detail-media[data-strategy="albedo"] {
+  --sust-strategies-detail-media-width: 7.2rem;
+  --sust-strategies-detail-label-width: 7.2rem;
+}
+
+.sust-strategies__detail-media[data-strategy="albedo"] .sust-strategies__detail-icon {
+  width: 12.5rem;
+}
+
+html[lang='es'] .sust-strategies__detail-media[data-strategy="masa"] {
+  --sust-strategies-detail-media-width: 8.5rem;
+  --sust-strategies-detail-label-width: 8.5rem;
+}
+
+html[lang='en'] .sust-strategies__detail-media[data-strategy="masa"] {
+  --sust-strategies-detail-media-width: 10.5rem;
+  --sust-strategies-detail-label-width: 10.5rem;
+}
+
+html[lang='es'] .sust-strategies__detail-media[data-strategy="ventilacion"] {
+  --sust-strategies-detail-media-width: 17.6rem;
+  --sust-strategies-detail-label-width: 17.6rem;
+}
+
+html[lang='en'] .sust-strategies__detail-media[data-strategy="ventilacion"] {
+  --sust-strategies-detail-media-width: 15rem;
+  --sust-strategies-detail-label-width: 15rem;
+}
+
+html[lang='es'] .sust-strategies__detail-media[data-strategy="cubiertas"] {
+  --sust-strategies-detail-media-width: 9.9rem;
+  --sust-strategies-detail-label-width: 9.9rem;
+}
+
+html[lang='en'] .sust-strategies__detail-media[data-strategy="cubiertas"] {
+  --sust-strategies-detail-media-width: 13.5rem;
+  --sust-strategies-detail-label-width: 13.5rem;
+}
+
+html[lang='es'] .sust-strategies__detail-media[data-strategy="proporcion"] {
+  --sust-strategies-detail-media-width: 8.9rem;
+  --sust-strategies-detail-label-width: 8.9rem;
+}
+
+html[lang='en'] .sust-strategies__detail-media[data-strategy="proporcion"] {
+  --sust-strategies-detail-media-width: 9.9rem;
+  --sust-strategies-detail-label-width: 9.9rem;
+}
+
 
 .sust-strategies__detail-title {
   margin: 0 2rem 0 0;
@@ -6442,7 +6515,7 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
     position: static;
     width: 100%;
     height: auto;
-    margin-top: 1.5rem;
+    margin-top: 0;
     padding-left: 0;
     border-left: none;
     overflow: visible;
@@ -6466,6 +6539,16 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
   .sust-strategies__detail-icon {
     /* Fluid: 6rem @ 375px → 10rem @ 1024px */
     width: clamp(6rem, 9.86vw + 3.7rem, 10rem);
+  }
+
+  .sust-strategies__detail-media[data-strategy="albedo"] .sust-strategies__detail-icon {
+    /* Fluid: 7.5rem @ 375px → 12.5rem @ 1024px */
+    width: clamp(7.5rem, 12.3vw + 4.6rem, 12.5rem);
+  }
+
+  html[lang='en'] .sust-strategies__detail-media[data-strategy="masa"] {
+    --sust-strategies-detail-media-width: clamp(4.2rem, 6.9vw + 2.59rem, 7.35rem);
+    --sust-strategies-detail-label-width: clamp(4.2rem, 6.9vw + 2.59rem, 7.35rem);
   }
 
   .sust-strategies__detail-title {
@@ -6680,7 +6763,7 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
   --sust-pilares-detail-label-height: clamp(1.2rem, 1.55vw, 1.7rem);
   display: inline-flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: clamp(0.7rem, 1vw, 0.95rem);
   width: var(--sust-pilares-detail-media-width);
   align-self: flex-start;
@@ -6715,6 +6798,11 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
 /* "Luz / Light" comparte el mismo arranque visual que el ícono y el texto. */
 .sust-pilares__detail-media[data-pilar="luz"] .sust-pilares__detail-label {
   align-self: flex-start;
+  height: calc(var(--sust-pilares-detail-label-height) * 1.4);
+}
+
+.sust-pilares__detail-media[data-pilar="radiacion"] .sust-pilares__detail-label {
+  height: calc(var(--sust-pilares-detail-label-height) * 1.5);
 }
 
 /* Items con texto largo se alinean a la izquierda en vez de centrarse. */
@@ -6724,8 +6812,32 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
   align-self: flex-start;
 }
 
+html[lang='es'] .sust-pilares__detail-media[data-pilar="calidad_aire"] .sust-pilares__detail-label {
+  height: calc(var(--sust-pilares-detail-label-height) * 1.15);
+}
+
+html[lang='es'] .sust-pilares__detail-media[data-pilar="temperatura"] .sust-pilares__detail-label {
+  height: calc(var(--sust-pilares-detail-label-height) * 1.15);
+}
+
+html[lang='en'] .sust-pilares__detail-media[data-pilar="calidad_aire"] .sust-pilares__detail-label {
+  height: calc(var(--sust-pilares-detail-label-height) * 1.4);
+}
+
+html[lang='en'] .sust-pilares__detail-media[data-pilar="flujo_aire"] .sust-pilares__detail-label {
+  height: calc(var(--sust-pilares-detail-label-height) * 1.2);
+}
+
 html[lang='en'] .sust-pilares__detail-media[data-pilar="emisiones"] .sust-pilares__detail-label {
-  height: calc(var(--sust-pilares-detail-label-height) * 1.3);
+  height: calc(var(--sust-pilares-detail-label-height) * 2.2);
+}
+
+html[lang='en'] .sust-pilares__detail-media[data-pilar="radiacion"] .sust-pilares__detail-label {
+  height: calc(var(--sust-pilares-detail-label-height) * 1.35);
+}
+
+html[lang='en'] .sust-pilares__detail-media[data-pilar="temperatura"] .sust-pilares__detail-label {
+  height: calc(var(--sust-pilares-detail-label-height) * 1.5);
 }
 
 .sust-pilares__detail-media[data-pilar="calidad_aire"] .sust-pilares__detail-icon {
@@ -7491,6 +7603,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   position: fixed;
   left: var(--page-side-padding);
   bottom: var(--space-lg);
+  height: auto;
   z-index: 5;
   --dialogue-overlap-top: 100%;
   --dialogue-overlap-right: 0px;
@@ -7556,6 +7669,9 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
 .floating-logo__stack {
   display: grid;
+  /* Safari: sin align-items, el grid estira los hijos al alto del contenedor
+     y hace el logo cuadrado ignorando el aspect-ratio del SVG. */
+  align-items: start;
 }
 
 .floating-logo__img--black {
