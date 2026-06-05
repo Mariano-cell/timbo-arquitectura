@@ -3931,49 +3931,12 @@ const Timbo = {
       'exuma-lodge': {
         stages: [
           { center: [-74.5, 22.5], zoom: 4, hold: 800 },
-          { center: [-76.5, 24.2], zoom: 7.5, speed: 1.4 },
-          { center: [-76.44, 24.17], zoom: 12, speed: 1.0 },
+          { center: [-75.8, 23.5], zoom: 7.5, speed: 1.4 },
+          { center: [-75.8041, 23.4866], zoom: 13, speed: 1.0 },
         ],
-        marker: [-76.44, 24.17],
+        marker: [-75.8041, 23.4866],
         label: { name: 'Exuma Lodge', detail: 'Bahamas' },
-        polygon: [
-          [-76.43952, 24.17401], [-76.43917, 24.17413], [-76.43758, 24.17173],
-          [-76.43709, 24.16841], [-76.43679, 24.16843], [-76.43633, 24.16778],
-          [-76.43648, 24.16748], [-76.43468, 24.16589], [-76.43443, 24.16513],
-          [-76.43371, 24.16479], [-76.43254, 24.16478], [-76.43251, 24.16529],
-          [-76.43462, 24.16682], [-76.43579, 24.16965], [-76.43561, 24.17027],
-          [-76.43516, 24.17026], [-76.43634, 24.17104], [-76.4376, 24.17428],
-          [-76.43817, 24.17945], [-76.43719, 24.18043], [-76.43829, 24.18074],
-          [-76.43884, 24.18177], [-76.43938, 24.18179], [-76.44047, 24.18262],
-          [-76.44125, 24.1837], [-76.44208, 24.18265], [-76.44235, 24.18151],
-          [-76.44325, 24.18124], [-76.44302, 24.18031], [-76.44146, 24.17939],
-          [-76.44134, 24.17874], [-76.44173, 24.17765], [-76.4426, 24.17656],
-          [-76.44369, 24.17605], [-76.44525, 24.17359], [-76.44547, 24.1724],
-          [-76.44471, 24.17191], [-76.44449, 24.17137], [-76.44504, 24.16905],
-          [-76.44453, 24.16823], [-76.44375, 24.16861], [-76.44302, 24.16814],
-          [-76.44255, 24.16835], [-76.44049, 24.16775], [-76.44224, 24.1678],
-          [-76.44319, 24.16696], [-76.44248, 24.1664], [-76.44198, 24.16491],
-          [-76.44209, 24.1639], [-76.44246, 24.16357], [-76.44211, 24.16292],
-          [-76.44241, 24.1619], [-76.44228, 24.16089], [-76.44091, 24.16004],
-          [-76.44092, 24.15958], [-76.4402, 24.15913], [-76.4402, 24.15881],
-          [-76.43957, 24.1591], [-76.43874, 24.15894], [-76.4392, 24.15878],
-          [-76.43922, 24.1583], [-76.44027, 24.1578], [-76.43811, 24.15763],
-          [-76.43727, 24.15804], [-76.43712, 24.15771], [-76.43602, 24.15774],
-          [-76.43562, 24.15812], [-76.43544, 24.15784], [-76.43526, 24.15806],
-          [-76.43574, 24.1584], [-76.43662, 24.15827], [-76.43686, 24.15973],
-          [-76.43748, 24.16014], [-76.43821, 24.16138], [-76.43786, 24.163],
-          [-76.43685, 24.16441], [-76.43615, 24.16455], [-76.43617, 24.16413],
-          [-76.43542, 24.16367], [-76.43494, 24.16391], [-76.4354, 24.16445],
-          [-76.43533, 24.16512], [-76.43581, 24.16534], [-76.43582, 24.16592],
-          [-76.43633, 24.16612], [-76.43635, 24.16683], [-76.43712, 24.16711],
-          [-76.43758, 24.16864], [-76.43811, 24.16911], [-76.4384, 24.16901],
-          [-76.43846, 24.16971], [-76.43882, 24.16965], [-76.43859, 24.17094],
-          [-76.43889, 24.17257], [-76.43955, 24.17395], [-76.43971, 24.17247],
-          [-76.44034, 24.1739], [-76.44102, 24.17363], [-76.44089, 24.1727],
-          [-76.4414, 24.17268], [-76.44157, 24.17301], [-76.44109, 24.17334],
-          [-76.44147, 24.1746], [-76.44061, 24.17585], [-76.43968, 24.17475],
-          [-76.43952, 24.17401],
-        ],
+        waterColor: 'gray200',
       },
       'praderas-cabin': {
         stages: [
@@ -3983,6 +3946,7 @@ const Timbo = {
         ],
         marker: [-71.5378, -41.7780],
         label: { name: 'Praderas Cabin', detail: 'Río Negro, Argentina' },
+        hideContours: true,
       },
       'cherokee-ave': {
         stages: [
@@ -3993,6 +3957,7 @@ const Timbo = {
         marker: [-80.1291, 25.8264],
         label: { name: 'Cherokee Ave', detail: 'Miami Beach, Florida' },
         minRoads: true,
+        waterColor: 'gray200',
       },
       'club-de-mar': {
         stages: [
@@ -4001,7 +3966,8 @@ const Timbo = {
           { center: [-54.6407, -34.8377], zoom: 11, speed: 1.0 },
         ],
         marker: [-54.6407, -34.8377],
-        label: { name: 'Club de Mar', detail: 'José Ignacio, Uruguay' },
+        label: { name: 'Club de Mar', detail: 'José Ignacio,<br>Uruguay' },
+        waterColor: 'gray200',
       },
       'chacras-de-murray': {
         stages: [
@@ -4011,6 +3977,8 @@ const Timbo = {
         ],
         marker: [-58.9405, -34.5101],
         label: { name: 'Chacras de Murray', detail: 'Buenos Aires, Argentina' },
+        labelBelow: true,
+        hideUrbanDetail: true,
       },
       'haras-san-pablo': {
         stages: [
@@ -4020,6 +3988,8 @@ const Timbo = {
         ],
         marker: [-59.0392, -34.6065],
         label: { name: 'Haras San Pablo', detail: 'Buenos Aires, Argentina' },
+        labelBelow: true,
+        hideUrbanDetail: true,
       },
       'cardano': {
         stages: [
@@ -4028,7 +3998,9 @@ const Timbo = {
           { center: [-58.9263, -34.5128], zoom: 11, speed: 1.0 },
         ],
         marker: [-58.9263, -34.5128],
-        label: { name: 'Clubhouse Barrio Cardano', detail: 'Buenos Aires, Argentina' },
+        label: { name: 'Cardano', detail: 'Buenos Aires, Argentina' },
+        labelBelow: true,
+        hideUrbanDetail: true,
       },
       'tobar-lodge': {
         stages: [
@@ -4048,6 +4020,7 @@ const Timbo = {
         polygonAfterStage: 1,
         marker: [-58.1671, -27.2805],
         label: { name: 'Cabaña Suindá', detail: 'Corrientes, Argentina' },
+        labelBelow: true,
         polygon: [
           [-58.2431, -27.262], [-58.4134, -27.2867], [-58.4892, -27.2733],
           [-58.538, -27.2955], [-58.599, -27.2998], [-58.6734, -27.3537],
@@ -4249,9 +4222,10 @@ const Timbo = {
       // respecto al theme oscuro original, pero sin pasarse a tonos casi
       // blancos. Suficiente para que el texto negro contraste sin perder
       // la lectura del mapa cuando está alejado.
+      const waterOverride = this.config.waterColor ? palette[this.config.waterColor] : null;
       const colors = isLight ? {
         background: palette.gray300,   // territorio: un escalón más claro que gray400
-        water: palette.gray300,
+        water: waterOverride || palette.gray100, // agua más clara que la tierra para diferenciarlas
         building: palette.gray400,     // edificios un escalón más oscuros que el fondo
         landuse: palette.gray300,
         land: palette.gray400,         // tierra: un escalón más claro que gray500
@@ -4361,6 +4335,30 @@ const Timbo = {
         }
       });
 
+      // hideUrbanDetail: suprimir rellenos de zonas residenciales/uso de suelo y edificios
+      if (this.config.hideUrbanDetail) {
+        const toHide = ['landuse_residential', 'landuse', 'building', 'building-top'];
+        toHide.forEach((id) => {
+          try { this.map.setLayoutProperty(id, 'visibility', 'none'); } catch (_) {}
+        });
+      }
+
+      // hideContours: suprimir curvas de nivel, hillshade y rutas menores en zonas montañosas
+      if (this.config.hideContours) {
+        const layers = this.map.getStyle()?.layers || [];
+        layers.forEach((layer) => {
+          const id = (layer.id || '').toLowerCase();
+          const isNoisy = id.includes('contour') || id.includes('hillshade') ||
+            id.includes('road_minor') || id.includes('road-minor') ||
+            id.includes('road_track') || id.includes('track') ||
+            id.includes('path') || id.includes('footway') ||
+            id.includes('service') || id.includes('tunnel');
+          if (isNoisy) {
+            try { this.map.setLayoutProperty(layer.id, 'visibility', 'none'); } catch (_) {}
+          }
+        });
+      }
+
       // minRoads: suprimir calles, avenidas y edificios para mapas con demasiada trama urbana
       if (this.config.minRoads) {
         const layers = this.map.getStyle()?.layers || [];
@@ -4395,10 +4393,11 @@ const Timbo = {
     },
 
     // Compute a center that places MARKER_COORDS at ~25% from the left edge
+    // (no offset for labelBelow configs — label goes below, not to the right)
     getOffsetCenter() {
+      if (this.config.labelBelow) return this.config.marker;
       const bounds = this.map.getBounds();
       const lngSpan = bounds.getEast() - bounds.getWest();
-      // Shift map center so marker sits at 25% from left (shift right by 25% of span)
       return [this.config.marker[0] + lngSpan * 0.25, this.config.marker[1]];
     },
 
@@ -4446,12 +4445,12 @@ const Timbo = {
       if (this.marker) this.marker.remove();
 
       const el = document.createElement('div');
-      el.className = 'project-map-marker';
+      el.className = 'project-map-marker' + (this.config.labelBelow ? ' project-map-marker--label-below' : '');
       const { name, detail } = this.config.label;
       el.innerHTML = '<div class="project-map-marker__dot"></div><div class="project-map-marker__ring"></div>' +
         '<div class="project-map-marker__label">' +
           '<span class="project-map-marker__name">' + name + '</span>' +
-          '<span class="project-map-marker__detail">' + detail + '</span>' +
+          '<span class="project-map-marker__detail">' + (detail || '') + '</span>' +
         '</div>';
 
       this.marker = new maplibregl.Marker({ element: el })
@@ -5157,10 +5156,11 @@ const Timbo = {
 
   /* ============================================================
      LANG TOGGLE
-     Inyecta el widget ES / EN en el hero de cada página.
-     Busca el primer elemento con clase .hero, .sust-hero o .project-hero
-     y le agrega un <div class="lang-toggle"> en la esquina inferior derecha.
-     El color (dark/light) se infiere del data-nav-theme del hero.
+     Inyecta el widget ES / EN en el hero / primera sección de cada página.
+     Busca la primera sección que matchee el selector (en orden de especificidad):
+       .hero, .sust-hero, .project-hero, .about-hero, .contact-image,
+       .services-directory, .projects-gallery
+     El color (dark/light) se infiere del data-nav-theme de la sección (default: light).
 
      Caso especial — home (.hero): el hero excede el viewport en altura,
      así que el toggle se fija al viewport con position:fixed en vez de
@@ -5168,7 +5168,9 @@ const Timbo = {
      ============================================================ */
   langToggle: {
     init() {
-      const hero = document.querySelector('.hero, .sust-hero, .project-hero');
+      const hero = document.querySelector(
+        '.hero, .sust-hero, .project-hero, .about-hero, .contact-image, .services-directory, .projects-gallery'
+      );
       if (!hero) return;
 
       // Asegurarse de que el hero tenga position relativa para que el absolute funcione
@@ -5179,10 +5181,10 @@ const Timbo = {
 
       const theme = hero.dataset.navTheme === 'dark' ? 'dark' : 'light';
 
-      // En home (.hero) el hero supera el viewport → toggle fixed al viewport.
-      // En el resto de páginas → toggle absolute dentro del hero.
-      const isHome = hero.classList.contains('hero');
-      const fixedClass = isHome ? ' lang-toggle--fixed' : '';
+      // En home (.hero) y proyectos (.projects-gallery) la sección excede el viewport
+      // → toggle fixed al viewport. En el resto → absolute dentro de la sección.
+      const isFixed = hero.classList.contains('hero') || hero.classList.contains('projects-gallery');
+      const fixedClass = isFixed ? ' lang-toggle--fixed' : '';
 
       const toggle = document.createElement('div');
       toggle.className = `lang-toggle lang-toggle--${theme}${fixedClass}`;

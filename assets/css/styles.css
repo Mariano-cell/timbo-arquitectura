@@ -62,20 +62,12 @@ html[lang="es"] .sust-hero__visual-img--en {
 
 /* --- Lang toggle ---
    Widget ES / EN que se inyecta en el hero de cada página via Timbo.langToggle.
-   Posición: esquina inferior derecha del hero, sobre la imagen.
+   Posición: borde derecho a --margin-b, borde inferior a --space-lg.
    Color: hereda del data-nav-theme del hero (--dark → blanco, --light → negro). */
 .lang-toggle {
   position: absolute;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 30;
-}
-
-/* En home el hero excede el viewport → toggle fijo al viewport */
-.lang-toggle--fixed {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: var(--space-lg);
+  right: var(--margin-a);
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -87,6 +79,13 @@ html[lang="es"] .sust-hero__visual-img--en {
   text-transform: uppercase;
   line-height: 1;
   user-select: none;
+}
+
+/* En home el hero excede el viewport → toggle fijo al viewport */
+.lang-toggle--fixed {
+  position: fixed;
+  bottom: var(--space-lg);
+  right: var(--margin-a);
 }
 
 .lang-toggle__sep {
@@ -129,11 +128,12 @@ html[lang="es"] .sust-hero__visual-img--en {
 }
 
 /* --- MOBILE --- */
+/* --- MOBILE --- */
 @media (max-width: 1023.98px) {
   .lang-toggle,
   .lang-toggle--fixed {
-    bottom: 1.25rem;
-    right: 1.25rem;
+    bottom: var(--space-lg);
+    right: var(--margin-a);
     font-size: 0.6875rem;
   }
 }
@@ -1570,7 +1570,7 @@ html[lang='en'] .philosophy__signal-label {
     justify-content: end;
     column-gap: clamp(0.5rem, 4vw, 2rem);
     padding-left: 0;
-    padding-right: var(--margin-b);
+    padding-right: var(--margin-a);
   }
 
   .philosophy__signal {
@@ -3760,6 +3760,14 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
 
 .project-map-marker--entering .project-map-marker__label {
   opacity: 1;
+}
+
+.project-map-marker--label-below .project-map-marker__label {
+  left: 50%;
+  top: calc(100% + 10px);
+  transform: translateX(-50%);
+  align-items: center;
+  text-align: center;
 }
 
 .project-map-marker__name {
@@ -6635,7 +6643,7 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
 
 .sust-benefits .container {
   margin-left: var(--margin-c);
-  margin-right: var(--margin-b);
+  margin-right: var(--margin-a);
 }
 
 .sust-benefits__title {
@@ -9262,7 +9270,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   --gallery-bg: var(--color-gray-100);
   --gallery-padding-top: clamp(6rem, 8vw, 12rem);
   --gallery-padding-bottom: clamp(10rem, 12vw, 16rem);
-  --gallery-side-padding-right: var(--margin-b);
+  --gallery-side-padding-right: var(--margin-a);
   --gallery-side-padding-left: calc(var(--margin-c));
   --gallery-max-width: 1600px;
   --gallery-row-gap-y: 1rem;
