@@ -128,13 +128,20 @@ html[lang="es"] .sust-hero__visual-img--en {
 }
 
 /* --- MOBILE --- */
-/* --- MOBILE --- */
 @media (max-width: 1023.98px) {
   .lang-toggle,
   .lang-toggle--fixed {
-    bottom: var(--space-lg);
-    right: var(--margin-a);
+    position: fixed;
+    bottom: var(--margin-a);
+    left: var(--margin-a);
+    right: auto;
     font-size: 0.6875rem;
+    transition: opacity 200ms ease, visibility 200ms ease;
+  }
+
+  .lang-toggle--hidden-mobile {
+    opacity: 0;
+    visibility: hidden;
   }
 }
 

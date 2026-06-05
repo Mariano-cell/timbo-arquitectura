@@ -5201,6 +5201,15 @@ const Timbo = {
       });
 
       hero.appendChild(toggle);
+
+      // Mobile: ocultar el toggle apenas el usuario hace scroll
+      const SCROLL_HIDE_THRESHOLD = 15; // px
+      const updateMobileVisibility = () => {
+        if (window.innerWidth >= 1024) return;
+        toggle.classList.toggle('lang-toggle--hidden-mobile', window.scrollY > SCROLL_HIDE_THRESHOLD);
+      };
+      window.addEventListener('scroll', updateMobileVisibility, { passive: true });
+      updateMobileVisibility();
     },
   },
 
