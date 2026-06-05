@@ -5291,16 +5291,49 @@ const Timbo = {
   initAutoGallery(root, dots, activate) {
     if (!root || dots.length < 2) return;
 
-    const intervalMs = Number.parseInt(root.dataset.galleryAutoplay || '', 10);
-    if (!Number.isFinite(intervalMs) || intervalMs <= 0) return;
+    // El atributo data-gallery-autoplay actúa como switch: si no existe, no arranca.
+    // El valor numérico ya no se usa — el timing está estandarizado (ver abajo).
+    const hasAutoplay = root.dataset.galleryAutoplay !== undefined;
+    if (!hasAutoplay) return;
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    window.setInterval(() => {
+    const FIRST_DELAY_MS  = 2000; // primer cambio 2s después de entrar al viewport
+    const INTERVAL_MS     = 5000; // ciclo estándar a partir del segundo cambio
+
+    let stopped = false;
+
+    const advance = () => {
+      if (stopped) return;
       const currentIndex = Array.from(dots).findIndex((dot) => dot.classList.contains('is-active'));
       const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % dots.length : 0;
       activate(nextIndex);
-    }, intervalMs);
+    };
+
+    // Si el usuario toca un dot, detiene la automatización para siempre
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => { stopped = true; }, { once: true });
+    });
+
+    let started = false;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !started) {
+          started = true;
+          observer.disconnect();
+
+          // Primer cambio a los 2s
+          window.setTimeout(() => {
+            advance();
+            // Ciclo regular cada 4s
+            window.setInterval(advance, INTERVAL_MS);
+          }, FIRST_DELAY_MS);
+        }
+      });
+    }, { threshold: 0.25 });
+
+    observer.observe(root);
   },
 
   projectOverviewSlider: {
