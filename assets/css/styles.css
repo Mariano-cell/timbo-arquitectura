@@ -863,10 +863,11 @@ html[lang="es"] .sust-hero__visual-img--en {
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
 
-  /* En mobile: escondemos el video y usamos imagen como fondo del hero.
-     Decisión: ahorrar data y evitar reproducir un video 4K en celular. */
+  /* En mobile: mostramos el video (igual que en desktop).
+     object-fit: cover en la regla base recorta los costados y mantiene el 100vh.
+     La imagen de fondo queda como fallback si el video no carga. */
   .hero__bg video {
-    display: none;
+    display: block;
   }
 
   .hero__bg {
@@ -3869,10 +3870,10 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
   }
 
   .project-refuge{
-    padding-block: calc(var(--margin-b) * 6);
+    padding-block: calc(var(--margin-b) * 2);
   }
   .project-phrase{
-    padding-block: calc(var(--margin-b) * 6);
+    padding-block: calc(var(--margin-b) * 2);
   }
 
   .project-overview{
@@ -3896,12 +3897,12 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
   }
 
   .project-palette {
-    padding-bottom: calc(var(--margin-b) * 6);
+    padding-bottom: calc(var(--margin-b) * 2);
   }
 
   .project-highlight {
     /* padding-block: clamp(2rem, 3vh, 4rem); */
-    padding-block: clamp(9rem, 12vh, 14rem);
+    padding-block: clamp(6rem, 8vh, 10rem);
   }
 
   .page--cherokee-ave .project-highlight {
