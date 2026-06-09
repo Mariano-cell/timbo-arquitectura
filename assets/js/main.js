@@ -1564,20 +1564,9 @@ const Timbo = {
     },
 
     init() {
-      this.sectionEl = document.getElementById('sust-breathe');
-      this.titleEl = this.sectionEl?.querySelector('.sust-breathe__title');
-      this.textEl = this.sectionEl?.querySelector('.sust-breathe__text');
-      if (!this.sectionEl || !this.titleEl || !this.textEl) return;
-
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        this.applyTitle(1);
-        this.applyText(1);
-        return;
-      }
-
-      this.update();
-      window.addEventListener('scroll', () => this.requestUpdate(), { passive: true });
-      window.addEventListener('resize', () => this.requestUpdate());
+      // Animaciones migradas a sustProcessTitleReveal y anim-fade-up.
+      // El módulo queda disponible por si se reactiva; por ahora no hace nada.
+      return;
     },
   },
 
@@ -2285,7 +2274,7 @@ const Timbo = {
       section.classList.add('is-detail-open');
 
       const getPilares = () => {
-        const lang = Timbo.i18n.detect();
+        const lang = Timbo.state.lang || 'es';
         return SITE_DATA.sustainability?.[lang]?.pillars?.items
           || SITE_DATA.sustainability?.es?.pillars?.items
           || {};
@@ -2306,7 +2295,7 @@ const Timbo = {
         if (detailIcon) {
           if (pilar?.icon) {
             detailIcon.src = pilar.icon;
-            detailIcon.alt = Timbo.i18n.detect() === 'en'
+            detailIcon.alt = Timbo.state.lang === 'en'
               ? `Icon of ${pilar.title}`
               : `Icono de ${pilar.title}`;
             detailIcon.hidden = false;
@@ -3303,7 +3292,7 @@ const Timbo = {
     },
 
     update() {
-      const currentScrollY = window.scrollY || window.pageYOffset || 0;
+      const currentScrollY = window.scrollY || 0;
 
       this.items.forEach(({ el, range }) => {
         const fadeDistance = Math.max(range.end - range.start, 1);
@@ -4686,6 +4675,47 @@ const Timbo = {
      En la página de contacto, cada teléfono abre una elección:
      llamar o continuar por WhatsApp.
      ============================================================ */
+  contactCopyEmail: {
+    init() {
+      const buttons = document.querySelectorAll('[data-copy-email]');
+      if (!buttons.length) return;
+
+      // Crear el toast una sola vez y anexarlo al body
+      const toast = document.createElement('div');
+      toast.className = 'contact-copy-toast';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('aria-live', 'polite');
+      document.body.appendChild(toast);
+
+      let hideTimer = null;
+
+      const showToast = (text) => {
+        toast.textContent = text;
+        toast.classList.add('is-visible');
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => toast.classList.remove('is-visible'), 2000);
+      };
+
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const email = btn.dataset.copyEmail;
+          if (!email) return;
+
+          navigator.clipboard.writeText(email).then(() => {
+            const lang = Timbo.state.lang || 'es';
+            const msg = Timbo.i18n.resolve('contact.emailCopied', lang) || (lang === 'en' ? 'Email copied' : 'Correo copiado');
+            showToast(msg);
+          }).catch(() => {
+            // Fallback para navegadores sin soporte de Clipboard API
+            const lang = Timbo.state.lang || 'es';
+            const msg = Timbo.i18n.resolve('contact.emailCopied', lang) || (lang === 'en' ? 'Email copied' : 'Correo copiado');
+            showToast(msg);
+          });
+        });
+      });
+    },
+  },
+
   contactPhoneActions: {
     init() {
       const items = Array.from(document.querySelectorAll('[data-contact-phone]'))
@@ -5272,6 +5302,7 @@ const Timbo = {
     this.natureDialogueTextReveal.init();
     this.projectPhraseTextParallax.init();
     this.contactForm.init();
+    this.contactCopyEmail.init();
     this.contactPhoneActions.init();
     this.keyboardNav.init();
     // Hover-blur de la galería desactivado a pedido del cliente.
@@ -5312,10 +5343,17 @@ const Timbo = {
 
     // Si el usuario toca un dot, detiene la automatización para siempre
     dots.forEach(dot => {
-      dot.addEventListener('click', () => { stopped = true; }, { once: true });
+      dot.addEventListener('click', () => {
+        stopped = true;
+        if (intervalId !== null) {
+          window.clearInterval(intervalId);
+          intervalId = null;
+        }
+      }, { once: true });
     });
 
     let started = false;
+    let intervalId = null;
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -5326,8 +5364,8 @@ const Timbo = {
           // Primer cambio a los 2s
           window.setTimeout(() => {
             advance();
-            // Ciclo regular cada 4s
-            window.setInterval(advance, INTERVAL_MS);
+            // Ciclo regular — guardamos el ID para poder cancelarlo si hiciera falta
+            intervalId = window.setInterval(advance, INTERVAL_MS);
           }, FIRST_DELAY_MS);
         }
       });

@@ -146,7 +146,7 @@ h6 {
 /* --- 400 · Roman / Regular --- */
 @font-face {
   font-family: 'Neue Haas Grotesk Display Pro';
-  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayRoman.ttf') format('truetype');
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayRoman.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -162,7 +162,7 @@ h6 {
 /* --- 500 · Medium --- */
 @font-face {
   font-family: 'Neue Haas Grotesk Display Pro';
-  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayMediu.ttf') format('truetype');
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayMedium.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -178,7 +178,7 @@ h6 {
 /* --- 700 · Bold --- */
 @font-face {
   font-family: 'Neue Haas Grotesk Display Pro';
-  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBold.ttf') format('truetype');
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -194,7 +194,7 @@ h6 {
 /* --- 900 · Black --- */
 @font-face {
   font-family: 'Neue Haas Grotesk Display Pro';
-  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBlack.ttf') format('truetype');
+  src: url('../fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBlack.woff2') format('woff2');
   font-weight: 900;
   font-style: normal;
   font-display: swap;
@@ -277,9 +277,9 @@ h6 {
   --text-sm: 0.975rem;
   /* 15.6px */
   --text-base: 1.25rem;
-  /* 16px */
+  /* 20px */
   --text-lg: 1.125rem;
-  /* 18px */
+  /* 18px — nota: lg (18px) < base (20px); jerarquía invertida, conservar por compatibilidad */
   --text-xl: 1.25rem;
   /* 20px */
   --text-2xl: 1.5rem;

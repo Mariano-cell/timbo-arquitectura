@@ -7,53 +7,15 @@
   <meta name="description" content="Timbó — Exuma Lodge">
   <title>Timbó — Exuma Lodge</title>
   <link rel="icon" type="image/png" href="../assets/images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
+  <meta property="og:title" content="Exuma Lodge — Timbó Arquitectura">
+  <meta property="og:description" content="Lodge de huéspedes en la península de Exuma, Bahamas. Arquitectura tropical que celebra los ritmos naturales del paisaje bahameño.">
+  <meta property="og:image" content="https://estudiotimbo.com/assets/images/projects/exuma-lodge/hero-01.jpg">
+  <meta property="og:url" content="https://estudiotimbo.com/proyectos/proyecto-exuma-lodge.html">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://estudiotimbo.com/proyectos/proyecto-exuma-lodge.html">
   <link rel="stylesheet" href="../assets/css/variables.css">
   <link rel="stylesheet" href="../assets/css/styles.css">
-  <style>
-    /* ====================================================================
-       LABELS A/B/C de revisión — TEMPORAL.
-       ==================================================================== */
-    .page-content > section[data-review-section] {
-      position: relative;
-    }
 
-    .page-content > section[data-review-section] > .project-review-section-label {
-      position: absolute;
-      top: 50%;
-      right: clamp(0.35rem, 0.8vw, 0.75rem);
-      transform: translateY(-50%);
-      display: grid;
-      place-items: center;
-      min-width: clamp(2rem, 3vw, 2.75rem);
-      height: clamp(2rem, 3vw, 2.75rem);
-      padding: 0 0.35rem;
-      border: 1px solid rgba(0, 0, 0, 0.12);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.82);
-      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.12);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      color: rgba(0, 0, 0, 0.82);
-      font-size: clamp(0.85rem, 1.1vw, 1rem);
-      font-weight: var(--fw-medium);
-      line-height: 1;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 120;
-    }
-
-    @media (max-width: 900px) {
-      .page-content > section[data-review-section] > .project-review-section-label {
-        right: 0.35rem;
-        min-width: 1.75rem;
-        height: 1.75rem;
-        font-size: 0.78rem;
-      }
-    }
-
-  </style>
 </head>
 
 <body class="page--haras-light page--exuma-lodge">
@@ -240,8 +202,7 @@
       </div>
     </section>
 
-    <!-- ====== HIGHLIGHT ======
-         NUEVA sección. TODO cliente: imagen highlight-01.jpg + dos líneas de título. -->
+    <!-- ====== HIGHLIGHT ====== -->
     <section class="project-highlight project-highlight--split" data-project-slug="exuma-lodge" data-nav-theme="light">
       <div class="container project-highlight__container">
         <div class="project-highlight__visual">
@@ -293,35 +254,6 @@
 
   <script src="../assets/js/data.js"></script>
   <script src="../assets/js/main.js"></script>
-
-  <script>
-    (() => {
-      const sections = document.querySelectorAll('.page-content > section');
-
-      const getSectionLabel = (index) => {
-        let label = '';
-        let current = index;
-        do {
-          label = String.fromCharCode(65 + (current % 26)) + label;
-          current = Math.floor(current / 26) - 1;
-        } while (current >= 0);
-        return label;
-      };
-
-      sections.forEach((section, index) => {
-        const label = getSectionLabel(index);
-        let marker = section.querySelector('.project-review-section-label');
-        section.dataset.reviewSection = label;
-        if (!marker) {
-          marker = document.createElement('span');
-          marker.className = 'project-review-section-label';
-          marker.setAttribute('aria-hidden', 'true');
-          section.appendChild(marker);
-        }
-        marker.textContent = label;
-      });
-    })();
-  </script>
 
 </body>
 

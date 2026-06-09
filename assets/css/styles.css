@@ -1951,9 +1951,10 @@ html.is-entering-home.is-entering-home-active .main-nav {
   transform: scale(1);
 }
 
-/* `.project-hero--praderas .project-hero__media img { object-position: 58% 58%; }`
-   movido al <style> inline de proyecto-praderas-cabin.html — ajuste de
-   encuadre específico de esa foto, no del sistema. */
+/* Encuadre del hero de Praderas: punto focal al 58% h/v (no está centrado). */
+.project-hero--praderas .project-hero__media img {
+  object-position: 58% 58%;
+}
 
 .project-hero--praderas .project-hero__title {
   color: var(--color-black);
@@ -2454,6 +2455,22 @@ html.is-entering-home.is-entering-home-active .main-nav {
   display: none;
 }
 
+/* Encuadre excepcional: prioriza mostrar la franja derecha y recorta desde la izquierda.
+   Sólo aplica a la página club-de-mar. */
+.project-refuge__image--focus-right img {
+  object-position: right center;
+}
+
+/* Aspect-ratio específico para las imágenes de gallery-mobile-only en club-de-mar. */
+.project-refuge--gallery-mobile-only .project-refuge__img,
+.project-palette--gallery-mobile-only .project-palette__img {
+  aspect-ratio: 2720 / 3200;
+}
+
+.project-refuge--gallery-mobile-only .project-refuge__img--focus-right {
+  object-position: right center;
+}
+
 /* Hooks scroll-driven para las imágenes de .project-refuge.
    Estado base como fallback si JS no corre; los valores reales los setea Timbo.refugePhoto* inline. */
 .project-refuge__image--slide-x {
@@ -2517,6 +2534,20 @@ html.is-entering-home.is-entering-home-active .main-nav {
     justify-self: start;
     margin-left: var(--margin-c);
   }
+}
+
+/* Ratios alternativos para frame, phrase y palette en páginas específicas.
+   Aplicados con clase modificadora local para no alterar el ratio base 16/9. */
+.project-frame--ratio-3-2-local .project-frame__media,
+.project-palette--ratio-3-2-local .project-palette__img {
+  aspect-ratio: 3 / 2;
+}
+
+/* Tobar Lodge: aspect-ratio 3/2 para frame, phrase y palette */
+.page--tobar-lodge .project-frame__photo .project-frame__img,
+.page--tobar-lodge .project-phrase__photo .project-phrase__img,
+.page--tobar-lodge .project-palette__photo .project-palette__img {
+  aspect-ratio: 3 / 2;
 }
 
 /* === MODIFICADOR: project-frame--gallery ===
@@ -2731,6 +2762,19 @@ html.is-entering-home.is-entering-home-active .main-nav {
   right: auto;
 }
 
+@media (min-width: 1024px) {
+  .project-highlight[data-project-slug="cardano"] .project-highlight__title {
+    top: auto;
+    bottom: var(--margin-b);
+  }
+}
+
+.project-highlight[data-project-slug="club-de-mar"] .project-highlight__title {
+  left: var(--margin-c);
+  right: auto;
+  color: var(--color-black);
+}
+
 .project-highlight[data-project-slug="haras-san-pablo"] .project-highlight__title {
   top: auto;
   bottom: var(--margin-c);
@@ -2748,6 +2792,10 @@ html[lang="es"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
 
 html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .project-highlight__title {
   top: var(--margin-c);
+}
+
+.project-highlight[data-project-slug="praderas-cabin"] .project-highlight__title {
+  max-width: 30rem;
 }
 
 .project-highlight__title-line {
@@ -2947,6 +2995,15 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
 .project-palette__text.is-revealed .project-palette__text-line {
   -webkit-mask-image: none;
   mask-image: none;
+}
+
+/* Tobar Lodge: excepción para palette text cuando es hijo único — resetea margen
+   y paralax, y limita el ancho. Scopeado a page--tobar-lodge para no afectar otras páginas. */
+.page--tobar-lodge .project-palette__copy > .project-palette__text:only-of-type {
+  margin-top: 0;
+  font-weight: var(--fw-regular);
+  max-width: clamp(25rem, 32vw, 38rem);
+  will-change: auto;
 }
 
 /* Invertir orden visual manteniendo el ancho de cada componente.
@@ -3327,6 +3384,22 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
   aspect-ratio: 16 / 9;
 }
 
+/* Excepción local: respeta el ratio original del archivo en lugar del 16/9 del modificador.
+   Sólo aplica a la página club-de-mar. */
+.project-phrase--single-horizontal .project-phrase__image--original-ratio {
+  aspect-ratio: 2720 / 3200;
+}
+
+/* Excepción local: reduce el ancho visual de la imagen y deja aire entre el texto y la foto.
+   Sólo aplica a la página club-de-mar. */
+@media (min-width: 901px) {
+  .project-phrase__images--narrow-right {
+    width: 70%;
+    justify-self: end;
+    transform: translateX(calc(var(--margin-c) * -1));
+  }
+}
+
 /* Zoom-in sutil de la foto A: la imagen se acerca apenas un poco
    dentro de su propio marco. El marco no cambia de tamano. */
 .project-phrase__image--zoom img {
@@ -3427,6 +3500,11 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
     color: var(--color-black);
   }
 
+  .page--club-de-mar .main-nav:not(.main-nav--scrolled),
+  .page--club-de-mar .main-nav:not(.main-nav--scrolled) .nav__link {
+    color: var(--color-black);
+  }
+
   .project-hero--cardano .project-hero__title {
     color: #fff;
   }
@@ -3444,6 +3522,12 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
     font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
     line-height: 1.2;
     max-width: 70vw;
+  }
+
+  /* estandar-a-mobile para párrafo — igual que .project-frame__text */
+  .page--tobar-lodge .project-palette__text {
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
   }
 
   .page--tobar-lodge .project-phrase__text.is-revealed .project-phrase__text-line {
@@ -3780,7 +3864,7 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
 
 .project-map-marker__name {
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: var(--fw-bold);
   color: #fff;
   letter-spacing: 0.03em;
   line-height: 1.1;
@@ -4215,6 +4299,11 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
     transform: scale(1.12);
   }
 
+  /* Cardano: ratio vertical específico de los assets de esta página */
+  .page--cardano .project-phrase--gallery-mobile-only .project-phrase__img {
+    aspect-ratio: 1133 / 1388;
+  }
+
   .project-phrase--gallery-mobile-only .project-phrase__dots {
     position: absolute;
     top: 0.65rem;
@@ -4259,6 +4348,27 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
 
   .project-phrase[data-project-slug="praderas-cabin"] .project-phrase__image {
     aspect-ratio: 16 / 9;
+  }
+
+  .project-phrase[data-project-slug="praderas-cabin"] .project-phrase__copy {
+    gap: 0;
+  }
+
+  /* estandar-a-mobile para frase-destacada */
+  .project-palette[data-project-slug="praderas-cabin"] .project-palette__text,
+  .project-palette[data-project-slug="cabana-suinda"] .project-palette__text {
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    line-height: 1.2;
+    max-width: 70vw;
+  }
+
+  .project-highlight[data-project-slug="chacras-de-murray"] .project-highlight__title {
+    left: auto;
+    transform: none;
+  }
+
+  .project-palette[data-project-slug="cabana-suinda"] .project-palette__text {
+    margin-top: 0;
   }
 
   .project-palette--gallery .project-palette__images {
@@ -4650,7 +4760,7 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
 
   .project-palette__intro,
   .project-palette__text {
-    font-size: clamp(1rem, 4.2vw, 1.2rem);
+    /* font-size: clamp(1rem, 4.2vw, 1.2rem); */
     padding-block: 2rem;
   }
 
@@ -9061,6 +9171,40 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
 .contact-image__link:hover {
   opacity: 0.68;
+}
+
+/* Botón de copiar email — reset de estilos de <button> */
+.contact-image__copy-email {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+/* Toast de confirmación de copia */
+.contact-copy-toast {
+  position: fixed;
+  bottom: var(--space-xl);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--color-black);
+  color: var(--color-text-light);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.05em;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+  z-index: 200;
+  white-space: nowrap;
+}
+
+.contact-copy-toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .contact-image__phones {

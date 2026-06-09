@@ -12,12 +12,14 @@
     html, body { background-color: #000; }
   </style>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-
+  <meta property="og:title" content="Timbó Arquitectura — Diseño bioclimático en Argentina">
+  <meta property="og:description" content="Estudio de arquitectura bioclimática fundado por Gerónimo Vigil y Mía Morrone. Diseñamos espacios que responden al clima, el lugar y la naturaleza.">
+  <meta property="og:image" content="https://estudiotimbo.com/assets/images/hero/hero_001.jpeg">
+  <meta property="og:url" content="https://estudiotimbo.com/">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://estudiotimbo.com/">
   <link rel="stylesheet" href="assets/css/variables.css">
-  <link rel="stylesheet" href="assets/css/styles.css?v=20260603-01">
+  <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
 <body class="page--home" style="background-color: #000;">
@@ -58,7 +60,7 @@
          ========================================== -->
     <section class="hero" id="hero" data-nav-theme="dark">
       <div class="hero__bg">
-        <video muted loop playsinline preload="auto">
+        <video muted loop playsinline preload="auto" poster="assets/images/hero/hero-poster.jpg">
           <source src="assets/images/hero/hero-video_004-4k.mp4" type="video/mp4">
         </video>
       </div>
@@ -150,7 +152,7 @@
           </article>
           <article class="philosophy__signal">
             <img class="philosophy__signal-icon philosophy__signal-icon--precipitation" src="assets/images/philosophy/iconos-nuevos/precipitacion.svg" alt="" aria-hidden="true" loading="lazy">
-            <img class="philosophy__signal-label-svg philosophy__signal-label-svg--one-line philosophy__signal-label-svg--precipitation-es" src="assets/images/philosophy/iconos-nuevos/nombres/precipitacion.svg?v=20260603-02" alt="" aria-hidden="true" loading="lazy">
+            <img class="philosophy__signal-label-svg philosophy__signal-label-svg--one-line philosophy__signal-label-svg--precipitation-es" src="assets/images/philosophy/iconos-nuevos/nombres/precipitacion.svg" alt="" aria-hidden="true" loading="lazy">
             <img class="philosophy__signal-label-svg-en philosophy__signal-label-svg-en--one-line philosophy__signal-label-svg-en--precipitation" src="assets/images/philosophy/iconos-ingles/precipitation.svg" alt="" aria-hidden="true" loading="lazy">
             <p class="philosophy__signal-label" data-i18n="home.philosophyPrecipitation">Precipitación</p>
           </article>
@@ -185,9 +187,6 @@
     </section>
 
   </main>
-
-  <!-- TODO: eliminar este spacer cuando el diseño esté completo -->
-  <div style="height: 60vh;" hidden></div>
 
   <!-- ====== FOOTER ====== -->
   <footer id="main-footer" class="main-footer" hidden>

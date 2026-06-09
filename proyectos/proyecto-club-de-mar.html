@@ -7,103 +7,17 @@
   <meta name="description" content="Timbó — Club de Mar">
   <title>Timbó — Casa de Playa Club de Mar</title>
   <link rel="icon" type="image/png" href="../assets/images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
+  <meta property="og:title" content="Club de Mar — Timbó Arquitectura">
+  <meta property="og:description" content="Proyecto costero donde el paisajismo aporta estrategias de control solar y relación con el entorno natural.">
+  <meta property="og:image" content="https://estudiotimbo.com/assets/images/projects/club-de-mar/hero-01.jpeg">
+  <meta property="og:url" content="https://estudiotimbo.com/proyectos/proyecto-club-de-mar.html">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://estudiotimbo.com/proyectos/proyecto-club-de-mar.html">
   <link rel="stylesheet" href="../assets/css/variables.css">
   <link rel="stylesheet" href="../assets/css/styles.css">
-  <style>
-    /* ====================================================================
-       LABELS A/B/C de revisión — TEMPORAL.
-       ==================================================================== */
-    .page-content > section[data-review-section] {
-      position: relative;
-    }
-
-    .page-content > section[data-review-section] > .project-review-section-label {
-      position: absolute;
-      top: 50%;
-      right: clamp(0.35rem, 0.8vw, 0.75rem);
-      transform: translateY(-50%);
-      display: grid;
-      place-items: center;
-      min-width: clamp(2rem, 3vw, 2.75rem);
-      height: clamp(2rem, 3vw, 2.75rem);
-      padding: 0 0.35rem;
-      border: 1px solid rgba(0, 0, 0, 0.12);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.82);
-      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.12);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      color: rgba(0, 0, 0, 0.82);
-      font-size: clamp(0.85rem, 1.1vw, 1rem);
-      font-weight: var(--fw-medium);
-      line-height: 1;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 120;
-    }
-
-    @media (max-width: 900px) {
-      .page-content > section[data-review-section] > .project-review-section-label {
-        right: 0.35rem;
-        min-width: 1.75rem;
-        height: 1.75rem;
-        font-size: 0.78rem;
-      }
-    }
-
-    .project-frame__media {
-      aspect-ratio: 16 / 9;
-    }
-
-    /* Encuadre excepcional solo para la imagen izquierda de refuge en esta
-       página: prioriza mostrar la franja derecha y recorta desde la izquierda. */
-    .project-refuge__image--focus-right img {
-      object-position: right center;
-    }
-
-    .project-refuge--gallery-mobile-only .project-refuge__img,
-    .project-palette--gallery-mobile-only .project-palette__img {
-      aspect-ratio: 2720 / 3200;
-    }
-
-    .project-refuge--gallery-mobile-only .project-refuge__img--focus-right {
-      object-position: right center;
-    }
-
-    /* Excepción local para phrase en esta página: respeta el ratio original
-       del archivo en lugar del 16/9 del modificador compartido. */
-    .project-phrase--single-horizontal .project-phrase__image--original-ratio {
-      aspect-ratio: 2720 / 3200;
-    }
-
-    /* Excepción local para phrase en esta página: reduce el ancho visual de la
-       imagen y deja el aire entre el texto y la foto. */
-    @media (min-width: 901px) {
-      .project-phrase__images--narrow-right {
-        width: 70%;
-        justify-self: end;
-        transform: translateX(calc(var(--margin-c) * -1));
-      }
-    }
-
-    .project-highlight[data-project-slug="club-de-mar"] .project-highlight__title {
-      left: var(--margin-c);
-      right: auto;
-      color: var(--color-black);
-    }
-
-    @media (max-width: 1023.98px) {
-      .main-nav:not(.main-nav--scrolled),
-      .main-nav:not(.main-nav--scrolled) .nav__link {
-        color: var(--color-black);
-      }
-    }
-  </style>
 </head>
 
-<body class="page--haras-light">
+<body class="page--haras-light page--club-de-mar">
   <nav class="main-nav main-nav--dark is-visible" aria-label="Main navigation">
     <ul class="nav__links">
       <li><a href="../index.html" class="nav__link" data-i18n="nav.home">Inicio</a></li>
@@ -278,7 +192,6 @@
     </section>
 
     <!-- ====== PHRASE ======
-         NUEVA sección. TODO cliente: texto + imágenes phrase-01.jpg y phrase-02.jpg.
 
          data-phrase-reveal="off": desactiva el reveal por máscara (estandar-b) del
          módulo Timbo.projectPhraseTextReveal en esta página. El <p> usa estandar-a
@@ -304,8 +217,7 @@
       </div>
     </section>
 
-    <!-- ====== HIGHLIGHT ======
-         NUEVA sección. TODO cliente: imagen highlight-01.jpg + dos líneas de título. -->
+    <!-- ====== HIGHLIGHT ====== -->
     <section class="project-highlight project-highlight--split" data-project-slug="club-de-mar" data-nav-theme="light">
       <div class="container project-highlight__container">
         <div class="project-highlight__visual">
@@ -378,33 +290,6 @@
 
   <script src="../assets/js/data.js"></script>
   <script src="../assets/js/main.js"></script>
-
-  <script>
-    (() => {
-      const sections = document.querySelectorAll('.page-content > section');
-      const getSectionLabel = (index) => {
-        let label = '';
-        let current = index;
-        do {
-          label = String.fromCharCode(65 + (current % 26)) + label;
-          current = Math.floor(current / 26) - 1;
-        } while (current >= 0);
-        return label;
-      };
-      sections.forEach((section, index) => {
-        const label = getSectionLabel(index);
-        let marker = section.querySelector('.project-review-section-label');
-        section.dataset.reviewSection = label;
-        if (!marker) {
-          marker = document.createElement('span');
-          marker.className = 'project-review-section-label';
-          marker.setAttribute('aria-hidden', 'true');
-          section.appendChild(marker);
-        }
-        marker.textContent = label;
-      });
-    })();
-  </script>
 
 </body>
 

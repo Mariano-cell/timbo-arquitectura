@@ -7,74 +7,14 @@
   <meta name="description" content="Timbó — Praderas Cabin">
   <title>Timbó — Cabaña Praderas</title>
   <link rel="icon" type="image/png" href="../assets/images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
+  <meta property="og:title" content="Cabaña Praderas — Timbó Arquitectura">
+  <meta property="og:description" content="Casa de montaña en el extremo sur de Sudamérica. Un refugio diseñado para el clima patagónico: orientado, eficiente y enraizado en el paisaje.">
+  <meta property="og:image" content="https://estudiotimbo.com/assets/images/projects/praderas-cabin/hero-01.jpg">
+  <meta property="og:url" content="https://estudiotimbo.com/proyectos/proyecto-praderas-cabin.html">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://estudiotimbo.com/proyectos/proyecto-praderas-cabin.html">
   <link rel="stylesheet" href="../assets/css/variables.css">
   <link rel="stylesheet" href="../assets/css/styles.css">
-  <style>
-    .page-content > section[data-review-section] {
-      position: relative;
-    }
-
-    .page-content > section[data-review-section] > .project-review-section-label {
-      position: absolute;
-      top: 50%;
-      right: clamp(0.35rem, 0.8vw, 0.75rem);
-      transform: translateY(-50%);
-      display: grid;
-      place-items: center;
-      min-width: clamp(2rem, 3vw, 2.75rem);
-      height: clamp(2rem, 3vw, 2.75rem);
-      padding: 0 0.35rem;
-      border: 1px solid rgba(0, 0, 0, 0.12);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.82);
-      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.12);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      color: rgba(0, 0, 0, 0.82);
-      font-size: clamp(0.85rem, 1.1vw, 1rem);
-      font-weight: var(--fw-medium);
-      line-height: 1;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 120;
-    }
-
-    @media (max-width: 900px) {
-      .page-content > section[data-review-section] > .project-review-section-label {
-        right: 0.35rem;
-        min-width: 1.75rem;
-        height: 1.75rem;
-        font-size: 0.78rem;
-      }
-    }
-
-    /* Encuadre específico de la foto del hero de Praderas: el punto
-       focal de la imagen no está en el centro geométrico, sino al 58%
-       horizontal y vertical. Esta regla vive acá (no en styles.css)
-       porque es ajuste de UNA foto, no del sistema. */
-    .project-hero--praderas .project-hero__media img {
-      object-position: 58% 58%;
-    }
-
-    .project-refuge--gallery .project-refuge__img,
-    .project-frame__media,
-    .project-phrase--single-horizontal .project-phrase__image,
-    .project-palette--gallery .project-palette__img {
-      aspect-ratio: 16 / 9;
-    }
-
-    .project-highlight[data-project-slug="praderas-cabin"] .project-highlight__title {
-      max-width: 30rem;
-    }
-
-    @media (max-width: 1023.98px) {
-      .project-highlight[data-project-slug="praderas-cabin"] .project-highlight__title {
-        max-width: 70vw;
-      }
-    }
-  </style>
 </head>
 
 <body class="page--haras-light">
@@ -343,39 +283,6 @@
 
   <script src="../assets/js/data.js"></script>
   <script src="../assets/js/main.js"></script>
-  <script>
-    (() => {
-      const sections = document.querySelectorAll('.page-content > section');
-
-      const getSectionLabel = (index) => {
-        let label = '';
-        let current = index;
-
-        do {
-          label = String.fromCharCode(65 + (current % 26)) + label;
-          current = Math.floor(current / 26) - 1;
-        } while (current >= 0);
-
-        return label;
-      };
-
-      sections.forEach((section, index) => {
-        const label = getSectionLabel(index);
-        let marker = section.querySelector('.project-review-section-label');
-
-        section.dataset.reviewSection = label;
-
-        if (!marker) {
-          marker = document.createElement('span');
-          marker.className = 'project-review-section-label';
-          marker.setAttribute('aria-hidden', 'true');
-          section.appendChild(marker);
-        }
-
-        marker.textContent = label;
-      });
-    })();
-  </script>
 
 </body>
 

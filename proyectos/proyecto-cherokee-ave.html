@@ -7,55 +7,14 @@
   <meta name="description" content="Timbó — Cherokee Residence">
   <title>Timbó — Casa Cherokee</title>
   <link rel="icon" type="image/png" href="../assets/images/logo/solo-arbol/Timbo_Isologo1_Gris1.png">
+  <meta property="og:title" content="Cherokee Residence — Timbó Arquitectura">
+  <meta property="og:description" content="Residencia de permanencia y solidez. Arquitectura contemporánea en diálogo con el entorno.">
+  <meta property="og:image" content="https://estudiotimbo.com/assets/images/projects/cherokee-ave/hero-01.jpg">
+  <meta property="og:url" content="https://estudiotimbo.com/proyectos/proyecto-cherokee-ave.html">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://estudiotimbo.com/proyectos/proyecto-cherokee-ave.html">
   <link rel="stylesheet" href="../assets/css/variables.css">
   <link rel="stylesheet" href="../assets/css/styles.css">
-  <style>
-    /* ====================================================================
-       LABELS A/B/C de revisión — TEMPORAL.
-       Eliminar este <style> y el <script> al final del body cuando termine
-       el feedback con la diseñadora.
-       ==================================================================== */
-    .page-content > section[data-review-section] {
-      position: relative;
-    }
-
-    .page-content > section[data-review-section] > .project-review-section-label {
-      position: absolute;
-      top: 50%;
-      right: clamp(0.35rem, 0.8vw, 0.75rem);
-      transform: translateY(-50%);
-      display: grid;
-      place-items: center;
-      min-width: clamp(2rem, 3vw, 2.75rem);
-      height: clamp(2rem, 3vw, 2.75rem);
-      padding: 0 0.35rem;
-      border: 1px solid rgba(0, 0, 0, 0.12);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.82);
-      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.12);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      color: rgba(0, 0, 0, 0.82);
-      font-size: clamp(0.85rem, 1.1vw, 1rem);
-      font-weight: var(--fw-medium);
-      line-height: 1;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 120;
-    }
-
-    @media (max-width: 900px) {
-      .page-content > section[data-review-section] > .project-review-section-label {
-        right: 0.35rem;
-        min-width: 1.75rem;
-        height: 1.75rem;
-        font-size: 0.78rem;
-      }
-    }
-
-  </style>
 </head>
 
 <body class="page--haras-light page--cherokee-ave">
@@ -89,7 +48,7 @@
          Mantiene `project-hero--cherokee` por la regla CSS de color del título. -->
     <section class="project-hero project-hero--cherokee" id="hero" data-nav-theme="dark">
       <div class="project-hero__media" aria-hidden="true">
-        <img id="project-cover" src="../assets/images/projects/cherokee-ave/hero-01.png" alt="Cherokee Residence"
+        <img id="project-cover" src="../assets/images/projects/cherokee-ave/hero-01.jpg" alt="Cherokee Residence"
           loading="eager" decoding="async">
       </div>
 
@@ -162,7 +121,7 @@
             </div>
 
             <figure class="project-overview__photo">
-              <img class="project-overview__img is-active" src="../assets/images/projects/cherokee-ave/overview-01.png"
+              <img class="project-overview__img is-active" src="../assets/images/projects/cherokee-ave/overview-01.jpg"
                 alt="Cherokee Residence" loading="lazy" decoding="async">
               <img class="project-overview__img" src="../assets/images/projects/cherokee-ave/overview-02.jpg"
                 alt="Cherokee Residence" loading="lazy" decoding="async">
@@ -239,7 +198,6 @@
     </section>
 
     <!-- ====== PHRASE ======
-         NUEVA sección. TODO cliente: texto + imágenes phrase-01.jpg y phrase-02.jpg.
 
          data-phrase-reveal="off": desactiva el reveal por máscara (estandar-b) del
          módulo Timbo.projectPhraseTextReveal en esta página. El <p> usa estandar-a
@@ -280,13 +238,12 @@
       </div>
     </section>
 
-    <!-- ====== HIGHLIGHT ======
-         NUEVA sección. TODO cliente: imagen highlight-01.jpg + dos líneas de título. -->
+    <!-- ====== HIGHLIGHT ====== -->
     <section class="project-highlight project-highlight--split" data-project-slug="cherokee-ave" data-nav-theme="light">
       <div class="container project-highlight__container">
         <div class="project-highlight__visual">
           <figure class="project-highlight__media anim-zoom-in">
-            <img src="../assets/images/projects/cherokee-ave/highlight-01.png" alt="Cherokee Residence" loading="lazy" decoding="async">
+            <img src="../assets/images/projects/cherokee-ave/highlight-01.jpg" alt="Cherokee Residence" loading="lazy" decoding="async">
           </figure>
 
           <h2 class="project-highlight__title" id="project-highlight-title" data-reveal-trigger-ratio-mobile="0.85">
@@ -346,7 +303,7 @@
          NOTA: `final.jpg` no existe; se apunta a `final-02.jpg`. -->
     <section class="project-final" data-nav-theme="dark">
       <div class="project-final__media anim-fade-in" data-anim-delay="0" aria-hidden="true">
-        <img src="../assets/images/projects/cherokee-ave/final-01.png" alt="" loading="lazy" decoding="async">
+        <img src="../assets/images/projects/cherokee-ave/final-01.jpg" alt="" loading="lazy" decoding="async">
       </div>
 
       <div class="project-final__content">
@@ -361,42 +318,6 @@
   <script src="../assets/js/data.js"></script>
   <script src="../assets/js/main.js"></script>
 
-  <!-- ====================================================================
-       Script de LABELS A/B/C de revisión — TEMPORAL.
-       ==================================================================== -->
-  <script>
-    (() => {
-      const sections = document.querySelectorAll('.page-content > section');
-
-      const getSectionLabel = (index) => {
-        let label = '';
-        let current = index;
-
-        do {
-          label = String.fromCharCode(65 + (current % 26)) + label;
-          current = Math.floor(current / 26) - 1;
-        } while (current >= 0);
-
-        return label;
-      };
-
-      sections.forEach((section, index) => {
-        const label = getSectionLabel(index);
-        let marker = section.querySelector('.project-review-section-label');
-
-        section.dataset.reviewSection = label;
-
-        if (!marker) {
-          marker = document.createElement('span');
-          marker.className = 'project-review-section-label';
-          marker.setAttribute('aria-hidden', 'true');
-          section.appendChild(marker);
-        }
-
-        marker.textContent = label;
-      });
-    })();
-  </script>
 
 </body>
 

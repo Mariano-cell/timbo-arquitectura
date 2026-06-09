@@ -875,3 +875,70 @@ Decisiones que se tomaron a propósito durante el desarrollo y que conviene revi
 2. Extender `Timbo.i18n.apply()` para que, además de `textContent` y `innerHTML`, sepa actualizar atributos arbitrarios (sintaxis tipo `data-i18n-attr="data-svg-src:sustainability.heroSvgPath"`). Más genérico pero más cambio.
 
 **Después de migrar:** borrar todas las reglas `html[lang="xx"] .xxx--yy { display: none }` del CSS y los pares `<div>...--es` / `<div>...--en` del HTML. Reemplazar por un solo elemento por caso.
+
+## ⭐ Backlog de optimización post-lanzamiento
+
+Auditoría realizada en junio 2026 sobre el código en producción. Los ítems están ordenados por prioridad dentro de cada categoría. **Trabajar de a uno a la vez**, verificar que no rompe nada, y marcar como completado.
+
+### 🔴 Crítico
+
+- [x] ~~**Formulario de contacto no envía emails.**~~ No aplica: el formulario fue eliminado. La página de contacto solo tiene email, teléfonos e Instagram. La serverless function `netlify/functions/contact.js` es código muerto — puede borrarse en la limpieza final.
+
+- [x] **Email de contacto — copy to clipboard.** El `<a href="mailto:">` fue reemplazado por un `<button data-copy-email="...">` que copia el email al portapapeles al hacer click y muestra un toast ("Correo copiado" / "Email copied") en el idioma activo. Implementado en: `contacto.html` (HTML), `assets/css/styles.css` (clases `.contact-image__copy-email` y `.contact-copy-toast`), `assets/js/main.js` (módulo `contactCopyEmail`), `assets/js/data.js` (clave `contact.emailCopied` en ES y EN).
+
+- [x] **Bloques TEMPORAL eliminados de las páginas de proyecto.** Se limpiaron los `<style>` y `<script>` inline de labels A/B/C de 8 páginas (`exuma-lodge`, `cherokee-ave`, `haras-san-pablo`, `chacras-de-murray`, `cabana-suinda`, `cardano-clubhouse`, `club-de-mar`, `tobar-lodge`). Las reglas CSS reales que había dentro de esos bloques (aspect-ratios, object-position, excepciones de layout) fueron migradas a `assets/css/styles.css` y scopeadas con clases de body (`page--tobar-lodge`, `page--club-de-mar`, `page--cardano`) o con selectores `data-project-slug` ya existentes. `praderas-cabin` no tenía bloques TEMPORAL. Se agregaron clases `page--cardano` y `page--club-de-mar` a los `<body>` de sus respectivas páginas para habilitar el scope.
+
+- [x] **Video hero sin poster.** Agregado `poster="assets/images/hero/hero-poster.jpg"` al `<video>` en `index.html`. Se usó la imagen que antes era el hero mobile.
+
+- [x] ~~**Video hero apunta a versión 4K.**~~ No aplica: la diferencia es solo 4 MB sobre 25 MB. No vale el riesgo de tocar algo que funciona.
+
+### 🟠 Importante
+
+- [x] **Imágenes comprimidas.** 152 imágenes procesadas con `sips` (Mac). Full-width (hero, highlight, final) → 2400px max; galería/columna → 1600px max; calidad 75. Resultado: 432 MB → 95 MB (-78%). Los backups `-original` se movieron a `MORRONE-VIGIL/otros/imagenes-originales/` (fuera del repo). Pendiente menor: `DSC02312.jpg`, `DSC01983.jpg`, `segunda-opcion.jpg` en `intro-section/` no entraron en criterio pero superan 1 MB — comprimir si el cliente nota lentitud en el home.
+
+- [x] **Fuentes convertidas a `.woff2`.** Los 4 pesos activos (400, 500, 700, 900 normal) convertidos a woff2. `variables.css` actualizado. Los `.ttf` de esos 4 pesos se conservan como fallback pero no se referencian. Pesos no usados (100, 200, 250, 300 y todas las italics) siguen en `.ttf`.
+
+- [x] **Sin Open Graph ni Twitter Card en ninguna página.** Agregado `og:title`, `og:description`, `og:image`, `og:url` y `og:type` en las 15 páginas del sitio. Imagen representativa por página (hero de cada proyecto, fotos del sitio para páginas generales).
+
+- [x] **`canonical` agregado en todas las páginas.** `<link rel="canonical" href="https://estudiotimbo.com/...">` agregado en las 15 páginas del sitio. Consolida el SEO en la URL sin `?lang=`.
+
+- [x] **`sustPilaresDetail` usa `i18n.detect()` en lugar de `state.lang` (líneas 2288 y 2309 de `main.js`).** Corregido: ambas ocurrencias reemplazadas por `Timbo.state.lang || 'es'`.
+
+- [x] **`initAutoGallery` crea un `setInterval` sin cleanup (línea 5330 de `main.js`).** Corregido: el ID se guarda en `intervalId` y se cancela con `clearInterval` cuando el usuario hace click en un dot.
+
+- [x] **`sustBreatheTextReveal` registra un scroll listener pero sus métodos `applyTitle()` y `applyText()` están vacíos (la animación migró a otro módulo).** El `init()` ahora retorna inmediatamente con un comentario explicativo. El módulo queda intacto por si se reactiva.
+
+### 🟡 Menor
+
+- [x] **JetBrains Mono se carga solo en `index.html` sin usarse en ningún lugar del sitio.** Borradas las tres líneas de Google Fonts en `index.html`.
+
+- [x] **`?v=20260603-01` en `styles.css` solo en `index.html`.** Quitado el query string de `index.html`; Netlify invalida caché por content hash en cada deploy.
+
+- [x] **`<div style="height: 60vh;" hidden>` con `<!-- TODO -->` en `index.html`.** Borrado.
+
+- [x] **`window.pageYOffset` deprecated en `philosophySignalOpacityReveal.update()`.** Simplificado a `window.scrollY || 0`.
+
+- [x] **`font-weight: 600` hardcodeado en `.project-map-marker__name`.** Reemplazado por `var(--fw-bold)`.
+
+- [x] **Inconsistencia en escala tipográfica en `variables.css`.** Corregido el comentario de `--text-base` (era `16px`, ahora dice `20px`). La inversión `lg < base` se documenta en el comentario como comportamiento a conservar por compatibilidad.
+
+- [x] ~~**5 páginas de proyecto tienen secciones con contenido pendiente del cliente.**~~ No aplica: el contenido ya estaba completo. Los comentarios `TODO cliente` eran residuales del proceso de desarrollo y fueron eliminados.
+
+- [x] **Typo en nombre de archivo de fuente.** `NeueHaasDisplayMediu.woff2` renombrado a `NeueHaasDisplayMedium.woff2`. Referencia en `variables.css` actualizada.
+
+- [x] **SVG de precipitación con query string roto.** `precipitacion.svg?v=20260603-02` en `index.html` impedía que el icono cargara. Eliminado el `?v=...` del `src`.
+
+- [x] **Cache headers agregados en `netlify.toml`.** Assets estáticos (`/assets/*`) se cachean por 1 año con `immutable`. Páginas HTML se sirven sin cache (`must-revalidate`).
+
+- [x] **`robots.txt` y `sitemap.xml` creados.** `sitemap.xml` lista las 15 páginas del sitio con prioridades. `robots.txt` permite todo y apunta al sitemap.
+
+- [x] **Imágenes `-falta` en haras-san-pablo.** `frame-02-falta.jpg` y `phrase-02-falta.jpg` renombradas a `frame-02.jpg` y `phrase-02.jpg`. Referencias actualizadas en el HTML.
+
+### Regla de trabajo para este backlog
+
+1. Elegir **un ítem** a la vez, en orden de prioridad (🔴 antes que 🟠 antes que 🟡).
+2. Antes de empezar: releer el archivo o archivos afectados. No asumir el estado actual.
+3. Hacer **solo ese cambio**. No aprovechar para arreglar otra cosa "de paso".
+4. Verificar: abrir el sitio en desktop y mobile, confirmar que lo que se tocó funciona y que el resto no se rompió.
+5. Marcar el ítem como completado (`[x]`) en este archivo.
+6. Commitear antes de pasar al siguiente.
