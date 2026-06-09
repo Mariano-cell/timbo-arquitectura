@@ -6,12 +6,29 @@
 # Cache headers
 # ============================================================
 
-# Imágenes, fuentes, CSS, JS — cachear 1 año
-# (Netlify invalida automáticamente en cada deploy por content hash)
+# Imágenes, fuentes, videos — cachear 1 año
+# (rara vez cambian; si cambian, cambia el nombre del archivo)
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# CSS y JS — siempre revalidar contra el servidor.
+# ⚠️ NO usar immutable acá: el browser del visitante nunca volvería a
+# consultar si el archivo cambió (la invalidación "por content hash" de
+# Netlify aplica a su CDN, no al browser). Con must-revalidate + ETag,
+# si el archivo no cambió el server responde 304 (casi gratis) y si
+# cambió se descarga la versión nueva. Esto causó el bug del hero video
+# (jun 2026): main.js viejo cacheado 1 año en los browsers.
+[[headers]]
+  for = "/assets/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/assets/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # Páginas HTML — sin cache (siempre fresh)
 [[headers]]

@@ -928,7 +928,7 @@ Auditoría realizada en junio 2026 sobre el código en producción. Los ítems e
 
 - [x] **SVG de precipitación con query string roto.** `precipitacion.svg?v=20260603-02` en `index.html` impedía que el icono cargara. Eliminado el `?v=...` del `src`.
 
-- [x] **Cache headers agregados en `netlify.toml`.** Assets estáticos (`/assets/*`) se cachean por 1 año con `immutable`. Páginas HTML se sirven sin cache (`must-revalidate`).
+- [x] **Cache headers agregados en `netlify.toml`.** ⚠️ **Corregido en jun 2026 tras causar un bug:** el `immutable` de 1 año sobre TODO `/assets/*` hacía que los browsers nunca revalidaran `main.js`/`styles.css` (la invalidación "por content hash" de Netlify aplica a su CDN, no al browser del visitante). Resultado: el hero video del home no cargaba online (HTML nuevo con `<source>` sin `src` + `main.js` viejo cacheado que no sabía setearlo) aunque sí funcionaba en localhost. Fix aplicado: (1) `/assets/css/*` y `/assets/js/*` ahora van con `max-age=0, must-revalidate` (ETag → 304 si no cambió); imágenes/fuentes/videos siguen con 1 año `immutable`; (2) cache-bust único `?v=20260609` agregado a todas las referencias de css/js en los 16 HTML (necesario porque las copias ya cacheadas como `immutable` no revalidan ni aunque cambie el header — solo un cambio de URL las destraba). **Regla a futuro:** si un asset con `immutable` (imagen, fuente, video) cambia de contenido, cambiarle el nombre de archivo; css/js ya no lo necesitan.
 
 - [x] **`robots.txt` y `sitemap.xml` creados.** `sitemap.xml` lista las 15 páginas del sitio con prioridades. `robots.txt` permite todo y apunta al sitemap.
 
