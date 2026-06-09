@@ -10959,10 +10959,6 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
     column-gap: clamp(1.5rem, 3vw, 4rem);
   }
 
-  .page--haras-san-pablo .project-palette__copy--text-only {
-    padding-top: 0;
-  }
-
   .page--cherokee-ave .project-palette__container {
     row-gap: clamp(1.5rem, 2.4vw, 2.25rem);
     column-gap: clamp(1.5rem, 3vw, 4rem);
@@ -10974,17 +10970,35 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 @media (max-width: 1023.98px) {
-  .page--haras-san-pablo .project-palette__copy--intro-only {
+  /* Haras San Pablo y Club de Mar: orden mobile = __intro → galería → __text.
+     display: contents en __copy hace que sus hijos participen directamente
+     en el grid del container, permitiendo asignarles order individual. */
+  .page--haras-san-pablo .project-palette__copy,
+  .page--club-de-mar .project-palette__copy {
+    display: contents;
+  }
+
+  .page--haras-san-pablo .project-palette__intro,
+  .page--club-de-mar .project-palette__intro {
     order: 1;
+    max-width: none;
+    margin-top: 0;
+    padding-top: 0;
+    padding-bottom: 1rem;
   }
 
   .page--haras-san-pablo .project-palette__images,
-  .page--haras-san-pablo .project-palette__gallery-mobile {
+  .page--haras-san-pablo .project-palette__gallery-mobile,
+  .page--club-de-mar .project-palette__images,
+  .page--club-de-mar .project-palette__gallery-mobile {
     order: 2;
   }
 
-  .page--haras-san-pablo .project-palette__copy--text-only {
+  .page--haras-san-pablo .project-palette__text,
+  .page--club-de-mar .project-palette__text {
     order: 3;
+    max-width: none;
+    margin-top: 1rem;
   }
 
   .page--cherokee-ave .project-palette__copy--intro-only {
