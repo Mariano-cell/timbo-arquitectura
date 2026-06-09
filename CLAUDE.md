@@ -934,6 +934,8 @@ Auditoría realizada en junio 2026 sobre el código en producción. Los ítems e
 
 - [x] **Imágenes `-falta` en haras-san-pablo.** `frame-02-falta.jpg` y `phrase-02-falta.jpg` renombradas a `frame-02.jpg` y `phrase-02.jpg`. Referencias actualizadas en el HTML.
 
+- [x] **`<title>` y `<meta description>` optimizados para SEO en las 15 páginas.** Las 9 páginas de proyecto tenían descriptions genéricas (`"Timbó — [Nombre]"`); reescritas con tipología + ubicación + concepto + firma del estudio. Titles unificados al formato `[Nombre] — Timbó Arquitectura`. Home: title cambiado a `Timbó Arquitectura — Diseño Bioclimático` (se quitó "Inicio"), description ampliada con nombres de los arquitectos y keywords. Proyectos: description con ubicaciones reales. Sustentabilidad: description descriptiva. Servicios, Sobre Nosotros y Contacto estaban aceptables, no se tocaron.
+
 ### Regla de trabajo para este backlog
 
 1. Elegir **un ítem** a la vez, en orden de prioridad (🔴 antes que 🟠 antes que 🟡).
@@ -942,3 +944,45 @@ Auditoría realizada en junio 2026 sobre el código en producción. Los ítems e
 4. Verificar: abrir el sitio en desktop y mobile, confirmar que lo que se tocó funciona y que el resto no se rompió.
 5. Marcar el ítem como completado (`[x]`) en este archivo.
 6. Commitear antes de pasar al siguiente.
+
+## ⭐ Backlog de auditoría estructural — junio 2026
+
+Hallazgos del análisis estructural del 9 de junio de 2026. Ordenados por impacto real. Trabajar de a uno a la vez igual que el backlog anterior.
+
+### 🔴 Alto impacto — rendimiento real
+
+- [x] **Video hero (25 MB 4K) se descarga en mobile.** Resuelto (jun 2026) con decisión del cliente de **mantener el video visible en mobile** (no se reemplaza por imagen). Implementación: se generó `hero-video_004-mobile.mp4` (1080p, 30fps, CRF 30, 5.5 MB) con ffmpeg desde el 4K. El `<source>` en `index.html` quedó **sin `src`**, con `data-src-desktop` y `data-src-mobile`; `Timbo.heroIntro.init()` elige el src con `matchMedia('(max-width: 1023.98px)')`, hace `video.load()` y `play()`. Desktop sigue usando el 4K (decisión: no cambiar a `-web.mp4`). Mobile pasó de 25 MB → 5.5 MB.
+
+- [x] **Poster del hero pesa 3.4 MB.** Resuelto (jun 2026): comprimido con ImageMagick a 1920px de ancho, calidad 68, metadata stripped. Resultado: 3.4 MB → 268 KB (−92%). Mismo nombre de archivo, sin cambios en código. El original está recuperable desde git.
+
+- [x] **Sin `<link rel="preload">` para las fuentes activas.** Resuelto (jun 2026): preload de `NeueHaasDisplayRoman.woff2` (400) y `NeueHaasDisplayMedium.woff2` (500) agregado en el `<head>` de las 15 páginas del sitio + `prompts/proyecto-_TEMPLATE.html`, justo antes del `<link>` a `variables.css`. En las páginas de `proyectos/` y en la plantilla la ruta lleva `../`. Se incluyó `crossorigin` (obligatorio para fonts; sin él se descarga duplicado). 700 y 900 no se precargan (decisión: no competir por ancho de banda).
+
+- [x] **Video con `preload="auto"` — descarga agresiva.** Resuelto junto con el ítem del video mobile: el `<video>` quedó con `preload="metadata"` y además el `<source>` no tiene `src` en el HTML (lo setea JS), así que el browser no puede descargar nada hasta que `heroIntro.init()` decide qué versión cargar.
+
+- [x] **`hero_005.jpg` y `DSC01983.jpg` sin comprimir — 3.5 MB y 2.9 MB.** Resuelto (jun 2026): `hero_005.jpg` comprimida a 2400×1800, calidad 75, metadata stripped → 3.4 MB → 593 KB (−83%). Mismo nombre, sin cambios en código; original recuperable de git. `DSC01983.jpg` resultó ser un archivo huérfano (ninguna página lo referenciaba — la nota anterior de este ítem era incorrecta) y Mariano lo borró a mano.
+
+### 🟠 Riesgo de romperse
+
+- [x] **Bug: el underline SVG del nav no aparecía nunca.** Resuelto (jun 2026). El diagnóstico original ("se rompe al cambiar idioma") se quedaba corto: como `Timbo.init()` llama `navLinkUnderline.init()` (paso 1) y después **siempre** `i18n.set()` (paso 3), el `el.textContent = value` de `apply()` borraba el span + SVG en **cada carga de página** — el underline no aparecía en ningún idioma. Fix aplicado (dos partes, en `main.js`): (1) `navLinkUnderline.init()` ahora **muda el atributo `data-i18n` del `<a>` al `<span class="nav__link-label">`** que crea — así `apply()` escribe el texto en el span y nunca toca los hijos del `<a>`; (2) `i18n.set()` llama `Timbo.navLinkUnderline.updateAllWidths()` después de `apply()` porque el largo de los labels cambia con el idioma. Nota: el fix sugerido originalmente (re-llamar `init()`) no habría funcionado — `init()` saltea links con `data-underline-ready="true"`, atributo que sobrevive al borrado de los hijos.
+
+- [x] ~~**3 scroll listeners sin `{ passive: true }`.**~~ Falso positivo de la auditoría (verificado jun 2026): los tres listeners señalados (`navScroll`, dos variantes de `navHide`) SÍ tienen `{ passive: true }` — el flag está en la línea del cierre del callback multilínea, no en la línea del `addEventListener`, y el grep de la auditoría solo miró esa primera línea. Se verificó con un script que balancea paréntesis: los 33 listeners de `scroll`/`touchmove`/`wheel` de `main.js` tienen `passive`. Nada que cambiar.
+
+- [x] **Los parallax de `refugePhotoSlide` y `refugePhotoA` usan coordenadas absolutas hardcodeadas.** Decisión (jun 2026): **se acepta el riesgo, no se migra.** El layout del home está estable y recalibrar el parallax tiene más riesgo visual que beneficio. ⚠️ Regla operativa: si en el futuro se cambia el alto del hero o de la intro del home, hay que revisar y reajustar a mano las constantes `X_START_Y`, `X_END_Y`, etc. de estos dos módulos en `main.js`.
+
+- [ ] **`floatingLogo` corre 5 `getBoundingClientRect()` en cada evento de scroll.** `updateLogoState()` llama hasta 5 funciones que leen layout. Está mitigado porque no hay escrituras al DOM entremedio (no hay thrashing hoy), pero es frágil ante modificaciones futuras. Considerar throttle con RAF o consolidar las lecturas.
+
+- [ ] **23 `resize` listeners sin debounce.** Todos se disparan decenas de veces por segundo mientras el usuario arrastra el borde. Algunos recalculan layouts. Agregar debounce de 100–150ms al menos en los que hacen trabajo pesado (`navTheme`, `floatingLogo`, `navLinkUnderline`).
+
+### 🟡 Deuda técnica / mejoras menores
+
+> **⏸️ Decisión (jun 2026):** los ítems que quedan abiertos en este backlog (los 🟠 preventivos y todos los 🟡 de abajo) **quedan en pausa por decisión de Mariano**: la página funciona bien y se deja así. Retomar sólo si aparece un problema concreto (lentitud reportada por el cliente, bug, o una sesión futura de limpieza).
+
+- [x] **404: `assets/images/hero/hero-mobile.jpg` no existe pero `styles.css` lo referencia.** Resuelto (jun 2026): la regla era el fallback de imagen del hero mobile si el video no carga. En vez de borrarla, se apuntó a `assets/images/hero/hero-poster.jpg` (existe, 268 KB) — es el mismo archivo del atributo `poster` del `<video>`, así que el browser lo descarga una sola vez. Se mantiene el fallback, desaparece el 404.
+
+- [x] **404: `assets/images/logo/timbo-gris.svg` no existe pero algo lo referencia.** Resuelto (jun 2026): lo pedía `floatingLogo.render()` en `main.js` (capa `floating-logo__img--gray` del logo flotante). Esa capa gris solo se mostraba con la clase `floating-logo--on-values`, que depende de `#values-breakdown` — sección que **no existe en ningún HTML** (el módulo `valuesBreakdown` que la renderizaba nunca se llama en `Timbo.init()`). O sea: la capa gris no podía mostrarse nunca. Se eliminó el `<img>` de la capa gris del template. Nota: quedan reglas CSS de `.floating-logo__img--gray` en `styles.css` (inofensivas, sin elemento al que aplicar) — limpiarlas junto con el módulo muerto `valuesBreakdown` en la limpieza final. `gris.svg` (logo viejo, otro dibujo) no servía como reemplazo.
+
+- [ ] **13 `@font-face` declarados para pesos no usados (100, 200, 250, 300 y todas las itálicas).** No fuerzan descarga pero generan parsing y pueden confundir al browser. Borrar los bloques de `variables.css` correspondientes a pesos que el sitio no usa.
+
+- [ ] **Sin `srcset` ni `<picture>` en ninguna imagen.** En mobile se descarga la misma imagen de 1600px que en desktop. No es trivial pero es la mejora más grande en mobile después del video. Debatir si vale implementarlo o si la compresión existente es suficiente.
+
+- [ ] **Scripts sin `defer`.** `data.js` y `main.js` se cargan al pie del `<body>` sin `defer`. Agregar `defer` los hace explícitamente no-bloqueantes. Riesgo bajo, ganancia en claridad y práctica más correcta.

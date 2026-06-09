@@ -865,13 +865,15 @@ html[lang="es"] .sust-hero__visual-img--en {
 
   /* En mobile: mostramos el video (igual que en desktop).
      object-fit: cover en la regla base recorta los costados y mantiene el 100vh.
-     La imagen de fondo queda como fallback si el video no carga. */
+     La imagen de fondo queda como fallback si el video no carga.
+     Usa el mismo hero-poster.jpg del atributo poster del <video>:
+     el browser lo descarga una sola vez. */
   .hero__bg video {
     display: block;
   }
 
   .hero__bg {
-    background-image: url('../images/hero/hero-mobile.jpg');
+    background-image: url('../images/hero/hero-poster.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

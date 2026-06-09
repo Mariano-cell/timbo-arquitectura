@@ -167,6 +167,11 @@ const Timbo = {
       this.updateToggle();
       Timbo.pageTitle.update();
 
+      // El largo de los labels del nav cambia con el idioma
+      // (ej. SUSTENTABILIDAD vs SUSTAINABILITY) → recalcular el ancho
+      // del underline SVG de cada link.
+      Timbo.navLinkUnderline.updateAllWidths();
+
       // Re-renderizar componentes dinámicos que dependen del idioma
       Timbo.projectPage.render();
       Timbo.sustPilaresDetail.refresh?.();
@@ -797,6 +802,15 @@ const Timbo = {
         label.className = 'nav__link-label';
         label.textContent = labelText;
 
+        // El data-i18n se muda del <a> al span: así i18n.apply() escribe el
+        // texto en el label y nunca borra el SVG del underline (que es hijo
+        // directo del <a>). Sin esto, cada apply() destruía el underline.
+        const i18nKey = link.getAttribute('data-i18n');
+        if (i18nKey) {
+          label.setAttribute('data-i18n', i18nKey);
+          link.removeAttribute('data-i18n');
+        }
+
         const svgNS = 'http://www.w3.org/2000/svg';
         const underline = document.createElementNS(svgNS, 'svg');
         underline.classList.add('nav__link-underline');
@@ -1275,7 +1289,6 @@ const Timbo = {
       logo.innerHTML = `
         <span class="floating-logo__stack" aria-hidden="true">
           <img src="${depth}assets/images/logo/timbo-negro.svg" alt="Timbó" class="floating-logo__img floating-logo__img--black">
-          <img src="${depth}assets/images/logo/timbo-gris.svg" alt="Timbó" class="floating-logo__img floating-logo__img--gray">
           <img src="${depth}assets/images/logo/timbo-blanco.svg" alt="Timbó" class="floating-logo__img floating-logo__img--white">
         </span>
       `;
@@ -2493,6 +2506,21 @@ const Timbo = {
       if (!video) {
         heroContent.classList.add('is-visible');
         return;
+      }
+
+      // El <source> del HTML no tiene src: se elige acá según viewport
+      // (mobile → versión liviana 1080p, desktop → 4K). Así el browser
+      // nunca descarga el 4K en un celular.
+      const source = video.querySelector('source');
+      if (source && !source.getAttribute('src')) {
+        const isMobile = window.matchMedia('(max-width: 1023.98px)').matches;
+        const src = isMobile
+          ? source.getAttribute('data-src-mobile')
+          : source.getAttribute('data-src-desktop');
+        if (src) {
+          source.src = src;
+          video.load();
+        }
       }
 
       // Sin animación de entrada del video: mostrar y reproducir directo.
