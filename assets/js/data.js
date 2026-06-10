@@ -39,7 +39,7 @@ const SITE_DATA = {
   pageMeta: {
     es: {
       brand:           'Timbó',
-      home:            'Timbó — Estudio de Arquitectura',
+      home:            'Estudio Timbó — Arquitectura adaptada al clima y la naturaleza.',
       projects:        'Timbó — Proyectos',
       sustainability:  'Timbó — Sustentabilidad',
       services:        'Timbó — Servicios',
@@ -48,7 +48,7 @@ const SITE_DATA = {
     },
     en: {
       brand:           'Timbó',
-      home:            'Timbó — Architecture Studio',
+      home:            'Timbó Studio — Architecture shaped by climate and place.',
       projects:        'Timbó — Projects',
       sustainability:  'Timbó — Sustainability',
       services:        'Timbó — Services',
