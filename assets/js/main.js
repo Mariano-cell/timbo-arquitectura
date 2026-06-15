@@ -1107,7 +1107,11 @@ const Timbo = {
         const el = document.getElementById(id);
         if (!el) return;
         el.hidden = value === '';
-        el.textContent = value;
+        if (/<br\s*\/?>/i.test(value)) {
+          el.innerHTML = value;
+        } else {
+          el.textContent = value;
+        }
       };
 
       const setHTML = (id, value) => {
@@ -3249,9 +3253,14 @@ const Timbo = {
       const statement = document.querySelector('.philosophy__statement');
       if (!statement) return;
 
+      const isMobile = window.matchMedia('(max-width: 1023.98px)');
+
       const update = () => {
         const rect = statement.getBoundingClientRect();
-        const trigger = window.innerHeight / 2;
+        // Mobile: trigger más bajo (aparece antes, sin scrollear tanto).
+        // Desktop: se mantiene la mitad del viewport.
+        const divisor = isMobile.matches ? 1.15 : 2;
+        const trigger = window.innerHeight / divisor;
 
         if (rect.top <= trigger) {
           statement.classList.add('is-revealed');
@@ -3332,13 +3341,17 @@ const Timbo = {
   },
 
   sustClimateTitleReveal: {
+    // Multiplicador del viewport para el trigger del reveal.
+    // Valor entre 0 y 1: mas alto = el titulo se revela antes (menos scroll).
+    TRIGGER_RATIO: 0.85,
+
     init() {
       const title = document.querySelector('.sust-climate__title');
       if (!title) return;
 
       const update = () => {
         const rect = title.getBoundingClientRect();
-        const trigger = window.innerHeight / 2;
+        const trigger = window.innerHeight * this.TRIGGER_RATIO;
 
         if (rect.top <= trigger) {
           title.classList.add('is-revealed');
@@ -3520,7 +3533,12 @@ const Timbo = {
   },
 
   sustProcessTitleReveal: {
+    // Multiplicador del viewport para el trigger del reveal.
+    // Valor entre 0 y 1: mas alto = el titulo se revela antes (menos scroll).
+    TRIGGER_RATIO: 0.85,
+
     init() {
+      const triggerRatio = this.TRIGGER_RATIO;
       const targets = [
         {
           selector: '.sust-process__title',
@@ -3549,7 +3567,7 @@ const Timbo = {
       };
 
       const update = () => {
-        const trigger = window.innerHeight / 2;
+        const trigger = window.innerHeight * triggerRatio;
 
         titles.forEach((title) => {
           const rect = title.getBoundingClientRect();
@@ -6463,21 +6481,13 @@ const Timbo = {
     mobileQuery: null,
 
     init() {
-      const els = document.querySelectorAll('.project-palette__text');
-      if (!els.length) return;
-      this.mobileQuery = window.matchMedia('(max-width: 1023.98px)');
-
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduceMotion) return;
-
-      this.items = Array.from(els).map(el => ({
-        el,
-        section: el.closest('.project-palette') || el.parentElement,
-      }));
-
-      this.update();
-      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
-      window.addEventListener('resize', () => this.onScroll(), { passive: true });
+      // DESACTIVADO: el parallax-en-Y de los .project-palette__text se anuló
+      // (desktop y mobile). Limpiamos cualquier transform residual por si
+      // alguna ejecución previa lo dejó seteado, y no registramos listeners.
+      document.querySelectorAll('.project-palette__text').forEach(el => {
+        el.style.transform = '';
+      });
+      return;
     },
 
     onScroll() {
@@ -6589,21 +6599,13 @@ const Timbo = {
     mobileQuery: null,
 
     init() {
-      const els = document.querySelectorAll('.project-phrase__text');
-      if (!els.length) return;
-      this.mobileQuery = window.matchMedia('(max-width: 1023.98px)');
-
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduceMotion) return;
-
-      this.items = Array.from(els).map(el => ({
-        el,
-        section: el.closest('.project-phrase') || el.parentElement,
-      }));
-
-      this.update();
-      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
-      window.addEventListener('resize', () => this.onScroll(), { passive: true });
+      // DESACTIVADO: el parallax-en-Y de los .project-phrase__text se anuló
+      // (desktop y mobile). Limpiamos cualquier transform residual por si
+      // alguna ejecución previa lo dejó seteado, y no registramos listeners.
+      document.querySelectorAll('.project-phrase__text').forEach(el => {
+        el.style.transform = '';
+      });
+      return;
     },
 
     onScroll() {

@@ -73,7 +73,7 @@ html[lang="es"] .sust-hero__visual-img--en {
   gap: 0.35rem;
   z-index: 30;
   font-family: var(--font-primary);
-  font-size: 0.75rem;
+  font-size: 1.2rem;
   font-weight: var(--fw-medium);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1078,6 +1078,7 @@ html[lang="es"] .sust-hero__visual-img--en {
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
   .intro {
+    padding-top: var(--space-lg);
     padding-bottom: var(--space-2xl);
   }
 
@@ -1093,7 +1094,7 @@ html[lang="es"] .sust-hero__visual-img--en {
   }
 
   .intro__body {
-    padding-bottom: 6rem;
+    padding-bottom: 2rem;
     gap: var(--space-md);
     /* mitad del gap desktop (32px → 16px) */
   }
@@ -1236,10 +1237,20 @@ html[lang="es"] .sust-hero__visual-img--en {
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
 
+  /* Padding top a un tercio del desktop (6rem → 2rem). */
+  .nature-dialogue {
+    padding-top: 2rem;
+  }
+
   /* Altura de la sección reducida: en desktop la imagen es 120vh,
      en mobile la bajamos a 75vh. Recorta más la foto pero la sección
      queda más compacta. Ajustar este valor si querés más/menos alto. */
-  .nature-dialogue__image img {}
+  /* La foto es horizontal pero acá se muestra en formato vertical, así
+     que cover la recorta. Desplazamos el encuadre hacia la derecha para
+     elegir qué parte se ve. 'center' = centrada; 'right' = borde derecho. */
+  .nature-dialogue__image img {
+    object-position: 30% center;
+  }
 
   /* En mobile el texto pasa al mismo tamaño que .philosophy__text
      y se ancla en la parte inferior derecha de la imagen.
@@ -1560,6 +1571,11 @@ html[lang='en'] .philosophy__signal-label {
   /* Pasamos de grid 2 columnas a 1 sola columna.
      El orden del HTML define el apilado: arriba .philosophy__content
      (título + párrafo + botón), abajo .philosophy__signals (íconos). */
+  .philosophy {
+    padding-top: clamp(2rem, 3.5vw, 4.5rem);
+    padding-bottom: clamp(3rem, 4.5vw, 4rem);
+  }
+
   .philosophy__container {
     grid-template-columns: 1fr;
     gap: clamp(3rem, 8vw, 5rem);
@@ -1577,15 +1593,17 @@ html[lang='en'] .philosophy__signal-label {
   .philosophy__signals {
     width: 100%;
     grid-template-columns: repeat(3, 1fr);
-    justify-content: end;
+    justify-content: center;
     column-gap: clamp(0.5rem, 4vw, 2rem);
+    row-gap: clamp(2.5rem, 5vw, 4rem);
     padding-left: 0;
-    padding-right: var(--margin-a);
+    padding-right: 0;
   }
 
   .philosophy__signal {
     width: 100%;
-    align-items: center;
+    align-items: flex-start;
+    text-align: left;
   }
 
   .philosophy__signal-icon {
@@ -2497,7 +2515,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .project-frame__container {
   display: grid;
   grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
-  gap: clamp(3rem, 6vw, 8rem);
+  gap: clamp(1.5rem, 3vw, 4rem);
   align-items: center;
   max-width: none;
   margin: 6rem var(--margin-b) 0 var(--margin-b);
@@ -2644,7 +2662,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .project-frame__text {
   margin: 0;
-  max-width: clamp(23.8rem, 30.6vw, 35.7rem)
+  max-width: none;
 }
 
 .project-highlight {
@@ -2788,13 +2806,13 @@ html.is-entering-home.is-entering-home-active .main-nav {
   transform: translateX(-50%);
 }
 
-html[lang="es"] .project-highlight[data-project-slug="chacras-de-murray"] .project-highlight__title {
+/* html[lang="es"] .project-highlight[data-project-slug="chacras-de-murray"] .project-highlight__title {
   top: var(--margin-a);
-}
+} */
 
-html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .project-highlight__title {
+/* html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .project-highlight__title {
   top: var(--margin-c);
-}
+} */
 
 .project-highlight[data-project-slug="praderas-cabin"] .project-highlight__title {
   max-width: 30rem;
@@ -2952,7 +2970,7 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
 }
 
 .project-palette__intro {
-  max-width: clamp(25rem, 32vw, 38rem);
+  max-width: none;
   margin-top: clamp(1rem, 2vh, 4rem);
 }
 
@@ -2961,7 +2979,7 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
      de las imágenes. Estándar para todos los proyectos. */
   margin-top: clamp(1rem, 2vw, 2rem);
   font-weight: var(--fw-bold);
-  max-width: 22rem;
+  max-width: none;
   will-change: transform;
 }
 
@@ -3004,7 +3022,7 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
 .page--tobar-lodge .project-palette__copy > .project-palette__text:only-of-type {
   margin-top: 0;
   font-weight: var(--fw-regular);
-  max-width: clamp(25rem, 32vw, 38rem);
+  max-width: clamp(19rem, 70vw, 35rem);
   will-change: auto;
 }
 
@@ -3161,6 +3179,14 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
     font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
     line-height: 1.2;
   }
+
+  /* Exuma Lodge: el texto de la paleta se alinea a la derecha en mobile. */
+  .page--exuma-lodge .project-palette__text {
+    text-align: right;
+    margin-left: auto;
+    margin-top: 0;
+    padding-top: 1rem;
+  }
 }
 
 /* ========================= PROJECT PHRASE ========================= */
@@ -3193,7 +3219,7 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
   letter-spacing: 0.03em;
   color: var(--color-black);
   min-width: 0;
-  padding-top: clamp(6rem, 10vw, 12rem);
+  padding-top: clamp(2rem, 3vw, 4rem);
   align-self: start;
 }
 
@@ -3221,6 +3247,20 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
   max-width: clamp(23.8rem, 30.6vw, 35.7rem);
 }
 
+/* Club de Mar: el texto de project-phrase se estira a todo el contenedor.
+   Scopeado para no afectar las frases destacadas de las demás páginas. */
+.page--club-de-mar .project-phrase__text {
+  max-width: none;
+}
+
+/* Praderas: el .project-phrase__text que vive dentro de la sección .project-frame
+   (clases cruzadas en el HTML) debe estirarse a todo el contenedor en desktop,
+   igual que el resto de los textos de frame/palette. Scopeado para no afectar
+   otras páginas ni las demás frases destacadas. */
+.project-frame[data-project-slug="praderas-cabin"] .project-phrase__text {
+  max-width: none;
+}
+
 /* === estandar-desktop para frase-destacada — scope: Tobar Lodge ===
    Aplica sólo a la página de Tobar Lodge (clase .page--tobar-lodge en <body>).
    Pisa el font-weight regular de .project-phrase__text--body para hacerlo bold,
@@ -3230,6 +3270,12 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
   font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
   letter-spacing: 0.03em;
   line-height: 1.5;
+  font-weight: var(--fw-regular);
+}
+
+/* Sólo la frase "lugar de refugio y descanso" mantiene el bold;
+   el resto del párrafo va en regular (igual que los demás párrafos). */
+.page--tobar-lodge .project-phrase__text-emphasis {
   font-weight: var(--fw-bold);
 }
 
@@ -3392,13 +3438,25 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
   aspect-ratio: 2720 / 3200;
 }
 
-/* Excepción local: reduce el ancho visual de la imagen y deja aire entre el texto y la foto.
-   Sólo aplica a la página club-de-mar. */
+/* Club de Mar (sólo desktop): la imagen de project-phrase es retrato, pero su
+   celda de grid era ancha (7fr) y dejaba un hueco vacío a la izquierda. Acá la
+   columna de la imagen se ajusta al ancho REAL de la foto (height de referencia
+   × su aspect-ratio) y el texto se queda con todo el espacio sobrante.
+   Reemplaza el truco viejo de width:70% + translate. */
 @media (min-width: 901px) {
-  .project-phrase__images--narrow-right {
-    width: 70%;
+  /* La imagen ocupa ~50% del ancho; el texto se queda con el otro 50%. */
+  .page--club-de-mar .project-phrase__container {
+    grid-template-columns: minmax(0, 50fr) minmax(0, 50fr);
+  }
+
+  .page--club-de-mar .project-phrase__images--narrow-right {
+    width: 100%;
     justify-self: end;
-    transform: translateX(calc(var(--margin-c) * -1));
+  }
+
+  .page--club-de-mar .project-phrase__images--narrow-right .project-phrase__image {
+    width: 100%;
+    height: auto;
   }
 }
 
@@ -3519,17 +3577,29 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
     margin-top: 0;
   }
 
-  /* estandar-a-mobile para frase-destacada */
+  /* estandar-a-mobile para frase-destacada.
+     EXCEPCIÓN (pedido clienta): aunque es frase destacada, en mobile va
+     full-width — antes: max-width: 70vw. */
   .page--tobar-lodge .project-phrase__text {
     font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
     line-height: 1.2;
-    max-width: 70vw;
+    max-width: none;
   }
 
-  /* estandar-a-mobile para párrafo — igual que .project-frame__text */
-  .page--tobar-lodge .project-palette__text {
+  /* Misma config que .project-highlight__title mobile de esta página:
+     frase-destacada, alineada a la derecha, max-width 70vw. Sólo la frase de
+     cierre queda en __text en mobile (el intro pasó a __mobile-text). */
+  /* El selector iguala la especificidad de la regla base
+     `.page--tobar-lodge .project-palette__copy > .project-palette__text:only-of-type`
+     (línea ~3022) para poder pisarle el font-weight: regular en mobile. */
+  .page--tobar-lodge .project-palette__copy > .project-palette__text:only-of-type {
     font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
-    max-width: clamp(16rem, 80vw, 30rem);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+    max-width: 70vw;
+    margin-left: auto;
+    text-align: right;
+    color: var(--color-black);
   }
 
   .page--tobar-lodge .project-phrase__text.is-revealed .project-phrase__text-line {
@@ -3956,14 +4026,14 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
   }
 
   .project-refuge{
-    padding-block: calc(var(--margin-b) * 2);
+    padding-block: var(--margin-b);
   }
   .project-phrase{
-    padding-block: calc(var(--margin-b) * 2);
+    padding-block: var(--margin-b);
   }
 
   .project-overview{
-    padding-top: calc(var(--margin-b) * 4);
+    padding-top: calc(var(--margin-b) * 4 / 3);
   }
 
   .project-refuge__copy {}
@@ -3988,7 +4058,7 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
 
   .project-highlight {
     /* padding-block: clamp(2rem, 3vh, 4rem); */
-    padding-block: clamp(6rem, 8vh, 10rem);
+    padding-block: clamp(3rem, 4vh, 5rem);
   }
 
   .page--cherokee-ave .project-highlight {
@@ -4511,7 +4581,14 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
   }
 
   .page--cherokee-ave .project-highlight__title {
-    padding-top: 1rem;
+    padding-top: 0;
+  }
+
+  /* Praderas Cabin: la regla base le da max-width: 30rem (mayor
+     especificidad por el data-project-slug), que pisaba el 70vw mobile.
+     En mobile lo igualamos al resto de los títulos. */
+  .project-highlight[data-project-slug="praderas-cabin"] .project-highlight__title {
+    max-width: 70vw;
   }
 }
 
@@ -4681,7 +4758,8 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
     display: block;
     order: 0;
     margin-bottom: 1rem;
-    max-width: clamp(16rem, 80vw, 30rem);
+    /* Full-width en mobile (pedido clienta) — antes: clamp(16rem, 80vw, 30rem) */
+    max-width: none;
     font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
     font-weight: var(--fw-regular);
     line-height: 1.5;
@@ -4705,6 +4783,24 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
     margin-top: 1rem;
   }
 
+  /* Chacras de Murray: el intro de la paleta usa el mismo estándar de
+     párrafo mobile que los textos de project-frame (estandar-a-mobile).
+     Sólo mobile; desktop intacto. */
+  .project-palette[data-project-slug="chacras-de-murray"] .project-palette__intro {
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
+  }
+
+  /* Chacras de Murray: invertir orden mobile → texto intro ARRIBA, imagen ABAJO.
+     Sólo mobile; desktop (grid 2 columnas) intacto. */
+  .project-palette[data-project-slug="chacras-de-murray"] .project-palette__copy {
+    order: 1;
+  }
+
+  .project-palette[data-project-slug="chacras-de-murray"] .project-palette__images {
+    order: 2;
+  }
+
   .project-phrase {
     min-height: auto;
   }
@@ -4714,7 +4810,7 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
     max-width: var(--max-width);
     min-height: 0;
     grid-template-columns: 1fr;
-    margin-top: 1rem;
+    margin-top: 0;
   }
 
   .project-phrase__copy {
@@ -4722,10 +4818,10 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
     padding-top: 1rem;
   }
 
-  .project-phrase__intro,
+  /* .project-phrase__intro,
   .project-phrase__text {
     max-width: 75vw;
-  }
+  } */
 
   .project-final__content {
     min-height: 100vh;
@@ -4760,15 +4856,15 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
     width: 100%;
   }
 
-  .project-palette__intro,
-  .project-palette__text {
+  .project-palette__intro {
     /* font-size: clamp(1rem, 4.2vw, 1.2rem); */
-    padding-block: 2rem;
+    padding-block: 1rem;
+    padding-top: 0;
   }
 
   .project-palette__text{
-    padding-block: clamp(2rem, 3vw, 4rem);
-    margin-top: clamp(4rem, 4vw, 6rem);
+    padding-block: 1rem;
+    margin-top: 0;
     max-width: 70vw;
   }
 
@@ -5446,7 +5542,7 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
     justify-content: center;
     /* Empuja el contenido hacia abajo: 65% arriba / 35% abajo */
     padding-top: calc(95vh * 0.30);
-    padding-bottom: calc(95vh * 0.20);
+    padding-bottom: calc(95vh * 0.10);
   }
 
   .sust-hero__title {
@@ -6311,20 +6407,16 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
   height: 100%;
   display: flex;
   align-items: center;
-  padding-left: clamp(1.7rem, 2.4vw, 2.35rem);
+  padding-left: 0;
   border-left: 1px solid rgba(29, 29, 27, 0.18);
   overflow: visible;
 }
 
 .sust-strategies__detail-card {
   position: relative;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
   width: 100%;
   min-height: clamp(17rem, 25vw, 20rem);
   padding: 0;
-  padding-right: clamp(1rem, 1.8vw, 1.6rem);
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -6333,11 +6425,10 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
 .sust-strategies__detail-stack {
   display: flex;
   flex-direction: column;
-  align-self: center;
   align-items: flex-start;
   gap: clamp(1.1rem, 1.8vw, 1.55rem);
-  padding-block: 0.35rem;
-  margin-inline: var(--margin-a);
+  padding-top: 0.35rem;
+  padding-inline: var(--margin-a);
   will-change: opacity, transform, filter;
   transform-origin: left center;
 }
@@ -6347,11 +6438,10 @@ html[lang="en"] .project-highlight[data-project-slug="chacras-de-murray"] .proje
   --sust-strategies-detail-label-width: min(100%, 10rem);
   display: inline-flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: clamp(0.7rem, 1vw, 0.95rem);
   width: var(--sust-strategies-detail-media-width);
-  align-self: center;
-  justify-self: center;
+  align-self: flex-start;
 }
 
 .sust-strategies__detail-icon-frame {
@@ -6458,10 +6548,10 @@ html[lang='en'] .sust-strategies__detail-media[data-strategy="proporcion"] {
 
 .sust-strategies__detail-title {
   margin: 0 2rem 0 0;
-  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
-  font-weight: var(--fw-regular);
-  line-height: 1.35;
-  letter-spacing: 0.03em;
+  font-size: clamp(1.2rem, 1.8vw, 1.7rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
   text-transform: uppercase;
   color: var(--color-black);
 }
@@ -6494,7 +6584,16 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
 }
 
 .sust-strategies__orbit-label-item text {
+  /* Desktop: ~36% sobre el font-size="14" del atributo SVG (14 → 19). */
+  font-size: 19px;
   transition: opacity 220ms ease, fill 220ms ease;
+}
+
+/* --- MOBILE: mantener el tamaño original (14) --- */
+@media (max-width: 1023.98px) {
+  .sust-strategies__orbit-label-item text {
+    font-size: 14px;
+  }
 }
 
 .sust-strategies__orbit-label-item:hover text,
@@ -6634,8 +6733,18 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
        tiene 8 etiquetas en lugar de 6 y necesita un poco más de aire.
        overflow: visible permite que los elementos cercanos al borde no se
        recorten. */
-    transform: scale(1.05);
+    /* Reducida 15% a pedido (1.05 × 0.85). */
+    transform: scale(0.8925);
     transform-origin: center center;
+  }
+
+  /* Items de la rueda (etiquetas de texto) +30% sólo en mobile.
+     El content está en 0,0 local con el texto centrado (text-anchor
+     middle), así que escalar desde 0 0 lo agranda desde su propio centro
+     sin moverlo de su posición orbital. */
+  .sust-strategies__orbit-label-content {
+    transform: scale(1.7);
+    transform-origin: 0 0;
   }
 
   /* Detail: estático debajo de la rueda, siempre visible. */
@@ -6652,16 +6761,6 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
   .sust-strategies__detail-card {
     width: 100%;
     min-height: 0;
-    padding-right: 0;
-  }
-
-  .sust-strategies__detail-stack {
-    padding-bottom: 2rem;
-  }
-
-  /* Centrar horizontalmente el media (icono + label) dentro del stack. */
-  .sust-strategies__detail-media {
-    align-self: center;
   }
 
   .sust-strategies__detail-icon {
@@ -6784,6 +6883,11 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
 
 .sust-benefits__item-title {
   margin: 0 0 0.5rem;
+  /* Sangría en TODAS las líneas del título: el bloque se corre a la derecha
+     el ancho de la viñeta, y text-indent negativo saca la viñeta hacia afuera.
+     Así la segunda línea de un título largo queda alineada con la primera. */
+  padding-left: var(--sust-benefits-bullet-indent);
+  text-indent: calc(-1 * var(--sust-benefits-bullet-indent));
   font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
   font-weight: var(--fw-bold);
   line-height: 1.5;
@@ -6792,8 +6896,25 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
   text-wrap: balance;
 }
 
+/* Ancho reservado para la viñeta (glifo + separación). Compartido entre la
+   viñeta del título y la sangría del párrafo, para que ambos coincidan. */
+.sust-benefits__item {
+  --sust-benefits-bullet-indent: 1.2em;
+}
+
+/* Viñeta (bullet) antes de cada título de beneficio.
+   inline-block con ancho fijo = reserva el mismo espacio que sangra el párrafo. */
+.sust-benefits__item-title::before {
+  content: "\2022";
+  display: inline-block;
+  width: var(--sust-benefits-bullet-indent);
+}
+
 .sust-benefits__item-text {
   margin: 0;
+  /* Sangría en TODAS las líneas: el bloque entero se corre a la derecha el
+     ancho de la viñeta, alineándose con el texto del título. */
+  padding-left: var(--sust-benefits-bullet-indent);
   font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
   font-weight: var(--fw-regular);
   line-height: 1.35;
@@ -7043,7 +7164,16 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 .sust-pilares__orbit-label-item text {
+  /* Desktop: ~36% sobre el font-size="14" del atributo SVG (14 → 19). */
+  font-size: 19px;
   transition: opacity 220ms ease, fill 220ms ease;
+}
+
+/* --- MOBILE: mantener el tamaño original (14) --- */
+@media (max-width: 1023.98px) {
+  .sust-pilares__orbit-label-item text {
+    font-size: 14px;
+  }
 }
 
 .sust-pilares__orbit-label-item:hover text,
@@ -7148,8 +7278,18 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
        padding lateral). Para hacerla aún más grande la escalamos vía
        transform. overflow visible permite que las etiquetas que quedan
        fuera del viewBox al escalar no se corten. */
-    transform: scale(1.12);
+    /* Reducida 15% a pedido (1.12 × 0.85). */
+    transform: scale(0.952);
     transform-origin: center center;
+  }
+
+  /* Items de la rueda (etiquetas de texto) +30% sólo en mobile.
+     El content está en 0,0 local con el texto centrado (text-anchor
+     middle), así que escalar desde 0 0 lo agranda desde su propio centro
+     sin moverlo de su posición orbital. */
+  .sust-pilares__orbit-label-content {
+    transform: scale(1.7);
+    transform-origin: 0 0;
   }
 
   /* Detail: estático debajo de la rueda, siempre visible. */
@@ -7555,10 +7695,9 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   }
 
   .sust-emissions__left {
-    min-height: 100vh;
     padding: var(--space-2xl) var(--margin-a);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
   }
 
@@ -8139,7 +8278,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   font-size: clamp(1.9rem, 2.2vw, 2.6rem);
   font-weight: var(--fw-regular);
   line-height: 1.15;
-  /* letter-spacing: 0.03em; */
+  letter-spacing: 0.03em;
   color: rgba(255, 255, 255, 0.55);
   margin-bottom: 1.4em;
 }
@@ -8188,7 +8327,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 .about-approach {
   display: grid;
   grid-template-columns: minmax(0, 1fr) clamp(30rem, 42vw, 40rem);
-  height: 100vh;
+  min-height: 100vh;
   background-color: var(--color-black);
   color: var(--color-text-light);
   overflow: hidden;
@@ -8200,7 +8339,6 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   justify-content: space-between;
   height: 100%;
   padding: calc(var(--nav-height) + clamp(1rem, 2vw, 1.75rem)) var(--space-xl) clamp(1.25rem, 2vw, 1.75rem);
-  overflow: hidden;
 }
 
 .about-approach__text-block {
@@ -8218,7 +8356,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   line-height: 1.35;
   letter-spacing: 0.03em;
   color: rgba(255, 255, 255, 0.96);
-  padding-top: clamp(3rem, 4vw, 5rem);
+  padding-top: clamp(1rem, 2vw, 3rem);
 }
 
 .about-us__highlight {
@@ -8231,7 +8369,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   letter-spacing: 0.03em;
   color: var(--color-black);
   will-change: transform;
-  padding-top: clamp(1rem, 2vw, 3rem);
+  padding-top: 0;
 }
 
 .about-us__highlight-line {
@@ -10650,14 +10788,12 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
      el 100% del ancho del row, con aspect-ratio 16/9 (la
      altura sale del ancho).
 
-   - Portadas con DOS imágenes (par): SÓLO la primera foto
-     pasa a 100% con 16/9. La segunda foto se mantiene con
-     su tamaño actual y desborda hacia la derecha (lo
-     atacamos en una segunda instancia).
+   - Portadas con DOS imágenes (par): SÓLO se muestra la
+     primera foto, a 100% del row con 16/9. La segunda foto
+     queda oculta (display:none) en este rango — no hay scroll
+     horizontal. En desktop el par sigue mostrando ambas.
 
-   - El caption del par se ajusta al 100% del row (no al
-     ancho total del par) para que no se vaya con la segunda
-     foto al overflow.
+   - El caption del par se ajusta al 100% del row.
 
    El ancho del row disponible se referencia con `100%` desde
    dentro del item (que ya está al ancho del row vía flex).
@@ -10713,94 +10849,20 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   }
 
   /* --- PARES (Tobar, Praderas, Haras, Chacras, Cherokee) ---
-     El __media-pair "rompe" el padding lateral del .projects-gallery via
-     margin negativos: se extiende hasta el borde físico del viewport por
-     ambos lados (left y right). El padding-left de la propia media-pair
-     reposiciona la primera foto en su lugar original (alineada con el
-     resto del contenido del item). La segunda foto queda al lado de la
-     primera y asoma por la derecha del viewport como señal de que hay
-     más contenido scrolleable.
+     En este rango (≤449.98px) las portadas de DOS imágenes muestran
+     UNA SOLA foto: la primera ocupa el ancho del row con 16/9 y la
+     segunda se oculta. No hay scroll horizontal. (En desktop el par
+     sigue mostrando ambas fotos — esto es sólo mobile chico.) */
 
-     overflow-x: auto + overscroll-behavior-x: contain hacen que el usuario
-     pueda hacer scroll horizontal DENTRO de la portada para ver la segunda
-     foto, sin que ese scroll se propague al body. El caption (que es hermano
-     del __media-pair, no hijo) queda fuera del scroll → estático.
-
-     touch-action: pan-x permite que en touch el gesto horizontal scrollee
-     las fotos pero el gesto vertical scrollee la página normalmente.
-
-     scroll-snap-type para que las fotos "encajen" al deslizar. */
+  /* El contenedor del par deja de ser un carrusel: se comporta como un
+     bloque normal al ancho del row. */
   .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media-pair,
   .projects-gallery__row--2 .projects-gallery__media-pair,
   .projects-gallery__row--3 .projects-gallery__media-pair,
   .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__media-pair,
   .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media-pair {
-    /* Grid de TRES columnas: foto 1, foto 2, spacer de 1px (rellenado por
-       ::after). La tercera columna materializa el final del scroll. El
-       espacio visual entre la segunda foto y el borde derecho viene del
-       `gap` del grid (ya existente, = --row-pair-gap), no del spacer. */
-    grid-template-columns: calc(100vw - 2 * var(--margin-a)) auto 1px;
-    width: 100vw;
-    margin-left: calc(-1 * var(--margin-a));
-    margin-right: calc(-1 * var(--margin-a));
-    padding-left: var(--margin-a);
+    width: calc(100vw - 2 * var(--margin-a));
     height: auto;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    touch-action: pan-x;
-    scroll-snap-type: x mandatory;
-    /* scroll-padding-left hace que el snap respete el padding del container:
-       cuando la primera foto "encaja", queda alineada con el borde derecho
-       del padding (no con el borde izquierdo del viewport). Sin esto, el
-       snap pisa visualmente el padding y la foto se ve pegada al borde. */
-    scroll-padding-left: var(--margin-a);
-    /* Oculta la barra de scroll en navegadores que la muestran (mobile la oculta sola) */
-    scrollbar-width: none;
-  }
-
-  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media-pair::-webkit-scrollbar,
-  .projects-gallery__row--2 .projects-gallery__media-pair::-webkit-scrollbar,
-  .projects-gallery__row--3 .projects-gallery__media-pair::-webkit-scrollbar,
-  .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__media-pair::-webkit-scrollbar,
-  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media-pair::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* "Spacer" final: pseudo-elemento de 1px de ancho que ocupa la tercera
-     columna del grid. Es un hijo REAL del grid: su bounding box extiende
-     el scroll-width del container. El espacio visual REAL entre la
-     segunda foto y el borde derecho del viewport viene del `gap` del grid
-     (= --row-pair-gap), NO de este spacer. */
-  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media-pair::after,
-  .projects-gallery__row--2 .projects-gallery__media-pair::after,
-  .projects-gallery__row--3 .projects-gallery__media-pair::after,
-  .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__media-pair::after,
-  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media-pair::after {
-    content: "";
-    grid-column: 3;
-    grid-row: 1;
-    width: 1px;
-    height: 1px;
-  }
-
-  /* Snap points: cada foto del par "encaja" cuando se la termina de scrollear.
-     Así el usuario no queda con una vista "a medias" entre foto 1 y foto 2. */
-  .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media,
-  .projects-gallery__row--2 .projects-gallery__media,
-  .projects-gallery__row--3 .projects-gallery__media,
-  .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__media,
-  .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media {
-    scroll-snap-align: start;
-  }
-
-  /* Gap entre las dos imágenes del par: la mitad del valor desktop (1rem → 0.5rem).
-     Override de --row-pair-gap para todas las filas en este rango. */
-  .projects-gallery__row--1,
-  .projects-gallery__row--2,
-  .projects-gallery__row--3,
-  .projects-gallery__row--4,
-  .projects-gallery__row--5 {
-    --row-pair-gap: 0.5rem;
   }
 
   /* PRIMERA foto del par: ocupa el ancho del row con aspect 16/9.
@@ -10816,45 +10878,18 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
     aspect-ratio: 16 / 9;
   }
 
-  /* SEGUNDA foto del par: misma ALTURA que la primera (= width * 9/16),
-     pero ancho DERIVADO del aspect-ratio nativo de cada fila (no forzado a 16/9).
-     Ratios nativos heredados del CSS desktop:
-       - Fila 1 (Tobar foto B):     square 1/1
-       - Fila 2 (Praderas foto B):  estirada → ancho = altura * 3/2 − 40px*
-                                    (esta foto NO es 1/1 por --row-pair-b-width)
-       - Fila 3 (Haras foto B):     square 1/1
-       - Fila 4 (Chacras foto B):   square 1/1
-       - Fila 5 (Cherokee foto B):  square 1/1
-     (*) Para Praderas necesitamos override propio, ver bloque siguiente. */
+  /* SEGUNDA foto del par: oculta en mobile chico. */
   .projects-gallery__row--1>.projects-gallery__item--pair .projects-gallery__media--square:not(:first-child),
+  .projects-gallery__row--2 .projects-gallery__media--square:not(:first-child),
   .projects-gallery__row--3 .projects-gallery__media--square:not(:first-child),
   .projects-gallery__row--4>.projects-gallery__item--pair .projects-gallery__media--square:not(:first-child),
   .projects-gallery__row--5>.projects-gallery__item--pair .projects-gallery__media--square:not(:first-child) {
-    height: calc((100vw - 2 * var(--margin-a)) * 9 / 16);
-    /* width EXPLÍCITO (no `auto`): el grid necesita conocer el ancho real
-       de la columna 2 sin tener que medir el contenido. Sin esto, el grid
-       no incluye correctamente la columna 3 (spacer) en el scroll-width.
-       Como aspect-ratio es 1:1, width = height. */
-    width: calc((100vw - 2 * var(--margin-a)) * 9 / 16);
-    aspect-ratio: auto;
+    display: none;
   }
 
-  /* Fila 2 (Praderas) caso especial: la foto B no es 1/1, sino que tiene
-     ancho `media-height * 3/2 − 40px`. Mantenemos la proporción nativa:
-     altura igual a la primera, ancho = altura * (3/2) − un ajuste proporcional.
-     Como el "-40px" original era sobre la --row-media-height desktop,
-     usamos la misma fórmula relativa pero sobre la nueva altura mobile. */
-  .projects-gallery__row--2 .projects-gallery__media--square:not(:first-child) {
-    height: calc((100vw - 2 * var(--margin-a)) * 9 / 16);
-    width: calc(((100vw - 2 * var(--margin-a)) * 9 / 16) * 3 / 2 - 40px);
-    aspect-ratio: auto;
-  }
-
-  /* El __item, __item-frame, __visual y el __caption del par también pasan
-     al ancho del row (100% del .projects-gallery − paddings) para que el
-     caption no acompañe la segunda foto al overflow.
-     La estructura del par (display: grid con columnas explícitas) sigue
-     existiendo: por eso la segunda foto queda fuera del viewport. */
+  /* El __item, __item-frame, __visual y el __caption del par pasan al
+     ancho del row (100% del .projects-gallery − paddings), igual que los
+     wides, ahora que sólo se muestra una foto. */
   .projects-gallery__row--1>.projects-gallery__item--pair,
   .projects-gallery__row--2>.projects-gallery__item--pair,
   .projects-gallery__row--3>.projects-gallery__item--pair,
@@ -10964,10 +10999,30 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   .page--cherokee-ave .project-palette__container {
     row-gap: clamp(1.5rem, 2.4vw, 2.25rem);
     column-gap: clamp(1.5rem, 3vw, 4rem);
+    /* Las filas se ajustan al contenido y se anclan arriba, así el text
+       no queda empujado por la altura de la columna de imágenes. */
+    grid-template-rows: auto auto;
+    align-content: start;
+  }
+
+  /* intro y text apilados arriba en la columna 2, separados solo por el
+     row-gap normal (no por la altura de las imágenes). */
+  .page--cherokee-ave .project-palette__copy--intro-only {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
   }
 
   .page--cherokee-ave .project-palette__copy--text-only {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
     padding-top: 0;
+  }
+
+  /* Las imágenes abarcan ambas filas en la columna 1. */
+  .page--cherokee-ave .project-palette__images {
+    grid-row: 1 / span 2;
   }
 }
 
@@ -10987,6 +11042,30 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
     margin-top: 0;
     padding-top: 0;
     padding-bottom: 1rem;
+  }
+
+  /* Haras San Pablo: el intro de la paleta usa el mismo estándar de
+     párrafo mobile que los textos de project-frame (estandar-a-mobile).
+     Sólo mobile; desktop intacto. Va después de la regla compartida de
+     arriba para ganar el max-width por orden de cascada. */
+  .page--haras-san-pablo .project-palette__intro {
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
+  }
+
+  /* Cherokee y Suinda: mismo estándar de párrafo mobile en el intro de la paleta. */
+  .page--cherokee-ave .project-palette__intro,
+  .page--cabana-suinda .project-palette__intro {
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
+  }
+
+  /* Club de Mar: mismo estándar de párrafo mobile en el intro de la paleta.
+     Va después de la regla compartida de arriba (línea ~11007) para ganar
+     el max-width por orden de cascada. */
+  .page--club-de-mar .project-palette__intro {
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    max-width: clamp(16rem, 80vw, 30rem);
   }
 
   .page--haras-san-pablo .project-palette__images,
@@ -11014,5 +11093,82 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
   .page--cherokee-ave .project-palette__copy--text-only {
     order: 3;
+  }
+
+  /* Cabaña Suinda: orden mobile = __intro → galería → __text.
+     Misma estructura que haras/club (intro y text en un solo __copy),
+     así que display: contents en __copy + order en los hijos. */
+  .page--cabana-suinda .project-palette__copy {
+    display: contents;
+  }
+
+  .page--cabana-suinda .project-palette__intro {
+    order: 1;
+  }
+
+  .page--cabana-suinda .project-palette__images,
+  .page--cabana-suinda .project-palette__gallery-mobile {
+    order: 2;
+  }
+
+  .page--cabana-suinda .project-palette__text {
+    order: 3;
+  }
+
+  /* Texto de la paleta pegado al borde derecho y justificado a la derecha,
+     max-width 70vw. Sólo estas páginas, sólo mobile. Va al final del bloque
+     para ganar el `max-width: none` que haras/club aplican más arriba. */
+  .page--cherokee-ave .project-palette__text,
+  .page--cabana-suinda .project-palette__text,
+  .page--haras-san-pablo .project-palette__text,
+  .page--club-de-mar .project-palette__text,
+  .project-palette[data-project-slug="praderas-cabin"] .project-palette__text {
+    max-width: 70vw;
+    margin-left: auto;
+    text-align: right;
+  }
+}
+
+/* =========================================================================
+   OVERRIDE TEMPORAL — Párrafos de proyecto full-width en mobile (pedido clienta)
+   -------------------------------------------------------------------------
+   La clienta pidió que, en TODAS las páginas de proyecto, los párrafos
+   (los que usan el estándar mobile de párrafo) ocupen el 100% del ancho del
+   contenedor en mobile, sin max-width. Los TÍTULOS y las FRASES DESTACADAS
+   NO se modifican.
+
+   Por qué un override global y no editar cada regla: el max-width del estándar
+   de párrafo está repetido en ~15 bloques (genéricos + por página/slug). Este
+   bloque neutraliza todos de una sola vez, es reversible y no toca lo existente.
+
+   ⚠️ DEUDA TÉCNICA: esto es temporal. Al ir finalizando el proyecto hay que
+   corregir el código de raíz: quitar el `max-width` del estándar de párrafo en
+   cada regla que lo tenga y eliminar este override. Ver nota en CLAUDE.md.
+
+   Casos NO incluidos a propósito (son frase destacada, no párrafo):
+   - .project-highlight__title (frase destacada en todas las páginas).
+   - .project-palette__text: es frase destacada (bold). Donde tiene alineación
+     derecha (exuma, cherokee, cabaña-suinda, haras, club, praderas) conserva su
+     max-width por mayor especificidad. No se incluye acá.
+   - .project-phrase__text en tobar-lodge y praderas-cabin: marcados como frase
+     destacada (max-width 70vw). Conservan su ancho por mayor especificidad
+     (.page--x / [data-project-slug]) — el override genérico no los pisa.
+
+   .project-phrase__text genérico SÍ va full-width (en mobile usa estándar de
+   párrafo en el resto de los proyectos — decisión del usuario).
+   ========================================================================= */
+@media (max-width: 1023.98px) {
+  .project-refuge__text,
+  .project-frame__text,
+  .project-phrase__text,
+  .project-phrase__intro,
+  .project-palette__intro,
+  /* Casos por página con mayor especificidad que también deben neutralizarse */
+  .page--haras-san-pablo .project-palette__intro,
+  .page--cherokee-ave .project-palette__intro,
+  .page--cabana-suinda .project-palette__intro,
+  .page--club-de-mar .project-palette__intro,
+  .project-palette[data-project-slug="chacras-de-murray"] .project-palette__intro {
+    max-width: none;
   }
 }

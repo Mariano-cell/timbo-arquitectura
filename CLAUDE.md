@@ -828,6 +828,8 @@ Esta sección documenta **qué se hizo concretamente en cada hito**, para que cu
 - Sección 7 (Strategies / SVG circular de 8 estrategias bioclimáticas).
 - Verificar las claves que ya existen en `sustainability` (`title`, `variables[]`, `emissionsChartTitle`, etc.) — pueden estar consumidas por estas secciones; chequear caso por caso al migrarlas.
 
+**⚠️ Pendiente rueda de Estrategias (`.sust-strategies`) — textos ES/EN del detail.** En junio 2026 se igualó la configuración CSS del detail de la rueda de estrategias a la de pilares (alineación, paddings, tipografía del título), ahora que los textos de detalle SÍ existen. **Falta cargar los textos de detalle (título + descripción) en inglés y español** para cada uno de los 8 items de estrategias en `data.js` (bajo `sustainability.[lang].strategies.items`). Mariano los va a pasar. Cuando los tenga, completar las claves `title` y `description` de cada strategy en ambos idiomas. NO tocar los tamaños de los títulos SVG (`--sust-strategies-detail-label-width` / `--media-width` por `data-strategy`), que están ajustados a mano.
+
 #### Servicios (`servicios.html`) — listado de servicios migrado
 
 **Archivos tocados:**
@@ -856,6 +858,20 @@ Esta sección documenta **qué se hizo concretamente en cada hito**, para que cu
 ## ⚠️ Deuda técnica pendiente — fase de optimización
 
 Decisiones que se tomaron a propósito durante el desarrollo y que conviene revisar cuando lleguemos a la fase de optimización del sitio. **No son bugs**, son trade-offs explícitos.
+
+### Párrafos de proyecto full-width en mobile — override temporal
+
+**Dónde vive:** `assets/css/styles.css`, bloque `/* OVERRIDE TEMPORAL — Párrafos de proyecto full-width en mobile (pedido clienta) */` **al final del archivo**.
+
+**Qué pasa hoy:** la clienta pidió que, en todas las páginas de proyecto, los párrafos (los que usan el `estandar-a-mobile` de párrafo) ocupen el 100% del ancho del contenedor en mobile, sin `max-width`. Los **títulos** y las **frases destacadas** NO se modifican. En vez de editar las ~15 reglas que repiten `max-width: clamp(16rem, 80vw, 30rem)`, se agregó un único bloque `@media (max-width: 1023.98px)` con `max-width: none` que las neutraliza todas. Es reversible y no toca lo existente.
+
+**Selectores afectados:** `.project-refuge__text`, `.project-frame__text`, `.project-phrase__text` (genérico), `.project-phrase__intro`, `.project-palette__intro` (incluyendo los casos por página con mayor especificidad: haras, cherokee, cabaña-suinda, chacras-de-murray).
+
+**Excluidos a propósito (son frase destacada, no párrafo):** `.project-highlight__title`; `.project-palette__text` (frase destacada, conserva alineación/ancho); `.project-phrase__text` de **tobar-lodge** y **praderas-cabin** (marcados como frase destacada con `max-width: 70vw` — su mayor especificidad hace que el override genérico no los pise).
+
+**Por qué se hizo así:** el `max-width` del estándar de párrafo está repetido en muchísimos bloques (genéricos + por página/slug). Tocar cada uno es propenso a olvidos y a pisar reglas de otras páginas (home, sustentabilidad, about también usan ese `max-width`). El override global es atómico y de bajo riesgo.
+
+**⚠️ Cuándo y cómo corregir (al finalizar el proyecto):** esto es **temporal**. En la fase de cierre/limpieza hay que corregir el código de raíz: quitar el `max-width: clamp(16rem, 80vw, 30rem)` de cada regla del estándar de párrafo en las secciones de proyecto, y luego **eliminar este bloque override**. Mientras tanto, queda como está. Al hacer la limpieza, verificar que los selectores excluidos (frases destacadas) sigan intactos.
 
 ### Assets bilingües duplicados (SVG ES/EN)
 

@@ -211,11 +211,11 @@
     </section>
 
     <!-- ====== PHRASE ====== -->
-    <section class="project-phrase project-phrase--gallery" data-nav-theme="light">
+    <section class="project-phrase project-phrase--gallery" data-nav-theme="light" data-phrase-reveal="off">
       <div class="project-phrase__container">
         <div class="project-phrase__copy">
           <p class="project-phrase__text project-phrase__text--body anim-fade-up" data-anim-delay="0" id="project-phrase-text">
-            El lodge, lugar de refugio y descanso, vincula a las personas con la naturaleza prístina de un paisaje que
+            El lodge, <span class="project-phrase__text-emphasis">lugar de refugio y descanso</span>, vincula a las personas con la naturaleza prístina de un paisaje que
             se expresa con fuerza y sin intervención.
           </p>
         </div>
@@ -272,11 +272,16 @@
     <section class="project-palette project-palette--gallery" data-nav-theme="light" data-palette-reveal="off">
       <div class="project-palette__container">
         <div class="project-palette__copy anim-fade-up" data-anim-delay="0">
-          <p class="project-palette__text" id="project-palette-text">El lodge está diseñado para ser habitado en dos estaciones opuestas: un verano húmedo, lluvioso y cálido, y un invierno frío y seco. La estructura cuenta con alta masa térmica para regular la temperatura interior, ventilación cruzada mediante ventanas orientadas según la dirección predominante del viento y muros opacos bien aislados en la fachada más expuesta a la radiación solar.<br><br>Así, lo que se percibe como sencillo y austero es, al mismo tiempo, funcional y eficiente.
+          <!-- DESKTOP: párrafo completo (intro + cierre). En mobile, el primer párrafo
+               (.br-desktop) se oculta y queda sólo la frase de cierre; el primer párrafo
+               se muestra arriba via #project-palette-mobile-text. -->
+          <p class="project-palette__text" id="project-palette-text"><span class="br-desktop">El lodge está diseñado para ser habitado en dos estaciones opuestas: un verano húmedo, lluvioso y cálido, y un invierno frío y seco. La estructura cuenta con alta masa térmica para regular la temperatura interior, ventilación cruzada mediante ventanas orientadas según la dirección predominante del viento y muros opacos bien aislados en la fachada más expuesta a la radiación solar.<br><br></span>Así, lo que se percibe como sencillo y austero es, al mismo tiempo, funcional y eficiente.
           </p>
         </div>
 
-        <p class="project-palette__mobile-text" id="project-palette-mobile-text" hidden></p>
+        <!-- MOBILE-ONLY: primer párrafo (intro) sobre las imágenes. En desktop queda
+             oculto (display:none por defecto) y el texto completo lo muestra __text. -->
+        <p class="project-palette__mobile-text" id="project-palette-mobile-text">El lodge está diseñado para ser habitado en dos estaciones opuestas: un verano húmedo, lluvioso y cálido, y un invierno frío y seco. La estructura cuenta con alta masa térmica para regular la temperatura interior, ventilación cruzada mediante ventanas orientadas según la dirección predominante del viento y muros opacos bien aislados en la fachada más expuesta a la radiación solar.</p>
 
         <div class="project-palette__images anim-fade-in" data-anim-delay="120" data-gallery-autoplay="7000">
           <div class="project-palette__dots">
