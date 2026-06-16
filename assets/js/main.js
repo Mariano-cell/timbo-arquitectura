@@ -1145,6 +1145,22 @@ const Timbo = {
         Timbo.splitTextIntoVisualLines(el, { lineClass, innerClass });
       };
 
+      const setOptionalLineRevealText = (id, value, { lineClass, innerClass }) => {
+        if (value === undefined || value === null) return;
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        if (value === '') {
+          delete el.dataset.lineRevealSource;
+          el.hidden = true;
+          el.innerHTML = '';
+          return;
+        }
+
+        el.hidden = false;
+        setLineRevealText(id, value, { lineClass, innerClass });
+      };
+
       const setPaletteText = (value) => {
         if (value === undefined || value === null) return;
         const el = document.getElementById('project-palette-text');
@@ -1235,12 +1251,24 @@ const Timbo = {
       setText('project-overview-built-area', project.overviewBuiltArea);
       setHTML('project-overview-location', project.overviewLocation);
       setOptionalText('project-refuge-text', project.refugeText);
+      setOptionalLineRevealText('project-refuge-super-phrase', project.refugeSuperPhrase, {
+        lineClass: 'project-refuge__super-phrase-line',
+        innerClass: 'project-refuge__super-phrase-line-inner',
+      });
       setOptionalText('project-refuge-text-1', project.refugeText1);
       setOptionalText('project-refuge-text-2', project.refugeText2);
       setOptionalText('project-frame-text', project.frameText);
+      setOptionalLineRevealText('project-frame-super-phrase', project.frameSuperPhrase, {
+        lineClass: 'project-frame__super-phrase-line',
+        innerClass: 'project-frame__super-phrase-line-inner',
+      });
       setOptionalText('project-frame-text-1', project.frameText1);
       setOptionalText('project-frame-text-2', project.frameText2);
       setPhraseText(project.phraseText);
+      setOptionalLineRevealText('project-phrase-super-phrase', project.phraseSuperPhrase, {
+        lineClass: 'project-phrase__super-phrase-line',
+        innerClass: 'project-phrase__super-phrase-line-inner',
+      });
       setLineRevealText('project-highlight-title', project.highlightTitle, {
         lineClass: 'project-highlight__title-line',
         innerClass: 'project-highlight__title-line-inner',
@@ -3438,11 +3466,28 @@ const Timbo = {
           lineClass: 'about-us__highlight-line',
           innerClass: 'about-us__highlight-line-inner',
         },
+        {
+          selector: '.project-refuge__super-phrase',
+          lineClass: 'project-refuge__super-phrase-line',
+          innerClass: 'project-refuge__super-phrase-line-inner',
+        },
+        {
+          selector: '.project-frame__super-phrase',
+          lineClass: 'project-frame__super-phrase-line',
+          innerClass: 'project-frame__super-phrase-line-inner',
+        },
+        {
+          selector: '.project-phrase__super-phrase',
+          lineClass: 'project-phrase__super-phrase-line',
+          innerClass: 'project-phrase__super-phrase-line-inner',
+        },
       ]
-        .map((config) => {
-          const element = document.querySelector(config.selector);
-          return element ? { ...config, element } : null;
-        })
+        .flatMap((config) =>
+          Array.from(document.querySelectorAll(config.selector)).map((element) => ({
+            ...config,
+            element,
+          }))
+        )
         .filter(Boolean);
 
       if (!targets.length) return;
@@ -6414,7 +6459,7 @@ const Timbo = {
      Opt-out por página: <section class="project-palette" data-palette-reveal="off">.
      ============================================================ */
   projectPaletteTextReveal: {
-    TRIGGER_RATIO: 0.6,
+    TRIGGER_RATIO: 0.85,
     MOBILE_TRIGGER_RATIO: 0.85,
 
     init() {

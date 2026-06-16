@@ -2363,6 +2363,46 @@ html.is-entering-home.is-entering-home-active .main-nav {
   max-width: clamp(21.25rem, 27.2vw, 32.3rem);
 }
 
+/* === estandar-desktop para frase-destacada ===
+   Nuevo bloque opcional para frases destacadas dentro de project-refuge.
+   Usa el naming pedido por sección: project-refuge__super-phrase. */
+.project-refuge__super-phrase {
+  margin: 0;
+  max-width: clamp(21.25rem, 27.2vw, 32.3rem);
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  font-weight: var(--fw-bold);
+}
+
+/* Aparición estándar de frase destacada:
+   reveal renglón a renglón, mismo patrón que .project-highlight__title. */
+.project-refuge__super-phrase-line {
+  display: block;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.project-refuge__super-phrase-line-inner {
+  display: block;
+  transform: translateY(100%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-refuge__super-phrase.is-revealed .project-refuge__super-phrase-line-inner {
+  transform: translateY(0);
+}
+
+.project-refuge__super-phrase.is-revealed .project-refuge__super-phrase-line {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
 .project-refuge__gallery {
   position: relative;
   display: grid;
@@ -2665,6 +2705,45 @@ html.is-entering-home.is-entering-home-active .main-nav {
   max-width: none;
 }
 
+/* === estandar-desktop para frase-destacada ===
+   Bloque opcional para frases destacadas dentro de project-frame. */
+.project-frame__super-phrase {
+  margin: 0;
+  max-width: none;
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  font-weight: var(--fw-bold);
+}
+
+/* Aparición estándar de frase destacada:
+   reveal renglón a renglón, mismo patrón que .project-highlight__title. */
+.project-frame__super-phrase-line {
+  display: block;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.project-frame__super-phrase-line-inner {
+  display: block;
+  transform: translateY(100%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-frame__super-phrase.is-revealed .project-frame__super-phrase-line-inner {
+  transform: translateY(0);
+}
+
+.project-frame__super-phrase.is-revealed .project-frame__super-phrase-line {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
 .project-highlight {
   padding: var(--space-2xl) 0;
   background-color: var(--color-bg-light);
@@ -2816,6 +2895,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
 .project-highlight[data-project-slug="praderas-cabin"] .project-highlight__title {
   max-width: 30rem;
+  text-align: right;
 }
 
 .project-highlight__title-line {
@@ -3017,13 +3097,15 @@ html.is-entering-home.is-entering-home-active .main-nav {
   mask-image: none;
 }
 
-/* Tobar Lodge: excepción para palette text cuando es hijo único — resetea margen
-   y paralax, y limita el ancho. Scopeado a page--tobar-lodge para no afectar otras páginas. */
-.page--tobar-lodge .project-palette__copy > .project-palette__text:only-of-type {
+/* Chacras de Murray: la frase corta de palette no lleva separación extra
+   respecto del intro. Aplica en desktop y mobile. */
+.project-palette[data-project-slug="chacras-de-murray"] .project-palette__text {
   margin-top: 0;
-  font-weight: var(--fw-regular);
-  max-width: clamp(19rem, 70vw, 35rem);
-  will-change: auto;
+}
+
+/* Tobar Lodge: el intro de palette arranca sin separación superior. */
+.page--tobar-lodge .project-palette__intro {
+  margin-top: 0;
 }
 
 /* Invertir orden visual manteniendo el ancho de cada componente.
@@ -3253,11 +3335,15 @@ html.is-entering-home.is-entering-home-active .main-nav {
   max-width: none;
 }
 
-/* Praderas: el .project-phrase__text que vive dentro de la sección .project-frame
-   (clases cruzadas en el HTML) debe estirarse a todo el contenedor en desktop,
-   igual que el resto de los textos de frame/palette. Scopeado para no afectar
-   otras páginas ni las demás frases destacadas. */
-.project-frame[data-project-slug="praderas-cabin"] .project-phrase__text {
+/* === estandar-desktop para parrafo — scope: Praderas Cabin ===
+   El .project-phrase__text de Praderas pasó de frase destacada a párrafo:
+   regular, line-height 1.35, full-width (max-width: none). Clona el patrón
+   de Haras. El comportamiento mobile se define en el @media correspondiente. */
+.project-phrase[data-project-slug="praderas-cabin"] .project-phrase__text {
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  letter-spacing: 0.03em;
+  line-height: 1.35;
+  font-weight: var(--fw-regular);
   max-width: none;
 }
 
@@ -3297,6 +3383,41 @@ html.is-entering-home.is-entering-home-active .main-nav {
   letter-spacing: 0.03em;
   line-height: 1.35;
   font-weight: var(--fw-regular);
+}
+
+.project-phrase__super-phrase {
+  margin: 0;
+  max-width: none;
+  font-size: clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  font-weight: var(--fw-bold);
+}
+
+.project-phrase__super-phrase-line {
+  display: block;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 1) 8px);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.project-phrase__super-phrase-line-inner {
+  display: block;
+  transform: translateY(100%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-phrase__super-phrase.is-revealed .project-phrase__super-phrase-line-inner {
+  transform: translateY(0);
+}
+
+.project-phrase__super-phrase.is-revealed .project-phrase__super-phrase-line {
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 .project-phrase__text-line {
@@ -3460,6 +3581,13 @@ html.is-entering-home.is-entering-home-active .main-nav {
   }
 }
 
+@media (min-width: 901px) and (max-width: 1023.98px) {
+  .page--club-de-mar .project-phrase__super-phrase {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
+
 /* Zoom-in sutil de la foto A: la imagen se acerca apenas un poco
    dentro de su propio marco. El marco no cambia de tamano. */
 .project-phrase__image--zoom img {
@@ -3586,38 +3714,18 @@ html.is-entering-home.is-entering-home-active .main-nav {
     max-width: none;
   }
 
-  /* Misma config que .project-highlight__title mobile de esta página:
-     frase-destacada, alineada a la derecha, max-width 70vw. Sólo la frase de
-     cierre queda en __text en mobile (el intro pasó a __mobile-text). */
-  /* El selector iguala la especificidad de la regla base
-     `.page--tobar-lodge .project-palette__copy > .project-palette__text:only-of-type`
-     (línea ~3022) para poder pisarle el font-weight: regular en mobile. */
-  .page--tobar-lodge .project-palette__copy > .project-palette__text:only-of-type {
-    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
-    font-weight: var(--fw-bold);
-    line-height: 1.2;
-    max-width: 70vw;
-    margin-left: auto;
-    text-align: right;
-    color: var(--color-black);
-  }
-
   .page--tobar-lodge .project-phrase__text.is-revealed .project-phrase__text-line {
     -webkit-mask-image: none;
     mask-image: none;
   }
 
-  /* estandar-a-mobile para frase-destacada */
-  .project-frame[data-project-slug="praderas-cabin"] .project-phrase__text {
+  /* estandar-a-mobile para párrafo (Praderas: phrase pasó a párrafo) */
+  .project-phrase[data-project-slug="praderas-cabin"] .project-phrase__text {
     font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
-    line-height: 1.2;
-    max-width: 70vw;
+    line-height: 1.5;
+    font-weight: var(--fw-regular);
+    max-width: none;
     margin-top: 0;
-  }
-
-  .project-frame[data-project-slug="praderas-cabin"] .project-phrase__text.is-revealed .project-phrase__text-line {
-    -webkit-mask-image: none;
-    mask-image: none;
   }
 }
 
@@ -4298,6 +4406,54 @@ html.is-entering-home.is-entering-home-active .main-nav {
     order: 2;
   }
 
+  .page--tobar-lodge .project-frame__copy {
+    display: contents;
+  }
+
+  .page--haras-san-pablo .project-frame__copy {
+    display: contents;
+  }
+
+  .page--club-de-mar .project-frame__copy {
+    display: contents;
+  }
+
+  .page--tobar-lodge .project-frame__text {
+    order: 1;
+  }
+
+  .page--haras-san-pablo .project-frame__text {
+    order: 1;
+  }
+
+  .page--club-de-mar .project-frame__text {
+    order: 1;
+  }
+
+  .page--tobar-lodge .project-frame__super-phrase {
+    order: 3;
+    justify-self: end;
+    margin-left: auto;
+    text-align: right;
+    max-width: 70vw;
+  }
+
+  .page--haras-san-pablo .project-frame__super-phrase {
+    order: 3;
+    justify-self: end;
+    margin-left: auto;
+    text-align: right;
+    max-width: 70vw;
+  }
+
+  .page--club-de-mar .project-frame__super-phrase {
+    order: 3;
+    justify-self: end;
+    margin-left: auto;
+    text-align: right;
+    max-width: 70vw;
+  }
+
   .project-frame--gallery .project-frame__media {
     padding-top: 0;
   }
@@ -4424,6 +4580,34 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   .project-phrase[data-project-slug="praderas-cabin"] .project-phrase__copy {
     gap: 0;
+  }
+
+  .project-phrase__super-phrase {
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+    max-width: none;
+  }
+
+  .page--club-de-mar .project-phrase__copy {
+    display: contents;
+  }
+
+  .page--club-de-mar .project-phrase__text {
+    order: 1;
+    padding-top: 1rem;
+  }
+
+  .page--club-de-mar .project-phrase__images {
+    order: 2;
+  }
+
+  .page--club-de-mar .project-phrase__super-phrase {
+    order: 3;
+    justify-self: end;
+    margin-left: auto;
+    text-align: right;
+    max-width: 70vw;
   }
 
   /* estandar-a-mobile para frase-destacada */
@@ -4561,6 +4745,40 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .project-phrase__text {
     font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
     max-width: clamp(16rem, 80vw, 30rem);
+  }
+
+  .project-frame__super-phrase {
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+    max-width: none;
+  }
+
+  .page--exuma-lodge .project-refuge__copy {
+    display: contents;
+  }
+
+  .page--exuma-lodge .project-refuge__text {
+    order: 1;
+  }
+
+  .page--exuma-lodge .project-refuge__gallery {
+    order: 2;
+  }
+
+  .page--exuma-lodge .project-refuge__super-phrase {
+    order: 3;
+    justify-self: end;
+    margin-left: auto;
+    text-align: right;
+    max-width: 70vw;
+  }
+
+  .project-refuge__super-phrase {
+    font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
+    max-width: none;
   }
 
   .project-highlight__visual {
@@ -11053,9 +11271,13 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
     max-width: clamp(16rem, 80vw, 30rem);
   }
 
-  /* Cherokee y Suinda: mismo estándar de párrafo mobile en el intro de la paleta. */
+  /* Cherokee, Suinda, Exuma, Praderas, Chacras y Tobar: mismo estándar de párrafo mobile en el intro de la paleta. */
   .page--cherokee-ave .project-palette__intro,
-  .page--cabana-suinda .project-palette__intro {
+  .page--cabana-suinda .project-palette__intro,
+  .page--exuma-lodge .project-palette__intro,
+  .project-palette[data-project-slug="praderas-cabin"] .project-palette__intro,
+  .project-palette[data-project-slug="chacras-de-murray"] .project-palette__intro,
+  .page--tobar-lodge .project-palette__intro {
     font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
     max-width: clamp(16rem, 80vw, 30rem);
   }
@@ -11115,6 +11337,83 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
     order: 3;
   }
 
+  /* Exuma Lodge: orden mobile = __intro → imagen → __text.
+     Misma estructura que suinda (intro y text en un solo __copy),
+     así que display: contents en __copy + order en los hijos. */
+  .page--exuma-lodge .project-palette__copy {
+    display: contents;
+  }
+
+  .page--exuma-lodge .project-palette__intro {
+    order: 1;
+  }
+
+  .page--exuma-lodge .project-palette__images {
+    order: 2;
+  }
+
+  .page--exuma-lodge .project-palette__text {
+    order: 3;
+  }
+
+  /* Chacras de Murray: orden mobile = __intro → galería → __text.
+     Misma estructura que suinda/praderas (intro y text en un solo __copy),
+     así que display: contents en __copy + order en los hijos.
+     Chacras se scopea por data-project-slug (no tiene clase page--). */
+  .project-palette[data-project-slug="chacras-de-murray"] .project-palette__copy {
+    display: contents;
+  }
+
+  .project-palette[data-project-slug="chacras-de-murray"] .project-palette__intro {
+    order: 1;
+  }
+
+  .project-palette[data-project-slug="chacras-de-murray"] .project-palette__images {
+    order: 2;
+  }
+
+  .project-palette[data-project-slug="chacras-de-murray"] .project-palette__text {
+    order: 3;
+  }
+
+  /* Tobar Lodge: orden mobile = __intro → galería → __text.
+     Normalizado al mismo patrón que el resto de los proyectos. */
+  .page--tobar-lodge .project-palette__copy {
+    display: contents;
+  }
+
+  .page--tobar-lodge .project-palette__intro {
+    order: 1;
+  }
+
+  .page--tobar-lodge .project-palette__images {
+    order: 2;
+  }
+
+  .page--tobar-lodge .project-palette__text {
+    order: 3;
+  }
+
+  /* Praderas Cabin: orden mobile = __intro → galería → __text.
+     Misma estructura que suinda (intro y text en un solo __copy),
+     así que display: contents en __copy + order en los hijos.
+     Praderas se scopea por data-project-slug (no tiene clase page--). */
+  .project-palette[data-project-slug="praderas-cabin"] .project-palette__copy {
+    display: contents;
+  }
+
+  .project-palette[data-project-slug="praderas-cabin"] .project-palette__intro {
+    order: 1;
+  }
+
+  .project-palette[data-project-slug="praderas-cabin"] .project-palette__images {
+    order: 2;
+  }
+
+  .project-palette[data-project-slug="praderas-cabin"] .project-palette__text {
+    order: 3;
+  }
+
   /* Texto de la paleta pegado al borde derecho y justificado a la derecha,
      max-width 70vw. Sólo estas páginas, sólo mobile. Va al final del bloque
      para ganar el `max-width: none` que haras/club aplican más arriba. */
@@ -11122,10 +11421,20 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   .page--cabana-suinda .project-palette__text,
   .page--haras-san-pablo .project-palette__text,
   .page--club-de-mar .project-palette__text,
+  .page--tobar-lodge .project-palette__text,
   .project-palette[data-project-slug="praderas-cabin"] .project-palette__text {
     max-width: 70vw;
     margin-left: auto;
     text-align: right;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1023.98px) {
+  .page--tobar-lodge .project-palette__text {
+    justify-self: start;
+    margin-left: 0;
+    margin-right: auto;
+    text-align: left;
   }
 }
 
