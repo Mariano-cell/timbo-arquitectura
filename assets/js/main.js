@@ -3306,10 +3306,11 @@ const Timbo = {
   philosophySignalOpacityReveal: {
     items: [],
     ticking: false,
+    // Grilla actual: 4 columnas × 2 filas (8 iconos).
+    // Fila 1 (índices 0–3) sube de opacidad primero; fila 2 (índices 4–7) después.
     ROW_RANGES: [
       { start: 1350, end: 1650 },
       { start: 1550, end: 1850 },
-      { start: 1450, end: 1750 },
     ],
 
     clamp(value, min = 0, max = 1) {
@@ -3318,13 +3319,8 @@ const Timbo = {
 
     init() {
       this.items = Array.from(document.querySelectorAll('.philosophy__signal')).map((item, index) => {
-        let rowIndex = 2;
-
-        if (index <= 2) {
-          rowIndex = 0;
-        } else if (index <= 5) {
-          rowIndex = 1;
-        }
+        // 4 por fila: los primeros 4 son fila 0, los siguientes 4 son fila 1.
+        const rowIndex = index <= 3 ? 0 : 1;
 
         return {
           el: item,

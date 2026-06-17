@@ -1075,6 +1075,88 @@ html[lang="es"] .sust-hero__visual-img--en {
   z-index: 1;
 }
 
+/* === TEMPORAL: toggle disposición de fotos (verticales vs horizontal) === */
+/* Por defecto la foto horizontal está oculta; se muestra sólo en modo horizontal */
+.intro__photo--horizontal {
+  display: none;
+}
+
+/* Modo horizontal: ocultar las dos verticales, mostrar una sola horizontal full-width */
+.intro--horizontal .intro__photos {
+  grid-template-columns: 1fr;
+}
+
+.intro--horizontal .intro__photo--wide,
+.intro--horizontal .intro__photo--narrow {
+  display: none;
+}
+
+.intro--horizontal .intro__photo--horizontal {
+  display: block;
+  grid-column: 1 / -1;
+  aspect-ratio: 4 / 3;
+}
+
+/* Botón flotante temporal para probar las dos opciones */
+.intro-photo-toggle {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  z-index: 10;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-primary);
+  font-size: 0.8125rem;
+  font-weight: var(--fw-medium);
+  color: var(--color-bg-light);
+  background: var(--color-black);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.intro-photo-toggle:hover {
+  opacity: 1;
+}
+
+/* Toggle de imagen alternativa en la segunda foto vertical */
+.intro__photo img.intro__photo-alt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.intro__photo--narrow.is-alt img.intro__photo-alt {
+  display: block;
+}
+
+.intro-narrow-toggle {
+  position: absolute;
+  bottom: var(--space-md);
+  right: var(--space-md);
+  z-index: 10;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-primary);
+  font-size: 0.8125rem;
+  font-weight: var(--fw-medium);
+  color: var(--color-bg-light);
+  background: var(--color-black);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.intro-narrow-toggle:hover {
+  opacity: 1;
+}
+/* === /TEMPORAL === */
+
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
   .intro {
@@ -1215,6 +1297,30 @@ html[lang="es"] .sust-hero__visual-img--en {
   transform: translateY(0);
 }
 
+/* Botón CTA — mismo aspecto que .philosophy__cta, en versión clara
+   (fondo oscuro de la imagen). Alineado a la derecha bajo el texto. */
+.nature-dialogue__cta {
+  position: absolute;
+  top: calc(clamp(64px, 12vh, 144px) + 10rem);
+  left: var(--margin-c);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 5px;
+  color: var(--color-text-light);
+  font-size: clamp(1.7rem, 1.9vw, 2rem);
+  font-weight: var(--fw-regular);
+  letter-spacing: 0.08em;
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.nature-dialogue__cta:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: var(--color-text-light);
+}
+
 .btn {
   display: inline-block;
   padding: var(--space-md) var(--space-2xl);
@@ -1300,6 +1406,19 @@ html[lang="es"] .sust-hero__visual-img--en {
   align-items: start;
   margin-left: var(--margin-c);
   margin-right: var(--margin-c);
+  /* Anula max-width (1200px) y padding lateral heredados de .container:
+     esta sección usa sus propios márgenes y se ensancha hasta 1440px. */
+  max-width: 1440px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Entre 1024px y 1280px el margen derecho se acorta (margin-c → margin-b)
+   para ganar ancho en pantallas medianas. Solo afecta este rango desktop. */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .philosophy__container {
+    margin-right: var(--margin-b);
+  }
 }
 
 .philosophy__content {
@@ -1375,9 +1494,9 @@ html[lang="es"] .sust-hero__visual-img--en {
 
 .philosophy__signals {
   display: grid;
-  grid-template-columns: repeat(3, 12vw);
+  grid-template-columns: repeat(4, 9vw);
   row-gap: clamp(1.75rem, 2.8vw, 3rem);
-  column-gap: clamp(1rem, 1.75vw, 1.5rem);
+  column-gap: clamp(1rem, 3vw, 4rem);
   justify-items: center;
   align-items: start;
   justify-self: end;
@@ -2896,6 +3015,19 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .project-highlight[data-project-slug="praderas-cabin"] .project-highlight__title {
   max-width: 30rem;
   text-align: right;
+}
+
+/* Ajustes de posición solo desktop (pedido cliente) */
+@media (min-width: 1024px) {
+  /* cherokee: 1rem más abajo */
+  .page--cherokee-ave .project-highlight__title {
+    top: calc(clamp(5rem, 7vw, 11rem) + 1rem);
+  }
+
+  /* club-de-mar: 3rem más a la derecha */
+  .project-highlight[data-project-slug="club-de-mar"] .project-highlight__title {
+    left: calc(var(--margin-c) + 3rem);
+  }
 }
 
 .project-highlight__title-line {
