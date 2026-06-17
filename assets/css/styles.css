@@ -1301,8 +1301,8 @@ html[lang="es"] .sust-hero__visual-img--en {
    (fondo oscuro de la imagen). Alineado a la derecha bajo el texto. */
 .nature-dialogue__cta {
   position: absolute;
-  top: calc(clamp(64px, 12vh, 144px) + 10rem);
-  left: var(--margin-c);
+  top: calc(clamp(64px, 12vh, 144px) + 14rem);
+  left: var(--margin-a);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1476,7 +1476,7 @@ html[lang="es"] .sust-hero__visual-img--en {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-top: clamp(1rem, 2vw, 2rem);
+  margin-top: 0.5rem;
   padding: 0.15rem 1.1rem;
   border: 1px solid rgba(0, 0, 0, 0.9);
   border-radius: 5px;
@@ -2876,7 +2876,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   gap: clamp(3rem, 6vw, 8rem);
   align-items: center;
   max-width: none;
-  margin: 6rem var(--margin-b) 0 var(--margin-c);
+  margin: 6rem var(--margin-c) 0 var(--margin-c);
   padding: 0;
 }
 
@@ -3449,7 +3449,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 .project-phrase__text {
   /* margin-top: base (1-2rem) + 100px de aire para separar la frase clave
      de las imágenes. Estándar para todos los proyectos (igual que palette). */
-  margin-top: calc(clamp(1rem, 2vw, 2rem) + 100px);
+  margin-top: calc(clamp(1rem, 2vw, 2rem));
   font-weight: var(--fw-bold);
   max-width: 22rem;
   will-change: transform;
@@ -5883,7 +5883,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
 
   /* COPY: ocupa una vista completa, contenido un poco por debajo del centro (≈65/35). */
   .sust-hero__copy {
-    min-height: 95vh;
+    min-height: 70vh;
     max-width: 100%;
     margin: 0;
     padding: var(--space-2xl) var(--margin-a);
@@ -5892,7 +5892,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
     justify-content: center;
     /* Empuja el contenido hacia abajo: 65% arriba / 35% abajo */
     padding-top: calc(95vh * 0.30);
-    padding-bottom: calc(95vh * 0.10);
+    padding-bottom: calc(70vh * 0.10);
   }
 
   .sust-hero__title {
@@ -6012,7 +6012,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
   .sust-process {
     min-height: auto;
     padding: 0;
-    padding-block: clamp(2rem, 3vw, 4rem);
+    padding-block: 0;
+    /* padding-bottom: clamp(2rem, 3vw, 4rem); */
   }
 
   .sust-process__container {
@@ -6025,7 +6026,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   /* GRÁFICO: una vista completa, alineado arriba y con márgenes. */
   .sust-process__media-wrap {
     order: 2;
-    min-height: 100vh;
+    min-height: 30vh;
     padding: 0 var(--margin-a);
     justify-content: flex-start;
   }
@@ -6037,8 +6038,8 @@ html.is-entering-home.is-entering-home-active .main-nav {
   /* COPY: otra vista completa, centrado vertical (espacio arriba y abajo). */
   .sust-process__copy {
     order: 1;
-    min-height: 50vh;
-    padding: var(--space-2xl) var(--margin-a) 0;
+    min-height: 40vh;
+    padding: 0 var(--margin-a) 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -6056,6 +6057,13 @@ html.is-entering-home.is-entering-home-active .main-nav {
     /* Estándar mobile (estandar-a-mobile / párrafo) — Fluid: 16px @ 375px → 23px @ 1023px */
     font-size: clamp(1rem, 1.08vw + 0.747rem, 1.4375rem);
     max-width: clamp(16rem, 80vw, 30rem);
+  }
+}
+
+/* --- TABLET HORIZONTAL (1024–1365px) --- */
+@media (min-width: 1024px) and (max-width: 1365px) {
+  .sust-process {
+    padding-bottom: 0;
   }
 }
 
@@ -6541,8 +6549,9 @@ html.is-entering-home.is-entering-home-active .main-nav {
      El orden del HTML ya es copy -> media. */
   .sust-climate {
     --sust-climate-media-width: 100%;
-    min-height: 100vh;
-    padding: var(--space-2xl) 0;
+    min-height: 90vh;
+    padding: 0;
+    padding-bottom: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -6720,7 +6729,7 @@ html.is-entering-home.is-entering-home-active .main-nav {
   --sust-strategies-detail-gap: clamp(1.4rem, 2.6vw, 2.6rem);
   --sust-strategies-gutter-outset: max(0px, calc((100vw - var(--max-width)) / 2));
   --sust-strategies-reserved-width: max(0px, calc(var(--sust-strategies-detail-width) + var(--sust-strategies-detail-gap) - var(--sust-strategies-gutter-outset)));
-  padding: clamp(2rem, 4vw, 6rem) 0;
+  padding: 0;
   overflow-x: clip;
   background-color: var(--color-gray-100);
 }
@@ -7079,6 +7088,12 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
 
   .sust-strategies__diagram-svg {
     max-width: 100%;
+    /* Apaisado leve sólo en mobile: el viewBox es cuadrado (800x800) y dejaba
+       aire vertical arriba/abajo. aspect-ratio recorta ese alto sobrante sin
+       tocar el contenido (preserveAspectRatio="xMidYMid meet" mantiene el
+       dibujo centrado y a escala, sin deformar el círculo). */
+    aspect-ratio: 1 / 0.88;
+    height: auto;
     /* Scale más conservador que pilares (que está en 1.12) porque strategies
        tiene 8 etiquetas en lugar de 6 y necesita un poco más de aire.
        overflow: visible permite que los elementos cercanos al borde no se
@@ -7088,12 +7103,23 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
     transform-origin: center center;
   }
 
+  /* Sólo mobile: alejar las etiquetas del círculo para que no se solapen.
+     Escalamos el grupo contenedor desde el centro del SVG (400,400), lo que
+     empuja cada etiqueta radialmente hacia afuera de forma uniforme sin
+     moverlas de su ángulo. */
+  .sust-strategies__orbit-labels {
+    transform: scale(1.12);
+    transform-origin: 400px 400px;
+  }
+
   /* Items de la rueda (etiquetas de texto) +30% sólo en mobile.
      El content está en 0,0 local con el texto centrado (text-anchor
      middle), así que escalar desde 0 0 lo agranda desde su propio centro
-     sin moverlo de su posición orbital. */
+     sin moverlo de su posición orbital.
+     El 1.518 = 1.7 / 1.12: compensa el scale del contenedor de arriba para
+     que el tamaño visual del texto quede idéntico (sólo cambia la posición). */
   .sust-strategies__orbit-label-content {
-    transform: scale(1.7);
+    transform: scale(1.518);
     transform-origin: 0 0;
   }
 
@@ -7128,14 +7154,16 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
     --sust-strategies-detail-label-width: clamp(6.75rem, 11.02vw + 4.11rem, 11.2rem);
   }
 
+  /* +15% sólo en mobile sobre los valores originales (×1.15). */
   html[lang='es'] .sust-strategies__detail-media[data-strategy="masa"] {
-    --sust-strategies-detail-media-width: clamp(5.1rem, 8.38vw + 3.15rem, 8.5rem);
-    --sust-strategies-detail-label-width: clamp(5.1rem, 8.38vw + 3.15rem, 8.5rem);
+    --sust-strategies-detail-media-width: clamp(5.865rem, 9.637vw + 3.6225rem, 9.775rem);
+    --sust-strategies-detail-label-width: clamp(5.865rem, 9.637vw + 3.6225rem, 9.775rem);
   }
 
+  /* +15% sólo en mobile sobre los valores originales (×1.15). */
   html[lang='en'] .sust-strategies__detail-media[data-strategy="proporcion"] {
-    --sust-strategies-detail-media-width: clamp(5.94rem, 9.76vw + 3.66rem, 9.9rem);
-    --sust-strategies-detail-label-width: clamp(5.94rem, 9.76vw + 3.66rem, 9.9rem);
+    --sust-strategies-detail-media-width: clamp(6.831rem, 11.224vw + 4.209rem, 11.385rem);
+    --sust-strategies-detail-label-width: clamp(6.831rem, 11.224vw + 4.209rem, 11.385rem);
   }
 
   html[lang='en'] .sust-strategies__detail-media[data-strategy="proteccion"] {
@@ -7143,9 +7171,10 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
     --sust-strategies-detail-label-width: clamp(6rem, 9.86vw + 3.7rem, 11.5rem);
   }
 
+  /* +15% sólo en mobile sobre los valores originales (×1.15). */
   html[lang='en'] .sust-strategies__detail-media[data-strategy="masa"] {
-    --sust-strategies-detail-media-width: clamp(5.75rem, 9.2vw + 3.45rem, 9.8rem);
-    --sust-strategies-detail-label-width: clamp(5.75rem, 9.2vw + 3.45rem, 9.8rem);
+    --sust-strategies-detail-media-width: clamp(6.6125rem, 10.58vw + 3.9675rem, 11.27rem);
+    --sust-strategies-detail-label-width: clamp(6.6125rem, 10.58vw + 3.9675rem, 11.27rem);
   }
 
   .sust-strategies__detail-title {
@@ -7274,6 +7303,12 @@ html[lang='en'] .sust-strategies__orbit-label-text--en {
 }
 
 @media (max-width: 599.98px) {
+
+  .sust-benefits {
+    padding: clamp(2rem, 3vw, 4rem) 0 clamp(6rem, 8vw, 8.5rem);
+
+  }
+
   .sust-benefits .container {
     margin-left: var(--margin-a);
     padding-inline: 0;
@@ -7624,6 +7659,12 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
   .sust-pilares__diagram-svg {
     max-width: 100%;
+    /* Apaisado leve sólo en mobile: el viewBox es cuadrado (800x800) y dejaba
+       aire vertical arriba/abajo. aspect-ratio recorta ese alto sobrante sin
+       tocar el contenido (preserveAspectRatio="xMidYMid meet" mantiene el
+       dibujo centrado y a escala, sin deformar el círculo). */
+    aspect-ratio: 1 / 0.88;
+    height: auto;
     /* Scale: la rueda ya ocupa el 100% del ancho del viewport (sin
        padding lateral). Para hacerla aún más grande la escalamos vía
        transform. overflow visible permite que las etiquetas que quedan
@@ -7633,12 +7674,23 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
     transform-origin: center center;
   }
 
+  /* Sólo mobile: alejar las etiquetas del círculo para que no se solapen.
+     Escalamos el grupo contenedor desde el centro del SVG (400,400), lo que
+     empuja cada etiqueta radialmente hacia afuera de forma uniforme sin
+     moverlas de su ángulo. */
+  .sust-pilares__orbit-labels {
+    transform: scale(1.12);
+    transform-origin: 400px 400px;
+  }
+
   /* Items de la rueda (etiquetas de texto) +30% sólo en mobile.
      El content está en 0,0 local con el texto centrado (text-anchor
      middle), así que escalar desde 0 0 lo agranda desde su propio centro
-     sin moverlo de su posición orbital. */
+     sin moverlo de su posición orbital.
+     El 1.518 = 1.7 / 1.12: compensa el scale del contenedor de arriba para
+     que el tamaño visual del texto quede idéntico (sólo cambia la posición). */
   .sust-pilares__orbit-label-content {
-    transform: scale(1.7);
+    transform: scale(1.518);
     transform-origin: 0 0;
   }
 
@@ -7699,6 +7751,23 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   .sust-pilares__glow {
     transition: none;
     opacity: 1;
+  }
+}
+
+/* --- TABLET HORIZONTAL (1024–1365px) --- */
+@media (min-width: 1024px) and (max-width: 1365px) {
+  .sust-pilares {
+    padding-top: 0;
+  }
+
+  .sust-process {
+    min-height: 80vh;
+  }
+
+  
+  .sust-hero {
+    min-height: 80vh;
+    padding: clamp(4rem, 8vw, 7rem) 0 clamp(2rem, 4vw, 5rem);
   }
 }
 
@@ -8046,6 +8115,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
   .sust-emissions__left {
     padding: var(--space-2xl) var(--margin-a);
+    padding-bottom: 0;
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -8053,7 +8123,7 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 
   .sust-emissions__right {
     min-height: 60vh;
-    padding: var(--space-2xl) var(--margin-a);
+    padding: var(--space-2xl) var(--margin-a) 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -9558,6 +9628,15 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   }
 }
 
+/* --- TABLET HORIZONTAL (1024–1365px) --- */
+@media (min-width: 1024px) and (max-width: 1365px) {
+  /* Padding block al doble del desktop: clamp(0.3rem, 0.5vw, 0.55rem) → x2 */
+  .services-directory__item {
+    padding-top: clamp(0.6rem, 1vw, 1.1rem);
+    padding-bottom: clamp(0.6rem, 1vw, 1.1rem);
+  }
+}
+
 
 /* =========================
    CONTACTO
@@ -10490,10 +10569,16 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
   .projects-gallery__row--3,
   .projects-gallery__row--4,
   .projects-gallery__row--5 {
-    --row-height: 260px;
+    /* Alto FLUIDO en el rango 1024–1366px (proporciones intactas: los
+       aspect-ratios no se tocan, solo escala el alto maestro del que derivan
+       todos los anchos vía --row-media-height).
+       Tope: 300px @ 1366px (las portadas crecen y dejan menos aire a la derecha).
+       Piso: ~250px @ 1024px (las portadas se achican para no comerse el margen
+       derecho cuando el viewport se aprieta).
+       clamp(250px, 14.6vw + 100.5px, 300px) → 250 @1024 / 300 @1366. */
+    --row-height: clamp(250px, 14.6vw + 100.5px, 300px);
     /* Achicamos el ANCHO de las portadas (no el alto) en el rango 1024–1366px:
-       bajamos los aspect-ratios para que las imágenes salgan más angostas.
-       El alto se mantiene en 260px porque sigue derivándose de --row-height. */
+       bajamos los aspect-ratios para que las imágenes salgan más angostas. */
     --row-img-ratio: 3 / 2;
     /* wide: 16/9 → 3/2 (más angosta) */
     --row-lead-ratio: 4 / 3;
@@ -10514,11 +10599,36 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
     --row-wide-width: calc(var(--row-media-height) * 3 / 2);
   }
 
-  /* Excepción fila 4 (Chacras de Murray + Club de Mar): mantienen el
-     aspect-ratio 16/9 original. */
-  .projects-gallery__row--4 {
-    --row-img-ratio: 16 / 9;
+  /* Cardano (fila 3, item wide): iguala su ancho al de Suindá Lodge (fila 2)
+     en esta franja. Cardano usa ancho explícito (--row-cardano-width), no
+     --row-img-ratio, así que el 3/2 general no lo alcanza: hay que recalcular
+     su ancho a media-height * 3/2 (antes heredaba 16/9 del CSS base). */
+  .projects-gallery__row--3 {
+    --row-cardano-width: calc(var(--row-media-height) * 3 / 2);
   }
+
+  /* Igualar al ancho de la imagen-A (lead) de Tobar Lodge (fila 1) en esta
+     franja, que es media-height * 4/3 − 40px:
+       · Chacras de Murray (fila 4) imagen-A = --row-lead-width
+         (la fila 4 NO entra en el recálculo a 4/3 de filas 1 y 3, así que
+          seguía en 3/2 − 40px → más ancha; la bajamos a 4/3 − 40px).
+       · Praderas Cabin (fila 2) imagen-B = --row-pair-b-width
+         (definida en base como 3/2 − 40px, sin recálculo en la franja → la
+          bajamos a 4/3 − 40px).
+     --row-pair-width y los captions de ambas filas derivan de estas variables,
+     así que se reajustan solos. */
+  .projects-gallery__row--4 {
+    --row-lead-width: calc(var(--row-media-height) * 4 / 3 - 40px);
+  }
+
+  .projects-gallery__row--2 {
+    --row-pair-b-width: calc(var(--row-media-height) * 4 / 3 - 40px);
+  }
+
+  /* Club de Mar (fila 4, item wide): en esta franja iguala su ancho al de
+     Suindá Lodge (fila 2). Como ambas comparten --row-media-height, igualar
+     ancho = igualar aspect-ratio: hereda el --row-img-ratio: 3/2 general de
+     la franja (antes tenía una excepción 16/9 que la dejaba más ancha). */
 
   /* Chacras de Murray (fila 4, primer item): forzamos la ubicación en una
      sola línea para "Buenos Aires, Argentina". */
@@ -10535,15 +10645,9 @@ html[lang='en'] .sust-pilares__orbit-label-text--en {
 }
 
 
-/* En viewports 1024–1200px, Club de Mar (fila 4) pasa de 16/9 a 3/2,
-   igual al ancho que tiene Suindá en ese mismo rango.
-   Pisa la excepción --row-img-ratio: 16/9 que fila 4 tiene en ≤1366px. */
-@media (max-width: 1200px) {
-
-  .projects-gallery__row--4 {
-    --row-img-ratio: 3 / 2;
-  }
-}
+/* (Antes acá había un @media (max-width: 1200px) que bajaba Club de Mar de
+   16/9 a 3/2. Ya no hace falta: la fila 4 ahora usa 3/2 en toda la franja
+   ≤1366px, igualando a Suindá. Bloque eliminado.) */
 
 /* En viewports ≤1279px ocultamos la hover-card. Como ya no hay tarjeta que
    mostrar, tampoco tiene sentido el desplazamiento del proyecto vecino que
