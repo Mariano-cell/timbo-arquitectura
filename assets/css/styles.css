@@ -61,11 +61,12 @@ html[lang="es"] .sust-hero__visual-img--en {
 }
 
 /* --- Lang toggle ---
-   Widget ES / EN que se inyecta en el hero de cada página via Timbo.langToggle.
-   Posición: borde derecho a --margin-b, borde inferior a --space-lg.
+   Widget ES / EN que se inyecta en el body de cada página via Timbo.langToggle.
+   Fijo al viewport (position:fixed): acompaña el scroll en todo el recorrido.
+   Posición: borde derecho a --margin-a, borde inferior a --space-lg.
    Color: hereda del data-nav-theme del hero (--dark → blanco, --light → negro). */
 .lang-toggle {
-  position: absolute;
+  position: fixed;
   bottom: var(--space-lg);
   right: var(--margin-a);
   display: flex;
@@ -79,21 +80,6 @@ html[lang="es"] .sust-hero__visual-img--en {
   text-transform: uppercase;
   line-height: 1;
   user-select: none;
-  transition: opacity 200ms ease, visibility 200ms ease;
-}
-
-/* Home y proyectos: el hero excede el viewport → toggle fijo al viewport,
-   anclado abajo-derecha del primer viewport, se queda fijo al scrollear */
-.lang-toggle--fixed {
-  position: fixed;
-  bottom: var(--space-lg);
-  right: var(--margin-a);
-}
-
-/* Todas las páginas (desktop): se oculta al scrollear más de 50px */
-.lang-toggle--hidden {
-  opacity: 0;
-  visibility: hidden;
 }
 
 .lang-toggle__sep {
@@ -110,6 +96,31 @@ html[lang="es"] .sust-hero__visual-img--en {
 .lang-toggle--light .lang-option,
 .lang-toggle--light .lang-toggle__sep {
   color: var(--color-black);
+}
+
+/* Home: el toggle va en negro aunque el hero sea dark */
+.page--home .lang-toggle .lang-option,
+.page--home .lang-toggle .lang-toggle__sep {
+  color: var(--color-black);
+}
+
+/* Home: mientras el toggle está sobre el video del hero, le ponemos un
+   fondo gris para que el texto negro se lea. Al scrollear fuera del hero
+   (.lang-toggle--no-hero-bg) el fondo se va. */
+.page--home .lang-toggle {
+  /* padding constante (con y sin fondo) para que tamaño y posición no cambien;
+     sólo aparece/desaparece el color de fondo. El padding se compensa con un
+     margin negativo para que el texto quede en la misma posición que el resto
+     de las páginas (sin fondo). */
+  padding: 0.4rem 0.7rem;
+  margin: -0.4rem -0.7rem;
+  border-radius: var(--border-radius);
+  background-color: transparent; /* fondo desactivado a pedido — antes: rgba(218,218,218,0.5) */
+  transition: background-color 250ms ease;
+}
+
+.page--home .lang-toggle--no-hero-bg {
+  background-color: transparent;
 }
 
 .lang-option {
@@ -137,19 +148,11 @@ html[lang="es"] .sust-hero__visual-img--en {
 
 /* --- MOBILE --- */
 @media (max-width: 1023.98px) {
-  .lang-toggle,
-  .lang-toggle--fixed {
-    position: fixed;
+  .lang-toggle {
     bottom: var(--margin-a);
     left: var(--margin-a);
     right: auto;
     font-size: 0.6875rem;
-    transition: opacity 200ms ease, visibility 200ms ease;
-  }
-
-  .lang-toggle--hidden-mobile {
-    opacity: 0;
-    visibility: hidden;
   }
 }
 

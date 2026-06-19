@@ -5273,16 +5273,12 @@ const Timbo = {
 
   /* ============================================================
      LANG TOGGLE
-     Inyecta el widget ES / EN en el hero / primera sección de cada página.
+     Inyecta el widget ES / EN, fijo al viewport (position:fixed), en todas
+     las páginas. Acompaña el scroll durante todo el recorrido.
      Busca la primera sección que matchee el selector (en orden de especificidad):
        .hero, .sust-hero, .project-hero, .about-hero, .contact-image,
        .services-directory, .projects-gallery
-     El color (dark/light) se infiere del data-nav-theme de la sección (default: light).
-
-     Caso especial — home (.hero) y proyectos (.projects-gallery): la
-     sección excede el viewport en altura, así que el toggle se fija al
-     viewport con position:fixed (.lang-toggle--fixed) para que aparezca
-     abajo-derecha del primer viewport al cargar y se quede fijo ahí.
+     El color (dark/light) se infiere del data-nav-theme de esa sección (default: light).
      ============================================================ */
   langToggle: {
     init() {
@@ -5291,24 +5287,14 @@ const Timbo = {
       );
       if (!hero) return;
 
-      // Asegurarse de que el hero tenga position relativa para que el absolute funcione
-      const heroPosition = window.getComputedStyle(hero).position;
-      if (heroPosition === 'static') {
-        hero.style.position = 'relative';
-      }
-
+      // El hero sólo se usa para inferir el tema (dark/light); el toggle se
+      // monta en el body con position:fixed, así que no necesita anclaje al hero.
       const theme = hero.dataset.navTheme === 'dark' ? 'dark' : 'light';
 
-      // En home (.hero) y proyectos (.projects-gallery) la sección excede los 100vh,
-      // así que un toggle absolute quedaría al final de la sección (fuera del primer
-      // viewport). Para que aparezca abajo-derecha del primer viewport al cargar y se
-      // quede fijo ahí, usamos position:fixed via .lang-toggle--fixed.
-      // El resto de las páginas (hero ≈100vh) usan absolute dentro del hero.
-      const isFixed = hero.classList.contains('hero') || hero.classList.contains('projects-gallery');
-      const fixedClass = isFixed ? ' lang-toggle--fixed' : '';
-
+      // Toggle fijo al viewport en TODAS las páginas: acompaña el scroll
+      // durante todo el recorrido (no se oculta ni se va con la sección).
       const toggle = document.createElement('div');
-      toggle.className = `lang-toggle lang-toggle--${theme}${fixedClass}`;
+      toggle.className = `lang-toggle lang-toggle--${theme}`;
       toggle.innerHTML = `
         <button class="lang-option" data-lang="es" aria-label="Español">ES</button>
         <span class="lang-toggle__sep" aria-hidden="true">/</span>
@@ -5321,27 +5307,19 @@ const Timbo = {
         Timbo.i18n.set(btn.dataset.lang);
       });
 
-      hero.appendChild(toggle);
+      document.body.appendChild(toggle);
 
-      // Mobile: ocultar el toggle apenas el usuario hace scroll
-      const SCROLL_HIDE_THRESHOLD = 15; // px
-      const updateMobileVisibility = () => {
-        if (window.innerWidth >= 1024) return;
-        toggle.classList.toggle('lang-toggle--hidden-mobile', window.scrollY > SCROLL_HIDE_THRESHOLD);
-      };
-      window.addEventListener('scroll', updateMobileVisibility, { passive: true });
-      updateMobileVisibility();
-
-      // Desktop (todas las páginas): ocultar el toggle tras scrollear > 50px.
-      // Aplica tanto a los fixed (home, galería de proyectos) como a los
-      // absolute (sustentabilidad, páginas de proyecto, etc.).
-      const DESKTOP_HIDE_THRESHOLD = 50; // px
-      const updateDesktopVisibility = () => {
-        if (window.innerWidth < 1024) return;
-        toggle.classList.toggle('lang-toggle--hidden', window.scrollY > DESKTOP_HIDE_THRESHOLD);
-      };
-      window.addEventListener('scroll', updateDesktopVisibility, { passive: true });
-      updateDesktopVisibility();
+      // Home: el toggle lleva un fondo gris mientras está sobre el video del
+      // hero (para que el texto negro se lea). Apenas se scrollea (> 50px) se
+      // le quita el fondo (clase .lang-toggle--no-hero-bg).
+      if (hero.classList.contains('hero')) {
+        const HERO_BG_THRESHOLD = 50; // px
+        const updateHeroBg = () => {
+          toggle.classList.toggle('lang-toggle--no-hero-bg', window.scrollY > HERO_BG_THRESHOLD);
+        };
+        window.addEventListener('scroll', updateHeroBg, { passive: true });
+        updateHeroBg();
+      }
     },
   },
 
