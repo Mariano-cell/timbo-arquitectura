@@ -79,6 +79,21 @@ html[lang="es"] .sust-hero__visual-img--en {
   text-transform: uppercase;
   line-height: 1;
   user-select: none;
+  transition: opacity 200ms ease, visibility 200ms ease;
+}
+
+/* Home y proyectos: el hero excede el viewport → toggle fijo al viewport,
+   anclado abajo-derecha del primer viewport, se queda fijo al scrollear */
+.lang-toggle--fixed {
+  position: fixed;
+  bottom: var(--space-lg);
+  right: var(--margin-a);
+}
+
+/* Todas las páginas (desktop): se oculta al scrollear más de 50px */
+.lang-toggle--hidden {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .lang-toggle__sep {

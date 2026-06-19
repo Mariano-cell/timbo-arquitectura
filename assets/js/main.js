@@ -5279,8 +5279,10 @@ const Timbo = {
        .services-directory, .projects-gallery
      El color (dark/light) se infiere del data-nav-theme de la sección (default: light).
 
-     Todas las páginas (home, proyectos, etc.) usan el mismo
-     posicionamiento absolute dentro del hero, igual que sustentabilidad.
+     Caso especial — home (.hero) y proyectos (.projects-gallery): la
+     sección excede el viewport en altura, así que el toggle se fija al
+     viewport con position:fixed (.lang-toggle--fixed) para que aparezca
+     abajo-derecha del primer viewport al cargar y se quede fijo ahí.
      ============================================================ */
   langToggle: {
     init() {
@@ -5297,10 +5299,16 @@ const Timbo = {
 
       const theme = hero.dataset.navTheme === 'dark' ? 'dark' : 'light';
 
-      // Todas las páginas usan el mismo posicionamiento que sustentabilidad:
-      // toggle absolute dentro del hero (anclado abajo-derecha, se va al scrollear).
+      // En home (.hero) y proyectos (.projects-gallery) la sección excede los 100vh,
+      // así que un toggle absolute quedaría al final de la sección (fuera del primer
+      // viewport). Para que aparezca abajo-derecha del primer viewport al cargar y se
+      // quede fijo ahí, usamos position:fixed via .lang-toggle--fixed.
+      // El resto de las páginas (hero ≈100vh) usan absolute dentro del hero.
+      const isFixed = hero.classList.contains('hero') || hero.classList.contains('projects-gallery');
+      const fixedClass = isFixed ? ' lang-toggle--fixed' : '';
+
       const toggle = document.createElement('div');
-      toggle.className = `lang-toggle lang-toggle--${theme}`;
+      toggle.className = `lang-toggle lang-toggle--${theme}${fixedClass}`;
       toggle.innerHTML = `
         <button class="lang-option" data-lang="es" aria-label="Español">ES</button>
         <span class="lang-toggle__sep" aria-hidden="true">/</span>
@@ -5323,6 +5331,17 @@ const Timbo = {
       };
       window.addEventListener('scroll', updateMobileVisibility, { passive: true });
       updateMobileVisibility();
+
+      // Desktop (todas las páginas): ocultar el toggle tras scrollear > 50px.
+      // Aplica tanto a los fixed (home, galería de proyectos) como a los
+      // absolute (sustentabilidad, páginas de proyecto, etc.).
+      const DESKTOP_HIDE_THRESHOLD = 50; // px
+      const updateDesktopVisibility = () => {
+        if (window.innerWidth < 1024) return;
+        toggle.classList.toggle('lang-toggle--hidden', window.scrollY > DESKTOP_HIDE_THRESHOLD);
+      };
+      window.addEventListener('scroll', updateDesktopVisibility, { passive: true });
+      updateDesktopVisibility();
     },
   },
 
