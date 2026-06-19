@@ -209,52 +209,10 @@
     </section>
 
     <!-- ====== HIGHLIGHT ====== -->
-    <!-- TEMPORAL: toggle de tamaño de la imagen highlight (solo exuma-lodge). Borrar al fijar el tamaño final. -->
-    <style>
-      /* La imagen ocupa --highlight-scale del ancho y queda pegada a la derecha;
-         el espacio liberado al achicarla aparece a su izquierda. */
-      .project-highlight--scalable .project-highlight__media {
-        width: calc(100% * var(--highlight-scale, 1));
-        margin-left: auto;
-        transition: width 250ms ease;
-      }
-      .highlight-scale-toggle {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        z-index: 20;
-        display: flex;
-        gap: 6px;
-        background: rgba(0, 0, 0, 0.45);
-        padding: 6px;
-        border-radius: 8px;
-      }
-      .highlight-scale-toggle button {
-        font: inherit;
-        font-size: 13px;
-        color: #fff;
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        border-radius: 6px;
-        padding: 4px 10px;
-        cursor: pointer;
-      }
-      .highlight-scale-toggle button.is-active {
-        background: #fff;
-        color: #000;
-        border-color: #fff;
-      }
-    </style>
-    <section class="project-highlight project-highlight--split project-highlight--scalable" data-project-slug="exuma-lodge" data-nav-theme="light" style="--highlight-scale: 1;">
+    <section class="project-highlight project-highlight--split" data-project-slug="exuma-lodge" data-nav-theme="light">
       <div class="container project-highlight__container">
         <div class="project-highlight__visual">
           <figure class="project-highlight__media anim-zoom-in">
-            <!-- TEMPORAL: toggle de tamaño -->
-            <div class="highlight-scale-toggle" aria-label="Tamaño de imagen (revisión)">
-              <button type="button" data-scale="1" class="is-active">100%</button>
-              <button type="button" data-scale="0.9">0.9</button>
-              <button type="button" data-scale="0.8">0.8</button>
-            </div>
             <img src="../assets/images/projects/exuma-lodge/highlight-01.jpg" alt="Exuma Lodge" loading="lazy" decoding="async">
           </figure>
 
@@ -264,23 +222,6 @@
         </div>
       </div>
     </section>
-    <!-- TEMPORAL: lógica del toggle de tamaño de la imagen highlight (solo exuma-lodge). Borrar al fijar el tamaño final. -->
-    <script>
-      (function () {
-        var section = document.querySelector('.project-highlight--scalable');
-        if (!section) return;
-        var toggle = section.querySelector('.highlight-scale-toggle');
-        if (!toggle) return;
-        toggle.addEventListener('click', function (e) {
-          var btn = e.target.closest('button[data-scale]');
-          if (!btn) return;
-          section.style.setProperty('--highlight-scale', btn.dataset.scale);
-          toggle.querySelectorAll('button').forEach(function (b) {
-            b.classList.toggle('is-active', b === btn);
-          });
-        });
-      })();
-    </script>
 
     <!-- ====== PALETTE ====== -->
     <section class="project-palette project-palette--single-horizontal" data-nav-theme="light">

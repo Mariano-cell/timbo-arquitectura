@@ -63,10 +63,10 @@
     <section class="hero" id="hero" data-nav-theme="dark">
       <div class="hero__bg">
         <!-- El src del video lo setea Timbo.heroIntro según viewport:
-             desktop → hero-video_004-4k.mp4 / mobile → hero-video_004-mobile.mp4 -->
+             desktop → hero-video-final-desktop.mp4 / mobile → hero-video-final-mobile.mp4 -->
         <video muted loop playsinline preload="metadata" poster="assets/images/hero/hero-poster.jpg">
-          <source data-src-desktop="assets/images/hero/hero-video_004-4k.mp4"
-                  data-src-mobile="assets/images/hero/hero-video_004-mobile.mp4"
+          <source data-src-desktop="assets/images/hero/hero-video-final-desktop.mp4"
+                  data-src-mobile="assets/images/hero/hero-video-final-mobile.mp4"
                   type="video/mp4">
         </video>
       </div>
@@ -98,28 +98,12 @@
           </p>
         </div>
         <div class="intro__photos">
-          <!-- TEMPORAL: toggle para probar disposición de fotos (verticales vs horizontal) -->
-          <button type="button" class="intro-photo-toggle" data-intro-photo-toggle aria-pressed="false">
-            Ver foto horizontal
-          </button>
-          <!-- /TEMPORAL -->
           <figure class="intro__photo intro__photo--wide anim-fade-in" data-anim-delay="0">
             <img src="assets/images/intro-section/DSC01984.jpg" alt="Timbó — naturaleza" loading="lazy">
           </figure>
           <figure class="intro__photo intro__photo--narrow anim-fade-in" data-anim-delay="400">
-            <img src="assets/images/intro-section/DSC02312.jpg" alt="Timbó — arquitectura" loading="lazy">
-            <!-- TEMPORAL: imagen alternativa para la segunda foto vertical (toggle B) -->
-            <img class="intro__photo-alt" src="assets/images/intro-section/intro-vertical.png" alt="Timbó — arquitectura (alternativa)" loading="lazy">
-            <button type="button" class="intro-narrow-toggle" data-intro-narrow-toggle aria-pressed="false">
-              Cambiar imagen
-            </button>
-            <!-- /TEMPORAL -->
+            <img src="assets/images/intro-section/intro-vertical.jpg" alt="Timbó — arquitectura" loading="lazy">
           </figure>
-          <!-- TEMPORAL: opción de foto horizontal (toggle A/B) -->
-          <figure class="intro__photo intro__photo--horizontal anim-fade-in" data-anim-delay="0">
-            <img src="assets/images/intro-section/intro-horizontal.jpg" alt="Timbó — arquitectura y naturaleza" loading="lazy">
-          </figure>
-          <!-- /TEMPORAL -->
         </div>
       </div>
     </section>
@@ -219,31 +203,6 @@
   <!-- JS -->
   <script src="assets/js/data.js?v=20260609"></script>
   <script src="assets/js/main.js?v=20260609"></script>
-
-  <!-- TEMPORAL: toggle disposición de fotos de la intro (verticales vs horizontal) -->
-  <script>
-    (function () {
-      var btn = document.querySelector('[data-intro-photo-toggle]');
-      var intro = document.getElementById('intro');
-      if (!btn || !intro) return;
-      btn.addEventListener('click', function () {
-        var horizontal = intro.classList.toggle('intro--horizontal');
-        btn.setAttribute('aria-pressed', horizontal ? 'true' : 'false');
-        btn.textContent = horizontal ? 'Ver fotos verticales' : 'Ver foto horizontal';
-      });
-
-      // Toggle de imagen alternativa en la segunda foto vertical
-      var narrowBtn = document.querySelector('[data-intro-narrow-toggle]');
-      var narrowFig = document.querySelector('.intro__photo--narrow');
-      if (narrowBtn && narrowFig) {
-        narrowBtn.addEventListener('click', function () {
-          var alt = narrowFig.classList.toggle('is-alt');
-          narrowBtn.setAttribute('aria-pressed', alt ? 'true' : 'false');
-        });
-      }
-    })();
-  </script>
-  <!-- /TEMPORAL -->
 
 </body>
 

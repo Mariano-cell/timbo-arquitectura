@@ -5279,9 +5279,8 @@ const Timbo = {
        .services-directory, .projects-gallery
      El color (dark/light) se infiere del data-nav-theme de la sección (default: light).
 
-     Caso especial — home (.hero): el hero excede el viewport en altura,
-     así que el toggle se fija al viewport con position:fixed en vez de
-     absolute, usando la clase modificadora .lang-toggle--fixed.
+     Todas las páginas (home, proyectos, etc.) usan el mismo
+     posicionamiento absolute dentro del hero, igual que sustentabilidad.
      ============================================================ */
   langToggle: {
     init() {
@@ -5298,13 +5297,10 @@ const Timbo = {
 
       const theme = hero.dataset.navTheme === 'dark' ? 'dark' : 'light';
 
-      // En home (.hero) y proyectos (.projects-gallery) la sección excede el viewport
-      // → toggle fixed al viewport. En el resto → absolute dentro de la sección.
-      const isFixed = hero.classList.contains('hero') || hero.classList.contains('projects-gallery');
-      const fixedClass = isFixed ? ' lang-toggle--fixed' : '';
-
+      // Todas las páginas usan el mismo posicionamiento que sustentabilidad:
+      // toggle absolute dentro del hero (anclado abajo-derecha, se va al scrollear).
       const toggle = document.createElement('div');
-      toggle.className = `lang-toggle lang-toggle--${theme}${fixedClass}`;
+      toggle.className = `lang-toggle lang-toggle--${theme}`;
       toggle.innerHTML = `
         <button class="lang-option" data-lang="es" aria-label="Español">ES</button>
         <span class="lang-toggle__sep" aria-hidden="true">/</span>
