@@ -4758,6 +4758,66 @@ const Timbo = {
   },
 
   /* ============================================================
+     META PIXEL — eventos de conversión
+     El código base (PageView) vive en el <head> de cada HTML.
+     Acá se suman los eventos estándar que usa el agente de marketing:
+       - ViewContent: visita a una página de proyecto (para audiencias
+         de gente interesada en proyectos). Lee el data-project-slug.
+       - Contact: intención de contacto. El parámetro `method` dice
+         cuál fue: email_copy | whatsapp | phone_call | instagram.
+         En teléfonos se agrega `person` (mia / gero).
+     Delegación en document: funciona aunque los elementos se
+     rendericen después por JS. Si el píxel está bloqueado
+     (adblock), fbq no existe y el módulo no hace nada.
+     ============================================================ */
+  metaPixel: {
+    track(eventName, params) {
+      if (typeof window.fbq !== 'function') return;
+      window.fbq('track', eventName, params);
+    },
+
+    init() {
+      // ViewContent en páginas de proyecto
+      const projectEl = document.querySelector('[data-project-slug]');
+      if (projectEl) {
+        this.track('ViewContent', {
+          content_name: projectEl.dataset.projectSlug,
+          content_category: 'proyecto',
+        });
+      }
+
+      // Contact: email, WhatsApp, llamada, Instagram
+      document.addEventListener('click', (e) => {
+        const target = e.target instanceof Element ? e.target : null;
+        if (!target) return;
+
+        if (target.closest('[data-copy-email]')) {
+          this.track('Contact', { method: 'email_copy' });
+          return;
+        }
+
+        const link = target.closest('a[href]');
+        if (!link) return;
+        const href = link.getAttribute('href') || '';
+
+        let method = null;
+        if (href.startsWith('tel:')) method = 'phone_call';
+        else if (/wa\.me|whatsapp\.com/i.test(href)) method = 'whatsapp';
+        else if (/instagram\.com/i.test(href)) method = 'instagram';
+        else if (href.startsWith('mailto:')) method = 'email';
+        if (!method) return;
+
+        const params = { method };
+        const actions = link.closest('[data-contact-phone-actions]');
+        if (actions && actions.id) {
+          params.person = actions.id.replace('contact-phone-actions-', '');
+        }
+        this.track('Contact', params);
+      }, true);
+    },
+  },
+
+  /* ============================================================
      CONTACT PHONE ACTIONS
      En la página de contacto, cada teléfono abre una elección:
      llamar o continuar por WhatsApp.
@@ -5384,6 +5444,7 @@ const Timbo = {
     this.contactForm.init();
     this.contactCopyEmail.init();
     this.contactPhoneActions.init();
+    this.metaPixel.init();
     this.keyboardNav.init();
     // Hover-blur de la galería desactivado a pedido del cliente.
     // El módulo queda disponible por si se reactiva: this.projectsGalleryHoverBlur.init();

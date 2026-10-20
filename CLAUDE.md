@@ -1002,3 +1002,13 @@ Hallazgos del análisis estructural del 9 de junio de 2026. Ordenados por impact
 - [ ] **Sin `srcset` ni `<picture>` en ninguna imagen.** En mobile se descarga la misma imagen de 1600px que en desktop. No es trivial pero es la mejora más grande en mobile después del video. Debatir si vale implementarlo o si la compresión existente es suficiente.
 
 - [ ] **Scripts sin `defer`.** `data.js` y `main.js` se cargan al pie del `<body>` sin `defer`. Agregar `defer` los hace explícitamente no-bloqueantes. Riesgo bajo, ganancia en claridad y práctica más correcta.
+
+## Meta Pixel (Facebook) — instalado oct 2026
+
+- Pedido por el agente de marketing de los clientes. ID del píxel: `1491088029736432`.
+- Código base pegado justo antes de `</head>` en las 15 páginas del sitio + `prompts/proyecto-_TEMPLATE.html` (bloque `<!-- Meta Pixel Code -->`). Solo trackea `PageView`.
+- **Al crear una página nueva**, copiar el bloque (la plantilla ya lo incluye).
+- Eventos de conversión: módulo `Timbo.metaPixel` en `main.js` (delegación de clicks en `document`, no-op si `fbq` no existe). Definidos sin esperar al agente, con criterio propio:
+  - `ViewContent` en páginas de proyecto (`content_name` = `data-project-slug`, `content_category: 'proyecto'`).
+  - `Contact` con `method`: `email_copy` (botón copiar email), `whatsapp`, `phone_call`, `instagram`, `email` (mailto). En teléfonos agrega `person` (`mia` / `gero`, sacado del id del menú).
+  - Cualquier link nuevo a wa.me / tel: / instagram / mailto queda trackeado automáticamente.
